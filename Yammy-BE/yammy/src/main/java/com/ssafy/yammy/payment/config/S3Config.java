@@ -1,0 +1,36 @@
+package com.ssafy.yammy.payment.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+
+@Configuration
+public class S3Config {
+
+    @Value("${spring.cloud.aws.credentials.accessKey}")
+    private String accessKey;
+
+    @Value("${spring.cloud.aws.credentials.secretKey}")
+    private String secretKey;
+
+    @Value("${spring.cloud.aws.region.static}")
+    private String region;
+
+    @Bean
+    public S3Presigner s3Presigner() {
+        System.out.println("S3 region check: " + region);
+        System.out.println("AccessKey check: " + accessKey.substring(0, 4) + "********");
+        return S3Presigner.builder()
+                .region(Region.of(region))
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(accessKey, secretKey)
+                        )
+                )
+                .build();
+    }
+}

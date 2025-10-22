@@ -8,25 +8,31 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class) // 
+@EntityListeners(AuditingEntityListener.class)
 public class UsedItem {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public String title;
-    public String description;
-    public Integer price;
-    public boolean status;
+    private String title;
+    private String description;
+    private Integer price;
+    private boolean status;
 
     @CreatedDate
-    @Column(updatable = false) // db에 저장 이후 수정될 수 없도록
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @ElementCollection
+    private List<String> imageUrls; // presigned URL로 업로드한 이미지 주소
 }
+
