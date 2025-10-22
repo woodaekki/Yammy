@@ -1,4 +1,4 @@
-package com.example.yammy;
+package com.ssafy.yammy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

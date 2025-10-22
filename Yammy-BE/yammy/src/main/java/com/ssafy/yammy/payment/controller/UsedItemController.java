@@ -1,11 +1,11 @@
-package com.example.yammy.payment.controller;
+package com.ssafy.yammy.payment.controller;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import com.example.yammy.payment.entity.UsedItem;
-import com.example.yammy.payment.repository.UsedItemRepository;
+import com.ssafy.yammy.payment.entity.UsedItem;
+import com.ssafy.yammy.payment.repository.UsedItemRepository;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 

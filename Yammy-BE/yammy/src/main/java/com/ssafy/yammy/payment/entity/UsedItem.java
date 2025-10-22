@@ -1,4 +1,4 @@
-package com.example.yammy.payment.entity;
+package com.ssafy.yammy.payment.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
