@@ -29,7 +29,7 @@ public class UsedItem {
 //    @JoinColumn(name = "member_id", nullable = false)
 //    private Member member;
 
-    @Column(name = "nickname", nullable = false, length = 20)
+    @Column(name = "nickname", length = 20)
     private String nickname;
 
     @Column(name = "title", nullable = false, length = 50)
