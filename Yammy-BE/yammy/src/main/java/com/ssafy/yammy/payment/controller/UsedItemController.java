@@ -28,8 +28,7 @@ public class UsedItemController {
     @GetMapping
     public ResponseEntity<List<UsedItemResponseDto>> getAllTrades() {
         List<UsedItem> items = usedItemRepository.findAll();
-
-        // Entity → ResponseDto 변환
+        
         List<UsedItemResponseDto> response = items.stream()
                 .map(item -> UsedItemResponseDto.builder()
                         .id(item.getId())
@@ -96,7 +95,6 @@ public class UsedItemController {
 
         UsedItem savedItem = usedItemRepository.save(usedItem);
 
-        // Entity → ResponseDto 변환
         UsedItemResponseDto response = UsedItemResponseDto.builder()
                 .id(savedItem.getId())
                 // .memberId(savedItem.getMember().getId())
@@ -124,7 +122,7 @@ public class UsedItemController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다"));
 
-        // DTO 데이터로 Entity 업데이트
+
         usedItem.setTitle(dto.getTitle());
         usedItem.setDescription(dto.getDescription());
         usedItem.setPrice(dto.getPrice());
@@ -135,7 +133,6 @@ public class UsedItemController {
 
         UsedItem savedItem = usedItemRepository.save(usedItem);
 
-        // Entity → ResponseDto 변환
         UsedItemResponseDto response = UsedItemResponseDto.builder()
                 .id(savedItem.getId())
                 // .memberId(savedItem.getMember().getId())
