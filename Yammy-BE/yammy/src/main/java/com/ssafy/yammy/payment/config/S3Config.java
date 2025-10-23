@@ -22,8 +22,6 @@ public class S3Config {
 
     @Bean
     public S3Presigner s3Presigner() {
-        System.out.println("S3 region check: " + region);
-        System.out.println("AccessKey check: " + accessKey.substring(0, 4) + "********");
         return S3Presigner.builder()
                 .region(Region.of(region))
                 .credentialsProvider(
