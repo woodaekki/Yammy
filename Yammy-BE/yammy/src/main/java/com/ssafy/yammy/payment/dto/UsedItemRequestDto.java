@@ -22,8 +22,11 @@ public class UsedItemRequestDto {
     @Max(value = 1000000000, message = "가격은 10억원 이하여야 합니다")
     private Integer price;
 
+    private Boolean status;
+
     // 업로드 완료된 사진들의 photoId 리스트
     @Size(max = 3, message = "이미지는 최대 3장까지 등록 가능합니다")
     private List<Long> photoIds;
+
 
 }

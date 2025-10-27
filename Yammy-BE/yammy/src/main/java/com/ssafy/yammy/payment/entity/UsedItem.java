@@ -1,10 +1,7 @@
 package com.ssafy.yammy.payment.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -42,8 +39,8 @@ public class UsedItem {
     @Column(name = "price", nullable = false)
     private Integer price;
 
-//    @Column(name = "status", nullable = false)
-//    private Boolean status;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean status = false;  // 이것만으로 충분!
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
