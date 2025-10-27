@@ -25,11 +25,11 @@ public class SwaggerConfig {
                                         .bearerFormat("JWT")
                         ))
                 .info(new Info()
-                        .title("LastDance API")
-                        .description("디지털 유언장 공증 서비스 API 문서")
+                        .title("Yammy API")
+                        .description("야미 서비스 API 문서")
                         .version("v1.0.0")
                         .contact(new Contact()
-                                .name("SSAFY C107 Team")
+                                .name("SSAFY C105 Team")
                                 .email("sw383@naver.com")));
     }
 }
