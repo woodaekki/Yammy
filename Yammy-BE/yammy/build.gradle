@@ -4,13 +4,13 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example'
+group = 'com.ssafy.yammy'
 version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
+description = 'SSAFY 13기 C205팀 자율프로젝트'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
 
@@ -26,15 +26,50 @@ repositories {
 
 dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
+
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+    compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'com.mysql:mysql-connector-j:8.0.33'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+}
+
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+sourceSets {
+    main {
+        java {
+            srcDir querydslDir
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.generatedSourceOutputDirectory.set(querydslDir)
 }
 
 tasks.named('test') {
