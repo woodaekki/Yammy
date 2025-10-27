@@ -1,7 +1,10 @@
 package com.ssafy.yammy.payment.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.ssafy.yammy.payment.entity.UsedItem;
@@ -13,6 +16,8 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
+@Tag(name = "Payment API", description = "결제 관련 API")
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
@@ -23,6 +28,7 @@ public class UsedItemController {
     private final UsedItemRepository usedItemRepository;
 
     // 중고 거래 목록 전체 조회
+    @Operation(summary = "중고 거래 목록 전체 조회")
     @GetMapping("/trades")
     public ResponseEntity<List<UsedItem>> getAllTrades() {
         List<UsedItem> items = usedItemRepository.findAll();
@@ -30,6 +36,7 @@ public class UsedItemController {
     }
 
     // 중고 거래 목록 단건 조회
+    @Operation(summary = "중고 거래 목록 단건 조회")
     @GetMapping("/trades/{id}")
     public ResponseEntity<UsedItem> getTrade(@PathVariable long id) {
         UsedItem item = usedItemRepository.findById(id)
@@ -38,13 +45,14 @@ public class UsedItemController {
     }
 
     // 중고 거래 목록 게시물 작성 (보안 처리는 추후)
+    @Operation(summary = "중고 거래 목록 게시물 작성")
     @PostMapping("/trades")
     public ResponseEntity<UsedItem> createTrade(@RequestBody UsedItem usedItem) {
         UsedItem savedItem = usedItemRepository.save(usedItem);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedItem); // json의 바디 형태 반환
     }
-
+    @Operation(summary = "중고 거래 목록 게시물 수정")
     @PutMapping("/trades/{id}")
     public ResponseEntity<UsedItem> updateTrade(@PathVariable long id, @RequestBody UsedItem usedItem) {
         Optional<UsedItem> fixedItem = usedItemRepository.findById(id);
@@ -59,7 +67,7 @@ public class UsedItemController {
         return ResponseEntity.ok(savedItem);
     }
 
-
+    @Operation(summary = "중고 거래 목록 게시물 삭제")
     @DeleteMapping("/trades/{id}")
     public ResponseEntity<String> deleteTrade(@PathVariable long id) {
         usedItemRepository.deleteById(id);
