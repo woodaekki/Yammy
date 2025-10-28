@@ -1,10 +1,6 @@
 spring:
   config:
-<<<<<<< HEAD
-    import: optional:file:.env[.properties]  # ✅ .env 파일 자동 인식 설정
-=======
     import: optional:file:.env[.properties]
->>>>>>> 59bdc9e4e32c06a840c75bf2a69515a066c7525d
 
   application:
     name: yammy
@@ -14,6 +10,13 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:redis}   # 기본값: redis
+      port: ${SPRING_DATA_REDIS_PORT:6379}    # 기본값: 6379
+      password: ${SPRING_DATA_REDIS_PASSWORD:#{null}}
+      timeout: 6000ms
 
   jpa:
     hibernate:
