@@ -179,7 +179,7 @@ const SNSPage = () => {
             'https://storage.googleapis.com/uxpilot-auth.appspot.com/60a72d35f1-09cace140106185bf5cc.png'
         ];
 
-        return Array.from({ length: 3 }, (_, i) => ({
+        return Array.from({ length: 10 }, (_, i) => ({
             id: startId + i,
             author: authors[Math.floor(Math.random() * authors.length)],
             avatar: avatars[Math.floor(Math.random() * avatars.length)],
@@ -201,17 +201,17 @@ const SNSPage = () => {
 
             setIsLoading(true);
 
-            // API 호출 시뮬레이션 (1초 딜레이)
+            // API 호출 시뮬레이션 (0.3초 딜레이로 빠르게)
             setTimeout(() => {
                 const newPosts = generateNewPosts(posts.length + 1);
                 setPosts(prevPosts => [...prevPosts, ...newPosts]);
                 setIsLoading(false);
 
-                // 30개 이상이면 더 이상 로드하지 않음 (테스트용)
-                if (posts.length >= 30) {
+                // 100개 이상이면 더 이상 로드하지 않음 (테스트용)
+                if (posts.length >= 100) {
                     setHasMore(false);
                 }
-            }, 1000);
+            }, 300);
         };
 
         const observer = new IntersectionObserver(
@@ -220,7 +220,7 @@ const SNSPage = () => {
                     loadMorePosts();
                 }
             },
-            { threshold: 0.5 }
+            { threshold: 0.1, rootMargin: '200px' } // 화면 끝에서 200px 전에 미리 로드
         );
 
         const currentTarget = observerTarget.current;
@@ -311,12 +311,12 @@ const SNSPage = () => {
                     </div>
                 ))}
 
-                {/* Intersection Observer 타겟 */}
+                {/* Intersection Observer 타겟 - 마지막 게시물 아래 */}
                 <div ref={observerTarget} className="observer-target" />
 
-                {/* 로딩 인디케이터 */}
+                {/* 로딩 인디케이터 - 숨김 (백그라운드 로딩) */}
                 {isLoading && (
-                    <div className="loading-indicator">
+                    <div className="loading-indicator" style={{ opacity: 0, height: 0 }}>
                         <div className="spinner"></div>
                         <p>게시물을 불러오는 중...</p>
                     </div>
