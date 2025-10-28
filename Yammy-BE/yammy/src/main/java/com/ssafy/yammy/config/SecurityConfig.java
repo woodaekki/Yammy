@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/trades/**").permitAll()
                         .requestMatchers("/api/photos/**").permitAll()
                         .requestMatchers("/api/v1/ai/**").permitAll()
+                        .requestMatchers("/api/photos/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

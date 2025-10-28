@@ -3,10 +3,11 @@ package com.ssafy.yammy.payment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class PhotoUploadCompleteResponse {
-    private Long photoId;
-    private String fileUrl;
+    private List<Long> photoIds;
+    private List<String> fileUrls;
 }

@@ -5,6 +5,7 @@ import com.ssafy.yammy.payment.dto.*;
 import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.repository.PhotoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -12,11 +13,16 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 import java.net.URL;
 import java.time.Duration;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PhotoService {
@@ -27,6 +33,11 @@ public class PhotoService {
     // presigned URL 생성
     public PhotoUploadResponse getGalleryPresignedUploadUrl(Long memberId, String originalFilename, String contentType) {
         validateFile(originalFilename, contentType);
+
+        log.info("[PhotoService] Presigned URL 요청 수신됨");
+        log.info(" - memberId: {}", memberId);
+        log.info(" - originalFilename: {}", originalFilename);
+        log.info(" - contentType: {}", contentType);
 
         try (S3Presigner presigner = createPresigner()) {
             String folderName = (memberId != null) ? "members/" + memberId : "anonymous";
@@ -56,20 +67,33 @@ public class PhotoService {
                     photoConfig.getRegion(),
                     key);
 
-            return new PhotoUploadResponse(presignedUrl.toString(), fileUrl);
+            return new PhotoUploadResponse(presignedUrl.toString(), fileUrl, key);
         }
     }
 
     public PhotoUploadCompleteResponse completeUpload(PhotoUploadCompleteRequest request) {
-        Photo photo = Photo.builder()
-                .fileUrl(request.getFileUrl())
-                .s3Key(extractKeyFromUrl(request.getFileUrl()))
-                .contentType("image/jpeg")
-                .build();
+        if (request.getFileUrls() == null || request.getFileUrls().isEmpty()) {
+            throw new IllegalArgumentException("파일 URL이 없습니다.");
+        }
 
-        photoRepository.save(photo);
-        return new PhotoUploadCompleteResponse(photo.getId(), photo.getFileUrl());
+        List<Photo> savedPhotos = new ArrayList<>();
+
+        for (String fileUrl : request.getFileUrls()) {
+            Photo photo = Photo.builder()
+                    .fileUrl(fileUrl)
+                    .s3Key(extractKeyFromUrl(fileUrl))
+                    .contentType("image/jpeg")
+                    .build();
+            savedPhotos.add(photoRepository.save(photo));
+        }
+
+        // 여러 장일 수 있으므로 ID 리스트와 URL 리스트 모두 응답에 포함
+        return new PhotoUploadCompleteResponse(
+                savedPhotos.stream().map(Photo::getId).toList(),
+                savedPhotos.stream().map(Photo::getFileUrl).toList()
+        );
     }
+
 
     public PhotoResponse getPhoto(Long id) {
         Photo photo = photoRepository.findById(id)

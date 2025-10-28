@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @Slf4j
 @Tag(name = "Payment API", description = "결제 관련 API")
 @RestController
@@ -145,13 +146,15 @@ public class UsedItemController {
         usedItem.setDescription(dto.getDescription());
         usedItem.setPrice(dto.getPrice());
 
-        // 기존 사진 교체 (photoIds 기준)
+        // 기존 사진 교체
         if (dto.getPhotoIds() != null) {
-            usedItem.getPhotos().clear(); // 기존 관계 제거
-            List<Photo> newPhotos = photoRepository.findAllById(dto.getPhotoIds());
-            newPhotos.forEach(usedItem::addPhoto);
+            if (!dto.getPhotoIds().isEmpty()) {
+                // 새 이미지가 있을 때만 교체
+                usedItem.getPhotos().clear();
+                List<Photo> newPhotos = photoRepository.findAllById(dto.getPhotoIds());
+                newPhotos.forEach(usedItem::addPhoto);
+            }
         }
-
         UsedItem savedItem = usedItemRepository.save(usedItem);
 
         List<String> imageUrls = savedItem.getPhotos().stream()
