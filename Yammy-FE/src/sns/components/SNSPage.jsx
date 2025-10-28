@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SNSPage.css';
 
 const ImageCarousel = ({ images, postId }) => {
@@ -10,6 +11,8 @@ const ImageCarousel = ({ images, postId }) => {
 
     // 드래그 시작
     const handleDragStart = (e) => {
+        if (images.length <= 1) return; // 이미지가 1개면 드래그 안 함
+
         setIsDragging(true);
         const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
         setStartPos(clientX);
@@ -19,7 +22,7 @@ const ImageCarousel = ({ images, postId }) => {
 
     // 드래그 중 (실시간으로 따라다님)
     const handleDragMove = (e) => {
-        if (!isDragging) return;
+        if (!isDragging || images.length <= 1) return; // 이미지가 1개면 드래그 안 함
         e.preventDefault();
 
         const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
@@ -34,7 +37,7 @@ const ImageCarousel = ({ images, postId }) => {
 
     // 드래그 종료
     const handleDragEnd = () => {
-        if (!isDragging) return;
+        if (!isDragging || images.length <= 1) return; // 이미지가 1개면 드래그 안 함
         setIsDragging(false);
 
         const dragDuration = Date.now() - dragStartTime;
@@ -59,7 +62,7 @@ const ImageCarousel = ({ images, postId }) => {
     return (
         <div className="image-carousel">
             <div
-                className="carousel-slider"
+                className={`carousel-slider ${images.length <= 1 ? 'single-image' : ''}`}
                 onTouchStart={handleDragStart}
                 onTouchMove={handleDragMove}
                 onTouchEnd={handleDragEnd}
@@ -102,6 +105,7 @@ const ImageCarousel = ({ images, postId }) => {
 };
 
 const SNSPage = () => {
+    const navigate = useNavigate();
     const [posts, setPosts] = useState([
         {
             id: 1,
@@ -256,7 +260,7 @@ const SNSPage = () => {
                     <div key={post.id} className="post-card">
                         {/* 게시물 헤더 */}
                         <div className="post-header">
-                            <div className="post-author">
+                            <div className="post-author" onClick={() => navigate(`/user/${post.author}`)}>
                                 <img src={post.avatar} alt={post.author} className="author-avatar" />
                                 <div className="author-info">
                                     <h3 className="author-name">{post.author}</h3>
@@ -284,7 +288,7 @@ const SNSPage = () => {
                                     <span className="action-icon">{post.isLiked ? '❤️' : '🤍'}</span>
                                     <span className="action-count">{post.likes}</span>
                                 </button>
-                                <button className="action-btn">
+                                <button className="action-btn" onClick={() => navigate(`/post/${post.id}/comments`)}>
                                     <span className="action-icon">💬</span>
                                     <span className="action-count">{post.comments}</span>
                                 </button>
