@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { usePhotoUpload } from "../hooks/usePhotoUpload"
-import "../styles/useditem.css"
+import "../styles/usedItem.css"
 
 function PhotoUploader({ onUploaded }) {
   const { uploadPhotos, uploading } = usePhotoUpload()
