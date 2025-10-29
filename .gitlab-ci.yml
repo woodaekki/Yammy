@@ -72,7 +72,11 @@ FE_Image:
   tags:
     - test-build
   services:
-    - docker:24.0.5-dind # Docker 명령 실행을 위한 서비스
+    - name: docker:24.0.5-dind
+      alias: docker
+      # ⭐️ DIND 서비스에 privileged 모드를 활성화 ⭐️
+      entrypoint: ["/usr/local/bin/dockerd-entrypoint.sh", "--tls=false"] # TLS 비활성화 추가
+      command: ["--storage-driver=vfs"] # 이 옵션은 불안정할 때 시도
 
   variables:
     # ... (ECR 관련 변수) ...
