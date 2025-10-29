@@ -79,7 +79,7 @@ FE_Image:
     FE_IMAGE_URI: $ECR_REPOSITORY_URI/yammy-fe:latest # 이미지 이름 명확하게 분리
     AWS_DEFAULT_REGION: ap-northeast-2
     # ⭐️ 추가됨: DIND 서비스에 연결하기 위한 필수 설정 ⭐️
-    DOCKER_HOST: tcp://lockerhost:2375
+    DOCKER_HOST: tcp://localhost:2375
     DOCKER_TLS_CERTDIR: ""
 
   script:
