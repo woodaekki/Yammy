@@ -73,18 +73,14 @@ FE_Image:
     - test-build
   services:
     - name: docker:24.0.5-dind
-      alias: docker
-      # ⭐️ DIND 서비스에 privileged 모드를 활성화 ⭐️
-      entrypoint: ["/usr/local/bin/dockerd-entrypoint.sh", "--tls=false"] # TLS 비활성화 추가
-      command: ["--storage-driver=vfs"] # 이 옵션은 불안정할 때 시도
 
   variables:
     # ... (ECR 관련 변수) ...
     FE_IMAGE_URI: $ECR_REPOSITORY_URI/yammy-fe:latest # 이미지 이름 명확하게 분리
     AWS_DEFAULT_REGION: ap-northeast-2
     # ⭐️ 추가됨: DIND 서비스에 연결하기 위한 필수 설정 ⭐️
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: "" # TLS 인증 문제를 피하기 위해 (선택적이지만 권장됨)
+    DOCKER_HOST: tcp://lockerhost:2375
+    DOCKER_TLS_CERTDIR: ""
 
   script:
     - cd ${FRONTEND_DIR}
@@ -94,6 +90,8 @@ FE_Image:
     # ECR 로그인 및 AWS CLI 설치는 docker:24.0.5 이미지에서 진행
     - apk add --no-cache python3 py3-pip
     - pip install awscli
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
 
     # 2. Docker 이미지 빌드 및 푸시
