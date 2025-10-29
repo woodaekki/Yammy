@@ -20,7 +20,7 @@ RUN npm install -g serve
 
 # ⭐️ 빌드된 정적 파일만 런타임 이미지로 복사 ⭐️
 # /app/build 경로는 실제 프론트엔드 빌드 결과물 경로에 맞춰 수정해야 합니다.
-COPY --from=builder /app/build /usr/app/www
+COPY --from=builder /app/dist /usr/app/www
 
 # 애플리케이션 포트 오픈
 EXPOSE 3000
