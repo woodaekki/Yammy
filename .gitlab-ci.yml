@@ -67,10 +67,38 @@ Test_Build_BE:
 
 FE_Image:
   stage: FE_Image
+  image: node:20-alpine # Node 환경에서 빌드 (Alpine이 가볍습니다)
+  tags:
+      - yammy-build
+  variables:
+    # ⭐️ ECR 로그인 및 AWS CLI에 사용될 변수 (GitLab CI/CD Variables에 등록) ⭐️
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: ap-northeast-2
+
+    # Dockerfile 및 최종 이미지 경로 설정
+    FE_IMAGE_URI: $ECR_REPOSITORY_URI/yammy:latest
+
+  before_script:
+    - cd ${FRONTEND_DIR}
+
+    # 1. NPM 패키지 설치 및 빌드
+    - npm install
+    - npm run build
+
+    # 2. AWS CLI 설치 및 ECR 로그인 (Docker 명령을 위해 ECR 인증)
+    # Runner 환경에 AWS CLI가 없으면 이 과정을 거쳐야 합니다.
+    - apk add --no-cache python3 py3-pip # Alpine 리눅스 기반 이미지에서 AWS CLI 설치
+    - pip install awscli
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
+
   script:
-    - echo "Skipping FE Image build for Test."
-  when: manual
-  allow_failure: true
+    # 3. Docker 이미지 빌드
+    # Dockerfile은 FE_Image/Yammy_FE 디렉토리에 있다고 가정
+    - docker build -t $FE_IMAGE_URI .
+
+    # 4. ECR에 푸시
+    - docker push $FE_IMAGE_URI
 
 BE_Image:
   stage: BE_Image
