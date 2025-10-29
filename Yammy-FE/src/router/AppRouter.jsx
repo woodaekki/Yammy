@@ -6,6 +6,7 @@ import UsedItemPage from "../useditem/UsedItemPage";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
+import UsedItemChat from "../chat/components/UsedItemChat"
 
 export default function AppRouter() {
   return (
@@ -14,10 +15,10 @@ export default function AppRouter() {
       <Route path="/useditem/:id" element={<UsedItemDetail />} />
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
+      <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
       <Route path="/" element={<SNSPage />} />
       <Route path="/post/:postId/comments" element={<CommentPage />} />
       <Route path="/user/:userId" element={<UserProfile />} />
-  
     </Routes>
   );
 }
