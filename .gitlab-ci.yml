@@ -77,6 +77,7 @@ FE_Image:
   variables:
     # ... (ECR 관련 변수) ...
     FE_IMAGE_URI: $ECR_REPOSITORY_URI/yammy-fe:latest # 이미지 이름 명확하게 분리
+    AWS_DEFAULT_REGION: ap-northeast-2
 
   script:
     - cd ${FRONTEND_DIR}
