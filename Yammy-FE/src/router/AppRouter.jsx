@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import SNSPage from "../sns/components/SNSPage";
+import SNSPage from "../sns/SNSPage";
 import CommentPage from "../sns/components/CommentPage";
 import UserProfile from "../sns/components/UserProfile";
 import UsedItemPage from "../useditem/UsedItemPage";

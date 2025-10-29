@@ -37,4 +37,21 @@ spring:
       region:
         static: ${AWS_REGION}
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+  accessExpiration: ${JWT_ACCESS_EXPIRATION:900000}
+  refreshExpiration: ${JWT_REFRESH_EXPIRATION:1209600000}
+
 

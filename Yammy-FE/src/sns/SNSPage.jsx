@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SNSPage.css';
+import './styles/SNSPage.css';
 
 const ImageCarousel = ({ images, postId }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
