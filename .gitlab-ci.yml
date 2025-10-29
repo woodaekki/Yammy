@@ -16,6 +16,8 @@ variables:
 Test_Build_BE:
   stage: Test_Build
   image: openjdk:17-jdk-slim
+  tags:
+    - yammy-build
   services:
     - name: mysql:8.0
       alias: mysql-db
