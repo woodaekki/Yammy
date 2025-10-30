@@ -71,25 +71,6 @@ return (
       <div id="payment-method" />
       {/* 이용약관 UI */}
       <div id="agreement" />
-      {/* 쿠폰 체크박스 */}
-      <div>
-        <div>
-          <label htmlFor="coupon-box">
-            <input
-              id="coupon-box"
-              type="checkbox"
-              aria-checked="true"
-              disabled={!ready}
-              onChange={(event) => {
-                // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
-                setAmount(event.target.checked ? amount - 5_000 : amount + 5_000);
-              }}
-            />
-            <span>5,000원 쿠폰 적용</span>
-          </label>
-        </div>
-      </div>
-
       {/* 결제하기 버튼 */}
       <button
         className="button"
