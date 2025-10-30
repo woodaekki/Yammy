@@ -111,29 +111,22 @@ BE_Image:
     PROD_APPLICATION_YML: $PROD_APPLICATION_YML
 
   script:
-    # --- 1. Docker 설치 ---
     - apt-get update -qq && apt-get install -y --no-install-recommends docker.io docker-compose
 
-    # --- 2. AWS CLI 설치 및 로그인 ---
     - apt-get install -y python3 python3-pip
     - pip install awscli
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
 
-    # --- 3. ⭐️ 운영용 .jar 빌드 (가장 중요) ⭐️ ---
     - cd ${BACKEND_DIR}
     - chmod +x gradlew
     - rm -f src/main/resources/application.yml
     - echo "$PROD_APPLICATION_YML" > src/main/resources/application.yml
-    - echo "cat $PROD_APPLICATION_YML"
+    - cat $PROD_APPLICATION_YML
     - echo "Production application-prod.yml created successfully."
 
-    # ⭐️ 테스트를 제외하고 운영용 .jar 파일을 새로 빌드합니다. ⭐️
     - ./gradlew clean build -x test
     - echo "Production JAR built successfully."
 
-    # --- 4. ⭐️ 새로 빌드된 .jar로 Docker 이미지 생성 ⭐️ ---
-    # 이제 Dockerfile이 'build/libs/*.jar'를 복사할 때,
-    # 방금 위에서 만든 "운영용 .jar"를 사용하게 됩니다.
     - docker build -t $ECR_REPOSITORY_URI:$BE_IMAGE_TAG .
     - docker push $ECR_REPOSITORY_URI:$BE_IMAGE_TAG
 
