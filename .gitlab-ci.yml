@@ -57,8 +57,7 @@ Test_Build_BE:
       if [ -z "$MYSQL_HOST_IP" ]; then 
         MYSQL_HOST_IP="mysql-db"; # IP를 찾지 못하면 alias 사용 (wait-for-it이 성공했으므로 시도)
       fi;
-      export DB_URL=$(echo $DB_URL | sed "s/mysql-db/${MYSQL_HOST_IP}/");
-      echo "Final DB_URL Host: $MYSQL_HOST_IP"; # 최종 호스트 IP 확인
+      export DB_URL=jdbc:mysql://${MYSQL_HOST_IP}:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul
 
     - export DB_URL=$DB_URL
     - export DB_USERNAME=$DB_USERNAME
