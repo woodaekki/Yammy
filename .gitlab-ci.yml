@@ -141,13 +141,6 @@ Deploy:
   image: ubuntu:latest # Shell Runner가 image를 무시하지만, Alpine 도구를 삭제합니다.
 
   before_script:
-    - export PROD_DB_URL
-    - export PROD_DB_USERNAME
-    - export PROD_DB_PASSWORD
-    - export BE_IMAGE_URI
-    - export FE_IMAGE_URI
-    - export AWS_DEFAUIL_REGION
-    - echo "$AWS_DEFAULT_REGION"
 
     # ⭐️ 1. AWS CLI 및 Docker Compose 설치 (sudo 필요) ⭐️
     - sudo apt-get update -qq
@@ -157,10 +150,6 @@ Deploy:
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
 
   script:
-    # 4. 최신 이미지 Pull 및 Docker Compose 실행
     - docker pull $BE_IMAGE_URI
     - docker pull $FE_IMAGE_URI
-
-    # 5. Docker Compose 실행: 최신 이미지를 사용하여 서비스 업데이트
-    # EC2의 /home/ubuntu/docker-compose.yml 파일을 사용
     - sudo -E docker-compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate
