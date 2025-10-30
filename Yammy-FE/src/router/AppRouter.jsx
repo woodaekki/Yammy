@@ -11,20 +11,21 @@ import CheckoutPage from "../payment/components/CheckoutPage"
 import LoginPage from "../auth/LoginPage";
 import SignupPage from "../auth/SignupPage";
 import KakaoCallbackPage from "../auth/KakaoCallbackPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
   return (
     <Routes>
-      {/* Auth Routes */}
+      {/* Auth Routes - 로그인 필요 없음 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/kakao/callback" element={<KakaoCallbackPage />} />
 
-      {/* SNS Routes */}
-      <Route path="/" element={<SNSPage />} />
-      <Route path="/sns" element={<SNSPage />} />
-      <Route path="/post/:postId/comments" element={<CommentPage />} />
-      <Route path="/user/:userId" element={<UserProfile />} />
+      {/* SNS Routes - 로그인 필요 */}
+      <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
+      <Route path="/sns" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
+      <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
+      <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
       {/* UsedItem Routes */}
       <Route path="/useditem" element={<UsedItemPage />} />
@@ -33,6 +34,7 @@ export default function AppRouter() {
       <Route path="/useditem/create" element={<UsedItemCreate />} />
       <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
       <Route path="/useditem/:id/check" element={<CheckoutPage />} />
+     
     </Routes>
   );
 }

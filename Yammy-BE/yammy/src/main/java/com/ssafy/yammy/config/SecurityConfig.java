@@ -58,6 +58,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/photos/**").permitAll()
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
+                        // 팔로우 목록 조회는 누구나 가능
+                        .requestMatchers(HttpMethod.GET, "/api/follows/followers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/follows/following/**").permitAll()
+                        // 팔로우/언팔로우/상태 확인은 인증 필요
+                        .requestMatchers("/api/follows/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
