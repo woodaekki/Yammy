@@ -107,7 +107,6 @@ BE_Image:
     - chmod +x gradlew
     - rm -f src/main/resources/application.yml
     - echo "$PROD_APPLICATION_YML" > src/main/resources/application.yml
-    - cat src/main/resources/application.yml
     - echo "Production application-prod.yml created successfully."
     - ./gradlew clean build -x test
     - echo "Production JAR built successfully."

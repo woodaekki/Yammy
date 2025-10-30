@@ -1,5 +1,5 @@
 import axios from "axios"
-const BASE_URL = "http://localhost:8080/api"
+const BASE_URL = "http://k13c205.p.ssafy.io:8080/api"
 
 // 전체 조회
 export const getAllUsedItems = async () => {
@@ -15,7 +15,7 @@ export const getUsedItemById = async (id) => {
 
 // 작성
 export const createUsedItem = async (itemData) => {
-  const res = await axios.post("http://localhost:8080/api/trades", {
+  const res = await axios.post("http://k13c205.p.ssafy.io:8080/api/trades", {
     ...itemData,
     nickname: "익명 사용자" // 회원 가입 후 추후 변경 예정
   })

@@ -1,5 +1,5 @@
 import axios from "axios"
-const BASE_URL = "http://localhost:8080/api/photos"
+const BASE_URL = "http://k13c205.p.ssafy.io:8080/api/photos"
 
 // presigned URL 여러 개 요청
 export const getPresignedUrls = async (photoRequests) => {
