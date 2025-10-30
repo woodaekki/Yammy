@@ -6,8 +6,8 @@ import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.entity.UsedItem;
 import com.ssafy.yammy.payment.repository.PhotoRepository;
 import com.ssafy.yammy.payment.repository.UsedItemRepository;
-// import com.ssafy.yammy.payment.entity.Member;
-// import com.ssafy.yammy.payment.repository.MemberRepository;
+import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.auth.repository.MemberRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class UsedItemController {
 
     private final UsedItemRepository usedItemRepository;
     private final PhotoRepository photoRepository;
-    // private final MemberRepository memberRepository;  // Member 구현 후 활성화
+     private final MemberRepository memberRepository;  // Member 구현 후 활성화
 
     // 중고 거래 전체 조회
     @Operation(summary = "중고 거래 목록 전체 조회")
@@ -95,15 +95,26 @@ public class UsedItemController {
     @PostMapping
     public ResponseEntity<UsedItemResponseDto> createTrade(
             @Valid @RequestBody UsedItemRequestDto dto,
-            @RequestHeader(value = "Nickname", required = false, defaultValue = "익명") String nickname) { // 추후 member 코드 구현 후 수정 예정
+            @RequestHeader(value = "Nickname", required = false) String nickname) {
 
+        // memberId 필수 검증
+        if (dto.getMemberId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보가 필요합니다. 로그인 후 시도해주세요.");
+        }
+
+        // DB에서 멤버 조회 (없을 시 400 오류)
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+
+        // UsedItem 생성
         UsedItem usedItem = new UsedItem();
+        usedItem.setMember(member);
+        usedItem.setNickname(member.getNickname());
         usedItem.setTitle(dto.getTitle());
         usedItem.setDescription(dto.getDescription());
         usedItem.setPrice(dto.getPrice());
-        usedItem.setNickname(nickname);
 
-        // Photo 연결 (photoIds 기준)
+        // 사진 연결
         if (dto.getPhotoIds() != null && !dto.getPhotoIds().isEmpty()) {
             List<Photo> photos = photoRepository.findAllById(dto.getPhotoIds());
             photos.forEach(usedItem::addPhoto);
@@ -117,8 +128,8 @@ public class UsedItemController {
 
         UsedItemResponseDto response = UsedItemResponseDto.builder()
                 .id(savedItem.getId())
-                .memberId(null)
-                .nickname(savedItem.getNickname())
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
                 .title(savedItem.getTitle())
                 .description(savedItem.getDescription())
                 .price(savedItem.getPrice())
@@ -130,6 +141,7 @@ public class UsedItemController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     // 게시물 수정
     @Operation(summary = "중고 거래 목록 게시물 수정")

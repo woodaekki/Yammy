@@ -1,5 +1,6 @@
 package com.ssafy.yammy.payment.entity;
 
+import com.ssafy.yammy.auth.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,9 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "photo")
 public class Photo {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +38,6 @@ public class Photo {
     // 이미지 확장자 타입
     @Column(nullable = false, length = 100)
     private String contentType;
-
-    // Member 연동 후 변경 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", nullable = false)
-//    private Member member;
 
     @CreatedDate
     @Column(updatable = false) // 수정 불가능

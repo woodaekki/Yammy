@@ -1,5 +1,6 @@
 package com.ssafy.yammy.payment.entity;
 
+import com.ssafy.yammy.auth.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,17 +19,17 @@ import java.util.ArrayList;
 @Table(name = "useditem")
 public class UsedItem {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @Column(name = "nickname", length = 20)
+    private String nickname;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", nullable = false)
-//    private Member member;
-
-    @Column(name = "nickname", length = 20)
-    private String nickname;
 
     @Column(name = "title", nullable = false, length = 50)
     private String title;

@@ -9,6 +9,9 @@ import java.util.List;
 @Setter
 public class UsedItemRequestDto {
 
+    @NotNull(message = "회원 ID가 필요합니다")
+    private Long memberId; // 게시글 작성자 ID
+
     @NotBlank(message = "제목을 입력해주세요")
     @Size(min = 2, max = 50, message = "제목은 2자 이상 50자 이하여야 합니다")
     private String title;

@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paymentId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long paymentId;
 
     private String orderId;
     private String paymentKey;

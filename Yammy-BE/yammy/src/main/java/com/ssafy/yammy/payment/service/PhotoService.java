@@ -1,5 +1,7 @@
 package com.ssafy.yammy.payment.service;
 
+import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.payment.config.PhotoConfig;
 import com.ssafy.yammy.payment.dto.*;
 import com.ssafy.yammy.payment.entity.Photo;
@@ -13,8 +15,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 import java.net.URL;
 import java.time.Duration;
@@ -29,15 +29,11 @@ public class PhotoService {
 
     private final PhotoConfig photoConfig;
     private final PhotoRepository photoRepository;
+    private final MemberRepository memberRepository;
 
     // presigned URL 생성
     public PhotoUploadResponse getGalleryPresignedUploadUrl(Long memberId, String originalFilename, String contentType) {
         validateFile(originalFilename, contentType);
-
-        log.info("[PhotoService] Presigned URL 요청 수신됨");
-        log.info(" - memberId: {}", memberId);
-        log.info(" - originalFilename: {}", originalFilename);
-        log.info(" - contentType: {}", contentType);
 
         try (S3Presigner presigner = createPresigner()) {
             String folderName = (memberId != null) ? "members/" + memberId : "anonymous";
@@ -76,10 +72,15 @@ public class PhotoService {
             throw new IllegalArgumentException("파일 URL이 없습니다.");
         }
 
+        // member 조회
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 ID입니다."));
+
         List<Photo> savedPhotos = new ArrayList<>();
 
         for (String fileUrl : request.getFileUrls()) {
             Photo photo = Photo.builder()
+                    .member(member)
                     .fileUrl(fileUrl)
                     .s3Key(extractKeyFromUrl(fileUrl))
                     .contentType("image/jpeg")
@@ -87,13 +88,11 @@ public class PhotoService {
             savedPhotos.add(photoRepository.save(photo));
         }
 
-        // 여러 장일 수 있으므로 ID 리스트와 URL 리스트 모두 응답에 포함
         return new PhotoUploadCompleteResponse(
                 savedPhotos.stream().map(Photo::getId).toList(),
                 savedPhotos.stream().map(Photo::getFileUrl).toList()
         );
     }
-
 
     public PhotoResponse getPhoto(Long id) {
         Photo photo = photoRepository.findById(id)
