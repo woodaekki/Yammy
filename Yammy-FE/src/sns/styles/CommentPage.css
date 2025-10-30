@@ -12,7 +12,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    padding-top: 48px;
     background-color: #ffffff;
     border-bottom: 1px solid #f3f4f6;
     position: sticky;
@@ -100,6 +99,12 @@
     flex: 1;
     overflow-y: auto;
     padding-bottom: 20px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.comments-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .comment-item {

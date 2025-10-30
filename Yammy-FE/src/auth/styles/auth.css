@@ -1,12 +1,10 @@
-/* 인증 컨테이너 - Galaxy S8+ (360px 기준) */
+/* 인증 컨테이너 - 전체 화면 */
 .auth-container {
   display: flex;
   flex-direction: column;
-  width: 360px;
+  width: 100%;
   min-height: 100vh;
-  margin: 0 auto;
   background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
 
@@ -110,16 +108,15 @@
 
 /* 폼 스타일 */
 .auth-form {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 .signup-form {
-  max-height: calc(100vh - 300px);
-  overflow-y: auto;
-  padding-right: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .form-group {
@@ -361,7 +358,6 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1.5rem 0;
-  margin-top: auto;
 }
 
 .footer-text {
@@ -383,61 +379,4 @@
   text-decoration: underline;
 }
 
-/* 반응형 - 360px 이하 (작은 화면) */
-@media (max-width: 360px) {
-  .auth-container {
-    width: 100%;
-    box-shadow: none;
-  }
 
-  .auth-content {
-    padding: 1rem;
-  }
-
-  .auth-logo-icon {
-    width: 4rem;
-    height: 4rem;
-  }
-
-  .auth-logo-icon i {
-    font-size: 1.5rem;
-  }
-
-  .auth-title {
-    font-size: 1.5rem;
-  }
-
-  .form-input,
-  .form-textarea {
-    font-size: 0.875rem;
-    padding: 0.625rem 0.875rem;
-  }
-}
-
-/* 반응형 - 360px 초과 (큰 화면) */
-@media (min-width: 361px) {
-  .auth-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    border-radius: 0.5rem;
-  }
-}
-
-/* 스크롤바 스타일 */
-.signup-form::-webkit-scrollbar {
-  width: 4px;
-}
-
-.signup-form::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 2px;
-}
-
-.signup-form::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 2px;
-}
-
-.signup-form::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
