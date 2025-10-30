@@ -48,6 +48,8 @@ Test_Build_BE:
     - cd ${BACKEND_DIR}
     - chmod +x gradlew
 
+    - sleep 10
+
     # ⭐️ 추가됨: 기존 application.yml 파일 삭제 ⭐️
     - echo "Deleting existing application.yml and creating CI version..."
     - rm -f src/main/resources/application.yml
