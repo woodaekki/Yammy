@@ -163,4 +163,4 @@ Deploy:
 
     # 5. Docker Compose 실행: 최신 이미지를 사용하여 서비스 업데이트
     # EC2의 /home/ubuntu/docker-compose.yml 파일을 사용
-    - docker-compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate
+    - sudo docker-compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate
