@@ -54,6 +54,12 @@ function UsedItemDetail() {
 
   }
 
+  // 결제 클릭 시
+  function handleCharge() {
+    navigate(`/useditem/${params.id}/check`)
+
+  }
+
   // 로딩 중이거나 게시글이 없을 때
   if (loading) {
     return <p className="loading-text">로딩 중...</p>
@@ -112,6 +118,9 @@ function UsedItemDetail() {
         </button>
         <button className="chat-btn" onClick={handleChat}>
           채팅
+        </button>
+         <button className="charge-btn" onClick={handleCharge}>
+          결제
         </button>
       </div>
     </div>

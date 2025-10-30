@@ -7,18 +7,23 @@ import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
 import UsedItemChat from "../chat/components/UsedItemChat"
+import CheckoutPage from "../payment/components/CheckoutPage"
 
 export default function AppRouter() {
   return (
     <Routes>
+      <Route path="/" element={<SNSPage />} />
+      <Route path="/post/:postId/comments" element={<CommentPage />} />
+      <Route path="/user/:userId" element={<UserProfile />} />
+
       <Route path="/useditem" element={<UsedItemPage />} />
       <Route path="/useditem/:id" element={<UsedItemDetail />} />
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
       <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
-      <Route path="/" element={<SNSPage />} />
-      <Route path="/post/:postId/comments" element={<CommentPage />} />
-      <Route path="/user/:userId" element={<UserProfile />} />
+      <Route path="/useditem/:id/check" element={<CheckoutPage />} />
+
+      
     </Routes>
   );
 }
