@@ -1,6 +1,7 @@
 package com.ssafy.yammy.payment.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -28,5 +29,12 @@ public class UsedItemRequestDto {
     @Size(max = 3, message = "이미지는 최대 3장까지 등록 가능합니다")
     private List<Long> photoIds;
 
+    @Builder
+    public UsedItemRequestDto(String title, Integer price, String description, List<Long> photoIds) {
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.photoIds = photoIds;
+    }
 
 }

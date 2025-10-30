@@ -54,8 +54,15 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/api/v1/webhook/**").permitAll()
-                        .requestMatchers("/api/trades/**").permitAll()
-                        .requestMatchers("/api/photos/**").permitAll()
+
+                        // 중고거래 API — 읽기는 공개, 쓰기는 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/trades/**").permitAll()       // 조회는 누구나
+                        .requestMatchers(HttpMethod.POST, "/api/trades/**").authenticated()  // 작성은 로그인 필요
+                        .requestMatchers(HttpMethod.PUT, "/api/trades/**").authenticated()   // 수정은 로그인 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/trades/**").authenticated()// 삭제는 로그인 필요
+
+                        // 사진 업로드도 인증 필요
+                        .requestMatchers("/api/photos/**").authenticated()
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         // 팔로우 목록 조회는 누구나 가능

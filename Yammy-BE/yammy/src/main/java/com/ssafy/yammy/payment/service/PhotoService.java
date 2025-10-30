@@ -1,143 +1,92 @@
 package com.ssafy.yammy.payment.service;
 
-import com.ssafy.yammy.payment.config.PhotoConfig;
-import com.ssafy.yammy.payment.dto.*;
+import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.auth.repository.MemberRepository;
+import com.ssafy.yammy.config.JwtTokenProvider;
+import com.ssafy.yammy.payment.dto.PhotoUploadCompleteRequest;
+import com.ssafy.yammy.payment.dto.PhotoUploadResponse;
 import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.repository.PhotoRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
-import java.net.URL;
 import java.time.Duration;
-import java.util.UUID;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PhotoService {
 
-    private final PhotoConfig photoConfig;
+    private final S3Presigner s3Presigner;
     private final PhotoRepository photoRepository;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    // presigned URL 생성
-    public PhotoUploadResponse getGalleryPresignedUploadUrl(Long memberId, String originalFilename, String contentType) {
-        validateFile(originalFilename, contentType);
+    private static final String BUCKET_NAME = "yammy-project";
 
-        log.info("[PhotoService] Presigned URL 요청 수신됨");
-        log.info(" - memberId: {}", memberId);
-        log.info(" - originalFilename: {}", originalFilename);
-        log.info(" - contentType: {}", contentType);
+    // Presigned URL 생성
+    public List<PhotoUploadResponse> generatePresignedUrls(int count, String contentType) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> {
+                    String s3Key = "useditem/" + UUID.randomUUID() + ".jpg";
 
-        try (S3Presigner presigner = createPresigner()) {
-            String folderName = (memberId != null) ? "members/" + memberId : "anonymous";
-            String subFolder = "gallery";
-            String extension = extractExtension(originalFilename);
+                    PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                            .bucket(BUCKET_NAME)
+                            .key(s3Key)
+                            .contentType(contentType)
+                            .build();
 
-            String key = String.format("%s/%s/%s%s",
-                    folderName,
-                    subFolder,
-                    UUID.randomUUID(),
-                    extension);
+                    PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(
+                            r -> r.signatureDuration(Duration.ofMinutes(10))
+                                    .putObjectRequest(putObjectRequest)
+                    );
 
-            PutObjectRequest objectRequest = PutObjectRequest.builder()
-                    .bucket(photoConfig.getBucketName())
-                    .key(key)
-                    .contentType(contentType)
-                    .build();
-
-            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(20))
-                    .putObjectRequest(objectRequest)
-                    .build();
-
-            URL presignedUrl = presigner.presignPutObject(presignRequest).url();
-            String fileUrl = String.format("https://%s.s3.%s.amazonaws.com/%s",
-                    photoConfig.getBucketName(),
-                    photoConfig.getRegion(),
-                    key);
-
-            return new PhotoUploadResponse(presignedUrl.toString(), fileUrl, key);
-        }
+                    return PhotoUploadResponse.builder()
+                            .s3Key(s3Key)
+                            .presignedUrl(presignedRequest.url().toString())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
-    public PhotoUploadCompleteResponse completeUpload(PhotoUploadCompleteRequest request) {
-        if (request.getFileUrls() == null || request.getFileUrls().isEmpty()) {
+    // 업로드 완료 시 DB에 Photo 저장하고 Photo 반환
+    public Photo completeUpload(HttpServletRequest request, PhotoUploadCompleteRequest dto) {
+        String token = extractToken(request);
+        Long memberId = jwtTokenProvider.getMemberId(token);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+
+        if (dto.getFileUrl() == null || dto.getFileUrl().isBlank()) {
             throw new IllegalArgumentException("파일 URL이 없습니다.");
         }
 
-        List<Photo> savedPhotos = new ArrayList<>();
+        Photo photo = new Photo();
+        photo.setMember(member);
+        photo.setS3Key(dto.getS3Key());
+        photo.setFileUrl(dto.getFileUrl());
+        photo.setContentType(dto.getContentType());
 
-        for (String fileUrl : request.getFileUrls()) {
-            Photo photo = Photo.builder()
-                    .fileUrl(fileUrl)
-                    .s3Key(extractKeyFromUrl(fileUrl))
-                    .contentType("image/jpeg")
-                    .build();
-            savedPhotos.add(photoRepository.save(photo));
+        Photo saved = photoRepository.save(photo);
+        return saved;
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증 토큰이 없습니다.");
         }
-
-        // 여러 장일 수 있으므로 ID 리스트와 URL 리스트 모두 응답에 포함
-        return new PhotoUploadCompleteResponse(
-                savedPhotos.stream().map(Photo::getId).toList(),
-                savedPhotos.stream().map(Photo::getFileUrl).toList()
-        );
-    }
-
-
-    public PhotoResponse getPhoto(Long id) {
-        Photo photo = photoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("사진을 찾을 수 없습니다."));
-        return new PhotoResponse(photo.getId(), photo.getFileUrl());
-    }
-
-    public void deletePhoto(Long id) {
-        if (!photoRepository.existsById(id)) {
-            throw new IllegalArgumentException("삭제할 사진이 존재하지 않습니다.");
-        }
-        photoRepository.deleteById(id);
-    }
-
-    private void validateFile(String originalFilename, String contentType) {
-        if (originalFilename == null || originalFilename.isBlank()) {
-            throw new IllegalArgumentException("파일 이름이 비어 있습니다.");
-        }
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
-        }
-    }
-
-    private String extractExtension(String filename) {
-        int dotIndex = filename.lastIndexOf('.');
-        return (dotIndex > 0) ? filename.substring(dotIndex) : "";
-    }
-
-    private String extractKeyFromUrl(String fileUrl) {
-        int idx = fileUrl.indexOf(".com/");
-        return idx > 0 ? fileUrl.substring(idx + 5) : fileUrl;
-    }
-
-    private S3Presigner createPresigner() {
-        return S3Presigner.builder()
-                .region(Region.of(photoConfig.getRegion()))
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(
-                                        photoConfig.getAccessKey(),
-                                        photoConfig.getSecretKey()
-                                )
-                        )
-                )
-                .build();
+        return authHeader.substring(7);
     }
 }

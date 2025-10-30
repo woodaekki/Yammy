@@ -6,6 +6,8 @@ import UsedItemPage from "../useditem/UsedItemPage";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
+import UsedItemChat from "../chat/components/UsedItemChat"
+import CheckoutPage from "../payment/components/CheckoutPage"
 import LoginPage from "../auth/LoginPage";
 import SignupPage from "../auth/SignupPage";
 import KakaoCallbackPage from "../auth/KakaoCallbackPage";
@@ -25,11 +27,14 @@ export default function AppRouter() {
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
       <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
-      {/* UsedItem Routes - 로그인 필요 */}
-      <Route path="/useditem" element={<ProtectedRoute><UsedItemPage /></ProtectedRoute>} />
-      <Route path="/useditem/:id" element={<ProtectedRoute><UsedItemDetail /></ProtectedRoute>} />
-      <Route path="/useditem/edit/:id" element={<ProtectedRoute><UsedItemEdit /></ProtectedRoute>} />
-      <Route path="/useditem/create" element={<ProtectedRoute><UsedItemCreate /></ProtectedRoute>} />
+      {/* UsedItem Routes */}
+      <Route path="/useditem" element={<UsedItemPage />} />
+      <Route path="/useditem/:id" element={<UsedItemDetail />} />
+      <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
+      <Route path="/useditem/create" element={<UsedItemCreate />} />
+      <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
+      <Route path="/useditem/:id/check" element={<CheckoutPage />} />
+     
     </Routes>
   );
 }
