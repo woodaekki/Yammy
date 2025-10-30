@@ -130,10 +130,67 @@ BE_Image:
     - docker build -t $ECR_REPOSITORY_URI:$BE_IMAGE_TAG .
     - docker push $ECR_REPOSITORY_URI:$BE_IMAGE_TAG
 
+# --- Deploy Stage ---
 Deploy:
   stage: Deploy
+  tags:
+    - shell-deploy
+  image: alpine/ssh:latest
+
+  variables:
+    DEPLOY_HOST: $EC2_HOST      # EC2 인스턴스 Public IP 주소
+    DEPLOY_USER: $EC2_USERNAME             # EC2 접속 사용자 이름
+    DEPLOY_KEY: $EC2_PRIVATE_KEY      # SSH 프라이빗 키
+
+    # DB/이미지 정보 (docker-compose.yml에 주입할 값)
+    DB_URL: $DB_URL
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    DB_NAME: $DB_USERNAME
+
+    # ECR 및 이미지 정보 (전역 변수를 다시 Job 변수로 끌어옴)
+    ECR_REPOSITORY_URI: $ECR_REPOSITORY_URI
+    BE_IMAGE_URI: $ECR_REPOSITORY_URI:backend-latest
+    FE_IMAGE_URI: $ECR_REPOSITORY_URI:frontend-latest
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION # ECR 로그인에 필요
+
+  before_script:
+    # 1. SSH 키 설정 (GitLab CI/CD Variables에 등록된 키를 사용)
+    - eval $(ssh-agent -s)
+    - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    # 2. ⭐️ SSH 접속하여 실행할 명령어 묶음 정의 ⭐️
+    - |
+      SSH_COMMAND="
+        # 2-1. GitLab Variables의 값을 EC2 쉘 환경 변수로 설정 (docker-compose 참조용)
+        # 이 변수들은 EC2의 docker-compose.yml 파일에 주입됩니다.
+        export DB_URL='$DB_URL';
+        export DB_USERNAME='$DB_USERNAME';
+        export DB_PASSWORD='$DB_PASSWORD';
+        export ECR_REPOSITORY_URI='$ECR_REPOSITORY_URI';
+        export BE_IMAGE_URI='$BE_IMAGE_URI';
+        export FE_IMAGE_URI='$FE_IMAGE_URI';
+      
+        # 2-2. ECR 로그인 (EC2 호스트의 AWS CLI와 Docker 사용)
+        # ⚠️ EC2 인스턴스에 AWS CLI 설치 및 Docker 서비스가 실행 중이어야 합니다.
+        aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin \$ECR_REPOSITORY_URI;
+      
+        # 2-3. 최신 이미지 Pull (Downtime 최소화를 위해 Pull 먼저 실행)
+        docker pull \$BE_IMAGE_URI;
+        docker pull \$FE_IMAGE_URI;
+
+        # 2-4. Docker Compose 실행: 최신 이미지를 사용하여 서비스 업데이트
+        # DB 컨테이너는 데이터 보존을 위해 삭제/재생성되지 않고 업데이트됩니다.
+        # -f /home/ubuntu/docker-compose.yml 파일이 존재해야 합니다.
+        docker-compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate
+      "
+
   script:
-    - echo "Skipping Deploy for Test."
-  when: manual
-  allow_failure: true
+    # ⭐️ 3. SSH 접속 및 배포 명령 실행 ⭐️
+    # '-o StrictHostKeyChecking=no'는 보안 위험이 있어 keygen으로 대체했습니다.
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "$SSH_COMMAND"
 
