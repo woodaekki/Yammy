@@ -27,4 +27,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 닉네임 중복 확인
     boolean existsByNickname(String nickname);
+
+    // 카카오 ID로 조회
+    Optional<Member> findByKakaoId(String kakaoId);
+
+    // 카카오 ID로 삭제
+    void deleteByKakaoId(String kakaoId);
 }
