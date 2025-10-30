@@ -36,6 +36,7 @@ function UsedItemDetail() {
       return
     }
 
+
     deleteUsedItem(params.id)
       .then(function () {
         alert("게시글이 삭제되었습니다.")
@@ -45,6 +46,12 @@ function UsedItemDetail() {
         console.error("삭제 실패:", error)
         alert("삭제 중 오류가 발생했습니다.")
       })
+  }
+
+  // 채팅 클릭 시
+  function handleChat() {
+    navigate(`/useditem/${params.id}/chat`)
+
   }
 
   // 로딩 중이거나 게시글이 없을 때
@@ -102,6 +109,9 @@ function UsedItemDetail() {
         </button>
         <button className="delete-btn" onClick={handleDelete}>
           삭제
+        </button>
+        <button className="chat-btn" onClick={handleChat}>
+          채팅
         </button>
       </div>
     </div>
