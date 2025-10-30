@@ -1,36 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/authStore";
 import "./NavigationBar.css";
 
 const NavigationBarTop = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [nickname, setNickname] = useState('');
+  const { isLoggedIn, user, logOut, initialize } = useAuthStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // 로그인 상태 확인
+  // 초기화: localStorage에서 로그인 상태 복원
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    const userNickname = localStorage.getItem('nickname');
-    if (accessToken) {
-      setIsLoggedIn(true);
-      setNickname(userNickname || '사용자');
-    }
-  }, []);
+    initialize();
+  }, [initialize]);
 
   const handleLogout = () => {
     setShowUserMenu(false);
     if (window.confirm('로그아웃 하시겠습니까?')) {
-      localStorage.clear();
-      setIsLoggedIn(false);
-      setNickname('');
+      logOut();
       navigate('/login');
     }
   };
 
   const handleProfileClick = () => {
     setShowUserMenu(false);
-    navigate(`/user/${nickname}`);
+    navigate(`/user/${user?.nickname}`);
   };
 
   return (
@@ -44,7 +37,7 @@ const NavigationBarTop = () => {
               onClick={() => setShowUserMenu(!showUserMenu)}
             >
               <i className="fas fa-user-circle"></i>
-              <span className="user-nickname">{nickname}</span>
+              <span className="user-nickname">{user?.nickname || '사용자'}</span>
               <i className={`fas fa-chevron-down ${showUserMenu ? 'rotate' : ''}`}></i>
             </button>
             {showUserMenu && (

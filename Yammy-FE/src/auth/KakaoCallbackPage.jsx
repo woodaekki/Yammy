@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loginWithKakao } from './api/kakaoAuthApi';
+import useAuthStore from '../stores/authStore';
 import './styles/auth.css';
 
 export default function KakaoCallbackPage() {
   const navigate = useNavigate();
+  const { logIn } = useAuthStore();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,15 +42,8 @@ export default function KakaoCallbackPage() {
         // 백엔드로 인증 코드 전송
         const response = await loginWithKakao(code);
 
-        // 토큰 및 사용자 정보 저장
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-        localStorage.setItem('memberId', response.memberId);
-        localStorage.setItem('id', response.id);
-        localStorage.setItem('name', response.name);
-        localStorage.setItem('nickname', response.nickname);
-        localStorage.setItem('email', response.email);
-        localStorage.setItem('authority', response.authority);
+        // AuthStore를 통해 로그인 처리 (localStorage 저장 + 상태 업데이트)
+        logIn(response);
 
         // 메인 페이지로 리다이렉트
         navigate('/sns', { replace: true });

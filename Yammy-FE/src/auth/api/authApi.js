@@ -24,14 +24,50 @@ authApi.interceptors.request.use(
   }
 );
 
-// Response 인터셉터: 401 에러 시 로그인 페이지로 이동
+// Response 인터셉터: 401 에러 시 토큰 재발급 시도
 authApi.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.clear();
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러이고 재시도하지 않은 경우
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      const refreshToken = localStorage.getItem('refreshToken');
+      const loginId = localStorage.getItem('loginId');
+
+      if (refreshToken && loginId) {
+        try {
+          // 리프레시 토큰으로 액세스 토큰 재발급
+          const response = await axios.post(
+            `${API_BASE_URL}/auth/refresh?id=${loginId}&refreshToken=${refreshToken}`
+          );
+
+          const newAccessToken = response.data.accessToken;
+
+          // 새 토큰 저장
+          localStorage.setItem('accessToken', newAccessToken);
+
+          // 원래 요청 재시도
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return authApi(originalRequest);
+        } catch (refreshError) {
+          // 리프레시 실패 시 로그아웃 처리
+          console.error('토큰 재발급 실패:', refreshError);
+          localStorage.clear();
+          alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/login';
+          return Promise.reject(refreshError);
+        }
+      } else {
+        // 리프레시 토큰이나 loginId가 없는 경우
+        localStorage.clear();
+        alert('로그인이 필요한 서비스입니다.');
+        window.location.href = '/login';
+      }
     }
+
     return Promise.reject(error);
   }
 );

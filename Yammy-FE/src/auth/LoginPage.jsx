@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from './api/authApi';
 import { getKakaoAuthUrl } from './config/kakaoConfig';
+import useAuthStore from '../stores/authStore';
 import './styles/auth.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { isLoggedIn, logIn, initialize } = useAuthStore();
   const [formData, setFormData] = useState({
     id: '',
     password: '',
@@ -14,13 +16,13 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 이미 로그인된 경우 메인 페이지로 이동
+  // 초기화 및 로그인 상태 확인
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
+    initialize();
+    if (isLoggedIn) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [isLoggedIn, navigate, initialize]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,13 +47,8 @@ export default function LoginPage() {
     try {
       const response = await login(formData);
 
-      // 토큰 및 사용자 정보 저장
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('memberId', response.memberId);
-      localStorage.setItem('loginId', response.id);
-      localStorage.setItem('nickname', response.nickname);
-      localStorage.setItem('authority', response.authority);
+      // AuthStore를 통해 로그인 처리 (localStorage 저장 + 상태 업데이트)
+      logIn(response);
 
       // 메인 페이지로 이동
       navigate('/');
