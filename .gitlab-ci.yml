@@ -108,7 +108,6 @@ BE_Image:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     BE_IMAGE_TAG: backend-latest
-    PROD_APPLICATION_YML: $PROD_APPLICATION_YML
 
   script:
     - apt-get update -qq && apt-get install -y --no-install-recommends docker.io docker-compose
