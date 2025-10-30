@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getUsedItemById, updateUsedItem } from "../api/usedItemApi"
 import PhotoUploader from "../components/PhotoUploader"
-import "../styles/useditem.css"
+import "../styles/usedItem.css"
 
 function UsedItemEdit() {
   const params = useParams()

@@ -54,4 +54,12 @@ jwt:
   accessExpiration: ${JWT_ACCESS_EXPIRATION:900000}
   refreshExpiration: ${JWT_REFRESH_EXPIRATION:1209600000}
 
+# 카카오 OAuth 설정
+kakao:
+  rest:
+    api:
+      key: ${KAKAO_REST_API_KEY}
+  client-secret: ${KAKAO_CLIENT_SECRET:}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+
 

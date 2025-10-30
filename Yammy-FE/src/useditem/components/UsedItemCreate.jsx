@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { createUsedItem } from "../api/usedItemApi"
 import PhotoUploader from "../components/PhotoUploader"
-import "../styles/useditem.css"
+import "../styles/usedItem.css"
 
 function UsedItemCreate() {
   const navigate = useNavigate()

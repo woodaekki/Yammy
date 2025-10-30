@@ -106,6 +106,9 @@ const ImageCarousel = ({ images, postId }) => {
 
 const SNSPage = () => {
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [nickname, setNickname] = useState('');
+    const [showUserMenu, setShowUserMenu] = useState(false);
     const [posts, setPosts] = useState([
         {
             id: 1,
@@ -157,6 +160,16 @@ const SNSPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const observerTarget = useRef(null);
+
+    // 로그인 상태 확인
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const userNickname = localStorage.getItem('nickname');
+        if (accessToken) {
+            setIsLoggedIn(true);
+            setNickname(userNickname || '사용자');
+        }
+    }, []);
 
     // 새로운 게시물 데이터 생성 함수
     const generateNewPosts = (startId) => {
@@ -252,8 +265,56 @@ const SNSPage = () => {
         ));
     };
 
+    const handleLogout = () => {
+        if (window.confirm('로그아웃 하시겠습니까?')) {
+            localStorage.clear();
+            setIsLoggedIn(false);
+            setNickname('');
+            setShowUserMenu(false);
+            navigate('/login');
+        }
+    };
+
     return (
         <div className="sns-page">
+            {/* 상단 헤더 */}
+            <div className="sns-header">
+                <h1 className="sns-logo" onClick={() => navigate('/')}>Yammy</h1>
+                <div className="header-right">
+                    {isLoggedIn ? (
+                        <div className="user-menu-wrapper">
+                            <button
+                                className="user-button"
+                                onClick={() => setShowUserMenu(!showUserMenu)}
+                            >
+                                <i className="fas fa-user-circle"></i>
+                                <span className="user-nickname">{nickname}</span>
+                                <i className={`fas fa-chevron-down ${showUserMenu ? 'rotate' : ''}`}></i>
+                            </button>
+                            {showUserMenu && (
+                                <div className="user-dropdown">
+                                    <button onClick={() => navigate(`/user/${nickname}`)}>
+                                        <i className="fas fa-user"></i>
+                                        내 프로필
+                                    </button>
+                                    <button onClick={handleLogout}>
+                                        <i className="fas fa-sign-out-alt"></i>
+                                        로그아웃
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <button
+                            className="login-button"
+                            onClick={() => navigate('/login')}
+                        >
+                            로그인
+                        </button>
+                    )}
+                </div>
+            </div>
+
             {/* 피드 섹션 */}
             <div className="feed-container">
                 {posts.map(post => (
