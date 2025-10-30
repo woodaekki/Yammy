@@ -50,12 +50,9 @@ Test_Build_BE:
 
     - sleep 10
 
-    # ⭐️ 수정 2: Hostname Resolution 오류 해결을 위해 IP 주소 추출 및 치환 ⭐️
+    # ⭐️ 수정됨: if 문을 단일 라인으로 압축 ⭐️
     - export MYSQL_HOST_IP=$(getent hosts mysql-db | awk '{ print $1 }')
-    - if [ -z "$MYSQL_HOST_IP" ]; then
-        # 최후의 수단: Docker 브릿지 기본 IP (172.17.0.1) 또는 DIND 서비스 IP를 강제 사용
-        export MYSQL_HOST_IP="172.17.0.1";
-      fi
+    - if [ -z "$MYSQL_HOST_IP" ]; then export MYSQL_HOST_IP="172.17.0.1"; fi
 
     # ⭐️ 수정 3: DB_URL 변수를 IP 주소로 덮어쓰기 ⭐️
     - export DB_URL=$(echo $DB_URL | sed "s/mysql-db/${MYSQL_HOST_IP}/")
