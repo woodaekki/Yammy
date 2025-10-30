@@ -136,6 +136,7 @@ Deploy:
   # ⭐️ tags: yammy_proejct_deplyer 러너에 할당되도록 태그 사용 (현재 yammy-build 태그로 가정) ⭐️
   tags:
     - yammy-build
+  dependencies: [] # <-- 이 줄을 추가합니다.
   # ⭐️ image: Host OS의 도구를 사용하도록 변경 ⭐️
   image: ubuntu:latest # Shell Runner가 image를 무시하지만, Alpine 도구를 삭제합니다.
 
