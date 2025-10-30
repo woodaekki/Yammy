@@ -94,6 +94,7 @@ FE_Image:
     - apk add --no-cache python3 py3-pip
     - pip install awscli
     - export AWS_ACCESS_KEY_ID
+    - echo "$AWS_ACCESS_KEY_ID"
     - export AWS_SECRET_ACCESS_KEY
     - export AWS_DEFAULT_REGION
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
