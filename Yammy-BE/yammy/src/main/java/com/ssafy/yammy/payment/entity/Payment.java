@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "toss_payment")
+@Entity
 public class Payment {
 
     @Id
