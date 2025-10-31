@@ -15,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-@Tag(name = "Payment API", description = "얌 포인트 충전 및 결제 관련 API")
+@CrossOrigin(origins = "http://localhost:5173")
+@Tag(name = "Payment API", description = "얌 포인트 충전 API")
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
