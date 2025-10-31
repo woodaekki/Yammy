@@ -7,7 +7,7 @@ import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
 import UsedItemChat from "../chat/components/UsedItemChat"
-import CheckoutPage from "../payment/components/CheckoutPage"
+import MyPoint from "../payment/components/Mypoint"
 import LoginPage from "../auth/LoginPage";
 import SignupPage from "../auth/SignupPage";
 import KakaoCallbackPage from "../auth/KakaoCallbackPage";
@@ -33,8 +33,10 @@ export default function AppRouter() {
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
       <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
-      <Route path="/useditem/:id/check" element={<CheckoutPage />} />
-     
+
+      {/* Point Routes */}
+      <Route path="/mypoint" element={<MyPoint />} />
+    
     </Routes>
   );
 }
