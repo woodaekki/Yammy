@@ -48,6 +48,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/email/**").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
                         .requestMatchers("/api/oauth/**").permitAll() // 카카오 OAuth
+
+                        // 팔로우 목록 조회는 누구나 가능
+                        .requestMatchers(HttpMethod.GET, "/api/follows/followers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/follows/following/**").permitAll()
+                        // 팔로우/언팔로우/상태 확인은 인증 필요
+                        .requestMatchers("/api/follows/**").authenticated()
+
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
@@ -55,21 +62,21 @@ public class SecurityConfig {
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/api/v1/webhook/**").permitAll()
 
-                        // 중고거래 API — 읽기는 공개, 쓰기는 인증 필요
+                        // 중고거래 — 읽기는 공개, 쓰기는 인증 필요
                         .requestMatchers(HttpMethod.GET, "/api/trades/**").permitAll()       // 조회는 누구나
                         .requestMatchers(HttpMethod.POST, "/api/trades/**").authenticated()  // 작성은 로그인 필요
                         .requestMatchers(HttpMethod.PUT, "/api/trades/**").authenticated()   // 수정은 로그인 필요
                         .requestMatchers(HttpMethod.DELETE, "/api/trades/**").authenticated()// 삭제는 로그인 필요
 
-                        // 사진 업로드도 인증 필요
+                        // 사진 업로드
                         .requestMatchers("/api/photos/**").authenticated()
+
+                        // 포인트 충전 및 조회
+                        .requestMatchers("/api/payments/**").authenticated()
+                        .requestMatchers("/api/points/**").authenticated()
+
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        // 팔로우 목록 조회는 누구나 가능
-                        .requestMatchers(HttpMethod.GET, "/api/follows/followers/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/follows/following/**").permitAll()
-                        // 팔로우/언팔로우/상태 확인은 인증 필요
-                        .requestMatchers("/api/follows/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
