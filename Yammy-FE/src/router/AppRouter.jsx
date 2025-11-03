@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import SNSPage from "../sns/SNSPage";
 import CommentPage from "../sns/components/CommentPage";
 import UserProfile from "../sns/components/UserProfile";
+import PostCreate from "../sns/components/PostCreate";
 import UsedItemPage from "../useditem/UsedItemPage";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
@@ -24,6 +25,7 @@ export default function AppRouter() {
       {/* SNS Routes - 로그인 필요 */}
       <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
       <Route path="/sns" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
+      <Route path="/post/create" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
       <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
