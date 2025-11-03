@@ -1,4 +1,4 @@
-package com.ssafy.yammy.follow.controller;
+ package com.ssafy.yammy.follow.controller;
 
 import com.ssafy.yammy.config.CustomUserDetails;
 import com.ssafy.yammy.follow.dto.FollowListResponse;
