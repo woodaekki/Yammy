@@ -2,45 +2,38 @@
 .sns-page {
     background-color: #f9fafb;
     min-height: 100vh;
+    position: relative;
 }
 
-/* 상단 헤더 */
-.sns-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: white;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.sns-header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #6366f1 0%, #f59e0b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-}
-
-.create-post-btn {
-    padding: 0.5rem 1rem;
+/* 플로팅 게시글 작성 버튼 */
+.floating-create-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
     background-color: #6366f1;
     color: white;
     border: none;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    border-radius: 50%;
+    font-size: 20px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.create-post-btn:hover {
+.floating-create-btn:hover {
     background-color: #4f46e5;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.floating-create-btn:active {
+    transform: scale(0.95);
 }
 
 .sns-logo {

@@ -107,6 +107,14 @@
     display: none; /* Chrome, Safari, Opera */
 }
 
+.loading-message,
+.empty-comments {
+    padding: 40px 20px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
 .comment-item {
     display: flex;
     gap: 12px;

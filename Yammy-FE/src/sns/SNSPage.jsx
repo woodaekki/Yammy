@@ -219,14 +219,6 @@ const SNSPage = () => {
 
     return (
         <div className="sns-page">
-            {/* 상단 헤더 */}
-            <div className="sns-header">
-                <h1>피드</h1>
-                <button className="create-post-btn" onClick={() => navigate('/post/create')}>
-                    ✏️ 게시글 작성
-                </button>
-            </div>
-
             {/* 피드 섹션 */}
             <div className="feed-container">
                 {posts.map(post => (
@@ -322,6 +314,11 @@ const SNSPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* 플로팅 게시글 작성 버튼 */}
+            <button className="floating-create-btn" onClick={() => navigate('/post/create')}>
+                ✏️
+            </button>
         </div>
     );
 };
