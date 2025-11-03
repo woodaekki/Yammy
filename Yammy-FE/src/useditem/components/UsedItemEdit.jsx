@@ -13,10 +13,11 @@ function UsedItemEdit() {
     title: "",
     price: "",
     description: "",
+    team: "", 
   });
 
   const [existingPhotos, setExistingPhotos] = useState([]);
-  const [newPhotoIds, setNewPhotoIds] = useState(undefined); 
+  const [newPhotoIds, setNewPhotoIds] = useState(undefined);
   const [loading, setLoading] = useState(true);
 
   // 게시글 불러오기
@@ -27,6 +28,7 @@ function UsedItemEdit() {
           title: data.title,
           price: data.price,
           description: data.description,
+          team: data.team, 
         });
         setExistingPhotos(data.imageUrls || []);
       })
@@ -39,14 +41,12 @@ function UsedItemEdit() {
 
   // 입력값 변경
   function handleChange(event) {
-    const name = event.target.name;
-    const value = event.target.value;
+    const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   // 새 이미지 업로드 완료 시 콜백
   function handleUploaded(uploadResult) {
-    // 새 사진을 업로드하면 photoIds 갱신
     setNewPhotoIds(uploadResult.photoIds);
   }
 
@@ -58,9 +58,10 @@ function UsedItemEdit() {
       title: form.title,
       description: form.description,
       price: parseInt(form.price),
+      team: form.team,
     };
 
-    // 새 사진을 업로드했다면 photoIds 추가
+    // 새 사진 업로드 시 반영
     if (newPhotoIds !== undefined) {
       updateData.photoIds = newPhotoIds;
     }
@@ -76,17 +77,12 @@ function UsedItemEdit() {
       });
   }
 
-  if (loading) {
-    return <p>로딩 중...</p>;
-  }
+  if (loading) return <p>로딩 중...</p>;
 
   return (
     <div className="edit-container">
       <div className="detail-header">
-        <button
-          onClick={() => navigate("/useditem")}
-          className="back-btn"
-        >
+        <button onClick={() => navigate("/useditem")} className="back-btn">
           ←
         </button>
         <h1 className="header-title">게시글 수정</h1>
@@ -125,6 +121,27 @@ function UsedItemEdit() {
           className="textarea-field"
         ></textarea>
 
+        {/* 팀 선택 드롭다운 */}
+        <select
+          name="team"
+          value={form.team}
+          onChange={handleChange}
+          required
+          className="input-field"
+        >
+          <option value="">팀 선택</option>
+          <option value="DOOSAN">두산 베어스</option>
+          <option value="LOTTE">롯데 자이언츠</option>
+          <option value="LG">LG 트윈스</option>
+          <option value="SSG">SSG 랜더스</option>
+          <option value="KIA">KIA 타이거즈</option>
+          <option value="HANWHA">한화 이글스</option>
+          <option value="SAMSUNG">삼성 라이온즈</option>
+          <option value="NC">NC 다이노스</option>
+          <option value="KT">KT 위즈</option>
+          <option value="KIWOOM">키움 히어로즈</option>
+        </select>
+
         {/* 기존 이미지 */}
         <div className="existing-images">
           <h4>기존 이미지</h4>
@@ -158,7 +175,7 @@ function UsedItemEdit() {
           <button
             type="button"
             className="delete-btn"
-            onClick={() => navigate("/useditem")}
+            onClick={() => navigate("/useditem/" + params.id)}
           >
             취소
           </button>

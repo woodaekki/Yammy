@@ -40,6 +40,10 @@ public class UsedItem {
     @Column(name = "price", nullable = false)
     private Integer price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Team team;
+
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean status = false;
 

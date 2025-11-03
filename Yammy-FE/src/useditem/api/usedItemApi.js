@@ -59,3 +59,11 @@ export const updateUsedItem = async (id, itemData) => {
 export const deleteUsedItem = async (id) => {
   await axiosWithAuth.delete(`/trades/${id}`);
 };
+
+// 팀 또는 키워드 검색
+export const searchUsedItems = async ({ keyword = "", team = "" }) => {
+  const res = await axiosWithAuth.get(`/trades/search`, {
+    params: { keyword, team },
+  });
+  return res.data;
+};

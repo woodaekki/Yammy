@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUsedItem } from "../api/usedItemApi";
 import PhotoUploader from "../components/PhotoUploader";
-import "../styles/useditem.css";
+import "../styles/usedItem.css";
 
 function UsedItemCreate() {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ function UsedItemCreate() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [team, setTeam] = useState("");
   const [photoIds, setPhotoIds] = useState([]);
 
   // 에러 메시지 상태
@@ -18,6 +19,7 @@ function UsedItemCreate() {
     price: "",
     description: "",
     photo: "",
+    team: ""
   });
 
   // 실시간 유효성 검사
@@ -45,6 +47,10 @@ function UsedItemCreate() {
         if (value.length > 3) message = "이미지는 최대 3장까지만 등록 가능합니다.";
         break;
 
+      case "team":
+        if (!value) message = "팀을 선택해주세요.";
+        break;
+
       default:
         break;
     }
@@ -65,9 +71,16 @@ function UsedItemCreate() {
     validate("price", price);
     validate("description", description);
     validate("photo", photoIds);
+    validate("team", team);
 
-    // 하나라도 유효하지 않으면 제출 불가능
-    if (Object.values(errors).some((msg) => msg)) {
+    // 유효성 검사 결과 반영 후 에러 있으면 중단
+    if (
+      Object.values(errors).some((msg) => msg) ||
+      !title ||
+      !price ||
+      !description ||
+      !team
+    ) {
       alert("입력 조건을 모두 충족해야 합니다.");
       return;
     }
@@ -76,6 +89,7 @@ function UsedItemCreate() {
       title: title,
       price: parseInt(price),
       description: description,
+      team: team, //
       photoIds: photoIds,
     };
 
@@ -84,8 +98,8 @@ function UsedItemCreate() {
       alert("게시글이 등록되었습니다.");
       navigate("/useditem");
     } catch (err) {
-      alert("등록 중 오류가 발생했습니다.");
       console.error(err);
+      alert("등록 중 오류가 발생했습니다.");
     }
   }
 
@@ -135,6 +149,29 @@ function UsedItemCreate() {
           className="textarea-field"
         />
         {errors.description && <p className="error-text">{errors.description}</p>}
+
+        {/* 팀 선택 */}
+        <select
+          value={team}
+          onChange={(e) => {
+            setTeam(e.target.value);
+            validate("team", e.target.value);
+          }}
+          className="input-field"
+        >
+          <option value="">팀 선택</option>
+          <option value="DOOSAN">두산 베어스</option>
+          <option value="LOTTE">롯데 자이언츠</option>
+          <option value="LG">LG 트윈스</option>
+          <option value="SSG">SSG 랜더스</option>
+          <option value="KIA">KIA 타이거즈</option>
+          <option value="HANWHA">한화 이글스</option>
+          <option value="SAMSUNG">삼성 라이온즈</option>
+          <option value="NC">NC 다이노스</option>
+          <option value="KT">KT 위즈</option>
+          <option value="KIWOOM">키움 히어로즈</option>
+        </select>
+        {errors.team && <p className="error-text">{errors.team}</p>}
 
         {/* 이미지 업로더 */}
         <PhotoUploader onUploaded={handleUploaded} />
