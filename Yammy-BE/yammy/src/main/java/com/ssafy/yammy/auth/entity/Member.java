@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "member")
-@EntityListeners(MemberEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor

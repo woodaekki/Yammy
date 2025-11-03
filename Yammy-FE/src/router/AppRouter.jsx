@@ -12,6 +12,8 @@ import MyPoint from "../payment/components/Mypoint"
 import LoginPage from "../auth/LoginPage";
 import SignupPage from "../auth/SignupPage";
 import KakaoCallbackPage from "../auth/KakaoCallbackPage";
+import ChangePasswordPage from "../auth/ChangePasswordPage";
+import DeleteAccountPage from "../auth/DeleteAccountPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -21,6 +23,10 @@ export default function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/kakao/callback" element={<KakaoCallbackPage />} />
+
+      {/* Auth Routes - 로그인 필요 */}
+      <Route path="/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
+      <Route path="/delete-account" element={<ProtectedRoute><DeleteAccountPage /></ProtectedRoute>} />
 
       {/* SNS Routes - 로그인 필요 */}
       <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />

@@ -27,6 +27,7 @@ public class KakaoOAuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final com.ssafy.yammy.payment.repository.PointRepository pointRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${kakao.rest.api.key}")
@@ -200,7 +201,16 @@ public class KakaoOAuthService {
                 .kakaoId(kakaoId)
                 .build();
 
-        return memberRepository.save(newMember);
+        Member savedMember = memberRepository.save(newMember);
+
+        // Point 계좌 자동 생성
+        com.ssafy.yammy.payment.entity.Point point = new com.ssafy.yammy.payment.entity.Point();
+        point.setMember(savedMember);
+        point.setBalance(0L);
+        point.setUpdatedAt(java.time.LocalDateTime.now());
+        pointRepository.save(point);
+
+        return savedMember;
     }
 
     /**

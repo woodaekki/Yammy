@@ -30,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final com.ssafy.yammy.payment.repository.PointRepository pointRepository;
 
     @Value("${jwt.refreshExpiration}")
     private long refreshExpiration;
@@ -67,6 +68,13 @@ public class AuthService {
             .build();
 
         memberRepository.save(member);
+
+        // Point 계좌 자동 생성
+        com.ssafy.yammy.payment.entity.Point point = new com.ssafy.yammy.payment.entity.Point();
+        point.setMember(member);
+        point.setBalance(0L);
+        point.setUpdatedAt(LocalDateTime.now());
+        pointRepository.save(point);
 
         return new SignupResponse(
             member.getMemberId(),
