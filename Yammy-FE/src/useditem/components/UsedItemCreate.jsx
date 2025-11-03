@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUsedItem } from "../api/usedItemApi";
 import PhotoUploader from "../components/PhotoUploader";
-import "../styles/useditem.css";
+import "../styles/usedItem.css";
 
 function UsedItemCreate() {
   const navigate = useNavigate();
@@ -89,7 +89,7 @@ function UsedItemCreate() {
       title: title,
       price: parseInt(price),
       description: description,
-      team: team, // ✅ 추가됨 (백엔드 DTO와 일치)
+      team: team, //
       photoIds: photoIds,
     };
 
