@@ -8,8 +8,13 @@ function UsedItemList({ items }) {
     navigate("/useditem/" + id)
   }
 
+   function goMyPoint() {
+    navigate("/mypoint") 
+  }
+
   return (
     <div className="item-list-container">
+
       {items.map(function (item) {
         return (
           <div key={item.id} className="item-card" onClick={() => goDetail(item.id)}>
@@ -28,6 +33,12 @@ function UsedItemList({ items }) {
           </div>
         )
       })}
+
+       <div className="mypoint-button-container">
+        <button className="mypoint-button" onClick={goMyPoint}>
+          내 포인트
+        </button>
+      </div>
     </div>
   )
 }
