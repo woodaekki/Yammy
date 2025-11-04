@@ -1,63 +1,63 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi";
-import "../styles/usedItem.css";
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi"
+import "../styles/usedItem.css"
 
 function UsedItemDetail() {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams()
+  const navigate = useNavigate()
 
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [item, setItem] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   // 게시글 불러오기
   useEffect(() => {
     getUsedItemById(params.id)
       .then((data) => {
-        setItem(data);
+        setItem(data)
       })
       .catch((error) => {
-        console.error("게시글 불러오기 실패:", error);
+        console.error("게시글 불러오기 실패:", error)
       })
       .finally(() => {
-        setLoading(false);
-      });
-  }, [params.id]);
+        setLoading(false)
+      })
+  }, [params.id])
 
   // 수정 클릭 시
   function handleEdit() {
-    navigate("/useditem/edit/" + params.id);
+    navigate("/useditem/edit/" + params.id)
   }
 
   // 삭제 클릭 시
   function handleDelete() {
-    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?");
-    if (!confirmed) return;
+    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?")
+    if (!confirmed) return
 
     deleteUsedItem(params.id)
       .then(() => {
-        alert("게시글이 삭제되었습니다.");
-        navigate("/useditem");
+        alert("게시글이 삭제되었습니다.")
+        navigate("/useditem")
       })
       .catch((error) => {
-        console.error("삭제 실패:", error);
-        alert("삭제 중 오류가 발생했습니다.");
-      });
+        console.error("삭제 실패:", error)
+        alert("삭제 중 오류가 발생했습니다.")
+      })
   }
 
   // 채팅 클릭 시
   function handleChat() {
-    navigate(`/useditem/${params.id}/chat`);
+    navigate(`/useditem/${params.id}/chat`)
   }
 
   // 결제 클릭 시
   function handleCharge() {
-    navigate(`/useditem/${params.id}/check`);
+    navigate(`/useditem/${params.id}/check`)
   }
 
   // 로딩 중이거나 게시글이 없을 때
-  if (loading) return <p className="loading-text">로딩 중...</p>;
-  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>;
+  if (loading) return <p className="loading-text">로딩 중...</p>
+  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>
 
   // 한글 팀명 변환 (Enum → 한글)
   const teamNames = {
@@ -71,7 +71,7 @@ function UsedItemDetail() {
     NC: "NC 다이노스",
     KT: "KT 위즈",
     KIWOOM: "키움 히어로즈"
-  };
+  }
 
   return (
     <div className="detail-container">
@@ -131,7 +131,7 @@ function UsedItemDetail() {
         </button>
       </div>
     </div>
-  );
+  )
 }
 
-export default UsedItemDetail;
+export default UsedItemDetail

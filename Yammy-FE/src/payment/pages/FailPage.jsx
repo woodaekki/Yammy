@@ -1,9 +1,9 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom"
 
-export default function FailPage() {
-  const [searchParams] = useSearchParams();
-  const code = searchParams.get("code");
-  const message = searchParams.get("message");
+function FailPage() {
+  const [searchParams] = useSearchParams()
+  const code = searchParams.get("code")
+  const message = searchParams.get("message")
 
   return (
     <div>
@@ -11,5 +11,6 @@ export default function FailPage() {
       <p>사유: {message}</p>
       <p>에러 코드: {code}</p>
     </div>
-  );
+  )
 }
+export default FailPage

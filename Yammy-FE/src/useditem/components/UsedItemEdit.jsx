@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getUsedItemById, updateUsedItem } from "../api/usedItemApi";
-import PhotoUploader from "../components/PhotoUploader";
-import "../styles/usedItem.css";
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { getUsedItemById, updateUsedItem } from "../api/usedItemApi"
+import PhotoUploader from "../components/PhotoUploader"
+import "../styles/usedItem.css"
 
 function UsedItemEdit() {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams()
+  const navigate = useNavigate()
 
-  // 게시글 기본 정보
   const [form, setForm] = useState({
     title: "",
     price: "",
     description: "",
-    team: "", 
-  });
+    team: ""
+  })
 
-  const [existingPhotos, setExistingPhotos] = useState([]);
-  const [newPhotoIds, setNewPhotoIds] = useState(undefined);
-  const [loading, setLoading] = useState(true);
+  const [existingPhotos, setExistingPhotos] = useState([])
+  const [newPhotoIds, setNewPhotoIds] = useState(undefined)
+  const [loading, setLoading] = useState(true)
 
   // 게시글 불러오기
   useEffect(() => {
@@ -28,56 +27,55 @@ function UsedItemEdit() {
           title: data.title,
           price: data.price,
           description: data.description,
-          team: data.team, 
-        });
-        setExistingPhotos(data.imageUrls || []);
+          team: data.team
+        })
+        setExistingPhotos(data.imageUrls || [])
       })
       .catch((error) => {
-        console.error("게시글 조회 실패:", error);
-        alert("게시글 정보를 불러오지 못했습니다.");
+        console.error("게시글 조회 실패:", error)
+        alert("게시글 정보를 불러오지 못했습니다.")
       })
-      .finally(() => setLoading(false));
-  }, [params.id]);
+      .finally(() => setLoading(false))
+  }, [params.id])
 
   // 입력값 변경
   function handleChange(event) {
-    const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   // 새 이미지 업로드 완료 시 콜백
   function handleUploaded(uploadResult) {
-    setNewPhotoIds(uploadResult.photoIds);
+    setNewPhotoIds(uploadResult.photoIds)
   }
 
   // 수정 버튼 클릭 시
   function handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
     const updateData = {
       title: form.title,
       description: form.description,
       price: parseInt(form.price),
-      team: form.team,
-    };
+      team: form.team
+    }
 
-    // 새 사진 업로드 시 반영
     if (newPhotoIds !== undefined) {
-      updateData.photoIds = newPhotoIds;
+      updateData.photoIds = newPhotoIds
     }
 
     updateUsedItem(params.id, updateData)
       .then(() => {
-        alert("게시글이 수정되었습니다!");
-        navigate("/useditem/" + params.id);
+        alert("게시글이 수정되었습니다!")
+        navigate("/useditem/" + params.id)
       })
       .catch((error) => {
-        console.error("수정 실패:", error);
-        alert("게시글 수정 중 오류가 발생했습니다.");
-      });
+        console.error("수정 실패:", error)
+        alert("게시글 수정 중 오류가 발생했습니다.")
+      })
   }
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <p>로딩 중...</p>
 
   return (
     <div className="edit-container">
@@ -121,7 +119,7 @@ function UsedItemEdit() {
           className="textarea-field"
         ></textarea>
 
-        {/* 팀 선택 드롭다운 */}
+        {/* 팀 선택 */}
         <select
           name="team"
           value={form.team}
@@ -182,7 +180,7 @@ function UsedItemEdit() {
         </div>
       </form>
     </div>
-  );
+  )
 }
 
-export default UsedItemEdit;
+export default UsedItemEdit

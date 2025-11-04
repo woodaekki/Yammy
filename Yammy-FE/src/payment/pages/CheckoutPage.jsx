@@ -1,80 +1,91 @@
-import { useEffect, useState } from "react";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { useEffect, useState } from "react"
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
 
-const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const customerKey = "yammy-user";
+const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
+const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY
 
-export default function CheckoutPage() {
-  const [ready, setReady] = useState(false);
-  const [widgets, setWidgets] = useState(null);
-  const [amount, setAmount] = useState({ currency: "KRW", value: 5000 });
+function CheckoutPage() {
+  const [ready, setReady] = useState(false)
+  const [widgets, setWidgets] = useState(null)
+  const [amount, setAmount] = useState(5000)
 
+  // 페이지가 처음 열리면 toss 결제 위젯 불러오기
   useEffect(() => {
-    async function initWidgets() {
+    async function startToss() {
       try {
-        const tossPayments = await loadTossPayments(clientKey);
-        const widgets = tossPayments.widgets({ customerKey });
-        await widgets.setAmount(amount);
+        // 토스 페이먼츠 화면 불러오기
+        const tossPayments = await loadTossPayments(clientKey)
+        const widget = tossPayments.widgets({ customerKey })
 
-        await Promise.all([
-          widgets.renderPaymentMethods({
-            selector: "#payment-method",
-            variantKey: "DEFAULT",
-          }),
-          widgets.renderAgreement({
-            selector: "#agreement",
-            variantKey: "AGREEMENT",
-          }),
-        ]);
+        // 결제금액 표시하기
+        await widget.setAmount({ currency: "KRW", value: amount })
 
-        setWidgets(widgets);
-        setReady(true);
-      } catch (err) {
-        console.error("Toss 위젯 로드 실패:", err);
+        // 결제 수단 + 약관 UI 화면에 표시
+        // 토스 페이먼츠 UI는 selector + id 조합으로 화면 클래스명을 지정 요구 
+        await widget.renderPaymentMethods({ selector: "#payment-box" })
+        await widget.renderAgreement({ selector: "#agreement-box" })
+
+        setWidgets(widget)
+        setReady(true)
+      } catch (error) {
+        console.error("토스 결제 위젯 불러오기 실패", error)
       }
     }
 
-    initWidgets();
-  }, []);
+    startToss()
+  }, [])
 
+  // 결제하기 버튼 눌렀을 때 실행
   async function handlePayment() {
-    if (!widgets) return;
+    if (!widgets) return
     try {
-      const orderId = "order-" + new Date().getTime();
+      const orderId = "order-" + new Date().getTime()
+
       await widgets.requestPayment({
         orderId,
         orderName: "얌 포인트 충전",
         successUrl: window.location.origin + "/success",
-        failUrl: window.location.origin + "/fail",
-      });
-    } catch (err) {
-      console.error("결제 실패:", err);
+        failUrl: window.location.origin + "/fail"
+      })
+    } catch (error) {
+      console.error("결제 요청 실패", error)
     }
   }
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>얌 포인트 충전</h2>
 
-      <div id="payment-method"></div>
-      <div id="agreement"></div>
+      {/* 금액 입력 */}
+      <input
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(Number(e.target.value))}
+        placeholder="충전할 금액 입력"
+      />
 
-      <div>
-        <input
-          type="number"
-          value={amount.value}
-          onChange={(e) =>
-            setAmount({ currency: "KRW", value: Number(e.target.value) })
-          }
-        />
-      </div>
+      {/* 결제 UI */}
+      <div id="payment-box" style={{ marginTop: "20px" }}></div>
+      <div id="agreement-box" style={{ marginTop: "10px" }}></div>
 
+      {/* 결제 버튼 */}
       <button
         onClick={handlePayment}
         disabled={!ready}
+        style={{
+          marginTop: "20px",
+          backgroundColor: "#ff7f50",
+          color: "white",
+          border: "none",
+          padding: "10px 20px",
+          borderRadius: "8px",
+          fontWeight: "600",
+          cursor: ready ? "pointer" : "not-allowed"
+        }}
       >
         결제하기
       </button>
     </div>
-  );
+  )
 }
+export default CheckoutPage
