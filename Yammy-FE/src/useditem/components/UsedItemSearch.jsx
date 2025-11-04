@@ -1,14 +1,14 @@
-import { useState } from "react";
-import "../styles/usedItem.css";
+import { useState } from "react"
+import "../styles/usedItem.css"
 
 function UsedItemSearch({ onSearch }) {
-  const [keyword, setKeyword] = useState("");
-  const [team, setTeam] = useState("");
+  const [keyword, setKeyword] = useState("")
+  const [team, setTeam] = useState("")
 
   // 검색 버튼 클릭 or Enter 입력 시 호출
   function handleSearch(e) {
-    e.preventDefault();
-    onSearch({ keyword, team });
+    e.preventDefault()
+    onSearch({ keyword, team })
   }
 
   return (
@@ -48,4 +48,4 @@ function UsedItemSearch({ onSearch }) {
   );
 }
 
-export default UsedItemSearch;
+export default UsedItemSearch

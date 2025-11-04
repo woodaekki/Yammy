@@ -227,7 +227,7 @@ const SNSPage = () => {
                         <div className="post-header">
                             <div className="post-author" onClick={() => navigate(`/user/${post.memberId}`)}>
                                 <img
-                                    src={post.profileImage || 'https://via.placeholder.com/40'}
+                                    src={post.profileImage || '/nomal.jpg'}
                                     alt={post.nickname}
                                     className="author-avatar"
                                 />

@@ -17,4 +17,4 @@ const NavagationBarBottom = () => {
   );
 };
 
-export default NavagationBarBottom;
+export default NavagtionBarBottom;

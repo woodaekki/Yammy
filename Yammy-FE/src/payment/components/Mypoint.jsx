@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { getMyPoint } from "../api/pointAPI"
 
 function MyPoint() {
   const [balance, setBalance] = useState(null)
   const [error, setError] = useState(null)
   const token = localStorage.getItem("accessToken")
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchData() {
@@ -24,9 +26,13 @@ function MyPoint() {
   return (
     <div>
       <h2>내 포인트</h2>
-      <p>{balance} 얌</p>
+      <p>{balance.toLocaleString()} 얌</p>
+
+      <button onClick={() => navigate("/checkout")}>
+        충전하기
+      </button>
     </div>
-  );
+  )
 }
 
 export default MyPoint

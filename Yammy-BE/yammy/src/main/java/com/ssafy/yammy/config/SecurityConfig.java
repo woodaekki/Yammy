@@ -43,11 +43,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/email/**").permitAll()
-                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/email/**").permitAll()
+                        .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/oauth/**").permitAll() // 카카오 OAuth
+
+                        // 인증 필요한 Auth 엔드포인트
+                        .requestMatchers(HttpMethod.PUT, "/api/auth/password").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/auth/update").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/auth/delete").authenticated()
 
                         // 팔로우 목록 조회는 누구나 가능
                         .requestMatchers(HttpMethod.GET, "/api/follows/followers/**").permitAll()
