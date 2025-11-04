@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect  } from "react"
 import { useNavigate } from "react-router-dom"
 import { createUsedItem } from "../api/usedItemApi"
 import PhotoUploader from "../components/PhotoUploader"
+import { getTeamColors } from "../../sns/utils/teamColors" 
 import "../styles/usedItem.css"
 
 function UsedItemCreate() {
@@ -12,6 +13,7 @@ function UsedItemCreate() {
   const [description, setDescription] = useState("")
   const [team, setTeam] = useState("")
   const [photoIds, setPhotoIds] = useState([])
+  const [teamColors, setTeamColors] = useState(getTeamColors())
 
   // 에러 메시지 상태
   const [errors, setErrors] = useState({
@@ -21,6 +23,11 @@ function UsedItemCreate() {
     photo: "",
     team: ""
   })
+
+  // 유저 팀 컬러 초기화
+  useEffect(() => {
+    setTeamColors(getTeamColors())
+  }, [])
 
   // 실시간 유효성 검사
   const validate = (field, value) => {
@@ -180,6 +187,10 @@ function UsedItemCreate() {
         <button
           type="submit"
           className="submit-btn"
+          style={{
+            backgroundColor: teamColors.bgColor,
+            color: teamColors.textColor
+          }}
           disabled={Object.values(errors).some((msg) => msg)}
         >
           등록

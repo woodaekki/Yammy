@@ -113,7 +113,6 @@
   font-family: "Pretendard", sans-serif;
 }
 
-/* 상단 헤더 */
 .detail-header {
   display: flex;
   align-items: center;
@@ -265,18 +264,23 @@
 
 .floating-add-btn {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
-  background-color: #ff7f50;
+  right: calc(50% - 290px); 
+  bottom: 80px;                   
   color: white;
   border: none;
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
+  width: 65px;
+  height: 65px;
   font-size: 2rem;
+  font-weight: 500;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 300; 
 }
 
 .floating-add-btn:hover {
@@ -487,3 +491,62 @@
   margin: 0.2rem 0;
 }
 
+/* 검색 관련 */
+.useditem-search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 10px 14px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.search-select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fafafa;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-select:hover {
+  background-color: #f0f0f0;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.search-btn {
+  padding: 8px 14px;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mypoint-button {
+  padding: 8px 14px;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
