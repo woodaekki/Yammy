@@ -3,3 +3,6 @@
 .claude/
 
 .env
+
+# Firebase
+firebase-service-account.json
