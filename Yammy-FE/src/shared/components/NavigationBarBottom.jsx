@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./NavigationBar.css";
 
-const NavagationBarBottom = () => {
+const NavigationBarBottom = () => {
   return (
     <nav className="nav-bar-bottom">
       <Link to="/">SNS</Link>
@@ -13,4 +13,4 @@ const NavagationBarBottom = () => {
   );
 };
 
-export default NavagtionBarBottom;
+export default NavigationBarBottom;

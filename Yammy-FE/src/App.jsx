@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import NavigationBarBottom from './shared/components/NavagationBarBottom'
+import NavigationBarBottom from './shared/components/NavigationBarBottom'
 import NavigationBarTop from './shared/components/NavigationBarTop'
 import AppRouter from './router/AppRouter'
 import "./App.css"
