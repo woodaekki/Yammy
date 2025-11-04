@@ -2,191 +2,81 @@ package com.ssafy.yammy.payment.controller;
 
 import com.ssafy.yammy.payment.dto.UsedItemRequestDto;
 import com.ssafy.yammy.payment.dto.UsedItemResponseDto;
-import com.ssafy.yammy.payment.entity.Photo;
-import com.ssafy.yammy.payment.entity.UsedItem;
-import com.ssafy.yammy.payment.repository.PhotoRepository;
-import com.ssafy.yammy.payment.repository.UsedItemRepository;
-// import com.ssafy.yammy.payment.entity.Member;
-// import com.ssafy.yammy.payment.repository.MemberRepository;
+import com.ssafy.yammy.payment.entity.Team;
+import com.ssafy.yammy.payment.service.UsedItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.extern.slf4j.Slf4j;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @Slf4j
-@Tag(name = "Payment API", description = "결제 관련 API")
+@Tag(name = "UsedItem API", description = "중고거래 게시글 관련 API")
 @RestController
 @RequestMapping("/api/trades")
 @RequiredArgsConstructor
 public class UsedItemController {
 
-    private final UsedItemRepository usedItemRepository;
-    private final PhotoRepository photoRepository;
-    // private final MemberRepository memberRepository;  // Member 구현 후 활성화
+    private final UsedItemService usedItemService;
 
-    // 중고 거래 전체 조회
+    // 전체 조회
     @Operation(summary = "중고 거래 목록 전체 조회")
     @GetMapping
     public ResponseEntity<List<UsedItemResponseDto>> getAllTrades() {
-        List<UsedItem> items = usedItemRepository.findAll();
-
-        List<UsedItemResponseDto> response = items.stream()
-                .map(item -> {
-                    List<String> imageUrls = item.getPhotos().stream()
-                            .map(Photo::getFileUrl)
-                            .toList();
-
-                    return UsedItemResponseDto.builder()
-                            .id(item.getId())
-                            .memberId(null) // member 연동 후 수정
-                            .nickname(item.getNickname())
-                            .title(item.getTitle())
-                            .description(item.getDescription())
-                            .price(item.getPrice())
-                            .status(item.getStatus())
-                            .createdAt(item.getCreatedAt())
-                            .updatedAt(item.getUpdatedAt())
-                            .imageUrls(imageUrls)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usedItemService.getAllTrades());
     }
 
-    // 중고 거래 단건 조회
-    @Operation(summary = "중고 거래 목록 단건 조회")
+    // 단건 조회
+    @Operation(summary = "중고 거래 게시글 단건 조회")
     @GetMapping("/{id}")
     public ResponseEntity<UsedItemResponseDto> getTrade(@PathVariable Long id) {
-        UsedItem item = usedItemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
-
-        List<String> imageUrls = item.getPhotos().stream()
-                .map(Photo::getFileUrl)
-                .toList();
-
-        UsedItemResponseDto response = UsedItemResponseDto.builder()
-                .id(item.getId())
-                .memberId(null)
-                .nickname(item.getNickname())
-                .title(item.getTitle())
-                .description(item.getDescription())
-                .price(item.getPrice())
-                .status(item.getStatus())
-                .createdAt(item.getCreatedAt())
-                .updatedAt(item.getUpdatedAt())
-                .imageUrls(imageUrls)
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usedItemService.getTrade(id));
     }
 
     // 게시물 작성
-    @Operation(summary = "중고 거래 목록 게시물 작성")
+    @Operation(summary = "중고 거래 게시물 작성")
     @PostMapping
     public ResponseEntity<UsedItemResponseDto> createTrade(
-            @Valid @RequestBody UsedItemRequestDto dto,
-            @RequestHeader(value = "Nickname", required = false, defaultValue = "익명") String nickname) { // 추후 member 코드 구현 후 수정 예정
-
-        UsedItem usedItem = new UsedItem();
-        usedItem.setTitle(dto.getTitle());
-        usedItem.setDescription(dto.getDescription());
-        usedItem.setPrice(dto.getPrice());
-        usedItem.setNickname(nickname);
-
-        // Photo 연결 (photoIds 기준)
-        if (dto.getPhotoIds() != null && !dto.getPhotoIds().isEmpty()) {
-            List<Photo> photos = photoRepository.findAllById(dto.getPhotoIds());
-            photos.forEach(usedItem::addPhoto);
-        }
-
-        UsedItem savedItem = usedItemRepository.save(usedItem);
-
-        List<String> imageUrls = savedItem.getPhotos().stream()
-                .map(Photo::getFileUrl)
-                .toList();
-
-        UsedItemResponseDto response = UsedItemResponseDto.builder()
-                .id(savedItem.getId())
-                .memberId(null)
-                .nickname(savedItem.getNickname())
-                .title(savedItem.getTitle())
-                .description(savedItem.getDescription())
-                .price(savedItem.getPrice())
-                .status(savedItem.getStatus())
-                .createdAt(savedItem.getCreatedAt())
-                .updatedAt(savedItem.getUpdatedAt())
-                .imageUrls(imageUrls)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            HttpServletRequest request,
+            @Valid @RequestBody UsedItemRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(usedItemService.createTrade(request, dto));
     }
 
     // 게시물 수정
-    @Operation(summary = "중고 거래 목록 게시물 수정")
+    @Operation(summary = "중고 거래 게시물 수정")
     @PutMapping("/{id}")
     public ResponseEntity<UsedItemResponseDto> updateTrade(
+            HttpServletRequest request,
             @PathVariable Long id,
             @Valid @RequestBody UsedItemRequestDto dto) {
-
-        UsedItem usedItem = usedItemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
-
-        usedItem.setTitle(dto.getTitle());
-        usedItem.setDescription(dto.getDescription());
-        usedItem.setPrice(dto.getPrice());
-
-        // 기존 사진 교체
-        if (dto.getPhotoIds() != null) {
-            if (!dto.getPhotoIds().isEmpty()) {
-                // 새 이미지가 있을 때만 교체
-                usedItem.getPhotos().clear();
-                List<Photo> newPhotos = photoRepository.findAllById(dto.getPhotoIds());
-                newPhotos.forEach(usedItem::addPhoto);
-            }
-        }
-        UsedItem savedItem = usedItemRepository.save(usedItem);
-
-        List<String> imageUrls = savedItem.getPhotos().stream()
-                .map(Photo::getFileUrl)
-                .toList();
-
-        UsedItemResponseDto response = UsedItemResponseDto.builder()
-                .id(savedItem.getId())
-                .memberId(null)
-                .nickname(savedItem.getNickname())
-                .title(savedItem.getTitle())
-                .description(savedItem.getDescription())
-                .price(savedItem.getPrice())
-                .status(savedItem.getStatus())
-                .createdAt(savedItem.getCreatedAt())
-                .updatedAt(savedItem.getUpdatedAt())
-                .imageUrls(imageUrls)
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usedItemService.updateTrade(request, id, dto));
     }
 
     // 게시물 삭제
-    @Operation(summary = "중고 거래 목록 게시물 삭제")
+    @Operation(summary = "중고 거래 게시물 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrade(@PathVariable Long id) {
-        UsedItem usedItem = usedItemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "삭제할 게시글을 찾을 수 없습니다."));
-
-        usedItemRepository.delete(usedItem);
-
+    public ResponseEntity<Void> deleteTrade(
+            HttpServletRequest request,
+            @PathVariable Long id) {
+        usedItemService.deleteTrade(request, id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 검색 (팀 + 키워드)
+    @Operation(summary = "팀/키워드 기반 중고 거래 게시글 검색")
+    @GetMapping("/search")
+    public ResponseEntity<List<UsedItemResponseDto>> searchUsedItems(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Team team
+    ) {
+        return ResponseEntity.ok(usedItemService.searchUsedItems(keyword, team));
     }
 }

@@ -449,7 +449,6 @@
   object-fit: cover;
 }
 
-/* 새로 추가한 부분 */
 .no-image-box {
   position: absolute;
   top: 0;
@@ -487,3 +486,4 @@
   color: #3498db;
   margin: 0.2rem 0;
 }
+

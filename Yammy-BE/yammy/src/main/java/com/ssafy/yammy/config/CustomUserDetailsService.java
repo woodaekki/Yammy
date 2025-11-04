@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         // 로그인 ID로 회원 조회
         Member member = memberRepository.findById(loginId)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with login ID: " + loginId));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with login ID: " + loginId));
 
         return new CustomUserDetails(member);
     }

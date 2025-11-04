@@ -1,5 +1,6 @@
 package com.ssafy.yammy.payment.entity;
 
+import com.ssafy.yammy.auth.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,9 +24,9 @@ public class UsedItem {
     @Column(name = "post_id")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", nullable = false)
-//    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Column(name = "nickname", length = 20)
     private String nickname;
@@ -39,8 +40,12 @@ public class UsedItem {
     @Column(name = "price", nullable = false)
     private Integer price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Team team;
+
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean status = false;  // 이것만으로 충분!
+    private Boolean status = false;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)

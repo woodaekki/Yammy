@@ -49,14 +49,34 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/email/**").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/oauth/**").permitAll() // 카카오 OAuth
+
+                        // 팔로우 목록 조회는 누구나 가능
+                        .requestMatchers(HttpMethod.GET, "/api/follows/followers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/follows/following/**").permitAll()
+                        // 팔로우/언팔로우/상태 확인은 인증 필요
+                        .requestMatchers("/api/follows/**").authenticated()
+
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/api/v1/webhook/**").permitAll()
-                        .requestMatchers("/api/trades/**").permitAll()
-                        .requestMatchers("/api/photos/**").permitAll()
+
+                        // 중고거래 — 읽기는 공개, 쓰기는 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/trades/**").permitAll()       // 조회는 누구나
+                        .requestMatchers(HttpMethod.POST, "/api/trades/**").authenticated()  // 작성은 로그인 필요
+                        .requestMatchers(HttpMethod.PUT, "/api/trades/**").authenticated()   // 수정은 로그인 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/trades/**").authenticated()// 삭제는 로그인 필요
+
+                        // 사진 업로드
+                        .requestMatchers("/api/photos/**").authenticated()
+
+                        // 포인트 충전 및 조회
+                        .requestMatchers("/api/payments/**").authenticated()
+                        .requestMatchers("/api/points/**").authenticated()
+
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/admin/chat-rooms/**").hasRole("ADMIN")
@@ -75,7 +95,9 @@ public class SecurityConfig {
         // 개발 + 운영 도메인 함께 허용
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://k13c205.p.ssafy.io"
+                "http://k13c205.p.ssafy.io",
+                "http://k13c205.p.ssafy.io:3000",
+                "http://k13c205.p.ssafy.io:8080"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

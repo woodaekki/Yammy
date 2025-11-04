@@ -47,6 +47,8 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiration);
 
+        String role = authority.startsWith("ROLE_") ? authority : "ROLE_" + authority;
+
         return Jwts.builder()
             .setSubject(loginId)  // 로그인 ID를 subject로 설정
             .claim("authority", authority)  // ADMIN 또는 USER

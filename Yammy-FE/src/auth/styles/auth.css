@@ -1,0 +1,382 @@
+/* 인증 컨테이너 - 전체 화면 */
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* 헤더 */
+.auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0 0.5rem;
+}
+
+.back-button {
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+.back-button:hover {
+  color: #374151;
+}
+
+.header-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.header-spacer {
+  width: 2rem;
+}
+
+/* 로고 섹션 */
+.auth-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0;
+  margin-bottom: 1rem;
+}
+
+.auth-logo-section.small {
+  padding: 1.5rem 0 1rem;
+}
+
+.auth-logo-icon {
+  width: 5rem;
+  height: 5rem;
+  background: linear-gradient(to bottom right, #6366f1, #f59e0b);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.auth-logo-icon.small {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.auth-logo-icon i {
+  color: white;
+  font-size: 2rem;
+}
+
+.auth-logo-icon.small i {
+  font-size: 1.5rem;
+}
+
+.auth-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.auth-title.small {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+  color: #6b7280;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+/* 폼 스타일 */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-textarea {
+  resize: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: #6b7280;
+}
+
+/* 인라인 버튼 */
+.input-wrapper.with-button .form-input {
+  padding-right: 5rem;
+}
+
+.inline-button {
+  position: absolute;
+  right: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.inline-button:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.inline-button.success {
+  background-color: #10b981;
+}
+
+.inline-button.success:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.inline-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 에러/성공 메시지 */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.error-text {
+  display: block;
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.success-text {
+  display: block;
+  color: #10b981;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* 버튼 */
+.btn-primary {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-primary.loading {
+  opacity: 0.8;
+}
+
+/* 구분선 */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.divider span {
+  position: relative;
+  display: inline-block;
+  padding: 0 1rem;
+  background-color: white;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* 카카오 로그인 버튼 */
+.btn-kakao {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #fee500;
+  color: #000000;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-kakao:hover {
+  background-color: #fdd835;
+}
+
+.kakao-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* 스피너 */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 하단 링크 */
+.auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+}
+
+.footer-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+

@@ -1,6 +1,8 @@
 package com.ssafy.yammy.payment.dto;
 
+import com.ssafy.yammy.payment.entity.Team;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -22,11 +24,26 @@ public class UsedItemRequestDto {
     @Max(value = 1000000000, message = "가격은 10억원 이하여야 합니다")
     private Integer price;
 
+    @NotNull(message = "팀을 선택해주세요")
+    private Team team;
+
     private Boolean status;
 
     // 업로드 완료된 사진들의 photoId 리스트
     @Size(max = 3, message = "이미지는 최대 3장까지 등록 가능합니다")
     private List<Long> photoIds;
 
+    @Builder
+    public UsedItemRequestDto(String title,
+                              Integer price,
+                              String description,
+                              Team team,
+                              List<Long> photoIds) {
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.team = team;
+        this.photoIds = photoIds;
+    }
 
 }

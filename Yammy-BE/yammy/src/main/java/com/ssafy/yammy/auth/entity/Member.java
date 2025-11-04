@@ -63,6 +63,13 @@ public class Member {
     @Column(name = "profile_image", columnDefinition = "TEXT")
     private String profileImage;
 
+    @Column(name = "is_social", nullable = false)
+    @Builder.Default
+    private Boolean isSocial = false;
+
+    @Column(name = "kakao_id", unique = true)
+    private String kakaoId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -82,4 +89,6 @@ public class Member {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+
 }

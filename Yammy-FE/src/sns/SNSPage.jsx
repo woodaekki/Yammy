@@ -109,7 +109,7 @@ const SNSPage = () => {
     const [posts, setPosts] = useState([
         {
             id: 1,
-            author: '김철수',
+            author: '박재환',
             avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg',
             time: '2시간 전',
             content: '오늘 경기 정말 짜릿했다! 마지막 골 장면은 진짜 소름 돋았어 ⚽️🔥',
