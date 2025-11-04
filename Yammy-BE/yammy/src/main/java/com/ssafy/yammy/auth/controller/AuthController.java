@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "Auth API", description = "인증 관련 API")
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

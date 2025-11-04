@@ -1,17 +1,18 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+export const API_BASE_URL = 'http://localhost:8080/api';
 
-// Axios 인스턴스 생성
-const authApi = axios.create({
+// 공통 Axios 인스턴스 생성
+const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 // Request 인터셉터: Authorization 헤더 자동 추가
-authApi.interceptors.request.use(
+apiClient.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
@@ -25,7 +26,7 @@ authApi.interceptors.request.use(
 );
 
 // Response 인터셉터: 401 에러 시 토큰 재발급 시도
-authApi.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -58,7 +59,7 @@ authApi.interceptors.response.use(
 
           // 원래 요청 재시도
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return authApi(originalRequest);
+          return apiClient(originalRequest);
         } catch (refreshError) {
           // 리프레시 실패 시 로그아웃 처리
           console.error('토큰 재발급 실패:', refreshError);
@@ -79,87 +80,4 @@ authApi.interceptors.response.use(
   }
 );
 
-/**
- * 로그인
- */
-export const login = async (loginData) => {
-  const response = await authApi.post('/auth/login', loginData);
-  return response.data;
-};
-
-/**
- * 회원가입
- */
-export const signup = async (signupData) => {
-  const response = await authApi.post('/auth/signup', signupData);
-  return response.data;
-};
-
-/**
- * 로그아웃
- */
-export const logout = async (loginId) => {
-  const response = await authApi.post(`/auth/logout?id=${loginId}`);
-  return response.data;
-};
-
-/**
- * 이메일 인증 코드 발송
- */
-export const sendVerificationCode = async (email) => {
-  const response = await authApi.post(`/auth/email/send?email=${encodeURIComponent(email)}`);
-  return response.data;
-};
-
-/**
- * 이메일 인증 코드 확인
- */
-export const verifyEmail = async (email, code) => {
-  const response = await authApi.post(
-    `/auth/email/verify?email=${encodeURIComponent(email)}&code=${code}`
-  );
-  return response.data;
-};
-
-/**
- * 토큰 갱신
- */
-export const refreshAccessToken = async (accessToken, refreshToken) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/auth/refresh`,
-    {},
-    {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Refresh-Token': refreshToken,
-      }
-    }
-  );
-  return response.data;
-};
-
-/**
- * 비밀번호 변경
- */
-export const changePassword = async (passwordData) => {
-  const response = await authApi.put('/auth/password', passwordData);
-  return response.data;
-};
-
-/**
- * 회원 정보 수정
- */
-export const updateMember = async (updateData) => {
-  const response = await authApi.put('/auth/update', updateData);
-  return response.data;
-};
-
-/**
- * 회원 탈퇴
- */
-export const deleteMember = async () => {
-  const response = await authApi.delete('/auth/delete');
-  return response.data;
-};
-
-export default authApi;
+export default apiClient;

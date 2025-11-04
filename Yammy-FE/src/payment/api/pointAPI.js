@@ -1,11 +1,7 @@
-import axios from "axios"
+import apiClient from "../../api/apiClient"
 
-const BASE_URL = "http://localhost:8080/api"
-
-export async function getMyPoint(token) {
-  const response = await axios.get(`${BASE_URL}/points/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
+export async function getMyPoint() {
+  const response = await apiClient.get(`/points/me`)
   return response.data
 }
 

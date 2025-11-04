@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Tag(name = "Email Verification API", description = "이메일 인증 API")
 @RestController
-@RequestMapping("/api/v1/auth/email")
+@RequestMapping("/api/auth/email")
 @RequiredArgsConstructor
 public class EmailVerificationController {
 

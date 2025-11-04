@@ -129,7 +129,7 @@ export default function SignupPage() {
       team: formData.team.trim() || null,
       gameTag: 0,
       bio: formData.bio.trim() || null,
-      profileImage: null,
+      profileImage: "/nomal.jpg",
     };
 
     try {
@@ -144,11 +144,6 @@ export default function SignupPage() {
     }
   };
 
-  const handleKakaoSignup = () => {
-    alert('카카오 회원가입 기능은 준비 중입니다.');
-    // TODO: 백엔드 카카오 OAuth API 연동 시 구현
-  };
-
   return (
     <div className="auth-container">
       <div className="auth-content">
@@ -159,15 +154,6 @@ export default function SignupPage() {
           </button>
           <h2 className="header-title">회원가입</h2>
           <div className="header-spacer"></div>
-        </div>
-
-        {/* 로고 섹션 */}
-        <div className="auth-logo-section small">
-          <div className="auth-logo-icon small">
-            <i className="fas fa-trophy"></i>
-          </div>
-          <h2 className="auth-title small">Yammy 가입하기</h2>
-          <p className="auth-subtitle">스포츠 팬들과 함께하세요</p>
         </div>
 
         {/* 회원가입 폼 */}
@@ -352,25 +338,35 @@ export default function SignupPage() {
 
           <div className="form-group">
             <label htmlFor="team" className="form-label">
-              팀 (선택)
+              좋아하는 야구팀
             </label>
             <div className="input-wrapper">
-              <input
-                type="text"
+              <select
                 id="team"
                 name="team"
                 value={formData.team}
                 onChange={handleChange}
-                placeholder="좋아하는 팀을 입력하세요"
                 className="form-input"
-              />
-              <i className="fas fa-users input-icon"></i>
+              >
+                <option value="">팀을 선택하세요</option>
+                <option value="KIA 타이거즈">KIA 타이거즈</option>
+                <option value="삼성 라이온즈">삼성 라이온즈</option>
+                <option value="LG 트윈스">LG 트윈스</option>
+                <option value="두산 베어스">두산 베어스</option>
+                <option value="KT 위즈">KT 위즈</option>
+                <option value="SSG 랜더스">SSG 랜더스</option>
+                <option value="롯데 자이언츠">롯데 자이언츠</option>
+                <option value="한화 이글스">한화 이글스</option>
+                <option value="NC 다이노스">NC 다이노스</option>
+                <option value="키움 히어로즈">키움 히어로즈</option>
+              </select>
+              <i className="fas fa-baseball-ball input-icon"></i>
             </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="bio" className="form-label">
-              자기소개 (선택)
+              자기소개
             </label>
             <textarea
               id="bio"
@@ -396,23 +392,6 @@ export default function SignupPage() {
             ) : (
               '회원가입'
             )}
-          </button>
-
-          {/* 구분선 */}
-          <div className="divider">
-            <span>또는</span>
-          </div>
-
-          {/* 카카오 회원가입 */}
-          <button
-            type="button"
-            onClick={handleKakaoSignup}
-            className="btn-kakao"
-          >
-            <svg className="kakao-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.85 1.92 5.34 4.8 6.72-.21.77-.78 2.89-.9 3.36-.15.57.21.57.45.42.18-.12 2.91-1.95 3.75-2.52.6.09 1.23.12 1.9.12 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/>
-            </svg>
-            카카오로 가입하기
           </button>
         </form>
 
