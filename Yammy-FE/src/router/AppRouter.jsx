@@ -18,6 +18,7 @@ import KakaoCallbackPage from "../auth/KakaoCallbackPage"
 import ProtectedRoute from "./ProtectedRoute"
 import ChangePasswordPage from "../auth/ChangePasswordPage";
 import DeleteAccountPage from "../auth/DeleteAccountPage";
+import MyPage from "../mypage/MyPage";
 
 export default function AppRouter() {
   return (
@@ -30,6 +31,9 @@ export default function AppRouter() {
       {/* Auth Routes - 로그인 필요 */}
       <Route path="/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
       <Route path="/delete-account" element={<ProtectedRoute><DeleteAccountPage /></ProtectedRoute>} />
+
+      {/* MyPage Route - 로그인 필요 */}
+      <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
 
       {/* SNS Routes - 로그인 필요 */}
       <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />

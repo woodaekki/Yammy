@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
 import { getTeamColors } from "../../sns/utils/teamColors";
+import logo from "../../assets/images/logo.png";
 import "./NavigationBar.css";
 
 const NavigationBarTop = () => {
@@ -25,12 +26,14 @@ const NavigationBarTop = () => {
 
   const handleProfileClick = () => {
     setShowUserMenu(false);
-    navigate(`/user/${user?.nickname}`);
+    navigate('/mypage');
   };
 
   return (
     <nav className="nav-bar-top" style={{ backgroundColor: teamColors.bgColor }}>
-      <h1 className="sns-logo" style={{ color: teamColors.textColor }} onClick={() => navigate('/')}>Yammy</h1>
+      <div className="sns-logo" onClick={() => navigate('/')}>
+        <img src={logo} alt="Yammy" className="sns-logo-img" />
+      </div>
       <div className="header-right">
         {isLoggedIn ? (
           <div className="user-menu-wrapper">
