@@ -10,10 +10,14 @@ function UsedItemDetail() {
   const [item, setItem] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // 로그인 시 localStorage에 저장된 사용자 ID 
+  const myId = localStorage.getItem("memberId")
+
   // 게시글 불러오기
   useEffect(() => {
     getUsedItemById(params.id)
       .then((data) => {
+        console.log("받은 게시글 데이터:", data) 
         setItem(data)
       })
       .catch((error) => {
@@ -117,12 +121,18 @@ function UsedItemDetail() {
       </div>
 
       <div className="button-group">
-        <button className="edit-btn" onClick={handleEdit}>
-          수정
-        </button>
-        <button className="delete-btn" onClick={handleDelete}>
-          삭제
-        </button>
+        {/* 작성자 본인일 때만 수정·삭제 버튼 표시 */}
+        {Number(item.memberId) === Number(myId) && (
+          <>
+            <button className="edit-btn" onClick={handleEdit}>
+              수정
+            </button>
+            <button className="delete-btn" onClick={handleDelete}>
+              삭제
+            </button>
+          </>
+        )}
+
         <button className="chat-btn" onClick={handleChat}>
           채팅
         </button>
