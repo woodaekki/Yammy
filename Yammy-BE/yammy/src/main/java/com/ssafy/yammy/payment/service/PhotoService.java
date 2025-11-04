@@ -10,6 +10,7 @@ import com.ssafy.yammy.payment.repository.PhotoRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,7 +34,8 @@ public class PhotoService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String BUCKET_NAME = "yammy-project";
+    @Value("${AWS_S3_BUCKET}")
+    private String bucketName;
 
     // Presigned URL 생성
     public List<PhotoUploadResponse> generatePresignedUrls(int count, String contentType) {
@@ -42,7 +44,7 @@ public class PhotoService {
                     String s3Key = "useditem/" + UUID.randomUUID() + ".jpg";
 
                     PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                            .bucket(BUCKET_NAME)
+                            .bucket(bucketName)
                             .key(s3Key)
                             .contentType(contentType)
                             .build();
@@ -77,9 +79,9 @@ public class PhotoService {
         photo.setS3Key(dto.getS3Key());
         photo.setFileUrl(dto.getFileUrl());
         photo.setContentType(dto.getContentType());
+        photo.setTemporary(true);
 
-        Photo saved = photoRepository.save(photo);
-        return saved;
+        return photoRepository.save(photo);
     }
 
     private String extractToken(HttpServletRequest request) {
