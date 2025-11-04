@@ -136,16 +136,16 @@ export const changePassword = async (passwordData) => {
 /**
  * 회원 정보 수정
  */
-export const updateMember = async (loginId, updateData) => {
-  const response = await authApi.put(`/auth/update?id=${loginId}`, updateData);
+export const updateMember = async (updateData) => {
+  const response = await authApi.put('/auth/update', updateData);
   return response.data;
 };
 
 /**
  * 회원 탈퇴
  */
-export const deleteMember = async (loginId) => {
-  const response = await authApi.delete(`/auth/delete?id=${loginId}`);
+export const deleteMember = async () => {
+  const response = await authApi.delete('/auth/delete');
   return response.data;
 };
 

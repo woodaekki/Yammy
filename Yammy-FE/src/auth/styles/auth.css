@@ -379,4 +379,142 @@
   text-decoration: underline;
 }
 
+/* 경고 섹션 */
+.warning-section {
+  background: linear-gradient(to bottom, #fef3c7, #fed7aa);
+  border: 2px solid #fbbf24;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.warning-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #92400e;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.warning-list li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #78350f;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.warning-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0.5rem;
+  color: #f59e0b;
+  font-weight: bold;
+}
+
+/* 사용자 정보 박스 */
+.user-info-box {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.info-row:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* 체크박스 그룹 */
+.checkbox-group {
+  margin: 1rem 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Danger 버튼 */
+.submit-button.danger {
+  background: linear-gradient(to right, #dc2626, #ef4444);
+}
+
+.submit-button.danger:hover:not(:disabled) {
+  background: linear-gradient(to right, #b91c1c, #dc2626);
+}
+
+.submit-button.danger:disabled {
+  background: #9ca3af;
+}
+
+/* Secondary 버튼 */
+.submit-button.secondary {
+  background: #e5e7eb;
+  color: #374151;
+  margin-top: 0.75rem;
+}
+
+.submit-button.secondary:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+/* Form section title */
+.form-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
 
