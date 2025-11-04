@@ -2,7 +2,9 @@ package com.ssafy.yammy.payment.entity;
 
 import jakarta.persistence.*;
 import com.ssafy.yammy.auth.entity.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "point")
 public class Point {
 

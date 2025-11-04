@@ -8,10 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-/**
- * Member 엔티티의 생명주기 이벤트를 처리하는 리스너
- * Member가 생성되면 자동으로 Point 계좌를 생성합니다.
- */
 @Component
 public class MemberEntityListener {
 
@@ -26,12 +22,6 @@ public class MemberEntityListener {
         MemberEntityListener.pointRepository = pointRepository;
     }
 
-    /**
-     * Member가 DB에 저장된 직후 자동으로 실행됩니다.
-     * Member와 1:1 관계인 Point 계좌를 생성합니다.
-     *
-     * @param member 저장된 Member 엔티티
-     */
     @PostPersist
     public void createPointAccount(Member member) {
         Point point = new Point();
