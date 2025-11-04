@@ -5,6 +5,9 @@ import FollowListModal from './FollowListModal';
 import { getTeamColors } from '../utils/teamColors';
 import '../styles/UserProfile.css';
 
+// 기본 프로필 이미지
+const DEFAULT_PROFILE_IMAGE = '/nomal.jpg';
+
 const UserProfile = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
@@ -47,7 +50,7 @@ const UserProfile = () => {
                 setProfileData({
                     name: firstPost.nickname,
                     username: `@${firstPost.nickname}`,
-                    avatar: firstPost.profileImage || 'https://via.placeholder.com/100',
+                    avatar: firstPost.profileImage || DEFAULT_PROFILE_IMAGE,
                     postsCount: userPosts.length,
                     team: firstPost.team,
                 });
@@ -56,7 +59,7 @@ const UserProfile = () => {
                 setProfileData({
                     name: '사용자',
                     username: '@user',
-                    avatar: 'https://via.placeholder.com/100',
+                    avatar: DEFAULT_PROFILE_IMAGE,
                     postsCount: 0,
                     team: '',
                 });
@@ -118,7 +121,13 @@ const UserProfile = () => {
     }
 
     return (
-        <div className="user-profile">
+        <div
+            className="user-profile"
+            style={{
+                '--team-color': teamColors.bgColor,
+                '--team-text-color': teamColors.textColor
+            }}
+        >
             {/* 헤더 */}
             <div className="profile-header" style={{ backgroundColor: teamColors.bgColor }}>
                 <button onClick={goBack} className="back-btn" style={{ color: teamColors.textColor }}>←</button>
@@ -130,7 +139,14 @@ const UserProfile = () => {
             <div className="profile-info-section">
                 <div className="profile-main">
                     <div className="avatar-wrapper">
-                        <img src={profileData.avatar} alt={profileData.name} className="profile-avatar" />
+                        <img
+                            src={profileData.avatar}
+                            alt={profileData.name}
+                            className="profile-avatar"
+                            onError={(e) => {
+                                e.target.src = DEFAULT_PROFILE_IMAGE;
+                            }}
+                        />
                     </div>
 
                     <div className="profile-details">

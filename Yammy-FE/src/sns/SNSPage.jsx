@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllPosts, togglePostLike, followUser, unfollowUser } from './api/snsApi';
+import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost, updatePost } from './api/snsApi';
+import { getTeamColors } from './utils/teamColors';
 import './styles/SNSPage.css';
 
 // 시간 포맷 헬퍼 함수
@@ -123,7 +124,12 @@ const SNSPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [nextCursor, setNextCursor] = useState(null);
+    const [openMenuPostId, setOpenMenuPostId] = useState(null);
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editingCaption, setEditingCaption] = useState('');
     const observerTarget = useRef(null);
+    const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
+    const teamColors = getTeamColors();
 
     // 초기 게시글 로드
     useEffect(() => {
@@ -217,8 +223,70 @@ const SNSPage = () => {
         }
     };
 
+    // 게시글 수정 모드 시작
+    const handleEditPost = (postId, currentCaption) => {
+        setEditingPostId(postId);
+        setEditingCaption(currentCaption || '');
+        setOpenMenuPostId(null);
+    };
+
+    // 게시글 수정 저장
+    const handleSaveEdit = async (postId) => {
+        try {
+            await updatePost(postId, editingCaption);
+
+            // 로컬 상태 업데이트
+            setPosts(posts.map(post =>
+                post.id === postId
+                    ? { ...post, caption: editingCaption }
+                    : post
+            ));
+
+            setEditingPostId(null);
+            setEditingCaption('');
+        } catch (error) {
+            console.error('게시글 수정 실패:', error);
+            alert('게시글 수정에 실패했습니다.');
+        }
+    };
+
+    // 게시글 수정 취소
+    const handleCancelEdit = () => {
+        setEditingPostId(null);
+        setEditingCaption('');
+    };
+
+    // 게시글 삭제
+    const handleDeletePost = async (postId) => {
+        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+        try {
+            await deletePost(postId);
+
+            // 로컬 상태 업데이트 (게시글 제거)
+            setPosts(posts.filter(post => post.id !== postId));
+
+            setOpenMenuPostId(null);
+            alert('게시글이 삭제되었습니다.');
+        } catch (error) {
+            console.error('게시글 삭제 실패:', error);
+            alert('게시글 삭제에 실패했습니다.');
+        }
+    };
+
+    // 메뉴 토글
+    const handleToggleMenu = (postId) => {
+        setOpenMenuPostId(openMenuPostId === postId ? null : postId);
+    };
+
     return (
-        <div className="sns-page">
+        <div
+            className="sns-page"
+            style={{
+                '--team-color': teamColors.bgColor,
+                '--team-text-color': teamColors.textColor
+            }}
+        >
             {/* 피드 섹션 */}
             <div className="feed-container">
                 {posts.map(post => (
@@ -230,19 +298,65 @@ const SNSPage = () => {
                                     src={post.profileImage || '/nomal.jpg'}
                                     alt={post.nickname}
                                     className="author-avatar"
+                                    onError={(e) => { e.target.src = '/nomal.jpg'; }}
                                 />
                                 <div className="author-info">
                                     <h3 className="author-name">{post.nickname}</h3>
                                     <p className="post-time">{formatTimeAgo(post.createdAt)}</p>
                                 </div>
                             </div>
-                            <button className="post-menu-btn">⋯</button>
+                            {post.memberId === currentUserId && (
+                                <div className="post-menu-wrapper">
+                                    <button
+                                        className="post-menu-btn"
+                                        onClick={() => handleToggleMenu(post.id)}
+                                    >
+                                        ⋯
+                                    </button>
+                                    {openMenuPostId === post.id && (
+                                        <div className="post-menu-dropdown">
+                                            <button onClick={() => handleEditPost(post.id, post.caption)}>
+                                                <i className="fas fa-edit"></i> 수정
+                                            </button>
+                                            <button onClick={() => handleDeletePost(post.id)} className="delete-btn">
+                                                <i className="fas fa-trash"></i> 삭제
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* 게시물 내용 */}
-                        {post.caption && (
+                        {(post.caption || editingPostId === post.id) && (
                             <div className="post-content">
-                                <p>{post.caption}</p>
+                                {editingPostId === post.id ? (
+                                    <div className="post-edit-container">
+                                        <textarea
+                                            className="post-edit-textarea"
+                                            value={editingCaption}
+                                            onChange={(e) => setEditingCaption(e.target.value)}
+                                            placeholder="게시글 내용을 입력하세요..."
+                                            autoFocus
+                                        />
+                                        <div className="post-edit-actions">
+                                            <button
+                                                className="edit-save-btn"
+                                                onClick={() => handleSaveEdit(post.id)}
+                                            >
+                                                저장
+                                            </button>
+                                            <button
+                                                className="edit-cancel-btn"
+                                                onClick={handleCancelEdit}
+                                            >
+                                                취소
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>{post.caption}</p>
+                                )}
                             </div>
                         )}
 

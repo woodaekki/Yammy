@@ -152,7 +152,7 @@
 .info-input:focus,
 .info-textarea:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: var(--team-color);
 }
 
 .info-textarea {
@@ -164,19 +164,19 @@
 .save-btn {
   width: 100%;
   padding: 16px;
-  background-color: #4CAF50;
+  background-color: var(--team-color);
   color: white;
   border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .save-btn:hover:not(:disabled) {
-  background-color: #45A049;
+  filter: brightness(1.1);
 }
 
 .save-btn:disabled {

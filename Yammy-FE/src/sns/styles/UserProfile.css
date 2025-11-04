@@ -64,7 +64,7 @@
     right: 0;
     width: 24px;
     height: 24px;
-    background-color: #4CAF50;
+    background-color: var(--team-color);
     color: white;
     border-radius: 50%;
     display: flex;
@@ -142,7 +142,7 @@
 
 .link-text {
     font-size: 14px;
-    color: #4CAF50;
+    color: var(--team-color);
     text-decoration: none;
 }
 
@@ -164,7 +164,7 @@
     font-weight: 600;
     cursor: pointer;
     border: none;
-    background-color: #4CAF50;
+    background-color: var(--team-color);
     color: white;
     transition: all 0.2s;
 }
@@ -179,17 +179,17 @@
 }
 
 .follow-button:hover:not(.following) {
-    background-color: #45A049;
+    filter: brightness(1.1);
 }
 
 .message-button {
     flex: 1;
-    background-color: #FF9800;
+    background-color: var(--team-color);
     color: white;
 }
 
 .message-button:hover {
-    background-color: #F57C00;
+    filter: brightness(1.1);
 }
 
 .share-button {
@@ -221,8 +221,8 @@
 }
 
 .tab-button.active {
-    color: #4CAF50;
-    border-bottom-color: #4CAF50;
+    color: var(--team-color);
+    border-bottom-color: var(--team-color);
     font-weight: 700;
 }
 

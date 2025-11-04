@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPost, getComments, createComment, toggleCommentLike, deleteComment as deleteCommentApi } from '../api/snsApi';
+import { getPost, getComments, createComment, toggleCommentLike, deleteComment as deleteCommentApi, togglePostLike } from '../api/snsApi';
 import { getTeamColors } from '../utils/teamColors';
 import '../styles/CommentPage.css';
 
@@ -33,7 +33,7 @@ const CommentPage = () => {
     const [teamColors] = useState(getTeamColors());
 
     // 로컬스토리지에서 사용자 프로필 이미지 가져오기
-    const userProfileImage = localStorage.getItem('profileImage') || 'https://via.placeholder.com/40';
+    const userProfileImage = localStorage.getItem('profileImage') || '/nomal.jpg';
 
     // 게시글 정보 로드
     useEffect(() => {
@@ -80,6 +80,22 @@ const CommentPage = () => {
             ));
         } catch (error) {
             console.error('좋아요 토글 실패:', error);
+        }
+    };
+
+    const handleTogglePostLike = async () => {
+        try {
+            const response = await togglePostLike(postId);
+
+            // 게시물 상태 업데이트
+            setPostData({
+                ...postData,
+                isLiked: response.isLiked,
+                likeCount: response.likeCount
+            });
+        } catch (error) {
+            console.error('게시물 좋아요 토글 실패:', error);
+            alert('좋아요 처리에 실패했습니다.');
         }
     };
 
@@ -132,15 +148,55 @@ const CommentPage = () => {
     };
 
     return (
-        <div className="comment-page">
-            {/* 헤더 */}
-            <div className="comment-header" style={{ backgroundColor: teamColors.bgColor }}>
-                <button onClick={goBack} className="back-btn" style={{ color: teamColors.textColor }}>
-                    ←
-                </button>
-                <h1 className="header-title" style={{ color: teamColors.textColor }}>댓글</h1>
-                <button className="menu-btn" style={{ color: teamColors.textColor }}>⋮</button>
-            </div>
+        <div
+            className="comment-page"
+            style={{
+                '--team-color': teamColors.bgColor,
+                '--team-text-color': teamColors.textColor
+            }}
+        >
+            {/* 게시물 상세 */}
+            {postData && (
+                <div className="post-detail-section">
+                    <div className="post-author-info">
+                        <img
+                            src={postData.profileImage || '/nomal.jpg'}
+                            alt={postData.nickname}
+                            className="post-author-avatar"
+                            onError={(e) => { e.target.src = '/nomal.jpg'; }}
+                        />
+                        <div className="post-author-details">
+                            <h3 className="post-author-name">{postData.nickname}</h3>
+                            <p className="post-time">{formatTimeAgo(postData.createdAt)}</p>
+                        </div>
+                    </div>
+                    {postData.caption && (
+                        <p className="post-caption">{postData.caption}</p>
+                    )}
+                    {postData.imageUrls && postData.imageUrls.length > 0 && (
+                        <div className="post-images">
+                            {postData.imageUrls.map((url, index) => (
+                                <img
+                                    key={index}
+                                    src={url}
+                                    alt={`게시물 이미지 ${index + 1}`}
+                                    className="post-image"
+                                />
+                            ))}
+                        </div>
+                    )}
+                    <div className="post-actions-section">
+                        <button
+                            className={`post-like-btn ${postData.isLiked ? 'liked' : ''}`}
+                            onClick={handleTogglePostLike}
+                        >
+                            <span className="like-icon">{postData.isLiked ? '❤️' : '🤍'}</span>
+                            <span className="like-count">{postData.likeCount || 0}</span>
+                        </button>
+                        <span className="comment-count">💬 {postData.commentCount || 0}</span>
+                    </div>
+                </div>
+            )}
 
             {/* 댓글 목록 */}
             <div className="comments-list">
@@ -151,7 +207,12 @@ const CommentPage = () => {
                 ) : (
                     comments.map(comment => (
                         <div key={comment.id} className="comment-item">
-                            <img src={comment.profileImage || 'https://via.placeholder.com/40'} alt={comment.nickname} className="comment-avatar" />
+                            <img
+                                src={comment.profileImage || '/nomal.jpg'}
+                                alt={comment.nickname}
+                                className="comment-avatar"
+                                onError={(e) => { e.target.src = '/nomal.jpg'; }}
+                            />
                             <div className="comment-content-wrapper">
                                 <div className="comment-header-info">
                                     <span className="comment-author">{comment.nickname}</span>
@@ -181,6 +242,7 @@ const CommentPage = () => {
                     src={userProfileImage}
                     alt="내 프로필"
                     className="my-avatar"
+                    onError={(e) => { e.target.src = '/nomal.jpg'; }}
                 />
                 <div className="input-wrapper">
                     <textarea

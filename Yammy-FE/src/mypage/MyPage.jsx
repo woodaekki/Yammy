@@ -181,7 +181,13 @@ const MyPage = () => {
   };
 
   return (
-    <div className="mypage-container">
+    <div
+      className="mypage-container"
+      style={{
+        '--team-color': teamColors.bgColor,
+        '--team-text-color': teamColors.textColor
+      }}
+    >
       {/* 헤더 */}
       <div className="mypage-header" style={{ backgroundColor: teamColors.bgColor }}>
         <button onClick={() => navigate(-1)} className="back-btn" style={{ color: teamColors.textColor }}>
