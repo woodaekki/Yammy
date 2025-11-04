@@ -108,7 +108,7 @@ BE_Image:
   script:
     - apt-get update -qq && apt-get install -y --no-install-recommends docker.io docker-compose
     - apt-get install -y python3 python3-pip
-    - apt-get install -y awscli
+    - pip install awscli --break-system-packages
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
     - cd ${BACKEND_DIR}
     - chmod +x gradlew
