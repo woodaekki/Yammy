@@ -1,0 +1,146 @@
+.edit-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #333;
+}
+
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f1f1f1;
+  margin-bottom: 1rem; 
+}
+
+
+.edit-back-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.edit-header-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 폼 전체 */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* 입력 필드 */
+.edit-input-field,
+.edit-textarea-field,
+.edit-select {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.edit-input-field:focus,
+.edit-textarea-field:focus,
+.edit-select:focus {
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(153, 153, 153, 0.15);
+}
+
+.edit-textarea-field {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.edit-select {
+  background-color: #fff;
+  color: #333;
+}
+
+/* 이미지 영역 */
+.edit-images {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  box-sizing: border-box;
+}
+
+.edit-images h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+/* 이미지 리스트 */
+.edit-image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.edit-image-item {
+  width: 95px;
+  height: 95px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f4f4f4;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.edit-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 버튼 그룹 */
+.edit-button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 0.8rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+/* 텍스트 버튼 */
+.edit-text-btn {
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  transition: color 0.2s;
+}
+
+.edit-text-btn:hover {
+  color: #444;
+}
+
+.edit-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* 로딩 */
+.edit-loading-text {
+  text-align: center;
+  color: #888;
+  padding: 2rem 0;
+}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getUsedItemById, updateUsedItem } from "../api/usedItemApi"
 import PhotoUploader from "../components/PhotoUploader"
-import "../styles/usedItem.css"
+import "../styles/usedItemEdit.css"
 
 function UsedItemEdit() {
   const params = useParams()
@@ -79,23 +79,23 @@ function UsedItemEdit() {
 
   return (
     <div className="edit-container">
-      <div className="detail-header">
-        <button onClick={() => navigate("/useditem")} className="back-btn">
+      {/* 헤더 */}
+      <div className="edit-header">
+        <button onClick={() => navigate("/useditem")} className="edit-back-btn">
           ←
         </button>
-        <h1 className="header-title">게시글 수정</h1>
-        <div className="header-space"></div>
+        <h1 className="edit-header-title">상품 정보 수정</h1>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="edit-form">
         {/* 제목 */}
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="제목"
+          placeholder="제목을 입력하세요"
           required
-          className="input-field"
+          className="edit-input-field"
         />
 
         {/* 가격 */}
@@ -104,9 +104,9 @@ function UsedItemEdit() {
           name="price"
           value={form.price}
           onChange={handleChange}
-          placeholder="가격"
+          placeholder="가격을 입력하세요"
           required
-          className="input-field"
+          className="edit-input-field"
         />
 
         {/* 설명 */}
@@ -114,9 +114,9 @@ function UsedItemEdit() {
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="설명"
+          placeholder="상품 설명을 입력하세요"
           required
-          className="textarea-field"
+          className="edit-textarea-field"
         ></textarea>
 
         {/* 팀 선택 */}
@@ -125,7 +125,7 @@ function UsedItemEdit() {
           value={form.team}
           onChange={handleChange}
           required
-          className="input-field"
+          className="edit-select"
         >
           <option value="">팀 선택</option>
           <option value="DOOSAN">두산 베어스</option>
@@ -141,38 +141,38 @@ function UsedItemEdit() {
         </select>
 
         {/* 기존 이미지 */}
-        <div className="existing-images">
+        <div className="edit-images">
           <h4>기존 이미지</h4>
           {existingPhotos.length > 0 ? (
-            <div className="image-preview-list">
+            <div className="edit-image-list">
               {existingPhotos.map((url, index) => (
-                <div key={index} className="image-preview-item">
+                <div key={index} className="edit-image-item">
                   <img
                     src={url}
                     alt={"기존 이미지-" + index}
-                    className="preview-img"
+                    className="edit-image-preview"
                   />
                 </div>
               ))}
             </div>
           ) : (
-            <p>기존 이미지가 없습니다.</p>
+            <p className="edit-text">기존 이미지가 없습니다.</p>
           )}
         </div>
 
         {/* 새 이미지 업로더 */}
-        <div style={{ marginTop: "1rem" }}>
+        <div style={{ marginTop: "0.5rem" }}>
           <PhotoUploader onUploaded={handleUploaded} />
         </div>
 
         {/* 버튼 */}
-        <div className="button-group">
-          <button type="submit" className="edit-btn">
+        <div className="edit-button-group">
+          <button type="submit" className="edit-text-btn">
             수정 완료
           </button>
           <button
             type="button"
-            className="delete-btn"
+            className="edit-text-btn"
             onClick={() => navigate("/useditem/" + params.id)}
           >
             취소
