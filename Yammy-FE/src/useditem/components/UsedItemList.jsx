@@ -1,8 +1,15 @@
 import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { getTeamColors } from "../../sns/utils/teamColors" 
 import "../styles/usedItem.css"
 
 function UsedItemList({ items }) {
   const navigate = useNavigate()
+  const [teamColors, setTeamColors] = useState(getTeamColors())
+
+  useEffect(() => {
+    setTeamColors(getTeamColors())
+  }, [])
 
   function goDetail(id) {
     navigate("/useditem/" + id)
@@ -28,14 +35,26 @@ function UsedItemList({ items }) {
 
             <div className="item-info">
               <h3 className="item-title">{item.title}</h3>
-              <p className="item-price">{item.price.toLocaleString()}원</p>
+              <p
+                className="item-price"
+                style={{
+                color: teamColors.bgColor,
+              }}>
+                {item.price.toLocaleString()}원</p>
             </div>
           </div>
         )
       })}
 
        <div className="mypoint-button-container">
-        <button className="mypoint-button" onClick={goMyPoint}>
+        <button
+          className="mypoint-button"
+          onClick={goMyPoint}
+          style={{
+            backgroundColor: teamColors.bgColor,
+            color: teamColors.textColor,
+          }}
+        >
           내 포인트
         </button>
       </div>
