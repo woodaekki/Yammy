@@ -58,6 +58,9 @@ jwt:
   accessExpiration: ${JWT_ACCESS_EXPIRATION:900000}
   refreshExpiration: ${JWT_REFRESH_EXPIRATION:1209600000}
 
+firebase:
+  service-account: classpath:firebase-service-account.json
+  storage-bucket: yammy-chat-games.firebasestorage.app
 # 카카오 OAuth 설정
 kakao:
   rest:

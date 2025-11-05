@@ -28,6 +28,10 @@ public class CustomUserDetails implements UserDetails {
         return member.getName();
     }
 
+    public String getNickname() {
+        return member.getNickname();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Member.Authority 을 ROLE 로 매핑

@@ -16,7 +16,8 @@ Test_Build_BE:
     - CI/CD     # 삭제 예정
     - develop   # 삭제 예정
     - master
-  image: openjdk:17-jdk-slim
+  image: eclipse-temurin:17-jdk
+
   tags:
     - test-build
   services:
@@ -92,7 +93,8 @@ BE_Image:
     - CI/CD     # 삭제 예정
     - develop   # 삭제 예정
     - master
-  image: openjdk:17-jdk-slim
+  image: eclipse-temurin:17-jdk
+
   tags:
     - test-build
   services:
@@ -106,7 +108,7 @@ BE_Image:
   script:
     - apt-get update -qq && apt-get install -y --no-install-recommends docker.io docker-compose
     - apt-get install -y python3 python3-pip
-    - pip install awscli
+    - pip install awscli --break-system-packages
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
     - cd ${BACKEND_DIR}
     - chmod +x gradlew
