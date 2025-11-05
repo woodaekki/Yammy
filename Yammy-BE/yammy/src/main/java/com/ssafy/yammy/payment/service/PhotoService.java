@@ -13,11 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +34,7 @@ import java.util.stream.IntStream;
 public class PhotoService {
 
     private final S3Presigner s3Presigner;
+    private final S3Client s3Client;
     private final PhotoRepository photoRepository;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -87,6 +92,36 @@ public class PhotoService {
         photo.setTemporary(true);
 
         return photoRepository.save(photo);
+    }
+
+    // MultipartFile을 S3에 직접 업로드하고 URL 반환
+    public String uploadPhoto(MultipartFile file) {
+        return uploadPhoto(file, "ticket");
+    }
+
+    // MultipartFile을 S3에 직접 업로드하고 URL 반환 (폴더 경로 지정 가능)
+    public String uploadPhoto(MultipartFile file, String prefix) {
+        try {
+            String s3Key = prefix + "/" + UUID.randomUUID() + ".jpg";
+            String contentType = file.getContentType();
+            if (contentType == null) {
+                contentType = "image/jpeg";
+            }
+
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Key)
+                    .contentType(contentType)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
+            // S3 URL 생성 및 반환
+            return String.format("https://%s.s3.amazonaws.com/%s", bucketName, s3Key);
+        } catch (IOException e) {
+            log.error("파일 업로드 실패", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+        }
     }
 
     private String extractToken(HttpServletRequest request) {

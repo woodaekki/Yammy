@@ -83,6 +83,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/points/**").authenticated()
 
+                        // 경기 정보 조회
+                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
+
+                        // 티켓
+                        .requestMatchers("/api/tickets/**").authenticated()
+
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/admin/chat-rooms/**").hasRole("ADMIN")

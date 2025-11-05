@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import SNSPage from "../sns/SNSPage"
 import CommentPage from "../sns/components/CommentPage"
 import UserProfile from "../sns/components/UserProfile"
@@ -21,6 +21,8 @@ import ProtectedRoute from "./ProtectedRoute"
 import ChangePasswordPage from "../auth/ChangePasswordPage";
 import DeleteAccountPage from "../auth/DeleteAccountPage";
 import MyPage from "../mypage/MyPage";
+import TicketListPage from "../ticket/pages/TicketListPage";
+import TicketCreatePage from "../ticket/pages/TicketCreatePage";
 import TestChatPage from "../chatgames/pages/TestChatPage";
 import ChatGamePage from "../chatgames/pages/ChatGamePage";
 import ChatRoomListPage from "../chatgames/pages/ChatRoomListPage";
@@ -63,6 +65,11 @@ export default function AppRouter() {
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/success" element={<SuccessPage />} />
       <Route path="/fail" element={<FailPage />} />
+
+      {/* Ticket Routes - 로그인 필요 */}
+      <Route path="/ticket" element={<Navigate to="/ticket/list" replace />} />
+      <Route path="/ticket/list" element={<ProtectedRoute><TicketListPage /></ProtectedRoute>} />
+      <Route path="/ticket/create" element={<ProtectedRoute><TicketCreatePage /></ProtectedRoute>} />
      
       {/* Match Routes */}
       <Route path="/match" element={<MatchResultPage />} />

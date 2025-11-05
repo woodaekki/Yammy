@@ -1,0 +1,128 @@
+/* 티켓 모아보기 페이지 */
+.ticket-list-page {
+    min-height: 100vh;
+    background-color: #FFF9E6;
+    padding-bottom: 80px;
+}
+
+/* 헤더 */
+.ticket-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.create-ticket-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+}
+
+/* 안내 문구 */
+.ticket-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.ticket-info p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* 티켓 컨테이너 */
+.tickets-container {
+    padding: 0 16px;
+}
+
+/* 티켓 그리드 */
+.tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ticket-item {
+    width: 100%;
+}
+
+/* 로딩 메시지 */
+.loading-message {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 16px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* 빈 상태 */
+.empty-message {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-message p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 24px 0;
+    font-weight: 600;
+}
+
+.create-first-ticket-btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.create-first-ticket-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .tickets-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .tickets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
