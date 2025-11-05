@@ -15,10 +15,6 @@ function UsedItemList({ items }) {
     navigate("/useditem/" + id)
   }
 
-   function goMyPoint() {
-    navigate("/mypoint") 
-  }
-
   return (
     <div className="item-list-container">
 
@@ -45,19 +41,6 @@ function UsedItemList({ items }) {
           </div>
         )
       })}
-
-       <div className="mypoint-button-container">
-        <button
-          className="mypoint-button"
-          onClick={goMyPoint}
-          style={{
-            backgroundColor: teamColors.bgColor,
-            color: teamColors.textColor,
-          }}
-        >
-          내 포인트
-        </button>
-      </div>
     </div>
   )
 }
