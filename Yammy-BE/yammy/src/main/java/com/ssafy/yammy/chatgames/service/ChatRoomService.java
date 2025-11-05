@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -113,4 +114,9 @@ public class ChatRoomService {
         return chatRoomRepository.findByRoomKey(roomKey)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다: " + roomKey));
     }
+
+    public List<ChatRoom> getActiveRooms() {
+        return chatRoomRepository.findByStatus(RoomStatus.ACTIVE);
+    }
+
 }

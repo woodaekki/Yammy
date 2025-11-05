@@ -12,7 +12,11 @@ import LoginPage from "../auth/LoginPage";
 import SignupPage from "../auth/SignupPage";
 import KakaoCallbackPage from "../auth/KakaoCallbackPage";
 import ProtectedRoute from "./ProtectedRoute";
-
+import TestChatPage from "../chatgames/pages/TestChatPage";
+import ChatGamePage from "../chatgames/pages/ChatGamePage";
+import ChatRoomListPage from "../chatgames/pages/ChatRoomListPage";
+import AdminChatPage from "../chatgames/pages/AdminChatPage";
+import AdminRoute from "./AdminRoute"; 
 export default function AppRouter() {
   return (
     <Routes>
@@ -36,7 +40,14 @@ export default function AppRouter() {
 
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />
-    
+
+      {/* 임시챗팅방 */}
+      <Route path="/test-chat" element={<TestChatPage />} />
+
+      {/* Chat Game Routes*/}
+      <Route path="/cheerup" element={<ProtectedRoute><ChatRoomListPage /></ProtectedRoute>} />
+      <Route path="/cheerup/:roomKey" element={<ProtectedRoute><ChatGamePage /></ProtectedRoute>} />
+      <Route path="/admin/chat" element={<AdminRoute><AdminChatPage /></AdminRoute>} />
     </Routes>
   );
 }

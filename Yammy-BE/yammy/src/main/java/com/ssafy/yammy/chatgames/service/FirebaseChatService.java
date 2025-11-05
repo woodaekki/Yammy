@@ -41,7 +41,7 @@ public class FirebaseChatService {
      * Firestore에 메시지 저장
      * @return 생성된 메시지 ID
      */
-    public String saveMessage(String roomKey, Long memberId, String imageUrl) throws Exception {
+    public String saveMessage(String roomKey, Long memberId, String nickname,String imageUrl) throws Exception {
         Firestore firestore = FirestoreClient.getFirestore();
 
         var docRef = firestore.collection("chatRooms")
@@ -49,6 +49,7 @@ public class FirebaseChatService {
                 .collection("messages")
                 .add(Map.of(
                         "uid", memberId.toString(),
+                        "nickname", nickname,
                         "type", "image",
                         "imageUrl", imageUrl,
                         "createdAt", Timestamp.now()

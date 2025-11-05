@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Tag(name = "Chat Message", description = "채팅 메시지 API")
 @RestController
 @RequestMapping("/api/chat")
@@ -23,6 +25,13 @@ public class ChatMessageController {
 
     private final ChatRoomService chatRoomService;
     private final FirebaseChatService firebaseChatService;
+
+    @Operation(summary = "활성화된 채팅방 목록 조회", description = "ACTIVE 상태인 채팅방 목록 반환")
+    @GetMapping("/rooms")
+    public ResponseEntity<List<ChatRoom>> getActiveRooms() {
+        List<ChatRoom> rooms = chatRoomService.getActiveRooms();
+        return ResponseEntity.ok(rooms);
+    }
 
     @Operation(summary = "이미지 업로드", description = "채팅방에 이미지 전송")
     @PostMapping(value = "/rooms/{roomKey}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -48,6 +57,7 @@ public class ChatMessageController {
         String messageId = firebaseChatService.saveMessage(
                 roomKey,
                 user.getMemberId(),
+                user.getNickname(),
                 imageUrl
         );
 
