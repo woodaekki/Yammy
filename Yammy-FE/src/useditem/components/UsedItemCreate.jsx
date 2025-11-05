@@ -1,9 +1,9 @@
-import { useState, useEffect  } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { createUsedItem } from "../api/usedItemApi"
-import PhotoUploader from "../components/PhotoUploader"
 import { getTeamColors } from "../../sns/utils/teamColors" 
-import "../styles/usedItem.css"
+import PhotoUploader from "../components/PhotoUploader"
+import "../styles/usedItemCreate.css"
 
 function UsedItemCreate() {
   const navigate = useNavigate()
@@ -15,6 +15,10 @@ function UsedItemCreate() {
   const [photoIds, setPhotoIds] = useState([])
   const [teamColors, setTeamColors] = useState(getTeamColors())
 
+  useEffect(() => {
+    setTeamColors(getTeamColors())
+  }, [])
+
   // 에러 메시지 상태
   const [errors, setErrors] = useState({
     title: "",
@@ -23,11 +27,6 @@ function UsedItemCreate() {
     photo: "",
     team: ""
   })
-
-  // 유저 팀 컬러 초기화
-  useEffect(() => {
-    setTeamColors(getTeamColors())
-  }, [])
 
   // 실시간 유효성 검사
   const validate = (field, value) => {
@@ -65,22 +64,22 @@ function UsedItemCreate() {
     setErrors((prev) => ({ ...prev, [field]: message }))
   }
 
+  // 이미지 업로드 완료 시
   function handleUploaded(result) {
     setPhotoIds(result.photoIds)
     validate("photo", result.photoIds)
   }
 
+  // 제출
   async function handleSubmit(event) {
     event.preventDefault()
 
-    // 전체 유효성 검사 실행
     validate("title", title)
     validate("price", price)
     validate("description", description)
     validate("photo", photoIds)
     validate("team", team)
 
-    // 유효성 검사 결과 반영 후 에러 있으면 중단
     if (
       Object.values(errors).some((msg) => msg) ||
       !title ||
@@ -93,11 +92,11 @@ function UsedItemCreate() {
     }
 
     const newItem = {
-      title: title,
+      title,
       price: parseInt(price),
-      description: description,
-      team: team,
-      photoIds: photoIds
+      description,
+      team,
+      photoIds
     }
 
     try {
@@ -111,14 +110,16 @@ function UsedItemCreate() {
   }
 
   return (
-    <div className="useditem-create-container">
-      <div className="detail-header">
-        <button className="back-btn" onClick={() => navigate("/useditem")}>←</button>
-        <h1 className="header-title">게시글 등록</h1>
-        <div className="header-space" />
+    <div className="create-container">
+      {/* 헤더 */}
+      <div className="create-header">
+        <button className="create-back-btn" onClick={() => navigate("/useditem")}>
+          ←
+        </button>
+        <h1 className="create-header-title">게시글 등록</h1>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="create-form">
         {/* 제목 */}
         <input
           type="text"
@@ -128,9 +129,9 @@ function UsedItemCreate() {
             validate("title", e.target.value)
           }}
           placeholder="제목을 입력하세요"
-          className="input-field"
+          className="create-input-field"
         />
-        {errors.title && <p className="error-text">{errors.title}</p>}
+        {errors.title && <p className="create-text">{errors.title}</p>}
 
         {/* 가격 */}
         <input
@@ -141,9 +142,9 @@ function UsedItemCreate() {
             validate("price", e.target.value)
           }}
           placeholder="가격을 입력하세요"
-          className="input-field"
+          className="create-input-field"
         />
-        {errors.price && <p className="error-text">{errors.price}</p>}
+        {errors.price && <p className="create-text">{errors.price}</p>}
 
         {/* 설명 */}
         <textarea
@@ -153,9 +154,9 @@ function UsedItemCreate() {
             validate("description", e.target.value)
           }}
           placeholder="상품 설명을 입력하세요"
-          className="textarea-field"
+          className="create-textarea-field"
         />
-        {errors.description && <p className="error-text">{errors.description}</p>}
+        {errors.description && <p className="create-text">{errors.description}</p>}
 
         {/* 팀 선택 */}
         <select
@@ -164,7 +165,7 @@ function UsedItemCreate() {
             setTeam(e.target.value)
             validate("team", e.target.value)
           }}
-          className="input-field"
+          className="create-select"
         >
           <option value="">팀 선택</option>
           <option value="DOOSAN">두산 베어스</option>
@@ -178,23 +179,29 @@ function UsedItemCreate() {
           <option value="KT">KT 위즈</option>
           <option value="KIWOOM">키움 히어로즈</option>
         </select>
-        {errors.team && <p className="error-text">{errors.team}</p>}
+        {errors.team && <p className="create-text">{errors.team}</p>}
 
         {/* 이미지 업로더 */}
-        <PhotoUploader onUploaded={handleUploaded} />
-        {errors.photo && <p className="error-text">{errors.photo}</p>}
+        <div className="create-images">
+          <h4>이미지 등록</h4>
+          <PhotoUploader onUploaded={handleUploaded} />
+        </div>
+        {errors.photo && <p className="create-text">{errors.photo}</p>}
 
-        <button
-          type="submit"
-          className="submit-btn"
-          style={{
-            backgroundColor: teamColors.bgColor,
-            color: teamColors.textColor
-          }}
-          disabled={Object.values(errors).some((msg) => msg)}
-        >
-          등록
-        </button>
+        {/* 버튼 */}
+        <div className="create-button-group">
+          <button
+            type="submit"
+            className="create-submit-btn"
+            disabled={Object.values(errors).some((msg) => msg)}
+            style={{
+              backgroundColor: teamColors.bgColor,
+              color: teamColors.textColor
+            }}
+          >
+            등록
+          </button>
+        </div>
       </form>
     </div>
   )

@@ -1,0 +1,148 @@
+.create-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #333;
+}
+
+/* 헤더 */
+.create-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f1f1f1;
+  margin-bottom: 1rem;
+}
+
+.create-back-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.create-header-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 폼 전체 */
+.create-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* 입력 필드 */
+.create-input-field,
+.create-textarea-field,
+.create-select {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+/* ✅ 포커스 회색톤 */
+.create-input-field:focus,
+.create-textarea-field:focus,
+.create-select:focus {
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(153, 153, 153, 0.15);
+}
+
+.create-textarea-field {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.create-select {
+  background-color: #fff;
+  color: #333;
+}
+
+/* 이미지 영역 */
+.create-images {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  box-sizing: border-box;
+}
+
+.create-images h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+/* ✅ 이미지 프리뷰 영역 (edit 버전 동일) */
+.create-image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.create-image-item {
+  width: 95px;
+  height: 95px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f4f4f4;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.create-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 버튼 그룹 */
+.create-button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 0.8rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.create-submit-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.create-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 에러 및 일반 텍스트 */
+.create-text {
+  font-size: 0.9rem;
+  color: #d33;
+  margin: -0.4rem 0 0.6rem 0.2rem;
+}
+
+/* 로딩 */
+.create-loading-text {
+  text-align: center;
+  color: #888;
+  padding: 2rem 0;
+}
