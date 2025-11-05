@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "Auth API", description = "인증 관련 API")
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -78,19 +78,21 @@ public class AuthController {
     @Operation(summary = "새로운 AccessToken 발급")
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(
-        @RequestParam String id,
-        @RequestParam String refreshToken
+        @RequestHeader("Authorization") String authorizationHeader,
+        @RequestHeader("X-Refresh-Token") String refreshToken
     ) {
         try {
-            log.info("새로운 토큰 발급 요청: id={}", id);
-            String newAccessToken = authService.refresh(id, refreshToken);
-            log.info("새로운 토큰 발급 성공: id={}", id);
+            // Bearer 접두사 제거
+            String accessToken = authorizationHeader.replace("Bearer ", "");
+            log.info("새로운 토큰 발급 요청");
+            String newAccessToken = authService.refresh(accessToken, refreshToken);
+            log.info("새로운 토큰 발급 성공");
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         } catch (IllegalArgumentException e) {
-            log.warn("토큰 재발급 실패: id={}, 이유={}", id, e.getMessage());
+            log.warn("토큰 재발급 실패: 이유={}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            log.error("토큰 재발급 중 서버 오류: id={}", id, e);
+            log.error("토큰 재발급 중 서버 오류", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "토큰 재발급 처리 중 오류가 발생했습니다."));
         }

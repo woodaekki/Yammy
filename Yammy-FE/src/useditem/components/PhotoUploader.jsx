@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { usePhotoUpload } from "../hooks/usePhotoUpload";
-import "../styles/usedItem.css";
+import { useState } from "react"
+import { usePhotoUpload } from "../hooks/usePhotoUpload"
+import "../styles/usedItem.css"
 
 function PhotoUploader({ onUploaded }) {
-  const { uploadPhotos, uploading } = usePhotoUpload();
-  const [uploadedUrls, setUploadedUrls] = useState([]);
+  const { uploadPhotos, uploading } = usePhotoUpload()
+  const [uploadedUrls, setUploadedUrls] = useState([])
 
   // 파일 선택 시 실행
   function handleFileChange(event) {
-    const files = Array.from(event.target.files);
+    const files = Array.from(event.target.files)
 
     // 업로드 제한 (최대 3장)
     if (uploadedUrls.length + files.length > 3) {
-      alert("이미지는 최대 3장까지만 업로드할 수 있습니다");
+      alert("이미지는 최대 3장까지만 업로드할 수 있습니다")
       return;
     }
 
@@ -20,8 +20,8 @@ function PhotoUploader({ onUploaded }) {
     uploadPhotos(files)
       .then((result) => {
         // 새로 업로드된 이미지 + 기존 이미지 합치기
-        const newUrls = uploadedUrls.concat(result.fileUrls);
-        setUploadedUrls(newUrls);
+        const newUrls = uploadedUrls.concat(result.fileUrls)
+        setUploadedUrls(newUrls)
 
         // 부모 컴포넌트로 결과 전달
         onUploaded({
@@ -30,15 +30,15 @@ function PhotoUploader({ onUploaded }) {
         });
       })
       .catch((error) => {
-        console.error("업로드 실패:", error);
-        alert("사진 업로드 중 오류가 발생했습니다.");
+        console.error("업로드 실패:", error)
+        alert("사진 업로드 중 오류가 발생했습니다.")
       });
   }
 
   // 이미지 삭제
   function handleRemove(index) {
-    const newList = uploadedUrls.filter((_, i) => i !== index);
-    setUploadedUrls(newList);
+    const newList = uploadedUrls.filter((_, i) => i !== index)
+    setUploadedUrls(newList)
 
     // 부모 컴포넌트로 업데이트된 이미지 목록 전달
     onUploaded({
@@ -81,7 +81,7 @@ function PhotoUploader({ onUploaded }) {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default PhotoUploader;
+export default PhotoUploader

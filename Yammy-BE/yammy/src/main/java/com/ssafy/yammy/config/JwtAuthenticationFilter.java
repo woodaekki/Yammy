@@ -35,7 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 공개 경로는 JWT 필터 건너뛰기
         String path = request.getRequestURI();
-        if (path.startsWith("/api/v1/auth/") ||
+        if (path.startsWith("/api/auth/signup") ||
+                path.startsWith("/api/auth/login") ||
+                path.startsWith("/api/auth/email") ||
+                path.startsWith("/api/auth/refresh") ||
                 path.startsWith("/api/oauth/") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
@@ -51,23 +54,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtTokenProvider.validateToken(token)) {
-                String loginId = jwtTokenProvider.getLoginId(token);
+            try {
+                if (jwtTokenProvider.validateToken(token)) {
+                    String loginId = jwtTokenProvider.getLoginId(token);
 
-                // DB에서 UserDetails 조회 (로그인 ID 기반)
-                UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
+                    // DB에서 UserDetails 조회 (로그인 ID 기반)
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
 
-                // SecurityContext에 인증 객체 저장
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+                    // SecurityContext에 인증 객체 저장
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    // 토큰이 유효하지 않으면 401 반환 (프론트엔드의 자동 재발급 트리거)
+                    log.warn("Invalid or expired JWT token");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"error\":\"Invalid or expired token\"}");
+                    return;
+                }
+            } catch (Exception e) {
+                // 토큰 처리 중 예외 발생 시 401 반환
+                log.error("JWT token processing error", e);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"error\":\"Token processing error\"}");
+                return;
             }
         }
 

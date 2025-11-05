@@ -19,7 +19,6 @@ public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "photo_id")
     private Long id;
 
     @Column(name = "file_url", nullable = false)
@@ -31,6 +30,9 @@ public class Photo {
     @Column(name = "content_type", nullable = false)
     private String contentType;
 
+    @Column(nullable = false)
+    private Boolean temporary = true; // 임시 업로드 상태
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -41,8 +43,9 @@ public class Photo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
+    private UsedItem usedItem;
 
-    private com.ssafy.yammy.payment.entity.UsedItem usedItem;
+    // UsedItem <-> Photo 양방향 연결 메서드
     public void assignUsedItem(UsedItem usedItem) {
         this.usedItem = usedItem;
     }

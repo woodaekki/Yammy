@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -91,5 +92,26 @@ public class JwtTokenProvider {
             .build()
             .parseClaimsJws(token)
             .getBody();
+    }
+
+    // 만료된 토큰에서 로그인 ID 추출 (리프레시 시 사용)
+    public String getLoginIdFromExpiredToken(String token) {
+        try {
+            return getClaims(token).getSubject();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        }
+    }
+
+    // 토큰 만료 여부 확인
+    public boolean isTokenExpired(String token) {
+        try {
+            getClaims(token);
+            return false;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return true;
+        }
     }
 }

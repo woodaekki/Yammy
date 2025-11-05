@@ -42,6 +42,7 @@ public class UsedItemService {
                         .price(item.getPrice())
                         .status(item.getStatus())
                         .team(item.getTeam())
+                        .profileUrl(item.getMember() != null ? item.getMember().getProfileImage() : null)
                         .createdAt(item.getCreatedAt())
                         .updatedAt(item.getUpdatedAt())
                         .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
@@ -63,6 +64,7 @@ public class UsedItemService {
                 .price(item.getPrice())
                 .status(item.getStatus())
                 .team(item.getTeam())
+                .profileUrl(item.getMember() != null ? item.getMember().getProfileImage() : null)
                 .createdAt(item.getCreatedAt())
                 .updatedAt(item.getUpdatedAt())
                 .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
@@ -92,7 +94,11 @@ public class UsedItemService {
         // 사진 연결
         if (dto.getPhotoIds() != null && !dto.getPhotoIds().isEmpty()) {
             List<Photo> photos = photoRepository.findAllById(dto.getPhotoIds());
-            photos.forEach(usedItem::addPhoto);
+            photos.forEach(photo -> {
+                photo.setTemporary(false); // 임시 업로드에서 업로드 확정 처리
+                photo.setUsedItem(usedItem);
+            });
+            usedItem.setPhotos(photos);
         }
 
         UsedItem savedItem = usedItemRepository.save(usedItem);
@@ -187,6 +193,7 @@ public class UsedItemService {
                         .price(item.getPrice())
                         .status(item.getStatus())
                         .team(item.getTeam())
+                        .profileUrl(item.getMember() != null ? item.getMember().getProfileImage() : null)
                         .createdAt(item.getCreatedAt())
                         .updatedAt(item.getUpdatedAt())
                         .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())

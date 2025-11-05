@@ -1,0 +1,213 @@
+/* 마이페이지 컨테이너 */
+.mypage-container {
+  background-color: #FFF9E6;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* 헤더 */
+.mypage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #4CAF50;
+}
+
+.back-btn,
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  font-weight: 600;
+}
+
+.back-btn {
+  font-size: 24px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+/* 컨텐츠 */
+.mypage-content {
+  padding: 24px 16px;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.profile-avatar-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.profile-avatar-container.editable {
+  cursor: pointer;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.profile-avatar-container.editable:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-overlay i {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.avatar-overlay span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 정보 그룹 */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #111827;
+  margin: 0;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.info-value.readonly {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.info-input,
+.info-textarea {
+  font-size: 16px;
+  color: #111827;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.info-input:focus,
+.info-textarea:focus {
+  outline: none;
+  border-color: var(--team-color);
+}
+
+.info-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* 저장 버튼 */
+.save-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--team-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.save-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.save-btn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* 팀 토글 버튼 */
+.team-toggle-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.team-toggle-btn {
+  padding: 12px 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.team-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-toggle-btn.active {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

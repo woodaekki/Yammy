@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup, sendVerificationCode, verifyEmail } from './api/authApi';
+import { signup, sendVerificationCode, verifyEmail, login, updateMember } from './api/authApi';
+import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import './styles/auth.css';
 
 export default function SignupPage() {
@@ -23,6 +24,8 @@ export default function SignupPage() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +39,33 @@ export default function SignupPage() {
         [name]: '',
       }));
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 파일 크기 체크 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
+      return;
+    }
+
+    // 파일 타입 체크
+    if (!file.type.startsWith('image/')) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 파일만 업로드 가능합니다' }));
+      return;
+    }
+
+    setProfileImageFile(file);
+    setErrors((prev) => ({ ...prev, profileImage: '' }));
+
+    // 미리보기 생성
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSendCode = async () => {
@@ -102,6 +132,7 @@ export default function SignupPage() {
     if (!formData.email.trim() || !formData.email.includes('@'))
       newErrors.email = '올바른 이메일을 입력해주세요';
     if (!emailVerified) newErrors.email = '이메일 인증을 완료해주세요';
+    if (!formData.team) newErrors.team = '좋아하는 팀을 선택해주세요';
     if (formData.password.length < 8)
       newErrors.password = '비밀번호는 8자 이상이어야 합니다';
     if (formData.password !== formData.confirmPassword)
@@ -126,14 +157,65 @@ export default function SignupPage() {
       name: formData.name.trim(),
       nickname: formData.nickname.trim(),
       email: formData.email.trim(),
-      team: formData.team.trim() || null,
+      team: formData.team,
       gameTag: 0,
-      bio: formData.bio.trim() || null,
-      profileImage: null,
+      bio: formData.bio.trim() || "",
+      profileImage: "/nomal.jpg",
     };
 
     try {
+      // 1. 회원가입
       await signup(signupData);
+
+      // 2. 프로필 이미지가 있으면 업로드
+      if (profileImageFile) {
+        try {
+          // 로그인하여 토큰 얻기
+          const loginResult = await login({
+            id: formData.id.trim(),
+            password: formData.password,
+          });
+
+          // 로그인 성공 시 토큰 저장
+          if (loginResult.accessToken && loginResult.refreshToken) {
+            localStorage.setItem('accessToken', loginResult.accessToken);
+            localStorage.setItem('refreshToken', loginResult.refreshToken);
+
+            // Presigned URL 요청 (profile 폴더에 저장)
+            const presignedData = await getPresignedUrls([profileImageFile], 'profile');
+            const { presignedUrl, s3Key } = presignedData[0];
+
+            // S3에 직접 업로드
+            await fetch(presignedUrl, {
+              method: 'PUT',
+              body: profileImageFile,
+              headers: {
+                'Content-Type': profileImageFile.type,
+              },
+            });
+
+            // 업로드 완료 및 Photo DB 저장
+            const photoResult = await completeUpload({
+              s3Key: s3Key,
+              fileUrl: presignedUrl.split('?')[0],
+              contentType: profileImageFile.type,
+            });
+
+            // 프로필 이미지 URL 업데이트
+            await updateMember({
+              profileImage: photoResult.fileUrl,
+            });
+
+            // 토큰 삭제 (다시 로그인 페이지로 이동)
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          }
+        } catch (uploadErr) {
+          console.error('Profile image upload error:', uploadErr);
+          // 이미지 업로드 실패해도 회원가입은 성공으로 처리
+        }
+      }
+
       alert('회원가입이 완료되었습니다!');
       navigate('/login');
     } catch (err) {
@@ -142,11 +224,6 @@ export default function SignupPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleKakaoSignup = () => {
-    alert('카카오 회원가입 기능은 준비 중입니다.');
-    // TODO: 백엔드 카카오 OAuth API 연동 시 구현
   };
 
   return (
@@ -159,15 +236,6 @@ export default function SignupPage() {
           </button>
           <h2 className="header-title">회원가입</h2>
           <div className="header-spacer"></div>
-        </div>
-
-        {/* 로고 섹션 */}
-        <div className="auth-logo-section small">
-          <div className="auth-logo-icon small">
-            <i className="fas fa-trophy"></i>
-          </div>
-          <h2 className="auth-title small">Yammy 가입하기</h2>
-          <p className="auth-subtitle">스포츠 팬들과 함께하세요</p>
         </div>
 
         {/* 회원가입 폼 */}
@@ -229,6 +297,44 @@ export default function SignupPage() {
               <i className="fas fa-signature input-icon"></i>
             </div>
             {errors.nickname && <span className="error-text">{errors.nickname}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="profileImage" className="form-label">
+              프로필 이미지
+            </label>
+            <div className="profile-image-upload">
+              {profileImagePreview ? (
+                <label htmlFor="profileImage" className="image-preview-container clickable">
+                  <img
+                    src={profileImagePreview}
+                    alt="프로필 미리보기"
+                    className="profile-preview"
+                  />
+                  <div className="image-change-overlay">
+                    <i className="fas fa-camera"></i>
+                    <span>이미지 변경</span>
+                  </div>
+                </label>
+              ) : (
+                <label htmlFor="profileImage" className="image-upload-label">
+                  <i className="fas fa-camera"></i>
+                  <span>프로필 이미지 선택</span>
+                </label>
+              )}
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="image-input"
+                style={{ display: 'none' }}
+              />
+            </div>
+            {errors.profileImage && (
+              <span className="error-text">{errors.profileImage}</span>
+            )}
+            <span className="help-text">최대 5MB, JPG/PNG 형식 (클릭하여 변경)</span>
           </div>
 
           <div className="form-group">
@@ -351,26 +457,37 @@ export default function SignupPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="team" className="form-label">
-              팀 (선택)
+            <label htmlFor="team" className="form-label required">
+              좋아하는 야구팀
             </label>
             <div className="input-wrapper">
-              <input
-                type="text"
+              <select
                 id="team"
                 name="team"
                 value={formData.team}
                 onChange={handleChange}
-                placeholder="좋아하는 팀을 입력하세요"
                 className="form-input"
-              />
-              <i className="fas fa-users input-icon"></i>
+              >
+                <option value="">팀을 선택하세요</option>
+                <option value="LG 트윈스">LG 트윈스</option>
+                <option value="한화 이글스">한화 이글스</option>
+                <option value="SSG 랜더스">SSG 랜더스</option>
+                <option value="삼성 라이온즈">삼성 라이온즈</option>
+                <option value="NC 다이노스">NC 다이노스</option>
+                <option value="KT 위즈">KT 위즈</option>
+                <option value="롯데 자이언츠">롯데 자이언츠</option>
+                <option value="KIA 타이거즈">KIA 타이거즈</option>
+                <option value="두산 베어스">두산 베어스</option>
+                <option value="키움 히어로즈">키움 히어로즈</option>
+              </select>
+              <i className="fas fa-baseball-ball input-icon"></i>
             </div>
+            {errors.team && <span className="error-text">{errors.team}</span>}
           </div>
 
           <div className="form-group">
             <label htmlFor="bio" className="form-label">
-              자기소개 (선택)
+              자기소개
             </label>
             <textarea
               id="bio"
@@ -396,23 +513,6 @@ export default function SignupPage() {
             ) : (
               '회원가입'
             )}
-          </button>
-
-          {/* 구분선 */}
-          <div className="divider">
-            <span>또는</span>
-          </div>
-
-          {/* 카카오 회원가입 */}
-          <button
-            type="button"
-            onClick={handleKakaoSignup}
-            className="btn-kakao"
-          >
-            <svg className="kakao-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.85 1.92 5.34 4.8 6.72-.21.77-.78 2.89-.9 3.36-.15.57.21.57.45.42.18-.12 2.91-1.95 3.75-2.52.6.09 1.23.12 1.9.12 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/>
-            </svg>
-            카카오로 가입하기
           </button>
         </form>
 

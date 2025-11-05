@@ -1,5 +1,5 @@
 .user-profile {
-    background-color: #ffffff;
+    background-color: #FFF9E6;
     min-height: 100vh;
     padding-bottom: 20px;
 }
@@ -10,7 +10,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: none;
     background-color: #ffffff;
 }
 
@@ -32,6 +32,11 @@
 /* 프로필 정보 섹션 */
 .profile-info-section {
     padding: 20px 16px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    margin: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-main {
@@ -50,6 +55,7 @@
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
+    border: none;
 }
 
 .verified-badge {
@@ -58,7 +64,7 @@
     right: 0;
     width: 24px;
     height: 24px;
-    background-color: #1da1f2;
+    background-color: var(--team-color);
     color: white;
     border-radius: 50%;
     display: flex;
@@ -136,7 +142,7 @@
 
 .link-text {
     font-size: 14px;
-    color: #1da1f2;
+    color: var(--team-color);
     text-decoration: none;
 }
 
@@ -157,8 +163,8 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    border: 1px solid #e0e0e0;
-    background-color: #333;
+    border: none;
+    background-color: var(--team-color);
     color: white;
     transition: all 0.2s;
 }
@@ -168,14 +174,22 @@
 }
 
 .follow-button.following {
-    background-color: white;
+    background-color: #e5e7eb;
     color: #333;
+}
+
+.follow-button:hover:not(.following) {
+    filter: brightness(1.1);
 }
 
 .message-button {
     flex: 1;
-    background-color: white;
-    color: #333;
+    background-color: var(--team-color);
+    color: white;
+}
+
+.message-button:hover {
+    filter: brightness(1.1);
 }
 
 .share-button {
@@ -190,6 +204,7 @@
 .tabs-section {
     display: flex;
     border-bottom: 1px solid #e0e0e0;
+    margin: 0 16px;
 }
 
 .tab-button {
@@ -197,7 +212,7 @@
     padding: 12px;
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
     font-size: 14px;
     font-weight: 500;
     color: #666;
@@ -206,9 +221,9 @@
 }
 
 .tab-button.active {
-    color: #333;
-    border-bottom-color: #333;
-    font-weight: 600;
+    color: var(--team-color);
+    border-bottom-color: var(--team-color);
+    font-weight: 700;
 }
 
 /* 컨텐츠 섹션 */
@@ -226,6 +241,13 @@
     aspect-ratio: 1;
     overflow: hidden;
     background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.grid-item:hover {
+    transform: scale(1.05);
 }
 
 .grid-item img {
@@ -236,6 +258,14 @@
 
 /* NFT 그리드 */
 .nfts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+}
+
+/* 티켓 그리드 */
+.tickets-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -341,7 +371,7 @@
 }
 
 .option-item.danger {
-    color: #dc2626;
+    color: #FF5722;
 }
 
 .option-item span {

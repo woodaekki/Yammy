@@ -1,44 +1,22 @@
-import axios from "axios";
+import apiClient from "../../api/apiClient"
 
-const BASE_URL = "http://localhost:8080/api/photos";
-
-// 토큰 가져오기
-const axiosWithAuth = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-axiosWithAuth.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// presigned URL 요청
-export const getPresignedUrls = async (files) => {
-  const count = files.length;
-  const contentType = files[0].type;
-  const res = await axiosWithAuth.post(
-    `/presignedUrls?count=${count}&contentType=${encodeURIComponent(contentType)}`
-  );
-  return res.data;
-};
+// presigned URL 요청 (기본: useditem 폴더)
+export const getPresignedUrls = async (files, prefix = 'useditem') => {
+  const count = files.length
+  const contentType = files[0].type
+  const res = await apiClient.post(
+    `/photos/presignedUrls?count=${count}&contentType=${encodeURIComponent(contentType)}&prefix=${prefix}`
+  )
+  return res.data
+}
 
 // 업로드 완료
 export const completeUpload = async (completeRequest) => {
-  const res = await axiosWithAuth.post(`/complete`, completeRequest);
-  return res.data;
-};
+  const res = await apiClient.post(`/photos/complete`, completeRequest)
+  return res.data
+}
 
-
-// 사진 삭제 
+// 사진 삭제
 export const deletePhoto = async (photoId) => {
-  await axiosWithAuth.delete(`/${photoId}`);
-};
+  await apiClient.delete(`/photos/${photoId}`)
+}

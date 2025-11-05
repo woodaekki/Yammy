@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const API_BASE_URL = 'http://localhost:8080/api';
-const API_BASE_URL = 'http://k13c205.p.ssafy.io/api/v1';
+const API_BASE_URL = 'http://localhost:8080/api';
+// const API_BASE_URL = 'http://k13c205.p.ssafy.io/api/v1';
 
 /**
  * 카카오 로그인 처리 (인증 코드를 백엔드로 전송)

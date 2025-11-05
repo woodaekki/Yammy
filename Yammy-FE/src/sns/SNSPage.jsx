@@ -1,6 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost, updatePost } from './api/snsApi';
+import { getTeamColors } from './utils/teamColors';
 import './styles/SNSPage.css';
+
+// 시간 포맷 헬퍼 함수
+const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return '방금 전';
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+    if (diffInHours < 24) return `${diffInHours}시간 전`;
+    if (diffInDays < 7) return `${diffInDays}일 전`;
+    return date.toLocaleDateString('ko-KR');
+};
 
 const ImageCarousel = ({ images, postId }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,7 +29,7 @@ const ImageCarousel = ({ images, postId }) => {
 
     // 드래그 시작
     const handleDragStart = (e) => {
-        if (images.length <= 1) return; // 이미지가 1개면 드래그 안 함
+        if (images.length <= 1) return;
 
         setIsDragging(true);
         const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
@@ -20,15 +38,14 @@ const ImageCarousel = ({ images, postId }) => {
         setDragStartTime(Date.now());
     };
 
-    // 드래그 중 (실시간으로 따라다님)
+    // 드래그 중
     const handleDragMove = (e) => {
-        if (!isDragging || images.length <= 1) return; // 이미지가 1개면 드래그 안 함
+        if (!isDragging || images.length <= 1) return;
         e.preventDefault();
 
         const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
         const diff = clientX - startPos;
 
-        // 드래그한 거리를 %로 변환
         const containerWidth = e.currentTarget.offsetWidth;
         const movePercentage = (diff / containerWidth) * 100;
 
@@ -37,20 +54,17 @@ const ImageCarousel = ({ images, postId }) => {
 
     // 드래그 종료
     const handleDragEnd = () => {
-        if (!isDragging || images.length <= 1) return; // 이미지가 1개면 드래그 안 함
+        if (!isDragging || images.length <= 1) return;
         setIsDragging(false);
 
         const dragDuration = Date.now() - dragStartTime;
         const isQuickSwipe = dragDuration < 300 && Math.abs(dragOffset) > 10;
 
-        // 다음 이미지로 (왼쪽 스와이프)
         if ((isQuickSwipe && dragOffset < -5) || dragOffset < -30) {
             if (currentIndex < images.length - 1) {
                 setCurrentIndex(currentIndex + 1);
             }
-        }
-        // 이전 이미지로 (오른쪽 스와이프)
-        else if ((isQuickSwipe && dragOffset > 5) || dragOffset > 30) {
+        } else if ((isQuickSwipe && dragOffset > 5) || dragOffset > 30) {
             if (currentIndex > 0) {
                 setCurrentIndex(currentIndex - 1);
             }
@@ -106,121 +120,52 @@ const ImageCarousel = ({ images, postId }) => {
 
 const SNSPage = () => {
     const navigate = useNavigate();
-    const [posts, setPosts] = useState([
-        {
-            id: 1,
-            author: '박재환',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg',
-            time: '2시간 전',
-            content: '오늘 경기 정말 짜릿했다! 마지막 골 장면은 진짜 소름 돋았어 ⚽️🔥',
-            images: [
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/dce6e55300-6e1d23662ab252d21081.png',
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/c9fb85da1e-45116d9a79a3ab78a16e.png',
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/9a28a09c34-1b9e46f46d9df7dbde90.png'
-            ],
-            likes: 127,
-            comments: 23,
-            isLiked: false,
-            isFollowing: false
-        },
-        {
-            id: 2,
-            author: '박영희',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg',
-            time: '4시간 전',
-            content: '새로운 농구화 겟! 이제 더 멋진 슛을 날릴 수 있을 것 같아 🏀✨',
-            images: [
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/98cb1f43e3-528b8a3b540bea1f4652.png'
-            ],
-            likes: 89,
-            comments: 15,
-            isLiked: true,
-            isFollowing: true
-        },
-        {
-            id: 3,
-            author: '이민수',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg',
-            time: '6시간 전',
-            content: '오늘 마라톤 완주! 개인 최고 기록 갱신했다 💪 다음엔 더 빠르게!',
-            images: [
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/60a72d35f1-09cace140106185bf5cc.png',
-                'https://storage.googleapis.com/uxpilot-auth.appspot.com/e769c887d5-dd8311b543509738c710.png'
-            ],
-            likes: 156,
-            comments: 34,
-            isLiked: false,
-            isFollowing: false
-        }
-    ]);
-
+    const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [nextCursor, setNextCursor] = useState(null);
+    const [openMenuPostId, setOpenMenuPostId] = useState(null);
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editingCaption, setEditingCaption] = useState('');
     const observerTarget = useRef(null);
+    const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
+    const teamColors = getTeamColors();
 
-    // 새로운 게시물 데이터 생성 함수
-    const generateNewPosts = (startId) => {
-        const authors = ['김철수', '박영희', '이민수', '정수진', '최민호'];
-        const avatars = [
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg',
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg',
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg'
-        ];
-        const contents = [
-            '오늘 경기 정말 대박이었어요! 🔥',
-            '새로운 운동화 구매했습니다 👟',
-            '아침 조깅 완료! 상쾌하다 ☀️',
-            '헬스장에서 새 기록 달성! 💪',
-            '오늘의 운동 루틴 공유합니다 📝'
-        ];
-        const images = [
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/dce6e55300-6e1d23662ab252d21081.png',
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/98cb1f43e3-528b8a3b540bea1f4652.png',
-            'https://storage.googleapis.com/uxpilot-auth.appspot.com/60a72d35f1-09cace140106185bf5cc.png'
-        ];
+    // 초기 게시글 로드
+    useEffect(() => {
+        loadPosts();
+    }, []);
 
-        return Array.from({ length: 10 }, (_, i) => ({
-            id: startId + i,
-            author: authors[Math.floor(Math.random() * authors.length)],
-            avatar: avatars[Math.floor(Math.random() * avatars.length)],
-            time: `${Math.floor(Math.random() * 12) + 1}시간 전`,
-            content: contents[Math.floor(Math.random() * contents.length)],
-            images: [images[Math.floor(Math.random() * images.length)]],
-            likes: Math.floor(Math.random() * 200) + 50,
-            comments: Math.floor(Math.random() * 50) + 5,
-            isLiked: false,
-            isFollowing: false
-        }));
+    // 게시글 로드 함수
+    const loadPosts = async () => {
+        if (isLoading || !hasMore) return;
+
+        setIsLoading(true);
+
+        try {
+            const response = await getAllPosts(nextCursor);
+            const newPosts = response.posts;
+
+            setPosts(prevPosts => [...prevPosts, ...newPosts]);
+            setNextCursor(response.nextCursor);
+            setHasMore(response.hasNext);
+        } catch (error) {
+            console.error('게시글 로드 실패:', error);
+            alert('게시글을 불러오는데 실패했습니다.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // Intersection Observer 설정
     useEffect(() => {
-        // 더 많은 게시물 로드
-        const loadMorePosts = () => {
-            if (isLoading || !hasMore) return;
-
-            setIsLoading(true);
-
-            // API 호출 시뮬레이션 (0.3초 딜레이로 빠르게)
-            setTimeout(() => {
-                const newPosts = generateNewPosts(posts.length + 1);
-                setPosts(prevPosts => [...prevPosts, ...newPosts]);
-                setIsLoading(false);
-
-                // 100개 이상이면 더 이상 로드하지 않음 (테스트용)
-                if (posts.length >= 100) {
-                    setHasMore(false);
-                }
-            }, 300);
-        };
-
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting && hasMore && !isLoading) {
-                    loadMorePosts();
+                    loadPosts();
                 }
             },
-            { threshold: 0.1, rootMargin: '200px' } // 화면 끝에서 200px 전에 미리 로드
+            { threshold: 0.1, rootMargin: '200px' }
         );
 
         const currentTarget = observerTarget.current;
@@ -234,101 +179,260 @@ const SNSPage = () => {
                 observer.unobserve(currentTarget);
             }
         };
-    }, [hasMore, isLoading, posts.length]);
+    }, [hasMore, isLoading, nextCursor]);
 
-    const toggleLike = (postId) => {
-        setPosts(posts.map(post =>
-            post.id === postId
-                ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
-                : post
-        ));
+    // 좋아요 토글
+    const handleToggleLike = async (postId) => {
+        try {
+            const response = await togglePostLike(postId);
+
+            // 로컬 상태 업데이트
+            setPosts(posts.map(post =>
+                post.id === postId
+                    ? {
+                        ...post,
+                        isLiked: response.isLiked,
+                        likeCount: response.likeCount
+                    }
+                    : post
+            ));
+        } catch (error) {
+            console.error('좋아요 토글 실패:', error);
+            alert('좋아요 처리에 실패했습니다.');
+        }
     };
 
-    const toggleFollow = (postId) => {
-        setPosts(posts.map(post =>
-            post.id === postId
-                ? { ...post, isFollowing: !post.isFollowing }
-                : post
-        ));
+    // 팔로우 토글
+    const handleToggleFollow = async (memberId, isCurrentlyFollowing) => {
+        try {
+            if (isCurrentlyFollowing) {
+                await unfollowUser(memberId);
+            } else {
+                await followUser(memberId);
+            }
+
+            // 로컬 상태 업데이트
+            setPosts(posts.map(post =>
+                post.memberId === memberId
+                    ? { ...post, isFollowing: !isCurrentlyFollowing }
+                    : post
+            ));
+        } catch (error) {
+            console.error('팔로우 토글 실패:', error);
+            alert('팔로우 처리에 실패했습니다.');
+        }
+    };
+
+    // 게시글 수정 모드 시작
+    const handleEditPost = (postId, currentCaption) => {
+        setEditingPostId(postId);
+        setEditingCaption(currentCaption || '');
+        setOpenMenuPostId(null);
+    };
+
+    // 게시글 수정 저장
+    const handleSaveEdit = async (postId) => {
+        try {
+            await updatePost(postId, editingCaption);
+
+            // 로컬 상태 업데이트
+            setPosts(posts.map(post =>
+                post.id === postId
+                    ? { ...post, caption: editingCaption }
+                    : post
+            ));
+
+            setEditingPostId(null);
+            setEditingCaption('');
+        } catch (error) {
+            console.error('게시글 수정 실패:', error);
+            alert('게시글 수정에 실패했습니다.');
+        }
+    };
+
+    // 게시글 수정 취소
+    const handleCancelEdit = () => {
+        setEditingPostId(null);
+        setEditingCaption('');
+    };
+
+    // 게시글 삭제
+    const handleDeletePost = async (postId) => {
+        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+        try {
+            await deletePost(postId);
+
+            // 로컬 상태 업데이트 (게시글 제거)
+            setPosts(posts.filter(post => post.id !== postId));
+
+            setOpenMenuPostId(null);
+            alert('게시글이 삭제되었습니다.');
+        } catch (error) {
+            console.error('게시글 삭제 실패:', error);
+            alert('게시글 삭제에 실패했습니다.');
+        }
+    };
+
+    // 메뉴 토글
+    const handleToggleMenu = (postId) => {
+        setOpenMenuPostId(openMenuPostId === postId ? null : postId);
     };
 
     return (
-        <div className="sns-page">
+        <div
+            className="sns-page"
+            style={{
+                '--team-color': teamColors.bgColor,
+                '--team-text-color': teamColors.textColor
+            }}
+        >
             {/* 피드 섹션 */}
             <div className="feed-container">
                 {posts.map(post => (
                     <div key={post.id} className="post-card">
                         {/* 게시물 헤더 */}
                         <div className="post-header">
-                            <div className="post-author" onClick={() => navigate(`/user/${post.author}`)}>
-                                <img src={post.avatar} alt={post.author} className="author-avatar" />
+                            <div className="post-author" onClick={() => navigate(`/user/${post.memberId}`)}>
+                                <img
+                                    src={post.profileImage || '/nomal.jpg'}
+                                    alt={post.nickname}
+                                    className="author-avatar"
+                                    onError={(e) => { e.target.src = '/nomal.jpg'; }}
+                                />
                                 <div className="author-info">
-                                    <h3 className="author-name">{post.author}</h3>
-                                    <p className="post-time">{post.time}</p>
+                                    <h3 className="author-name">{post.nickname}</h3>
+                                    <p className="post-time">{formatTimeAgo(post.createdAt)}</p>
                                 </div>
                             </div>
-                            <button className="post-menu-btn">⋯</button>
+                            {post.memberId === currentUserId && (
+                                <div className="post-menu-wrapper">
+                                    <button
+                                        className="post-menu-btn"
+                                        onClick={() => handleToggleMenu(post.id)}
+                                    >
+                                        ⋯
+                                    </button>
+                                    {openMenuPostId === post.id && (
+                                        <div className="post-menu-dropdown">
+                                            <button onClick={() => handleEditPost(post.id, post.caption)}>
+                                                <i className="fas fa-edit"></i> 수정
+                                            </button>
+                                            <button onClick={() => handleDeletePost(post.id)} className="delete-btn">
+                                                <i className="fas fa-trash"></i> 삭제
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* 게시물 내용 */}
-                        <div className="post-content">
-                            <p>{post.content}</p>
-                        </div>
+                        {(post.caption || editingPostId === post.id) && (
+                            <div className="post-content">
+                                {editingPostId === post.id ? (
+                                    <div className="post-edit-container">
+                                        <textarea
+                                            className="post-edit-textarea"
+                                            value={editingCaption}
+                                            onChange={(e) => setEditingCaption(e.target.value)}
+                                            placeholder="게시글 내용을 입력하세요..."
+                                            autoFocus
+                                        />
+                                        <div className="post-edit-actions">
+                                            <button
+                                                className="edit-save-btn"
+                                                onClick={() => handleSaveEdit(post.id)}
+                                            >
+                                                저장
+                                            </button>
+                                            <button
+                                                className="edit-cancel-btn"
+                                                onClick={handleCancelEdit}
+                                            >
+                                                취소
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>{post.caption}</p>
+                                )}
+                            </div>
+                        )}
 
                         {/* 게시물 이미지 */}
-                        <ImageCarousel images={post.images} postId={post.id} />
+                        <ImageCarousel images={post.imageUrls} postId={post.id} />
 
                         {/* 게시물 액션 */}
                         <div className="post-actions">
                             <div className="action-buttons">
                                 <button
                                     className={`action-btn ${post.isLiked ? 'liked' : ''}`}
-                                    onClick={() => toggleLike(post.id)}
+                                    onClick={() => handleToggleLike(post.id)}
                                 >
                                     <span className="action-icon">{post.isLiked ? '❤️' : '🤍'}</span>
-                                    <span className="action-count">{post.likes}</span>
+                                    <span className="action-count">{post.likeCount}</span>
                                 </button>
-                                <button className="action-btn" onClick={() => navigate(`/post/${post.id}/comments`)}>
+                                <button
+                                    className="action-btn"
+                                    onClick={() => navigate(`/post/${post.id}/comments`)}
+                                >
                                     <span className="action-icon">💬</span>
-                                    <span className="action-count">{post.comments}</span>
+                                    <span className="action-count">{post.commentCount}</span>
                                 </button>
                                 <button className="action-btn">
                                     <span className="action-icon">📤</span>
                                 </button>
                             </div>
-                            <button
-                                className={`follow-btn ${post.isFollowing ? 'following' : ''}`}
-                                onClick={() => toggleFollow(post.id)}
-                            >
-                                {post.isFollowing ? '팔로잉' : '팔로우'}
-                            </button>
+                            {/* 자신의 게시글이 아닐 때만 팔로우 버튼 표시 */}
+                            {post.memberId !== JSON.parse(localStorage.getItem('memberId') || 'null') && (
+                                <button
+                                    className={`follow-btn ${post.isFollowing ? 'following' : ''}`}
+                                    onClick={() => handleToggleFollow(post.memberId, post.isFollowing)}
+                                >
+                                    {post.isFollowing ? '팔로잉' : '팔로우'}
+                                </button>
+                            )}
                         </div>
 
                         {/* 좋아요 수 */}
                         <div className="post-likes">
-                            <span>좋아요 {post.likes}개</span>
+                            <span>좋아요 {post.likeCount}개</span>
                         </div>
                     </div>
                 ))}
 
-                {/* Intersection Observer 타겟 - 마지막 게시물 아래 */}
+                {/* Intersection Observer 타겟 */}
                 <div ref={observerTarget} className="observer-target" />
 
-                {/* 로딩 인디케이터 - 숨김 (백그라운드 로딩) */}
+                {/* 로딩 인디케이터 */}
                 {isLoading && (
-                    <div className="loading-indicator" style={{ opacity: 0, height: 0 }}>
+                    <div className="loading-indicator">
                         <div className="spinner"></div>
                         <p>게시물을 불러오는 중...</p>
                     </div>
                 )}
 
                 {/* 더 이상 게시물이 없을 때 */}
-                {!hasMore && (
+                {!hasMore && posts.length > 0 && (
                     <div className="end-message">
                         <p>모든 게시물을 확인했습니다 ✓</p>
                     </div>
                 )}
+
+                {/* 게시물이 없을 때 */}
+                {!isLoading && posts.length === 0 && (
+                    <div className="empty-message">
+                        <p>아직 게시물이 없습니다.</p>
+                        <button onClick={() => navigate('/post/create')}>첫 게시물 작성하기</button>
+                    </div>
+                )}
             </div>
+
+            {/* 플로팅 게시글 작성 버튼 */}
+            <button className="floating-create-btn" onClick={() => navigate('/post/create')}>
+                ✏️
+            </button>
         </div>
     );
 };

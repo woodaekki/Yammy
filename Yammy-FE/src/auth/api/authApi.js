@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
-// const API_BASE_URL = 'http://k13c205.p.ssafy.io/api/v1';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // Axios 인스턴스 생성
 const authApi = axios.create({
@@ -36,13 +35,20 @@ authApi.interceptors.response.use(
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem('refreshToken');
-      const loginId = localStorage.getItem('loginId');
+      const accessToken = localStorage.getItem('accessToken');
 
-      if (refreshToken && loginId) {
+      if (refreshToken && accessToken) {
         try {
-          // 리프레시 토큰으로 액세스 토큰 재발급
+          // 리프레시 토큰으로 액세스 토큰 재발급 (Header 방식)
           const response = await axios.post(
-            `${API_BASE_URL}/auth/refresh?id=${loginId}&refreshToken=${refreshToken}`
+            `${API_BASE_URL}/auth/refresh`,
+            {},
+            {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'X-Refresh-Token': refreshToken,
+              }
+            }
           );
 
           const newAccessToken = response.data.accessToken;
@@ -62,7 +68,7 @@ authApi.interceptors.response.use(
           return Promise.reject(refreshError);
         }
       } else {
-        // 리프레시 토큰이나 loginId가 없는 경우
+        // 리프레시 토큰이나 accessToken이 없는 경우
         localStorage.clear();
         alert('로그인이 필요한 서비스입니다.');
         window.location.href = '/login';
@@ -118,11 +124,17 @@ export const verifyEmail = async (email, code) => {
 /**
  * 토큰 갱신
  */
-export const refreshAccessToken = async (loginId, refreshToken) => {
-  const response = await authApi.post('/auth/refresh', {
-    id: loginId,
-    refreshToken: refreshToken,
-  });
+export const refreshAccessToken = async (accessToken, refreshToken) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/auth/refresh`,
+    {},
+    {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Refresh-Token': refreshToken,
+      }
+    }
+  );
   return response.data;
 };
 
@@ -137,16 +149,16 @@ export const changePassword = async (passwordData) => {
 /**
  * 회원 정보 수정
  */
-export const updateMember = async (loginId, updateData) => {
-  const response = await authApi.put(`/auth/update?id=${loginId}`, updateData);
+export const updateMember = async (updateData) => {
+  const response = await authApi.put('/auth/update', updateData);
   return response.data;
 };
 
 /**
  * 회원 탈퇴
  */
-export const deleteMember = async (loginId) => {
-  const response = await authApi.delete(`/auth/delete?id=${loginId}`);
+export const deleteMember = async () => {
+  const response = await authApi.delete('/auth/delete');
   return response.data;
 };
 

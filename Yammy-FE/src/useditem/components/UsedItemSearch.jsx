@@ -1,14 +1,21 @@
-import { useState } from "react";
-import "../styles/usedItem.css";
+import { useState, useEffect } from "react"
+import { getTeamColors } from "../../sns/utils/teamColors" 
+import "../styles/usedItem.css"
 
 function UsedItemSearch({ onSearch }) {
-  const [keyword, setKeyword] = useState("");
-  const [team, setTeam] = useState("");
+  const [keyword, setKeyword] = useState("")
+  const [team, setTeam] = useState("")
+  const [teamColors, setTeamColors] = useState(getTeamColors()) 
+  
+  // 로그인한 유저의 팀 컬러 반영
+  useEffect(() => {
+    setTeamColors(getTeamColors())
+  }, [])
 
   // 검색 버튼 클릭 or Enter 입력 시 호출
   function handleSearch(e) {
-    e.preventDefault();
-    onSearch({ keyword, team });
+    e.preventDefault()
+    onSearch({ keyword, team })
   }
 
   return (
@@ -41,7 +48,15 @@ function UsedItemSearch({ onSearch }) {
         className="search-input"
       />
 
-      <button type="submit" className="search-btn">
+      {/* 팀 컬러 적용 버튼 */}
+      <button
+        type="submit"
+        className="search-btn"
+        style={{
+          backgroundColor: teamColors.bgColor,
+          color: teamColors.textColor,
+        }}
+      >
         검색
       </button>
     </form>

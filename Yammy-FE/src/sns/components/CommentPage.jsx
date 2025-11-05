@@ -1,93 +1,118 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getPost, getComments, createComment, toggleCommentLike, deleteComment as deleteCommentApi, togglePostLike } from '../api/snsApi';
+import { getTeamColors } from '../utils/teamColors';
 import '../styles/CommentPage.css';
+
+// 시간 포맷 헬퍼 함수
+const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return '방금 전';
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+    if (diffInHours < 24) return `${diffInHours}시간 전`;
+    if (diffInDays < 7) return `${diffInDays}일 전`;
+    return date.toLocaleDateString('ko-KR');
+};
 
 const CommentPage = () => {
     const navigate = useNavigate();
     const { postId } = useParams();
 
-    const [comments, setComments] = useState([
-        {
-            id: 1,
-            author: '이수진',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg',
-            time: '1시간 전',
-            content: '완전 동감해요! 특히 후반전 역전골이 진짜 짜릿했어요 ⚽️',
-            likes: 8,
-            isLiked: false,
-            replies: []
-        },
-        {
-            id: 2,
-            author: '박준호',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg',
-            time: '45분 전',
-            content: '골키퍼 선방도 대단했어요! 정말 명경기였네요 👏',
-            likes: 12,
-            isLiked: true,
-            replies: [
-                {
-                    id: 21,
-                    author: '김민수',
-                    avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg',
-                    time: '30분 전',
-                    content: '맞아요! 그 선방 장면 GIF로 만들어야겠어요 😄'
-                }
-            ]
-        },
-        {
-            id: 3,
-            author: '정미영',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg',
-            time: '20분 전',
-            content: '다음 경기도 기대되네요! 같이 응원해요 💪',
-            likes: 5,
-            isLiked: false,
-            replies: []
-        }
-    ]);
-
+    const [postData, setPostData] = useState(null);
+    const [comments, setComments] = useState([]);
     const [commentInput, setCommentInput] = useState('');
     const [showCommentMenu, setShowCommentMenu] = useState(false);
     const [selectedCommentId, setSelectedCommentId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [teamColors] = useState(getTeamColors());
 
-    const postPreview = {
-        author: '김민수',
-        avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg',
-        time: '2시간 전',
-        content: '오늘 경기 정말 대박이었다! 마지막 골 장면에서 소름이 돋았어요 🔥',
-        likes: 127,
-        comments: 23
+    // 로컬스토리지에서 사용자 프로필 이미지 가져오기
+    const userProfileImage = localStorage.getItem('profileImage') || '/nomal.jpg';
+
+    // 게시글 정보 로드
+    useEffect(() => {
+        loadPost();
+        loadComments();
+    }, [postId]);
+
+    const loadPost = async () => {
+        try {
+            const response = await getPost(postId);
+            setPostData(response);
+        } catch (error) {
+            console.error('게시글 로드 실패:', error);
+            alert('게시글을 불러올 수 없습니다.');
+            navigate(-1);
+        }
+    };
+
+    const loadComments = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getComments(postId);
+            setComments(response.comments || []);
+        } catch (error) {
+            console.error('댓글 로드 실패:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const goBack = () => {
         navigate(-1);
     };
 
-    const toggleLike = (commentId) => {
-        setComments(comments.map(comment =>
-            comment.id === commentId
-                ? { ...comment, isLiked: !comment.isLiked, likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1 }
-                : comment
-        ));
+    const toggleLike = async (commentId) => {
+        try {
+            const response = await toggleCommentLike(commentId);
+
+            // 로컬 상태 업데이트
+            setComments(comments.map(comment =>
+                comment.id === commentId
+                    ? { ...comment, isLiked: response.isLiked, likeCount: response.likeCount }
+                    : comment
+            ));
+        } catch (error) {
+            console.error('좋아요 토글 실패:', error);
+        }
     };
 
-    const handleCommentSubmit = () => {
+    const handleTogglePostLike = async () => {
+        try {
+            const response = await togglePostLike(postId);
+
+            // 게시물 상태 업데이트
+            setPostData({
+                ...postData,
+                isLiked: response.isLiked,
+                likeCount: response.likeCount
+            });
+        } catch (error) {
+            console.error('게시물 좋아요 토글 실패:', error);
+            alert('좋아요 처리에 실패했습니다.');
+        }
+    };
+
+    const handleCommentSubmit = async () => {
         if (!commentInput.trim()) return;
 
-        const newComment = {
-            id: Date.now(),
-            author: '나',
-            avatar: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg',
-            time: '방금 전',
-            content: commentInput,
-            likes: 0,
-            isLiked: false,
-            replies: []
-        };
-
-        setComments([newComment, ...comments]);
-        setCommentInput('');
+        try {
+            await createComment(postId, commentInput);
+            setCommentInput('');
+            // 댓글 목록 새로고침
+            loadComments();
+            // 게시글 정보도 새로고침 (댓글 수 업데이트)
+            loadPost();
+        } catch (error) {
+            console.error('댓글 작성 실패:', error);
+            alert('댓글 작성에 실패했습니다.');
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -107,90 +132,117 @@ const CommentPage = () => {
         setSelectedCommentId(null);
     };
 
-    const deleteComment = () => {
-        setComments(comments.filter(comment => comment.id !== selectedCommentId));
-        closeCommentMenu();
+    const handleDeleteComment = async () => {
+        try {
+            await deleteCommentApi(selectedCommentId);
+            // 댓글 목록에서 제거
+            setComments(comments.filter(comment => comment.id !== selectedCommentId));
+            closeCommentMenu();
+            // 게시글 정보 새로고침 (댓글 수 업데이트)
+            loadPost();
+        } catch (error) {
+            console.error('댓글 삭제 실패:', error);
+            alert('댓글 삭제에 실패했습니다.');
+            closeCommentMenu();
+        }
     };
 
     return (
-        <div className="comment-page">
-            {/* 헤더 */}
-            <div className="comment-header">
-                <button onClick={goBack} className="back-btn">
-                    ←
-                </button>
-                <h1 className="header-title">댓글</h1>
-                <button className="menu-btn">⋮</button>
-            </div>
-
-            {/* 게시물 미리보기 */}
-            <div className="post-preview">
-                <div className="post-preview-author">
-                    <img src={postPreview.avatar} alt={postPreview.author} />
-                    <div>
-                        <span className="author-name">{postPreview.author}</span>
-                        <span className="post-time">{postPreview.time}</span>
+        <div
+            className="comment-page"
+            style={{
+                '--team-color': teamColors.bgColor,
+                '--team-text-color': teamColors.textColor
+            }}
+        >
+            {/* 게시물 상세 */}
+            {postData && (
+                <div className="post-detail-section">
+                    <div className="post-author-info">
+                        <img
+                            src={postData.profileImage || '/nomal.jpg'}
+                            alt={postData.nickname}
+                            className="post-author-avatar"
+                            onError={(e) => { e.target.src = '/nomal.jpg'; }}
+                        />
+                        <div className="post-author-details">
+                            <h3 className="post-author-name">{postData.nickname}</h3>
+                            <p className="post-time">{formatTimeAgo(postData.createdAt)}</p>
+                        </div>
+                    </div>
+                    {postData.caption && (
+                        <p className="post-caption">{postData.caption}</p>
+                    )}
+                    {postData.imageUrls && postData.imageUrls.length > 0 && (
+                        <div className="post-images">
+                            {postData.imageUrls.map((url, index) => (
+                                <img
+                                    key={index}
+                                    src={url}
+                                    alt={`게시물 이미지 ${index + 1}`}
+                                    className="post-image"
+                                />
+                            ))}
+                        </div>
+                    )}
+                    <div className="post-actions-section">
+                        <button
+                            className={`post-like-btn ${postData.isLiked ? 'liked' : ''}`}
+                            onClick={handleTogglePostLike}
+                        >
+                            <span className="like-icon">{postData.isLiked ? '❤️' : '🤍'}</span>
+                            <span className="like-count">{postData.likeCount || 0}</span>
+                        </button>
+                        <span className="comment-count">💬 {postData.commentCount || 0}</span>
                     </div>
                 </div>
-                <p className="post-content">{postPreview.content}</p>
-                <div className="post-stats">
-                    <span>좋아요 {postPreview.likes}개</span>
-                    <span>댓글 {postPreview.comments}개</span>
-                </div>
-            </div>
+            )}
 
             {/* 댓글 목록 */}
             <div className="comments-list">
-                {comments.map(comment => (
-                    <div key={comment.id} className="comment-item">
-                        <img src={comment.avatar} alt={comment.author} className="comment-avatar" />
-                        <div className="comment-content-wrapper">
-                            <div className="comment-header-info">
-                                <span className="comment-author">{comment.author}</span>
-                                <span className="comment-time">{comment.time}</span>
-                            </div>
-                            <p className="comment-text">{comment.content}</p>
-                            <div className="comment-actions">
-                                <button
-                                    className={`like-btn ${comment.isLiked ? 'liked' : ''}`}
-                                    onClick={() => toggleLike(comment.id)}
-                                >
-                                    {comment.isLiked ? '❤️' : '🤍'} {comment.likes}
-                                </button>
-                                <button className="reply-btn">답글</button>
-                                <button className="more-btn" onClick={() => openCommentMenu(comment.id)}>
-                                    ⋯
-                                </button>
-                            </div>
-
-                            {/* 답글 */}
-                            {comment.replies.length > 0 && (
-                                <div className="replies">
-                                    {comment.replies.map(reply => (
-                                        <div key={reply.id} className="reply-item">
-                                            <img src={reply.avatar} alt={reply.author} className="reply-avatar" />
-                                            <div>
-                                                <div className="reply-header-info">
-                                                    <span className="reply-author">{reply.author}</span>
-                                                    <span className="reply-time">{reply.time}</span>
-                                                </div>
-                                                <p className="reply-text">{reply.content}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                {isLoading ? (
+                    <div className="loading-message">댓글을 불러오는 중...</div>
+                ) : comments.length === 0 ? (
+                    <div className="empty-comments">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</div>
+                ) : (
+                    comments.map(comment => (
+                        <div key={comment.id} className="comment-item">
+                            <img
+                                src={comment.profileImage || '/nomal.jpg'}
+                                alt={comment.nickname}
+                                className="comment-avatar"
+                                onError={(e) => { e.target.src = '/nomal.jpg'; }}
+                            />
+                            <div className="comment-content-wrapper">
+                                <div className="comment-header-info">
+                                    <span className="comment-author">{comment.nickname}</span>
+                                    <span className="comment-time">{formatTimeAgo(comment.createdAt)}</span>
                                 </div>
-                            )}
+                                <p className="comment-text">{comment.content}</p>
+                                <div className="comment-actions">
+                                    <button
+                                        className={`like-btn ${comment.isLiked ? 'liked' : ''}`}
+                                        onClick={() => toggleLike(comment.id)}
+                                    >
+                                        {comment.isLiked ? '❤️' : '🤍'} {comment.likeCount}
+                                    </button>
+                                    <button className="more-btn" onClick={() => openCommentMenu(comment.id)}>
+                                        ⋯
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
             {/* 댓글 입력 */}
             <div className="comment-input-section">
                 <img
-                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
+                    src={userProfileImage}
                     alt="내 프로필"
                     className="my-avatar"
+                    onError={(e) => { e.target.src = '/nomal.jpg'; }}
                 />
                 <div className="input-wrapper">
                     <textarea
@@ -216,7 +268,7 @@ const CommentPage = () => {
                     <div className="comment-menu-content" onClick={(e) => e.stopPropagation()}>
                         <h3>댓글 옵션</h3>
                         <button className="menu-option">수정하기</button>
-                        <button className="menu-option delete" onClick={deleteComment}>삭제하기</button>
+                        <button className="menu-option delete" onClick={handleDeleteComment}>삭제하기</button>
                         <button className="menu-option">신고하기</button>
                         <button className="cancel-btn" onClick={closeCommentMenu}>취소</button>
                     </div>
