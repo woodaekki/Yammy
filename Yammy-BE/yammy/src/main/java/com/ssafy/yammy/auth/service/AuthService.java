@@ -127,6 +127,7 @@ public class AuthService {
             member.getTeam(),
             member.getExp(),
             member.getAuthority().name(),
+            member.getProfileImage(),
             accessToken,
             refreshToken
         );

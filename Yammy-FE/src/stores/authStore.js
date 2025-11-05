@@ -25,6 +25,7 @@ const useAuthStore = create(
         if (userData.name) localStorage.setItem('name', userData.name);
         if (userData.email) localStorage.setItem('email', userData.email);
         if (userData.team) localStorage.setItem('team', userData.team);
+        if (userData.profileImage) localStorage.setItem('profileImage', userData.profileImage);
 
         set({
           isLoggedIn: true,
@@ -36,6 +37,7 @@ const useAuthStore = create(
             email: userData.email,
             team: userData.team,
             authority: userData.authority,
+            profileImage: userData.profileImage,
           },
         });
       },
@@ -51,6 +53,7 @@ const useAuthStore = create(
         localStorage.removeItem('name');
         localStorage.removeItem('email');
         localStorage.removeItem('team');
+        localStorage.removeItem('profileImage');
 
         set({
           isLoggedIn: false,
@@ -72,6 +75,7 @@ const useAuthStore = create(
               email: localStorage.getItem('email'),
               team: localStorage.getItem('team'),
               authority: localStorage.getItem('authority'),
+              profileImage: localStorage.getItem('profileImage'),
             },
           });
         } else {

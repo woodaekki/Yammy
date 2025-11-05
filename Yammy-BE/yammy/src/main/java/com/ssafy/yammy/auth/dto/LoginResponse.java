@@ -17,6 +17,7 @@ public class LoginResponse {
     private String team;
     private Long exp;
     private String authority;  // ADMIN or USER
+    private String profileImage;
     private String accessToken;
     private String refreshToken;
 }

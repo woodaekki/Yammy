@@ -89,6 +89,7 @@ public class KakaoOAuthService {
                 member.getTeam(),
                 member.getExp(),
                 member.getAuthority().name(),
+                member.getProfileImage(),
                 accessToken,
                 refreshToken
             );
