@@ -97,9 +97,8 @@
   object-fit: cover;
 }
 .detail-thumbnail.active {
-  border-color: #ff7e36;
+  border-color: #64748b ;
   transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(255, 126, 54, 0.3);
 }
 
 /* 본문 */
@@ -150,14 +149,13 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #1f2937;
-  line-height: 1.3;
+  line-height: 0.5;
 }
 
 .detail-date {
   font-size: 0.8rem;
   color: #6b7280;
-  line-height: 1.3;
-  margin-top: 0.1rem;
+  line-height: 0.2;
 }
 
 /* 버튼 */
@@ -189,6 +187,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .detail-chat-btn:hover {
   background-color: #ff6b1f;
   transform: translateY(-1px);
@@ -215,7 +214,6 @@
   width: fit-content;
   text-align: center; 
 }
-
 
 /* 상품 설명 */
 .detail-description {
