@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup, sendVerificationCode, verifyEmail } from './api/authApi';
+import { signup, sendVerificationCode, verifyEmail, login, updateMember } from './api/authApi';
+import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import './styles/auth.css';
 
 export default function SignupPage() {
@@ -23,6 +24,8 @@ export default function SignupPage() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +39,33 @@ export default function SignupPage() {
         [name]: '',
       }));
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 파일 크기 체크 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
+      return;
+    }
+
+    // 파일 타입 체크
+    if (!file.type.startsWith('image/')) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 파일만 업로드 가능합니다' }));
+      return;
+    }
+
+    setProfileImageFile(file);
+    setErrors((prev) => ({ ...prev, profileImage: '' }));
+
+    // 미리보기 생성
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSendCode = async () => {
@@ -102,6 +132,7 @@ export default function SignupPage() {
     if (!formData.email.trim() || !formData.email.includes('@'))
       newErrors.email = '올바른 이메일을 입력해주세요';
     if (!emailVerified) newErrors.email = '이메일 인증을 완료해주세요';
+    if (!formData.team) newErrors.team = '좋아하는 팀을 선택해주세요';
     if (formData.password.length < 8)
       newErrors.password = '비밀번호는 8자 이상이어야 합니다';
     if (formData.password !== formData.confirmPassword)
@@ -126,14 +157,65 @@ export default function SignupPage() {
       name: formData.name.trim(),
       nickname: formData.nickname.trim(),
       email: formData.email.trim(),
-      team: formData.team.trim() || null,
+      team: formData.team,
       gameTag: 0,
-      bio: formData.bio.trim() || null,
+      bio: formData.bio.trim() || "",
       profileImage: "/nomal.jpg",
     };
 
     try {
+      // 1. 회원가입
       await signup(signupData);
+
+      // 2. 프로필 이미지가 있으면 업로드
+      if (profileImageFile) {
+        try {
+          // 로그인하여 토큰 얻기
+          const loginResult = await login({
+            id: formData.id.trim(),
+            password: formData.password,
+          });
+
+          // 로그인 성공 시 토큰 저장
+          if (loginResult.accessToken && loginResult.refreshToken) {
+            localStorage.setItem('accessToken', loginResult.accessToken);
+            localStorage.setItem('refreshToken', loginResult.refreshToken);
+
+            // Presigned URL 요청 (profile 폴더에 저장)
+            const presignedData = await getPresignedUrls([profileImageFile], 'profile');
+            const { presignedUrl, s3Key } = presignedData[0];
+
+            // S3에 직접 업로드
+            await fetch(presignedUrl, {
+              method: 'PUT',
+              body: profileImageFile,
+              headers: {
+                'Content-Type': profileImageFile.type,
+              },
+            });
+
+            // 업로드 완료 및 Photo DB 저장
+            const photoResult = await completeUpload({
+              s3Key: s3Key,
+              fileUrl: presignedUrl.split('?')[0],
+              contentType: profileImageFile.type,
+            });
+
+            // 프로필 이미지 URL 업데이트
+            await updateMember({
+              profileImage: photoResult.fileUrl,
+            });
+
+            // 토큰 삭제 (다시 로그인 페이지로 이동)
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          }
+        } catch (uploadErr) {
+          console.error('Profile image upload error:', uploadErr);
+          // 이미지 업로드 실패해도 회원가입은 성공으로 처리
+        }
+      }
+
       alert('회원가입이 완료되었습니다!');
       navigate('/login');
     } catch (err) {
@@ -215,6 +297,44 @@ export default function SignupPage() {
               <i className="fas fa-signature input-icon"></i>
             </div>
             {errors.nickname && <span className="error-text">{errors.nickname}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="profileImage" className="form-label">
+              프로필 이미지
+            </label>
+            <div className="profile-image-upload">
+              {profileImagePreview ? (
+                <label htmlFor="profileImage" className="image-preview-container clickable">
+                  <img
+                    src={profileImagePreview}
+                    alt="프로필 미리보기"
+                    className="profile-preview"
+                  />
+                  <div className="image-change-overlay">
+                    <i className="fas fa-camera"></i>
+                    <span>이미지 변경</span>
+                  </div>
+                </label>
+              ) : (
+                <label htmlFor="profileImage" className="image-upload-label">
+                  <i className="fas fa-camera"></i>
+                  <span>프로필 이미지 선택</span>
+                </label>
+              )}
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="image-input"
+                style={{ display: 'none' }}
+              />
+            </div>
+            {errors.profileImage && (
+              <span className="error-text">{errors.profileImage}</span>
+            )}
+            <span className="help-text">최대 5MB, JPG/PNG 형식 (클릭하여 변경)</span>
           </div>
 
           <div className="form-group">
@@ -337,7 +457,7 @@ export default function SignupPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="team" className="form-label">
+            <label htmlFor="team" className="form-label required">
               좋아하는 야구팀
             </label>
             <div className="input-wrapper">
@@ -362,6 +482,7 @@ export default function SignupPage() {
               </select>
               <i className="fas fa-baseball-ball input-icon"></i>
             </div>
+            {errors.team && <span className="error-text">{errors.team}</span>}
           </div>
 
           <div className="form-group">

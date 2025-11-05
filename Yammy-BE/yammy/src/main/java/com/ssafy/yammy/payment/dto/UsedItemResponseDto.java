@@ -20,6 +20,7 @@ public class UsedItemResponseDto {
     private Team team;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String profileUrl;
     private List<String> imageUrls;
 
 }

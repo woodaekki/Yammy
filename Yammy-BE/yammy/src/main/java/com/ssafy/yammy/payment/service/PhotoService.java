@@ -37,11 +37,16 @@ public class PhotoService {
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
-    // Presigned URL 생성
+    // Presigned URL 생성 (기본: useditem 폴더)
     public List<PhotoUploadResponse> generatePresignedUrls(int count, String contentType) {
+        return generatePresignedUrls(count, contentType, "useditem");
+    }
+
+    // Presigned URL 생성 (폴더 경로 지정 가능)
+    public List<PhotoUploadResponse> generatePresignedUrls(int count, String contentType, String prefix) {
         return IntStream.range(0, count)
                 .mapToObj(i -> {
-                    String s3Key = "useditem/" + UUID.randomUUID() + ".jpg";
+                    String s3Key = prefix + "/" + UUID.randomUUID() + ".jpg";
 
                     PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                             .bucket(bucketName)

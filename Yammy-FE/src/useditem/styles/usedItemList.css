@@ -1,0 +1,93 @@
+.list-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: #fff;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* 카드 */
+.list-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.list-card:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 이미지 */
+.list-image-container {
+  width: 100%;
+  padding-bottom: 100%; 
+  position: relative;
+  background: #fafafa;
+}
+
+.list-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-no-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.9rem;
+  background-color: #f8f8f8;
+}
+
+/* 정보 영역 */
+.list-info {
+  padding: 0.7rem 0.8rem;
+}
+
+.list-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+
+.list-price {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* 포인트 버튼 */
+.list-point-container {
+  grid-column: 1 / -1; 
+  display: flex;
+  justify-content: center;
+  margin-top: 1.4rem;
+}
+
+.list-point-button {
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.list-point-button:hover {
+  opacity: 0.9;
+}

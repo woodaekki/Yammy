@@ -9,6 +9,8 @@ import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
 import UsedItemChat from "../chat/components/UsedItemChat"
 import MyPoint from "../payment/components/Mypoint"
+import MatchResultPage from "../match/MatchResultPage";
+import MatchResultDetailPage from "../match/components/MatchResultDetailPage";
 import CheckoutPage from "../payment/pages/CheckoutPage"
 import SuccessPage from "../payment/pages/SuccessPage"
 import FailPage from "../payment/pages/FailPage"
@@ -61,6 +63,10 @@ export default function AppRouter() {
       <Route path="/ticket" element={<Navigate to="/ticket/list" replace />} />
       <Route path="/ticket/list" element={<ProtectedRoute><TicketListPage /></ProtectedRoute>} />
       <Route path="/ticket/create" element={<ProtectedRoute><TicketCreatePage /></ProtectedRoute>} />
+     
+      {/* Match Routes */}
+      <Route path="/match" element={<MatchResultPage />} />
+      <Route path="/match/:matchcode" element={<MatchResultDetailPage />} />
 
     </Routes>
   );

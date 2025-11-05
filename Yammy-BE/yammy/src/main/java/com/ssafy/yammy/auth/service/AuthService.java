@@ -20,7 +20,9 @@ import com.ssafy.yammy.config.JwtTokenProvider;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -137,15 +139,26 @@ public class AuthService {
     public String refresh(String accessToken, String refreshToken) {
         // 만료된 Access Token에서 loginId 추출
         String loginId = jwtTokenProvider.getLoginIdFromExpiredToken(accessToken);
+        log.info("토큰 갱신 시도: loginId={}", loginId);
 
         // Redis에서 저장된 Refresh Token 가져오기
         String savedToken = refreshTokenRepository.findByLoginId(loginId);
-        if (savedToken == null || !savedToken.equals(refreshToken)) {
+        log.info("Redis에서 조회한 토큰: {}", savedToken != null ? "존재함" : "없음");
+
+        if (savedToken == null) {
+            log.warn("Redis에 저장된 RefreshToken이 없습니다. loginId={}", loginId);
+            throw new IllegalArgumentException("유효하지 않은 RefreshToken입니다.");
+        }
+
+        if (!savedToken.equals(refreshToken)) {
+            log.warn("RefreshToken 불일치. loginId={}", loginId);
+            log.debug("저장된 토큰: {}, 받은 토큰: {}", savedToken, refreshToken);
             throw new IllegalArgumentException("유효하지 않은 RefreshToken입니다.");
         }
 
         // Refresh Token이 만료되었는지 확인
         if (jwtTokenProvider.isTokenExpired(refreshToken)) {
+            log.warn("RefreshToken이 만료됨. loginId={}", loginId);
             throw new IllegalArgumentException("RefreshToken이 만료되었습니다. 다시 로그인해주세요.");
         }
 
@@ -154,6 +167,7 @@ public class AuthService {
             .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID입니다."));
 
         // 새 Access Token 생성
+        log.info("새로운 AccessToken 생성 성공. loginId={}", loginId);
         return jwtTokenProvider.createAccessToken(
             member.getMemberId(),
             member.getId(),

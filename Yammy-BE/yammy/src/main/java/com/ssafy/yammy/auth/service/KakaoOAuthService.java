@@ -6,6 +6,7 @@ import com.ssafy.yammy.auth.dto.KakaoUser;
 import com.ssafy.yammy.auth.dto.LoginResponse;
 import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.auth.repository.MemberRepository;
+import com.ssafy.yammy.auth.repository.RefreshTokenRepository;
 import com.ssafy.yammy.config.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +28,12 @@ public class KakaoOAuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final com.ssafy.yammy.payment.repository.PointRepository pointRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${jwt.refreshExpiration}")
+    private long refreshExpiration;
 
     @Value("${kakao.rest.api.key}")
     private String restApiKey;
@@ -70,6 +75,9 @@ public class KakaoOAuthService {
                 member.getId(),
                 member.getAuthority().name()
             );
+
+            // Redis에 Refresh Token 저장 (로그인 ID 기반)
+            refreshTokenRepository.save(member.getId(), refreshToken, refreshExpiration);
 
             // 5. 응답 반환
             return new LoginResponse(
