@@ -32,9 +32,11 @@ public class PhotoController {
     @PostMapping("/presignedUrls")
     public ResponseEntity<List<PhotoUploadResponse>> getPresignedUrls(
             @RequestParam int count,
-            @RequestParam String contentType) {
+            @RequestParam String contentType,
+            @RequestParam(defaultValue = "useditem") String prefix) {
 
-        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(count, contentType);
+        log.info("Presigned URL 요청 - count: {}, contentType: {}, prefix: {}", count, contentType, prefix);
+        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(count, contentType, prefix);
         return ResponseEntity.ok(responses);
     }
 

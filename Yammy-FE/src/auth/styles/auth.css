@@ -517,4 +517,105 @@
   margin-bottom: 1.5rem;
 }
 
+/* Profile Image Upload */
+.profile-image-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e5e7eb;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.image-preview-container:hover {
+  border-color: #3b82f6;
+}
+
+.profile-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-change-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: white;
+  gap: 0.25rem;
+}
+
+.image-preview-container:hover .image-change-overlay {
+  opacity: 1;
+}
+
+.image-change-overlay i {
+  font-size: 1.5rem;
+}
+
+.image-change-overlay span {
+  font-size: 0.75rem;
+}
+
+.image-upload-label {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed #d1d5db;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #f9fafb;
+  transition: all 0.2s;
+  gap: 0.5rem;
+}
+
+.image-upload-label:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.image-upload-label i {
+  font-size: 2rem;
+  color: #9ca3af;
+}
+
+.image-upload-label:hover i {
+  color: #3b82f6;
+}
+
+.image-upload-label span {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.help-text {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
 
