@@ -4,6 +4,7 @@ import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import logo from "../../assets/images/logo.png";
+import gugong from "../../assets/images/gugong.png";
 import "./NavigationBar.css";
 
 const NavigationBarTop = () => {
@@ -48,10 +49,16 @@ const NavigationBarTop = () => {
     isLoggedIn &&
     (location.pathname === "/useditem" || location.pathname === "/mypoint");
 
+  // ✅ 페이지별 로고 변경
+  const currentLogo =
+    location.pathname === "/useditem" || location.pathname === "/mypoint"
+      ? gugong
+      : logo;
+
   return (
     <nav className="nav-bar-top" style={{ backgroundColor: teamColors.bgColor }}>
       <div className="sns-logo" onClick={() => navigate("/")}>
-        <img src={logo} alt="Yammy" className="sns-logo-img" />
+        <img src={currentLogo} alt="Yammy" className="sns-logo-img" />
       </div>
 
       <div className="header-right">
@@ -80,13 +87,16 @@ const NavigationBarTop = () => {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                 >
                   <i className="fas fa-user-circle"></i>
-                  <span className="user-nickname">{user?.nickname || "사용자"}</span>
+                  <span className="user-nickname">
+                    {user?.nickname || "사용자"}
+                  </span>
                   <i
                     className={`fas fa-chevron-down ${
                       showUserMenu ? "rotate" : ""
                     }`}
                   ></i>
                 </button>
+
                 {showUserMenu && (
                   <div className="user-dropdown">
                     <button onClick={() => navigate("/mypage")}>

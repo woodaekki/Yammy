@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,9 @@ public class UsedItemController {
     // 전체 조회
     @Operation(summary = "중고 거래 목록 전체 조회")
     @GetMapping
-    public ResponseEntity<List<UsedItemResponseDto>> getAllTrades() {
-        return ResponseEntity.ok(usedItemService.getAllTrades());
+    // pageable은 기본 10장씩 지원함
+    public ResponseEntity<Page<UsedItemResponseDto>> getAllTrades(Pageable pageable) {
+        return ResponseEntity.ok(usedItemService.getAllTrades(pageable));
     }
 
     // 단건 조회
