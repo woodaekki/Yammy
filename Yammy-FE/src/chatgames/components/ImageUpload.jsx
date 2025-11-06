@@ -1,3 +1,4 @@
+import imageCompression from "browser-image-compression";
 import { useRef } from "react";
 import { chatMessageApi } from "../api/chatApi";
 import "../styles/ImageUpload.css";
