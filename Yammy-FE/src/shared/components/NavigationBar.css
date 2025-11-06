@@ -233,3 +233,58 @@
 .npay-point-balance {
   font-weight: bold;
 }
+
+/* === 야구 페이 (Ypay) 스타일 === */
+.ypay-baseball-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fffdf8;
+  border: 2px solid #e36a00;
+  border-radius: 12px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 4px rgba(227, 106, 0, 0.15);
+}
+
+.ypay-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.ypay-logo-circle {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 2px solid #e36a00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.ypay-balance {
+  color: #1e3a5f;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.ypay-charge-btn {
+  background-color: #e36a00;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ypay-charge-btn:hover {
+  background-color: #ff812e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(227, 106, 0, 0.3);
+}

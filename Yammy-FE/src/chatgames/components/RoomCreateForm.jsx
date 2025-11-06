@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { chatRoomApi } from '../api/chatApi';
+import "../styles/RoomCreateForm.css";
 
 /**
  * 채팅방 생성 폼 컴포넌트
@@ -29,7 +30,6 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 유효성 검사
     if (!formData.name.trim()) {
       setError('채팅방 이름을 입력해주세요.');
       return;
@@ -43,15 +43,11 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
       setLoading(true);
       setError(null);
 
-      // 백엔드에 전송
       const result = await chatRoomApi.createRoom(formData);
       console.log('✅ 채팅방 생성 성공:', result);
       
-      if (onSuccess) {
-        onSuccess(result);
-      }
+      if (onSuccess) onSuccess(result);
 
-      // 폼 초기화
       setFormData({
         roomKey: '',
         name: '',
@@ -69,30 +65,28 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">새 채팅방 만들기</h2>
+    <div className="room-create-form">
+      <h2 className="room-create-title">새 채팅방 만들기</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="room-create-form-inner">
         {/* 채팅방 키 (선택) */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            채팅방 키 (선택사항)
-          </label>
+        <div className="form-group">
+          <label className="form-label">채팅방 키 (선택사항)</label>
           <input
             type="text"
             name="roomKey"
             value={formData.roomKey}
             onChange={handleChange}
             placeholder="비워두면 자동 생성"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="form-input"
           />
-          <p className="text-xs text-gray-500 mt-1">예: kia-vs-lg-20251103</p>
+          <p className="form-hint">예: kia-vs-lg-20251103</p>
         </div>
 
         {/* 채팅방 이름 */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            채팅방 이름 <span className="text-red-500">*</span>
+        <div className="form-group">
+          <label className="form-label required">
+            채팅방 이름
           </label>
           <input
             type="text"
@@ -101,16 +95,14 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
             onChange={handleChange}
             placeholder="KIA vs LG"
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="form-input"
           />
         </div>
 
         {/* 홈팀 & 원정팀 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              홈팀 <span className="text-red-500">*</span>
-            </label>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label required">홈팀</label>
             <input
               type="text"
               name="homeTeam"
@@ -118,13 +110,11 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
               onChange={handleChange}
               placeholder="KIA"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-input"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              원정팀 <span className="text-red-500">*</span>
-            </label>
+          <div className="form-group">
+            <label className="form-label required">원정팀</label>
             <input
               type="text"
               name="awayTeam"
@@ -132,53 +122,47 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
               onChange={handleChange}
               placeholder="LG"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-input"
             />
           </div>
         </div>
 
         {/* 경기 시작 시간 */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            경기 시작 시간
-          </label>
+        <div className="form-group">
+          <label className="form-label">경기 시작 시간</label>
           <input
             type="datetime-local"
             name="startAt"
             value={formData.startAt}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="form-input"
           />
         </div>
 
         {/* 더블헤더 */}
-        <div className="flex items-center">
+        <div className="form-checkbox">
           <input
             type="checkbox"
             name="doubleHeader"
             checked={formData.doubleHeader}
             onChange={handleChange}
             id="doubleHeader"
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="checkbox-input"
           />
-          <label htmlFor="doubleHeader" className="ml-2 text-sm text-gray-700">
+          <label htmlFor="doubleHeader" className="checkbox-label">
             더블헤더 경기
           </label>
         </div>
 
         {/* 에러 메시지 */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
+        {error && <div className="form-error">{error}</div>}
 
         {/* 버튼 */}
-        <div className="flex gap-3 pt-2">
+        <div className="form-buttons">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold transition-colors"
+            className="btn-primary"
           >
             {loading ? '생성 중...' : '생성하기'}
           </button>
@@ -187,7 +171,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
               type="button"
               onClick={onCancel}
               disabled={loading}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="btn-secondary"
             >
               취소
             </button>
