@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { chatMessageApi } from '../api/chatApi';
+import imageCompression from 'browser-image-compression';  // ← 추가!
 
 /**
  * 이미지 업로드 컴포넌트
@@ -10,10 +11,30 @@ import { chatMessageApi } from '../api/chatApi';
 export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError }) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [compressing, setCompressing] = useState(false);  // ← 추가!
   const fileInputRef = useRef(null);
 
-  // 파일 선택 핸들러
-  const handleFileSelect = (event) => {
+  // 이미지 압축 함수 ← 추가!
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 1,          // 최대 1MB
+      maxWidthOrHeight: 1920, // 최대 1920px
+      useWebWorker: true,     // 웹 워커 사용 (성능 향상)
+    };
+
+    try {
+      console.log('원본 크기:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+      const compressedFile = await imageCompression(file, options);
+      console.log('압축 후 크기:', (compressedFile.size / 1024 / 1024).toFixed(2), 'MB');
+      return compressedFile;
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file; // 압축 실패 시 원본 반환
+    }
+  };
+
+  // 파일 선택 핸들러 (수정)
+  const handleFileSelect = async (event) => {  // ← async 추가
     const file = event.target.files[0];
     if (!file) return;
 
@@ -29,18 +50,29 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
       return;
     }
 
-    // 미리보기 생성
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+    try {
+      // 압축 시작 ← 추가!
+      setCompressing(true);
+      const compressedFile = await compressImage(file);
+      setCompressing(false);
 
-    // 자동 업로드
-    handleUpload(file);
+      // 미리보기 생성 (압축된 파일로)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(compressedFile);
+
+      // 자동 업로드 (압축된 파일로)
+      handleUpload(compressedFile);
+    } catch (error) {
+      console.error('압축 중 오류:', error);
+      setCompressing(false);
+      alert('이미지 처리 중 오류가 발생했습니다.');
+    }
   };
 
-  // 업로드 처리
+  // 업로드 처리 (그대로)
   const handleUpload = async (file) => {
     try {
       setUploading(true);
@@ -49,8 +81,8 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
       const result = await chatMessageApi.uploadImage(roomKey, file);
 
       console.log('✅ 업로드 성공:', result);
-      setPreview(null); // 미리보기 초기화
-      fileInputRef.current.value = ''; // input 초기화
+      setPreview(null);
+      fileInputRef.current.value = '';
 
       if (onUploadSuccess) {
         onUploadSuccess(result);
@@ -68,7 +100,7 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
     }
   };
 
-  // 취소 버튼
+  // 취소 버튼 (그대로)
   const handleCancel = () => {
     setPreview(null);
     fileInputRef.current.value = '';
@@ -84,7 +116,7 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
             alt="preview"
             className="max-h-40 rounded mx-auto"
           />
-          {!uploading && (
+          {!uploading && !compressing && (  // ← 수정!
             <button
               onClick={handleCancel}
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
@@ -104,7 +136,7 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
           type="file"
           accept="image/*"
           onChange={handleFileSelect}
-          disabled={uploading}
+          disabled={uploading || compressing}  // ← 수정!
           className="hidden"
           id="image-upload"
         />
@@ -112,30 +144,32 @@ export default function ImageUpload({ roomKey, onUploadSuccess, onUploadError })
         <label
           htmlFor="image-upload"
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg cursor-pointer transition-colors ${
-            uploading
+            uploading || compressing  // ← 수정!
               ? 'bg-gray-300 cursor-not-allowed'
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           }`}
         >
-          {uploading ? (
+          {compressing ? (  // ← 추가!
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span>압축 중...</span>
+            </>
+          ) : uploading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               <span>업로드 중...</span>
             </>
           ) : (
             <>
-              {/* <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg> */}
               <span className="font-semibold">이미지 선택</span>
             </>
           )}
         </label>
       </div>
 
-      {/* 안내 문구 */}
+      {/* 안내 문구 (수정) */}
       <p className="text-xs text-gray-500 mt-2 text-center">
-        10MB 이하의 이미지 파일 (JPG, PNG, GIF 등)
+        10MB 이하의 이미지 파일 (자동 압축 후 업로드)
       </p>
     </div>
   );
