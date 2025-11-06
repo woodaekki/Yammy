@@ -12,6 +12,8 @@ import com.ssafy.yammy.payment.repository.PhotoRepository;
 import com.ssafy.yammy.payment.repository.UsedItemRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,10 +31,8 @@ public class UsedItemService {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 전체 조회
-    public List<UsedItemResponseDto> getAllTrades() {
-        List<UsedItem> items = usedItemRepository.findAll();
-
-        return items.stream()
+    public Page<UsedItemResponseDto> getAllTrades(Pageable pageable) {
+        return usedItemRepository.findAll(pageable)
                 .map(item -> UsedItemResponseDto.builder()
                         .id(item.getId())
                         .memberId(item.getMember() != null ? item.getMember().getMemberId() : null)
@@ -46,8 +46,7 @@ public class UsedItemService {
                         .createdAt(item.getCreatedAt())
                         .updatedAt(item.getUpdatedAt())
                         .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
-                        .build())
-                .collect(Collectors.toList());
+                        .build());
     }
 
     // 단건 조회

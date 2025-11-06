@@ -1,85 +1,82 @@
-/**
- * 게임 정보 헤더 컴포넌트
- * @param {Object} room - 채팅방 정보
- */
+import "../styles/GameHeader.css";
+
 export default function GameHeader({ room }) {
   if (!room) {
     return (
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
-        <div className="animate-pulse">
-          <div className="h-8 bg-blue-400 rounded w-1/2 mb-3"></div>
-          <div className="h-4 bg-blue-400 rounded w-1/3"></div>
-        </div>
+      <div className="game-header loading">
+        <div className="skeleton title"></div>
+        <div className="skeleton subtitle"></div>
       </div>
     );
   }
 
-  // 상태별 표시
   const statusConfig = {
-    DRAFT: { text: '준비 중', color: 'bg-gray-500', icon: '⏳' },
-    ACTIVE: { text: '진행 중', color: 'bg-green-500', icon: '●' },
-    CANCELED: { text: '취소됨', color: 'bg-red-500', icon: '✕' }
+    DRAFT: { text: "준비 중", color: "gray" },
+    ACTIVE: { text: "진행 중", color: "green" },
+    CANCELED: { text: "취소됨", color: "red" },
   };
 
   const status = statusConfig[room.status] || statusConfig.DRAFT;
 
-  // 날짜 포맷팅
+  const teamColors = {
+    KIA: "#E41E26",
+    LG: "#3C1361",
+    DOOSAN: "#0C2340",
+    SSG: "#E31937",
+    LOTTE: "#002D62",
+    NC: "#1D428A",
+    KT: "#C8102E",
+    HANWHA: "#FF5F00",
+    SAMSUNG: "#0047AB",
+    KIWOOM: "#76232F",
+    DEFAULT: "#9CA3AF",
+  };
+
+  const homeColor = teamColors[room.homeTeam] || teamColors.DEFAULT;
+  const awayColor = teamColors[room.awayTeam] || teamColors.DEFAULT;
+
   const formatDate = (dateString) => {
-    if (!dateString) return '';
-    
+    if (!dateString) return "";
     const date = new Date(dateString);
-    const options = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      weekday: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    
-    return date.toLocaleString('ko-KR', options);
+    return date.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
-      {/* 팀 정보 */}
-      <div className="flex items-center justify-center gap-4 mb-3">
-        <div className="text-right">
-          <span className="text-2xl font-bold">{room.homeTeam || '홈팀'}</span>
-          <span className="text-xs block text-blue-100">HOME</span>
-        </div>
-        
-        <div className="text-3xl font-bold px-3">VS</div>
-        
-        <div className="text-left">
-          <span className="text-2xl font-bold">{room.awayTeam || '원정팀'}</span>
-          <span className="text-xs block text-blue-100">AWAY</span>
-        </div>
-      </div>
+    <div className="game-header-wrapper">
+      <div
+        className="team-band"
+        style={{
+          background: `linear-gradient(to right, ${homeColor} 50%, ${awayColor} 50%)`,
+        }}
+      />
+      <div className="game-header">
+        <div className="game-header-teams">
+          <div className="team-block">
+            <div className="team-circle" style={{ backgroundColor: homeColor }} />
+            <span className="team-name">{room.homeTeam || "홈팀"}</span>
+          </div>
 
-      {/* 경기 정보 */}
-      <div className="text-center space-y-1">
-        <h1 className="text-lg font-semibold">{room.name}</h1>
-        
-        {room.startAt && (
-          <p className="text-sm text-blue-100">
-            📅 {formatDate(room.startAt)}
-          </p>
-        )}
-        
-        {room.doubleHeader && (
-          <span className="inline-block bg-blue-400 text-white text-xs px-3 py-1 rounded-full">
-            🔄 더블헤더
-          </span>
-        )}
-      </div>
+          <div className="vs-circle">VS</div>
 
-      {/* 상태 표시 */}
-      <div className="mt-4 flex items-center justify-center gap-2">
-        <span className={`inline-flex items-center gap-1 ${status.color} text-white text-xs px-3 py-1 rounded-full`}>
-          <span>{status.icon}</span>
-          <span>{status.text}</span>
-        </span>
+          <div className="team-block">
+            <span className="team-name">{room.awayTeam || "원정팀"}</span>
+            <div className="team-circle" style={{ backgroundColor: awayColor }} />
+          </div>
+        </div>
+
+        <div className="game-header-info">
+          <h2 className="game-title">{room.name}</h2>
+          <p className="game-date">{formatDate(room.startAt)}</p>
+        </div>
+
+        <div className={`game-status ${status.color}`}>{status.text}</div>
       </div>
     </div>
   );

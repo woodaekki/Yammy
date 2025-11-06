@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getTeamColors } from "../../sns/utils/teamColors" 
-import "../styles/usedItem.css"
+import "../styles/usedItemList.css"
 
 function UsedItemList({ items }) {
   const navigate = useNavigate()

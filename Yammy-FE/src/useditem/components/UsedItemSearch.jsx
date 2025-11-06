@@ -51,7 +51,7 @@ function UsedItemSearch({ onSearch }) {
       {/* 팀 컬러 적용 버튼 */}
       <button
         type="submit"
-        className="search-btn"
+        className="search-button"
         style={{
           backgroundColor: teamColors.bgColor,
           color: teamColors.textColor,
