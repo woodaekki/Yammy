@@ -1,9 +1,9 @@
 import apiClient from "../../api/apiClient"
 
 // 전체 조회
-export const getAllUsedItems = async () => {
-  const res = await apiClient.get(`/trades`)
-  return res.data
+export const getAllUsedItems = async (page = 0, size = 10) => {
+  const res = await apiClient.get(`/trades?page=${page}&size=${size}`)
+  return res.data.content // Page 객체에서 content만 가져오기
 }
 
 // 단건 조회
@@ -30,9 +30,9 @@ export const deleteUsedItem = async (id) => {
 }
 
 // 팀 또는 키워드 검색
-export const searchUsedItems = async ({ keyword = "", team = "" }) => {
+export const searchUsedItems = async ({ keyword = "", team = "", page = 0, size = 10 }) => {
   const res = await apiClient.get(`/trades/search`, {
-    params: { keyword, team },
+    params: { keyword, team, page, size },
   })
   return res.data
 }
