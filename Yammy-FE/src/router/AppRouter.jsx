@@ -57,7 +57,10 @@ export default function AppRouter() {
       <Route path="/useditem/:id" element={<UsedItemDetail />} />
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
-      <Route path="/useditem/:id/chat" element={<UsedItemChatPage />} />
+
+      {/* UsedItem Chat Routes */}
+      <Route path="/useditem/chat/:roomKey" element={<UsedItemChatPage />} />
+      <Route path="/chatlist" element={<UsedItemChatList />} />
       
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />
@@ -81,7 +84,6 @@ export default function AppRouter() {
       <Route path="/cheerup" element={<ProtectedRoute><ChatRoomListPage /></ProtectedRoute>} />
       <Route path="/cheerup/:roomKey" element={<ProtectedRoute><ChatGamePage /></ProtectedRoute>} />
       <Route path="/admin/chat" element={<AdminRoute><AdminChatPage /></AdminRoute>} />
-      <Route path="/chatlist" element={<UsedItemChatList />} />
     </Routes>
   );
 }

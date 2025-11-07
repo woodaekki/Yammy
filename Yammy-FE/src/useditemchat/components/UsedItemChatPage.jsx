@@ -11,10 +11,10 @@ import '../styles/UsedItemChatPage.css';
  * 중고거래 1:1 채팅 페이지
  */
 export default function UsedItemChatPage() {
-  const { id } = useParams(); // usedItemId
+  const { roomKey } = useParams(); // 채팅방 키
   const navigate = useNavigate();
 
-  const [roomKey, setRoomKey] = useState(null); // 현재 채팅방 키
+  const [chatRoomInfo, setChatRoomInfo] = useState(null); // 채팅방 정보
   const [itemInfo, setItemInfo] = useState(null); // 물품 정보
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 메시지
@@ -23,21 +23,21 @@ export default function UsedItemChatPage() {
   // 실시간 메시지 구독
   const { messages, loading: loadingMessages, error: messageError } = useUsedItemChatMessages(roomKey);
 
-  // 채팅방 생성/입장 및 물품 정보 로드
+  // 채팅방 정보 및 물품 정보 로드
   useEffect(() => {
-    if (!id) return;
+    if (!roomKey) return;
 
     const initChat = async () => {
       try {
         setLoading(true);
 
-        // 1. 채팅방 생성/입장
-        const chatRoom = await usedItemChatApi.createOrEnterChatRoom(id);
+        // 1. 채팅방 정보 조회
+        const chatRoom = await usedItemChatApi.getChatRoom(roomKey);
         console.log('Chat room:', chatRoom);
-        setRoomKey(chatRoom.roomKey);
+        setChatRoomInfo(chatRoom);
 
         // 2. 물품 정보 조회
-        const item = await getUsedItemById(id);
+        const item = await getUsedItemById(chatRoom.usedItemId);
         console.log('Item info:', item);
         setItemInfo(item);
 
@@ -50,7 +50,7 @@ export default function UsedItemChatPage() {
     };
 
     initChat();
-  }, [id]);
+  }, [roomKey]);
 
   // 에러 처리
   if (error || messageError) {
@@ -60,8 +60,8 @@ export default function UsedItemChatPage() {
           <div className="chat-error-icon">⚠️</div>
           <h2 className="chat-error-title">채팅방 오류</h2>
           <p className="chat-error-message">{error || messageError}</p>
-          <button onClick={() => navigate(`/useditem/${id}`)} className="chat-error-button">
-            물품 상세로 돌아가기
+          <button onClick={() => navigate('/chatlist')} className="chat-error-button">
+            채팅방 목록으로 돌아가기
           </button>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function UsedItemChatPage() {
         <div className="chat-header-inner">
           <div className="chat-header-content">
             {/* 뒤로가기 버튼 */}
-            <button onClick={() => navigate(`/useditem/${id}`)} className="chat-back-button">
+            <button onClick={() => navigate('/chatlist')} className="chat-back-button">
               <svg className="chat-back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
