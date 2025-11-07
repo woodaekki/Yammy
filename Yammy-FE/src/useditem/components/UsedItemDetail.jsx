@@ -154,7 +154,7 @@ function UsedItemDetail() {
         {/* 가격과 팀명 구분 */}
         <div className="detail-price-team">
           {/* 가격 */}
-          <p className="detail-price">{item.price?.toLocaleString()} 원</p>
+          <p className="detail-price">{item.price?.toLocaleString()} 얌</p>
 
           {/* 팀명 */}
           {item.team && (

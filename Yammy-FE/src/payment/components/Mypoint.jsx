@@ -74,7 +74,7 @@ function MyPoint() {
               color: teamColors.textColor,
             }}
         >
-          {format(amount)}원 충전하기
+          {format(amount)}얌 충전하기
         </button>
       </div>
     </div>

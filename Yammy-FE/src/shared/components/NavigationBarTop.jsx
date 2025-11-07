@@ -68,7 +68,7 @@ const NavigationBarTop = () => {
               <div className="ypay-logo-circle">⚾</div>
               <span className="ypay-balance">
                 {balance !== null
-                  ? `${format(balance)}원`
+                  ? `${format(balance)}얌`
                   : error
                   ? "오류"
                   : "로딩 중..."}
