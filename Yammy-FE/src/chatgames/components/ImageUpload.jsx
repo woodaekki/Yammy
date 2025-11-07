@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { chatMessageApi } from "../api/chatApi";
 import "../styles/ImageUpload.css";
 
-export default function ImageUpload({ roomKey }) {
+export default function ImageUpload({ roomKey, apiUploadFunction }) {
   const fileRef = useRef(null);
 
   const compressImage = async (file) => {
@@ -43,8 +43,12 @@ export default function ImageUpload({ roomKey }) {
         return;
       }
 
-      // 기존 업로드 호출
-      await chatMessageApi.uploadImage(roomKey, compressedFile);
+      // 업로드 함수 호출 (커스텀 함수가 있으면 사용, 없으면 기본 chatMessageApi 사용)
+      if (apiUploadFunction) {
+        await apiUploadFunction(compressedFile);
+      } else {
+        await chatMessageApi.uploadImage(roomKey, compressedFile);
+      }
     } catch (err) {
       alert("업로드 실패");
       console.error(err);

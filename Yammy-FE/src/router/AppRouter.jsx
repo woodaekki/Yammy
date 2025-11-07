@@ -7,7 +7,7 @@ import PostCreate from "../sns/components/PostCreate";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
-import UsedItemChat from "../chat/components/UsedItemChat"
+import UsedItemChatPage from "../useditemchat/components/UsedItemChatPage"
 import MyPoint from "../payment/components/Mypoint"
 import MatchResultPage from "../match/MatchResultPage";
 import MatchResultDetailPage from "../match/components/MatchResultDetailPage";
@@ -58,7 +58,7 @@ export default function AppRouter() {
       <Route path="/useditem/:id" element={<UsedItemDetail />} />
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
-      <Route path="/useditem/:id/chat" element={<UsedItemChat />} />
+      <Route path="/useditem/:id/chat" element={<UsedItemChatPage />} />
       
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />
