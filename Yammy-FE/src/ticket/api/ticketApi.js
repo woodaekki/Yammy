@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:8080/api/tickets';
 
 // 토큰 가져오기
 const getAuthToken = () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem('accessToken');
 };
 
 // axios 인스턴스 생성
@@ -55,15 +55,16 @@ export const createTicket = async (ticketData) => {
 
         // 티켓 정보를 JSON으로 추가
         const ticketInfo = {
+            matchcode: ticketData.matchcode || null,
             game: ticketData.game,
             date: ticketData.date,
             location: ticketData.location,
             seat: ticketData.seat,
             comment: ticketData.comment,
-            type: ticketData.type,
-            awayScore: ticketData.awayScore,
-            homeScore: ticketData.homeScore,
-            review: ticketData.review,
+            type: ticketData.type || '야구',
+            awayScore: ticketData.awayScore || null,
+            homeScore: ticketData.homeScore || null,
+            review: ticketData.review || '',
         };
 
         formData.append('ticket', new Blob([JSON.stringify(ticketInfo)], { type: 'application/json' }));
@@ -73,9 +74,11 @@ export const createTicket = async (ticketData) => {
             formData.append('photo', ticketData.photo);
         }
 
+        const token = getAuthToken();
         const response = await axiosInstance.post('/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
+                ...(token && { Authorization: `Bearer ${token}` }),
             },
         });
 

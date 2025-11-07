@@ -7,16 +7,21 @@
 }
 
 .edit-header {
+  position: relative; 
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   padding: 0.8rem 1rem;
   border-bottom: 1px solid #f1f1f1;
   margin-bottom: 1rem; 
 }
 
-
 .edit-back-btn {
+  position: absolute;
+  left: 1rem;           
+  top: 50%;            
+  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 1.4rem;
@@ -27,6 +32,7 @@
 .edit-header-title {
   font-size: 1.1rem;
   font-weight: 600;
+  color: #1f2937;
 }
 
 /* 폼 전체 */

@@ -1,13 +1,41 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTeamColors } from '../../sns/utils/teamColors';
+import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
 import { createTicket } from '../api/ticketApi';
 import { getRecentMatches } from '../api/matchApi';
 import '../styles/TicketCreatePage.css';
 
+// 팀별 티켓 배경 이미지 매핑
+import lgtwinsTicket from '../../assets/images/tickets/lgtwins.png';
+import doosanTicket from '../../assets/images/tickets/doosan.png';
+import kiwoomTicket from '../../assets/images/tickets/kiwoom.png';
+import hanwhaTicket from '../../assets/images/tickets/hanwha.png';
+import ktwizTicket from '../../assets/images/tickets/ktwiz.png';
+import ncTicket from '../../assets/images/tickets/nc.png';
+import kiaTicket from '../../assets/images/tickets/kia.png';
+import samsungTicket from '../../assets/images/tickets/samsung.png';
+import lotteTicket from '../../assets/images/tickets/lotte.png';
+import ssgTicket from '../../assets/images/tickets/ssg.png';
+
+const TICKET_BACKGROUNDS = {
+    'LG 트윈스': lgtwinsTicket,
+    '두산 베어스': doosanTicket,
+    '키움 히어로즈': kiwoomTicket,
+    '한화 이글스': hanwhaTicket,
+    'KT 위즈': ktwizTicket,
+    'NC 다이노스': ncTicket,
+    'KIA 타이거즈': kiaTicket,
+    '삼성 라이온즈': samsungTicket,
+    '롯데 자이언츠': lotteTicket,
+    'SSG 랜더스': ssgTicket
+};
+
 const TicketCreatePage = () => {
     const navigate = useNavigate();
-    const teamColors = getTeamColors();
+    const [selectedTeam, setSelectedTeam] = useState(localStorage.getItem('team') || null);
+    const teamColors = selectedTeam ? TEAM_COLORS[selectedTeam] : { bgColor: '#4CAF50', textColor: '#ffffff' };
+    const ticketBackground = selectedTeam ? TICKET_BACKGROUNDS[selectedTeam] : null;
+
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         matchcode: '',
@@ -25,6 +53,7 @@ const TicketCreatePage = () => {
     });
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [showMatchModal, setShowMatchModal] = useState(false);
+    const [showTeamModal, setShowTeamModal] = useState(false);
     const [matches, setMatches] = useState([]);
     const [loadingMatches, setLoadingMatches] = useState(false);
 
@@ -157,7 +186,14 @@ const TicketCreatePage = () => {
                     ←
                 </button>
                 <h1 className="header-title" style={{ color: teamColors.textColor }}>티켓 발급</h1>
-                <div style={{ width: '40px' }}></div>
+                <button
+                    onClick={() => setShowTeamModal(true)}
+                    className="team-select-btn"
+                    style={{ color: teamColors.textColor }}
+                    title="팀 변경"
+                >
+                    {selectedTeam ? selectedTeam.split(' ')[0] : '팀선택'}
+                </button>
             </div>
 
             {/* 진행 단계 */}
@@ -189,6 +225,7 @@ const TicketCreatePage = () => {
                                 type="text"
                                 name="game"
                                 value={formData.game}
+                                onChange={handleChange}
                                 onClick={handleMatchModalOpen}
                                 placeholder="KBO 경기를 선택하거나 직접 입력하세요"
                                 readOnly
@@ -198,11 +235,14 @@ const TicketCreatePage = () => {
                                 className="direct-input-toggle-btn"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    const input = e.target.previousSibling;
-                                    input.readOnly = false;
-                                    input.focus();
+                                    const input = document.querySelector('input[name="game"]');
+                                    if (input) {
+                                        input.readOnly = false;
+                                        input.focus();
+                                        input.placeholder = "경기명을 직접 입력하세요 (예: LG vs KIA)";
+                                    }
                                 }}
-                                style={{ marginTop: '8px', fontSize: '12px', color: teamColors.bgColor }}
+                                style={{ marginTop: '8px', fontSize: '12px', color: teamColors.bgColor, cursor: 'pointer' }}
                             >
                                 직접 입력하기
                             </button>
@@ -262,13 +302,30 @@ const TicketCreatePage = () => {
                 {currentStep === 2 && (
                     <div className="form-step">
                         <div className="photo-upload-section">
-                            <div className="photo-preview">
+                            <div className="photo-preview" style={{ position: 'relative' }}>
+                                {ticketBackground && (
+                                    <img
+                                        src={ticketBackground}
+                                        alt="티켓 배경"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            opacity: 0.3,
+                                            pointerEvents: 'none'
+                                        }}
+                                    />
+                                )}
                                 {formData.photoPreview ? (
-                                    <img src={formData.photoPreview} alt="미리보기" />
+                                    <img src={formData.photoPreview} alt="미리보기" style={{ position: 'relative', zIndex: 1 }} />
                                 ) : (
-                                    <div className="photo-placeholder">
+                                    <div className="photo-placeholder" style={{ position: 'relative', zIndex: 1 }}>
                                         <div className="photo-icon">📷</div>
                                         <p>사진 선택</p>
+                                        {selectedTeam && <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>{selectedTeam} 티켓</p>}
                                     </div>
                                 )}
                             </div>
@@ -387,6 +444,37 @@ const TicketCreatePage = () => {
                                 ))}
                             </div>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* 팀 선택 모달 */}
+            {showTeamModal && (
+                <div className="location-modal" onClick={() => setShowTeamModal(false)}>
+                    <div className="location-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setShowTeamModal(false)}>✕</button>
+                        <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 700 }}>응원 팀 선택</h3>
+                        <div className="stadium-list">
+                            {Object.keys(TEAM_COLORS).map(team => (
+                                <div
+                                    key={team}
+                                    className="stadium-item team-item"
+                                    onClick={() => {
+                                        setSelectedTeam(team);
+                                        localStorage.setItem('team', team);
+                                        setShowTeamModal(false);
+                                    }}
+                                    style={{
+                                        borderLeft: `4px solid ${TEAM_COLORS[team].bgColor}`,
+                                        backgroundColor: selectedTeam === team ? `${TEAM_COLORS[team].bgColor}15` : 'transparent'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '20px', marginRight: '12px' }}>⚾</span>
+                                    <span style={{ flex: 1, fontWeight: selectedTeam === team ? 700 : 400 }}>{team}</span>
+                                    {selectedTeam === team && <span style={{ color: TEAM_COLORS[team].bgColor, fontWeight: 700 }}>✓</span>}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

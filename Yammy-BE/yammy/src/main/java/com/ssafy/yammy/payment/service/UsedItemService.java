@@ -3,6 +3,7 @@ package com.ssafy.yammy.payment.service;
 import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.config.JwtTokenProvider;
+import com.ssafy.yammy.global.util.BadWordsFilterUtil;
 import com.ssafy.yammy.payment.dto.UsedItemRequestDto;
 import com.ssafy.yammy.payment.dto.UsedItemResponseDto;
 import com.ssafy.yammy.payment.entity.Photo;
@@ -29,8 +30,10 @@ public class UsedItemService {
     private final PhotoRepository photoRepository;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BadWordsFilterUtil badWordsFilterUtil;
 
     // 전체 조회
+    // Pageable은 페이지 번호와 크기를 자동으로 받아오는 객체
     public Page<UsedItemResponseDto> getAllTrades(Pageable pageable) {
         return usedItemRepository.findAll(pageable)
                 .map(item -> UsedItemResponseDto.builder()
@@ -82,11 +85,15 @@ public class UsedItemService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "팀을 선택해야 합니다.");
         }
 
+        // 게시물 작성 시 제목 및 글 내용 욕설 필터링
+        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
+        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
+
         UsedItem usedItem = new UsedItem();
         usedItem.setMember(member);
         usedItem.setNickname(member.getNickname());
-        usedItem.setTitle(dto.getTitle());
-        usedItem.setDescription(dto.getDescription());
+        usedItem.setTitle(cleanTitle);
+        usedItem.setDescription(cleanDesc);
         usedItem.setPrice(dto.getPrice());
         usedItem.setTeam(dto.getTeam());
 
@@ -133,8 +140,12 @@ public class UsedItemService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "팀을 선택해야 합니다.");
         }
 
-        usedItem.setTitle(dto.getTitle());
-        usedItem.setDescription(dto.getDescription());
+        // 게시물 수정 시 제목 및 글 내용 욕설 필터링
+        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
+        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
+
+        usedItem.setTitle(cleanTitle);
+        usedItem.setDescription(cleanDesc);
         usedItem.setPrice(dto.getPrice());
         usedItem.setTeam(dto.getTeam());
 
