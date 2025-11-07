@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi"
-import { getTeamColors } from "../../sns/utils/teamColors" 
+import { getTeamColors } from "../../sns/utils/teamColors"
+import { usedItemChatApi } from "../../useditemchat/api/usedItemChatApi"
 import "../styles/usedItemDetail.css"
 
 function UsedItemDetail() {
@@ -36,7 +37,18 @@ function UsedItemDetail() {
   }
 
   const handleEdit = () => navigate("/useditem/edit/" + params.id)
-  const handleChat = () => navigate(`/useditem/${params.id}/chat`)
+
+  const handleChat = async () => {
+    try {
+      // 채팅방 생성 또는 기존 채팅방 입장
+      const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id)
+      // 채팅방으로 자동 이동
+      navigate(`/useditem/chat/${chatRoom.roomKey}`)
+    } catch (error) {
+      console.error("채팅방 생성 실패:", error)
+      alert("채팅방을 열 수 없습니다. 다시 시도해주세요.")
+    }
+  }
 
   const handleDelete = () => {
     const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?")
@@ -144,7 +156,7 @@ function UsedItemDetail() {
                 <button className="detail-text-btn" onClick={handleDelete}>삭제</button>
               </>
             ) : (
-              <button className="detail-chat-btn" onClick={handleChat}>채팅하기</button>
+              <button className="detail-chat-btn" onClick={handleChat}>채팅</button>
             )}
           </div>
         </div>

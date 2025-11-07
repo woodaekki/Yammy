@@ -29,7 +29,10 @@ function SuccessPage() {
       .then((res) => {
         console.log("결제 승인 완료:", res.data)
         setIsSuccess(true)
-        setMessage(`결제가 완료되었습니다. 충전 금액: ${Number(amount).toLocaleString()}원`)
+        setMessage(`결제가 완료되었습니다. 충전 금액: ${Number(amount).toLocaleString()}얌`)
+        
+        // 포인트 충전 자동 갱신
+        window.dispatchEvent(new Event("pointUpdated"));
       })
       .catch((err) => {
         console.error("결제 승인 실패:", err)
@@ -59,7 +62,7 @@ function SuccessPage() {
 
         {/* 버튼 */}
         <div className="payment-buttons">
-          <button className="payment-btn" onClick={() => navigate("/")}>
+          <button className="payment-btn" onClick={() => navigate("/useditem")}>
             홈으로 가기
           </button>
         </div>

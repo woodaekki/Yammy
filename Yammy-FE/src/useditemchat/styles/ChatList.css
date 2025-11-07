@@ -1,0 +1,213 @@
+/* 채팅방 목록 컨테이너 */
+.chat-list-container {
+  min-height: 100vh;
+  background-color: #f5f6f7;
+  padding-bottom: 80px;
+}
+
+/* 헤더 */
+.chat-list-header {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.chat-list-back-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #374151;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-list-back-btn:hover {
+  background-color: #f3f4f6;
+  border-radius: 8px;
+}
+
+.chat-list-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* 로딩 */
+.chat-list-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* 컨텐츠 */
+.chat-list-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* 빈 상태 */
+.chat-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.chat-list-empty p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.chat-list-go-market {
+  background-color: #9333ea;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chat-list-go-market:hover {
+  background-color: #7e22ce;
+}
+
+/* 채팅방 아이템 목록 */
+.chat-list-items {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 채팅방 아이템 */
+.chat-list-item {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chat-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.chat-list-item-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-list-item-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-list-item-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chat-list-item-avatar-placeholder {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.chat-list-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-list-item-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.chat-list-item-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-list-item-badge {
+  background-color: #dcfce7;
+  color: #166534;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.chat-list-item-preview {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-list-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.chat-list-item-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* 모바일 대응 */
+@media (max-width: 640px) {
+  .chat-list-item-name {
+    font-size: 0.9rem;
+  }
+
+  .chat-list-item-preview {
+    font-size: 0.8rem;
+  }
+
+  .chat-list-item-time {
+    font-size: 0.7rem;
+  }
+}

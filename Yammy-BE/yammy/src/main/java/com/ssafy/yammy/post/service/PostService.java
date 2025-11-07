@@ -3,6 +3,7 @@ package com.ssafy.yammy.post.service;
 import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.follow.repository.FollowRepository;
+import com.ssafy.yammy.global.util.BadWordsFilterUtil;
 import com.ssafy.yammy.post.dto.*;
 import com.ssafy.yammy.post.entity.Post;
 import com.ssafy.yammy.post.entity.PostImage;
@@ -30,6 +31,7 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final BadWordsFilterUtil badWordsFilterUtil;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
@@ -48,10 +50,13 @@ public class PostService {
             throw new IllegalArgumentException("게시글에는 최대 3개의 이미지만 업로드할 수 있습니다.");
         }
 
+        // 게시글 작성 시 욕설 필터링
+        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
+
         // 게시글 저장
         Post post = Post.builder()
                 .memberId(memberId)
-                .caption(request.getCaption())
+                .caption(cleanCaption)
                 .build();
         Post savedPost = postRepository.save(post);
 
@@ -133,7 +138,10 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "게시글을 수정할 권한이 없습니다.");
         }
 
-        post.updateCaption(request.getCaption());
+        // 수정 시 욕설 필터링
+        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
+
+        post.updateCaption(cleanCaption);
         Post updatedPost = postRepository.save(post);
 
         Member member = memberRepository.findById(memberId)

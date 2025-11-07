@@ -1,0 +1,119 @@
+/* === 행 === */
+.chat-row {
+  display: flex;
+  width: 100%;
+  margin: 8px 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 내 메시지: 오른쪽 끝 */
+.chat-row.mine {
+  justify-content: flex-end;
+}
+
+/* 상대 메시지: 왼쪽 끝 */
+.chat-row.theirs {
+  justify-content: flex-start;
+}
+
+/* === 컨텐츠 === */
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%; 
+}
+
+/* === 닉네임 === */
+.chat-nickname {
+  font-size: 0.78rem;
+  color: #888;
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+
+/* === 말풍선 === */
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 내 말풍선 (오른쪽 끝 붙음) */
+.chat-bubble.mine {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #d9f1ff, #aee4ff);
+  color: #0b253a;
+  border: 1px solid #bde6ff;
+  margin-right: 8px; 
+}
+
+/* 상대 말풍선 (왼쪽 끝 붙음) */
+.chat-bubble.theirs {
+  align-self: flex-start;
+  background: #f3f5f7;
+  color: #222;
+  border: 1px solid #e2e5e8;
+  margin-left: 8px; 
+}
+
+/* === 텍스트 === */
+.chat-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* === 이미지 === */
+.chat-image-wrapper {
+  position: relative;
+}
+
+.chat-image-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e3e3e3;
+  border-radius: 8px;
+}
+
+.chat-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chat-image {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.chat-image.visible {
+  opacity: 1;
+}
+
+/* === 시간 === */
+.chat-time {
+  align-self: flex-end;
+  font-size: 0.72rem;
+  color: #999;
+  margin-top: 4px;
+}

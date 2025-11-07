@@ -292,3 +292,16 @@
   background-color: #504f4f;
 }
 
+.chatlist-btn {
+  background-color: #f2f3f5;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chatlist-btn:hover {
+  background-color: #e4e6e8;
+}

@@ -36,7 +36,7 @@ function UsedItemList({ items }) {
                 style={{
                 color: teamColors.bgColor,
               }}>
-                {item.price.toLocaleString()}원</p>
+                {item.price.toLocaleString()}얌</p>
             </div>
           </div>
         )

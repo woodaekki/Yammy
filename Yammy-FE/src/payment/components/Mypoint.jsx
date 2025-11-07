@@ -58,7 +58,7 @@ function MyPoint() {
           <button onClick={() => addAmount(10000)}>+1만</button>
           <button onClick={() => addAmount(50000)}>+5만</button>
           <button onClick={() => addAmount(100000)}>+10만</button>
-          <button onClick={() => addAmount(1000000)}>+50만</button>
+          <button onClick={() => addAmount(500000)}>+50만</button>
         </div>
       </div>
 
@@ -67,14 +67,14 @@ function MyPoint() {
         <p className="mypoint-balance">현재 잔액: {format(balance)} 얌</p>
         <button
           className="mypoint-charge-btn"
-          onClick={() => navigate("/checkout")}
+          onClick={() => navigate("/checkout", { state: {amount}})}
           disabled={amount <= 0}
           style={{
               backgroundColor: teamColors.bgColor,
               color: teamColors.textColor,
             }}
         >
-          {format(amount)}원 충전하기
+          {format(amount)}얌 충전하기
         </button>
       </div>
     </div>
