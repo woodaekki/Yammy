@@ -1,13 +1,58 @@
 import { useState } from 'react';
 import { getTeamColors } from '../../sns/utils/teamColors';
+import { mintNFT, canMintNFT, getNFTStatusMessage, getEtherscanNFTUrl, getOpenSeaNFTUrl } from '../api/nftApi';
 import '../styles/TicketCard.css';
 
-const TicketCard = ({ ticket }) => {
+const TicketCard = ({ ticket, onNftMinted }) => {
     const [isFlipped, setIsFlipped] = useState(false);
+    const [isMinting, setIsMinting] = useState(false);
+    const [mintStatus, setMintStatus] = useState('');
     const teamColors = getTeamColors();
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
+    };
+
+    const handleMintNFT = async (e) => {
+        e.stopPropagation(); // 카드 플립 방지
+
+        if (!canMintNFT(ticket)) {
+            alert('NFT 발급이 불가능합니다.');
+            return;
+        }
+
+        if (!confirm('이 티켓을 NFT로 발급하시겠습니까?\n\n메타마스크가 없어도 발급 가능합니다.\n발급된 NFT는 서비스 내에서 보관됩니다.')) {
+            return;
+        }
+
+        setIsMinting(true);
+        setMintStatus('NFT 발급 중...');
+
+        try {
+            // photo는 ticket.photoPreview가 있으면 fetch로 가져와야 하지만
+            // 간단하게 하기 위해 일단 null로 처리 (이미 티켓에 사진이 저장되어 있음)
+            const response = await mintNFT(ticket.ticketId, null, null);
+
+            if (response.success) {
+                setMintStatus('NFT 발급 완료!');
+                alert(`NFT 발급이 완료되었습니다!\n\nToken ID: ${response.tokenId}\nTransaction: ${response.transactionHash}`);
+
+                // 부모 컴포넌트에 알림 (티켓 목록 새로고침용)
+                if (onNftMinted) {
+                    onNftMinted(ticket.ticketId, response);
+                }
+            } else {
+                setMintStatus('NFT 발급 실패');
+                alert(`NFT 발급에 실패했습니다.\n\n오류: ${response.errorMessage || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error('NFT 발급 오류:', error);
+            setMintStatus('NFT 발급 실패');
+            alert(`NFT 발급 중 오류가 발생했습니다.\n\n${error.response?.data?.message || error.message}`);
+        } finally {
+            setIsMinting(false);
+            setTimeout(() => setMintStatus(''), 3000);
+        }
     };
 
     return (
@@ -120,6 +165,51 @@ const TicketCard = ({ ticket }) => {
                                 ))}
                             </div>
                             <p>NO. {Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
+                        </div>
+
+                        {/* NFT 발급 버튼 */}
+                        <div className="nft-section" onClick={(e) => e.stopPropagation()}>
+                            {ticket.nftMinted ? (
+                                <div className="nft-status">
+                                    <span className="nft-badge">✅ NFT 발급 완료</span>
+                                    {ticket.nftTokenId && (
+                                        <div className="nft-links">
+                                            <a
+                                                href={getEtherscanNFTUrl(ticket.nftTokenId)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="nft-link"
+                                            >
+                                                Etherscan에서 보기
+                                            </a>
+                                            <a
+                                                href={getOpenSeaNFTUrl(ticket.nftTokenId)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="nft-link"
+                                            >
+                                                OpenSea에서 보기
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="nft-mint-section">
+                                    <button
+                                        className="nft-mint-button"
+                                        onClick={handleMintNFT}
+                                        disabled={isMinting || !canMintNFT(ticket)}
+                                    >
+                                        {isMinting ? '🔄 발급 중...' : '🎫 NFT로 발급하기'}
+                                    </button>
+                                    {mintStatus && (
+                                        <p className="mint-status">{mintStatus}</p>
+                                    )}
+                                    <p className="nft-info-text">
+                                        메타마스크 없이도 발급 가능합니다
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -63,6 +63,9 @@ public class Ticket {
     @Column(name = "ipfs_image_hash", columnDefinition = "TEXT")
     private String ipfsImageHash;  // IPFS 이미지 해시 (NFT 발급 시)
 
+    @Column(name = "ipfs_metadata_hash", columnDefinition = "TEXT")
+    private String ipfsMetadataHash;  // IPFS 메타데이터 해시 (재시도 시 재사용)
+
     // NFT 관련 필드
     @Column(name = "nft_token_id")
     private Long nftTokenId;  // NFT 토큰 ID

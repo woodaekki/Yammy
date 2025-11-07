@@ -46,6 +46,9 @@ public class NftService {
     @Value("${nft.private-key}")
     private String privateKey;
 
+    @Value("${nft.owner-address}")
+    private String nftOwnerAddress;
+
     @Value("${ipfs.api-key}")
     private String pinataApiKey;
 
@@ -57,86 +60,69 @@ public class NftService {
 
     private final Gson gson = new Gson();
     private final OkHttpClient httpClient = new OkHttpClient();
+    private final com.ssafy.yammy.ticket.repository.TicketRepository ticketRepository;
 
     /**
      * 티켓 NFT 발급 (이미지 포함)
+     * userWalletAddress가 null이면 서비스 지갑으로 발급
+     * 멱등성 보장: 재시도 시 이미 업로드된 IPFS 데이터 재사용
      */
     public NftMintResponse mintTicketNft(Ticket ticket, String userWalletAddress, MultipartFile photo) {
+        String imageHash = null;
+        String metadataHash = null;
+        String metadataUri = null;
+
         try {
-            log.info("NFT 발급 시작 - ticketId: {}, wallet: {}", ticket.getTicketId(), userWalletAddress);
+            // 지갑 주소가 없으면 서비스 지갑 사용 (커스터디 방식)
+            String targetWallet = userWalletAddress;
+            if (targetWallet == null || targetWallet.trim().isEmpty()) {
+                targetWallet = nftOwnerAddress;
+                log.info("NFT 발급 시작 (커스터디 방식) - ticketId: {}, 서비스 지갑: {}", ticket.getTicketId(), targetWallet);
+            } else {
+                log.info("NFT 발급 시작 (사용자 지갑) - ticketId: {}, wallet: {}", ticket.getTicketId(), targetWallet);
+            }
 
-            String imageIpfsUri = null;
-            String imageHash = null;
-
-            // 1. 이미지를 Pinata에 업로드
-            if (photo != null && !photo.isEmpty()) {
+            // 1. 이미지 IPFS 업로드 (멱등성 보장)
+            if (ticket.getIpfsImageHash() != null) {
+                // 이미 업로드된 이미지 재사용
+                imageHash = ticket.getIpfsImageHash();
+                log.info("기존 IPFS 이미지 재사용 - ticketId: {}, hash: {}", ticket.getTicketId(), imageHash);
+            } else if (photo != null && !photo.isEmpty()) {
+                // 새로 업로드
                 imageHash = uploadImageToPinata(photo, "yammy-ticket-" + ticket.getTicketId());
-                imageIpfsUri = pinataGateway + imageHash;
-                log.info("이미지 IPFS 업로드 완료: ipfs://{}", imageHash);
+                log.info("이미지 IPFS 업로드 완료 - ticketId: {}, hash: {}", ticket.getTicketId(), imageHash);
+
+                // 즉시 DB 저장 (실패해도 재사용 가능)
+                ticket.setIpfsImageHash(imageHash);
+                ticketRepository.save(ticket);
+                log.info("이미지 해시 DB 저장 완료");
             }
 
-            // 2. 메타데이터 생성 (IPFS 이미지 URL 포함)
-            String metadata = createMetadata(ticket, imageIpfsUri);
+            String imageIpfsUri = imageHash != null ? pinataGateway + imageHash : null;
 
-            // 3. IPFS에 메타데이터 업로드 (Pinata)
-            String metadataHash = uploadJsonToPinata(metadata, "yammy-ticket-" + ticket.getTicketId() + ".json");
-            String metadataUri = "ipfs://" + metadataHash;
-            log.info("메타데이터 IPFS 업로드 완료: {}", metadataUri);
+            // 2. 메타데이터 IPFS 업로드 (멱등성 보장)
+            if (ticket.getIpfsMetadataHash() != null) {
+                // 이미 업로드된 메타데이터 재사용
+                metadataHash = ticket.getIpfsMetadataHash();
+                metadataUri = "ipfs://" + metadataHash;
+                log.info("기존 IPFS 메타데이터 재사용 - ticketId: {}, hash: {}", ticket.getTicketId(), metadataHash);
+            } else {
+                // 새로 업로드
+                String metadata = createMetadata(ticket, imageIpfsUri);
+                metadataHash = uploadJsonToPinata(metadata, "yammy-ticket-" + ticket.getTicketId() + ".json");
+                metadataUri = "ipfs://" + metadataHash;
+                log.info("메타데이터 IPFS 업로드 완료 - ticketId: {}, hash: {}", ticket.getTicketId(), metadataHash);
 
-            // 4. 스마트 컨트랙트 호출 (mintTicket)
-            TransactionReceipt receipt = mintNftOnChain(
-                userWalletAddress,
-                ticket.getTicketId(),
-                metadataUri
-            );
-
-            // 5. 토큰 ID 파싱 (이벤트에서 추출)
-            Long tokenId = parseTokenIdFromReceipt(receipt);
-
-            log.info("NFT 발급 완료 - ticketId: {}, tokenId: {}, txHash: {}",
-                    ticket.getTicketId(), tokenId, receipt.getTransactionHash());
-
-            return NftMintResponse.builder()
-                    .tokenId(tokenId)
-                    .metadataUri(metadataUri)
-                    .transactionHash(receipt.getTransactionHash())
-                    .imageIpfsHash(imageHash)
-                    .success(true)
-                    .build();
-
-        } catch (Exception e) {
-            log.error("NFT 발급 실패 - ticketId: {}", ticket.getTicketId(), e);
-            return NftMintResponse.builder()
-                    .success(false)
-                    .errorMessage(e.getMessage())
-                    .build();
-        }
-    }
-
-    /**
-     * 티켓 NFT 발급 (이미 업로드된 이미지 해시 사용)
-     */
-    public NftMintResponse mintTicketNftWithHash(Ticket ticket, String userWalletAddress, String imageHash) {
-        try {
-            log.info("NFT 발급 시작 (기존 이미지 재사용) - ticketId: {}, wallet: {}, imageHash: {}",
-                    ticket.getTicketId(), userWalletAddress, imageHash);
-
-            String imageIpfsUri = null;
-            if (imageHash != null) {
-                imageIpfsUri = pinataGateway + imageHash;
+                // 즉시 DB 저장 (실패해도 재사용 가능)
+                ticket.setIpfsMetadataHash(metadataHash);
+                ticketRepository.save(ticket);
+                log.info("메타데이터 해시 DB 저장 완료");
             }
-
-            // 1. 메타데이터 생성 (IPFS 이미지 URL 포함)
-            String metadata = createMetadata(ticket, imageIpfsUri);
-
-            // 2. IPFS에 메타데이터 업로드 (Pinata)
-            String metadataHash = uploadJsonToPinata(metadata, "yammy-ticket-" + ticket.getTicketId() + ".json");
-            String metadataUri = "ipfs://" + metadataHash;
-            log.info("메타데이터 IPFS 업로드 완료: {}", metadataUri);
 
             // 3. 스마트 컨트랙트 호출 (mintTicket)
+            log.info("블록체인 트랜잭션 시작 - ticketId: {}", ticket.getTicketId());
             TransactionReceipt receipt = mintNftOnChain(
-                userWalletAddress,
+                targetWallet,
                 ticket.getTicketId(),
                 metadataUri
             );
@@ -156,10 +142,90 @@ public class NftService {
                     .build();
 
         } catch (Exception e) {
-            log.error("NFT 발급 실패 - ticketId: {}", ticket.getTicketId(), e);
+            log.error("NFT 발급 실패 - ticketId: {}, 단계: {}",
+                ticket.getTicketId(),
+                imageHash == null ? "이미지 업로드" :
+                metadataHash == null ? "메타데이터 업로드" : "블록체인 트랜잭션",
+                e);
+
+            // 중간 결과 반환 (재시도 시 활용)
             return NftMintResponse.builder()
                     .success(false)
                     .errorMessage(e.getMessage())
+                    .imageIpfsHash(imageHash)  // 업로드 성공한 이미지 해시 포함
+                    .build();
+        }
+    }
+
+    /**
+     * 티켓 NFT 발급 (이미 업로드된 이미지 해시 사용)
+     * 멱등성 보장: 재시도 시 이미 업로드된 IPFS 데이터 재사용
+     */
+    public NftMintResponse mintTicketNftWithHash(Ticket ticket, String userWalletAddress, String imageHash) {
+        String metadataHash = null;
+        String metadataUri = null;
+
+        try {
+            log.info("NFT 발급 시작 (기존 이미지 재사용) - ticketId: {}, wallet: {}, imageHash: {}",
+                    ticket.getTicketId(), userWalletAddress, imageHash);
+
+            String imageIpfsUri = null;
+            if (imageHash != null) {
+                imageIpfsUri = pinataGateway + imageHash;
+            }
+
+            // 1. 메타데이터 IPFS 업로드 (멱등성 보장)
+            if (ticket.getIpfsMetadataHash() != null) {
+                // 이미 업로드된 메타데이터 재사용
+                metadataHash = ticket.getIpfsMetadataHash();
+                metadataUri = "ipfs://" + metadataHash;
+                log.info("기존 IPFS 메타데이터 재사용 - ticketId: {}, hash: {}", ticket.getTicketId(), metadataHash);
+            } else {
+                // 새로 업로드
+                String metadata = createMetadata(ticket, imageIpfsUri);
+                metadataHash = uploadJsonToPinata(metadata, "yammy-ticket-" + ticket.getTicketId() + ".json");
+                metadataUri = "ipfs://" + metadataHash;
+                log.info("메타데이터 IPFS 업로드 완료 - ticketId: {}, hash: {}", ticket.getTicketId(), metadataHash);
+
+                // 즉시 DB 저장 (실패해도 재사용 가능)
+                ticket.setIpfsMetadataHash(metadataHash);
+                ticketRepository.save(ticket);
+                log.info("메타데이터 해시 DB 저장 완료");
+            }
+
+            // 2. 스마트 컨트랙트 호출 (mintTicket)
+            log.info("블록체인 트랜잭션 시작 - ticketId: {}", ticket.getTicketId());
+            TransactionReceipt receipt = mintNftOnChain(
+                userWalletAddress,
+                ticket.getTicketId(),
+                metadataUri
+            );
+
+            // 3. 토큰 ID 파싱 (이벤트에서 추출)
+            Long tokenId = parseTokenIdFromReceipt(receipt);
+
+            log.info("NFT 발급 완료 - ticketId: {}, tokenId: {}, txHash: {}",
+                    ticket.getTicketId(), tokenId, receipt.getTransactionHash());
+
+            return NftMintResponse.builder()
+                    .tokenId(tokenId)
+                    .metadataUri(metadataUri)
+                    .transactionHash(receipt.getTransactionHash())
+                    .imageIpfsHash(imageHash)
+                    .success(true)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("NFT 발급 실패 - ticketId: {}, 단계: {}",
+                ticket.getTicketId(),
+                metadataHash == null ? "메타데이터 업로드" : "블록체인 트랜잭션",
+                e);
+
+            // 중간 결과 반환 (재시도 시 활용)
+            return NftMintResponse.builder()
+                    .success(false)
+                    .errorMessage(e.getMessage())
+                    .imageIpfsHash(imageHash)
                     .build();
         }
     }
