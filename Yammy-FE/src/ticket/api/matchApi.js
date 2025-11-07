@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/matches';
+const API_URL = 'http://localhost:8080/api';
 
 // 토큰 가져오기
 const getAuthToken = () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem('accessToken');
 };
 
 // axios 인스턴스 생성
@@ -26,10 +26,10 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// 최근 경기 목록 조회
+// 최근 경기 목록 조회 (페이징 지원)
 export const getRecentMatches = async (page = 0, size = 20) => {
     try {
-        const response = await axiosInstance.get('/', {
+        const response = await axiosInstance.get('/matches/', {
             params: { page, size }
         });
         return response.data;
@@ -42,7 +42,7 @@ export const getRecentMatches = async (page = 0, size = 20) => {
 // 특정 경기 상세 조회
 export const getMatchDetail = async (matchcode) => {
     try {
-        const response = await axiosInstance.get(`/${matchcode}`);
+        const response = await axiosInstance.get(`/match/${matchcode}`);
         return response.data;
     } catch (error) {
         console.error('경기 상세 조회 실패:', error);
@@ -53,7 +53,7 @@ export const getMatchDetail = async (matchcode) => {
 // 특정 날짜의 경기 목록 조회
 export const getMatchesByDate = async (date) => {
     try {
-        const response = await axiosInstance.get(`/date/${date}`);
+        const response = await axiosInstance.get(`/matches/date/${date}`);
         return response.data;
     } catch (error) {
         console.error('날짜별 경기 조회 실패:', error);
