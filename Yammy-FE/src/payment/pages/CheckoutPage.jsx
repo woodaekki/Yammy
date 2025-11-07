@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useLocation } from "react-router-dom"
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
 import { getTeamColors } from "../../sns/utils/teamColors" 
 
@@ -6,9 +7,11 @@ const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
 const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY
 
 function CheckoutPage() {
+  const location = useLocation()
+  const initialAmount = location.state?.amount || 0
   const [ready, setReady] = useState(false)
+  const [amount] = useState(initialAmount)   
   const [widgets, setWidgets] = useState(null)
-  const [amount, setAmount] = useState(5000)
   const [teamColors, setTeamColors] = useState(getTeamColors())
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function CheckoutPage() {
         const tossPayments = await loadTossPayments(clientKey)
         const widget = tossPayments.widgets({ customerKey })
 
-        // 결제금액 표시하기
+        //  MyPoint에서 넘겨받은 결제금액 표시하기
         await widget.setAmount({ currency: "KRW", value: amount })
 
         // 결제 수단 + 약관 UI 화면에 표시
@@ -39,7 +42,7 @@ function CheckoutPage() {
     }
 
     startToss()
-  }, [])
+  }, [amount])
 
   // 결제하기 버튼 눌렀을 때 실행
   async function handlePayment() {
