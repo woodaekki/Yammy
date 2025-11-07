@@ -1,0 +1,224 @@
+/* === 전체 페이지 === */
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* === 헤더 === */
+.chat-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.chat-header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.chat-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+}
+
+.chat-back-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.chat-back-button:hover {
+  color: #222;
+}
+
+/* === 물품 정보 === */
+.chat-item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.chat-item-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.chat-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-item-title {
+  font-weight: 600;
+  color: #222;
+  font-size: 1rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-item-price {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* === 메시지 영역 === */
+.chat-message-area {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* === 로딩 === */
+.chat-loading-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-loading-box {
+  text-align: center;
+}
+
+.chat-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #d1d5db;
+  border-bottom-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 12px auto;
+}
+
+.chat-loading-text {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* === 에러 화면 === */
+.chat-error-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.chat-error-box {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  text-align: center;
+}
+
+.chat-error-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.chat-error-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.chat-error-message {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.chat-error-button {
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+}
+
+.chat-error-button:hover {
+  background-color: #1e40af;
+}
+
+/* === 이미지 모달 === */
+.chat-image-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.chat-image-modal-inner {
+  position: relative;
+  max-width: 900px;
+  max-height: 90vh;
+}
+
+.chat-image-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  color: #222;
+  border: none;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.chat-image-close:hover {
+  background: #e5e7eb;
+}
+
+.chat-close-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.chat-image-full {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 10px;
+}
+
+.chat-message-area {
+  flex: 1; 
+  overflow-y: auto; 
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+

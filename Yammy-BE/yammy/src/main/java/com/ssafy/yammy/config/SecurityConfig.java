@@ -76,6 +76,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/trades/**").authenticated()   // 수정은 로그인 필요
                         .requestMatchers(HttpMethod.DELETE, "/api/trades/**").authenticated()// 삭제는 로그인 필요
 
+                        // 중고거래 채팅
+                        .requestMatchers("/api/useditem/chat/**").authenticated()
+
                         // 사진 업로드
                         .requestMatchers("/api/photos/**").authenticated()
 

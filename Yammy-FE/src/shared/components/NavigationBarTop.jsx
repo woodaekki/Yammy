@@ -23,16 +23,42 @@ const NavigationBarTop = () => {
     initialize();
   }, [initialize]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await getMyPoint(token);
-        setBalance(res.balance);
-      } catch (err) {
-        setError("포인트를 불러오지 못했습니다.");
-      }
+  // 포인트 불러오기 함수
+  async function fetchData() {
+    try {
+      const res = await getMyPoint(token);
+      setBalance(res.balance);
+    } catch (err) {
+      setError("포인트를 불러오지 못했습니다.");
     }
-    if (token && isLoggedIn) fetchData();
+  }
+
+  // 로그인 상태 + 특정 페이지일 때마다 balance 갱신
+  useEffect(() => {
+    const shouldFetch =
+      token &&
+      isLoggedIn &&
+      (location.pathname.startsWith("/useditem") ||
+        location.pathname === "/mypoint" ||
+        location.pathname === "/chatlist" ||
+        location.pathname === "/checkout" ||
+        location.pathname.startsWith("/success") ||
+        location.pathname.startsWith("/fail"));
+
+    if (shouldFetch) {
+      fetchData();
+    }
+  }, [token, isLoggedIn, location.pathname]); // ← 페이지 이동 시마다 새로 갱신
+
+  // 결제 성공 시 즉시 포인트 업데이트 (CheckoutPage에서 dispatchEvent로 호출 가능)
+  useEffect(() => {
+    const handlePointUpdate = () => {
+      if (token && isLoggedIn) {
+        getMyPoint(token).then((res) => setBalance(res.balance));
+      }
+    };
+    window.addEventListener("pointUpdated", handlePointUpdate);
+    return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
 
   const handleLogout = () => {
@@ -44,14 +70,25 @@ const NavigationBarTop = () => {
   };
 
   const goMyPoint = () => navigate("/mypoint");
+  const goChatList = () => navigate("/chatlist");
 
   const shouldShowBalanceButton =
     isLoggedIn &&
-    (location.pathname === "/useditem" || location.pathname === "/mypoint");
+    (location.pathname.startsWith("/useditem") ||
+      location.pathname === "/mypoint" ||
+      location.pathname === "/chatlist" ||
+      location.pathname === "/checkout" ||
+      location.pathname.startsWith("/success") ||
+      location.pathname.startsWith("/fail"));
 
-  // ✅ 페이지별 로고 변경
+  // 페이지별 로고 변경
   const currentLogo =
-    location.pathname === "/useditem" || location.pathname === "/mypoint"
+    location.pathname.startsWith("/useditem") ||
+    location.pathname === "/mypoint" ||
+    location.pathname === "/chatlist" ||
+    location.pathname === "/checkout" ||
+    location.pathname.startsWith("/success") ||
+    location.pathname.startsWith("/fail")
       ? gugong
       : logo;
 
@@ -68,12 +105,16 @@ const NavigationBarTop = () => {
               <div className="ypay-logo-circle">⚾</div>
               <span className="ypay-balance">
                 {balance !== null
-                  ? `${format(balance)}원`
+                  ? `${format(balance)}얌`
                   : error
                   ? "오류"
                   : "로딩 중..."}
               </span>
             </div>
+            <button className="chatlist-btn" onClick={goChatList}>
+              채팅방
+            </button>
+
             <button className="ypay-charge-btn" onClick={goMyPoint}>
               충전하기
             </button>

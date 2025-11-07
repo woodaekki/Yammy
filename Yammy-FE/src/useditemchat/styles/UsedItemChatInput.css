@@ -1,0 +1,95 @@
+/* === 하단 입력창 전체 === */
+.useditem-chat-input-bar {
+  position: static; 
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  margin-top: auto; 
+}
+
+/* === 입력창 내부 === */
+.useditem-chat-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2%;
+  width: 96%;
+  padding: 2% 2%;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* === 공통 버튼 === */
+.useditem-chat-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5%;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.useditem-chat-btn:hover {
+  background-color: #f2f4f6;
+}
+
+/* === 아이콘 === */
+.useditem-chat-btn-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-gray {
+  color: #888;
+}
+
+.icon-white {
+  color: white;
+}
+
+/* === 전송 버튼 활성 상태 === */
+.send-btn-active {
+  background-color: #1c8bff;
+}
+
+.send-btn-active:hover {
+  background-color: #1778e6;
+}
+
+/* === 텍스트 입력창 === */
+.useditem-chat-text-input {
+  flex: 1;
+  border: none;
+  border-radius: 20px;
+  background-color: #f3f5f7;
+  padding: 2.5% 3%;
+  font-size: 0.95rem;
+  color: #333;
+  outline: none;
+  transition: background 0.2s ease;
+}
+
+.useditem-chat-text-input:focus {
+  background-color: #e9f3ff;
+}
+
+/* === 숨김 처리 === */
+.hidden {
+  display: none;
+}
+
+/* === 앱웹용 키보드 대응 === */
+@supports (-webkit-touch-callout: none) {
+  input:focus,
+  textarea:focus {
+    scroll-margin-bottom: 10%;
+  }
+}
