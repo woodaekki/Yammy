@@ -12,18 +12,19 @@
 /* 헤더 */
 .detail-header {
   display: flex;
+  position: relative;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.9rem 1.2rem;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  height: 56px;
+  border-bottom: 1px solid #f1f1f1;
   background-color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 .detail-back-btn {
   background: none;
+  position: absolute;
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
@@ -38,9 +39,10 @@
 }
 
 .detail-title {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #1f2937;
+  margin: 0 auto;
 }
 
 /* 이미지 슬라이더 */

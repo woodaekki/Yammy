@@ -8,6 +8,7 @@ import com.ssafy.yammy.comment.dto.CommentResponse;
 import com.ssafy.yammy.comment.entity.Comment;
 import com.ssafy.yammy.comment.repository.CommentLikeRepository;
 import com.ssafy.yammy.comment.repository.CommentRepository;
+import com.ssafy.yammy.global.util.BadWordsFilterUtil;
 import com.ssafy.yammy.post.entity.Post;
 import com.ssafy.yammy.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final BadWordsFilterUtil badWordsFilterUtil;
 
     private static final int DEFAULT_PAGE_SIZE = 50;
 
@@ -44,11 +46,13 @@ public class CommentService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
+        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
+
         // 댓글 저장
         Comment comment = Comment.builder()
                 .postId(postId)
                 .memberId(memberId)
-                .content(request.getContent())
+                .content(cleanContent)
                 .build();
         Comment savedComment = commentRepository.save(comment);
 
@@ -117,7 +121,9 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다.");
         }
 
-        comment.updateContent(request.getContent());
+        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
+
+        comment.updateContent(cleanContent);
         Comment updatedComment = commentRepository.save(comment);
 
         Member member = memberRepository.findById(memberId)
