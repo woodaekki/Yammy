@@ -38,6 +38,6 @@ out/
 
 ../../.env
 .env
-
+.env.*
 ### firebase ###
 firebase-service-account.json
