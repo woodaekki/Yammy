@@ -43,11 +43,11 @@ export default function ChatGamePage() {
   };
 
   const handleUploadSuccess = (result) => {
-    console.log('✅ 업로드 성공:', result);
+    console.log('업로드 성공:', result);
   };
 
   const handleUploadError = (error) => {
-    console.error('❌ 업로드 실패:', error);
+    console.error('업로드 실패:', error);
     alert('이미지 업로드 실패: ' + error.message);
   };
 
