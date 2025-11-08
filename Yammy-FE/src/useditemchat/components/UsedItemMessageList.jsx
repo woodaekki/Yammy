@@ -15,7 +15,7 @@ export default function UsedItemMessageList({ messages, loading, onImageClick })
 
   // Zustand + localStorage 혼합 유저 정보
   const { user, isLoggedIn } = useAuthStore();
-  const myId = user?.id || localStorage.getItem("memberId");
+  const myId = user?.memberId || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
 
   // 메시지 추가 시 맨 아래로 스크롤
