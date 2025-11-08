@@ -24,12 +24,22 @@
   max-width: 80%; 
 }
 
+/* 내 메시지 컨텐츠 정렬 */
+.chat-row.mine .chat-content {
+  align-items: flex-end;
+}
+
+/* 상대방 메시지 컨텐츠 정렬 */
+.chat-row.theirs .chat-content {
+  align-items: flex-start;
+}
+
 /* === 닉네임 === */
 .chat-nickname {
   font-size: 0.78rem;
   color: #888;
   margin-bottom: 4px;
-  padding-left: 4px;
+  padding: 0 4px;
 }
 
 /* === 말풍선 === */
@@ -42,22 +52,18 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* 내 말풍선 (오른쪽 끝 붙음) */
+/* 내 말풍선 */
 .chat-bubble.mine {
-  align-self: flex-end;
   background: linear-gradient(135deg, #d9f1ff, #aee4ff);
   color: #0b253a;
   border: 1px solid #bde6ff;
-  margin-right: 8px; 
 }
 
-/* 상대 말풍선 (왼쪽 끝 붙음) */
+/* 상대 말풍선 */
 .chat-bubble.theirs {
-  align-self: flex-start;
   background: #f3f5f7;
   color: #222;
   border: 1px solid #e2e5e8;
-  margin-left: 8px; 
 }
 
 /* === 텍스트 === */
@@ -112,8 +118,8 @@
 
 /* === 시간 === */
 .chat-time {
-  align-self: flex-end;
   font-size: 0.72rem;
   color: #999;
   margin-top: 4px;
+  padding: 0 4px;
 }

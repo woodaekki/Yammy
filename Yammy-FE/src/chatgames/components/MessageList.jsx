@@ -7,7 +7,7 @@ export default function MessageList({ messages, loading, onImageClick }) {
   const messagesEndRef = useRef(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  // ✅ 현재 로그인한 유저 정보
+  // 현재 로그인한 유저 정보
   const { user, isLoggedIn } = useAuthStore();
   const myId = user?.id || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
@@ -44,7 +44,7 @@ export default function MessageList({ messages, loading, onImageClick }) {
           </div>
         ) : (
           messages.map((msg) => {
-            // ✅ 내 메시지 판별 로직 (id 또는 닉네임 일치)
+            // 내 메시지 판별 로직 (id 또는 닉네임 일치)
             const isMine =
               (msg.senderId?.toString() === myId?.toString() ||
                 msg.memberId?.toString() === myId?.toString() ||

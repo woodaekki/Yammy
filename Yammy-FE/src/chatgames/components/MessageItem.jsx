@@ -6,7 +6,7 @@ export default function MessageItem({ message, onImageClick, isMine }) {
 
   return (
     <div className={`message-item ${isMine ? "mine" : "other"}`}>
-      {/* ✅ 내 닉네임도 항상 표시 */}
+      {/* 내 닉네임도 항상 표시 */}
       <div className="message-info">
         <span className="message-user">{message.nickname}</span>
         <span className="message-time">
