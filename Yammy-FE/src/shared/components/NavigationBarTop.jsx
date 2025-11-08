@@ -23,8 +23,11 @@ const NavigationBarTop = () => {
     initialize();
   }, [initialize]);
 
-  // cheerup 페이지에서는 네비게이션바 숨김
-  if (location.pathname.startsWith("/cheerup/")) {
+  // cheerup 하위경로 또는 useditem/chat 하위경로일 때만 네브바 숨김
+  if (
+    location.pathname.startsWith("/cheerup/") ||
+    location.pathname.startsWith("/useditem/chat/")
+  ) {
     return null;
   }
 
@@ -38,7 +41,6 @@ const NavigationBarTop = () => {
     }
   }
 
-  // 로그인 상태 + 특정 페이지일 때마다 balance 갱신
   useEffect(() => {
     const shouldFetch =
       token &&
@@ -50,9 +52,7 @@ const NavigationBarTop = () => {
         location.pathname.startsWith("/success") ||
         location.pathname.startsWith("/fail"));
 
-    if (shouldFetch) {
-      fetchData();
-    }
+    if (shouldFetch) fetchData();
   }, [token, isLoggedIn, location.pathname]);
 
   // 결제 성공 시 즉시 포인트 업데이트
@@ -86,7 +86,6 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/success") ||
       location.pathname.startsWith("/fail"));
 
-  // 페이지별 로고 변경
   const currentLogo =
     location.pathname.startsWith("/useditem") ||
     location.pathname === "/mypoint" ||

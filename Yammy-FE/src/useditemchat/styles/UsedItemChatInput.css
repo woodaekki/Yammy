@@ -1,14 +1,16 @@
-/* === 하단 입력창 전체 === */
+/* === 하단 입력창 전체 (고정) === */
 .useditem-chat-input-bar {
-  position: static; 
+  position: fixed;
+  bottom: 60px; /* 네비바 높이만큼 위로 */
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 600px;
   background-color: #ffffff;
   border-top: 1px solid #e5e7eb;
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: center;
-  z-index: 5;
-  margin-top: auto; 
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  box-sizing: border-box;
 }
 
 /* === 입력창 내부 === */
@@ -16,9 +18,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2%;
-  width: 96%;
-  padding: 2% 2%;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
   background-color: #ffffff;
   box-sizing: border-box;
 }
@@ -31,13 +33,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5%;
+  padding: 8px;
   border-radius: 50%;
   transition: background 0.2s ease;
   flex-shrink: 0;
 }
 
-.useditem-chat-btn:hover {
+.useditem-chat-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.useditem-chat-btn:not(:disabled):hover {
   background-color: #f2f4f6;
 }
 
@@ -70,7 +77,7 @@
   border: none;
   border-radius: 20px;
   background-color: #f3f5f7;
-  padding: 2.5% 3%;
+  padding: 10px 16px;
   font-size: 0.95rem;
   color: #333;
   outline: none;
@@ -79,6 +86,11 @@
 
 .useditem-chat-text-input:focus {
   background-color: #e9f3ff;
+}
+
+.useditem-chat-text-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* === 숨김 처리 === */
@@ -91,5 +103,12 @@
   input:focus,
   textarea:focus {
     scroll-margin-bottom: 10%;
+  }
+}
+
+/* 노치/다이나믹 아일랜드 대응 */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .useditem-chat-input-bar {
+    bottom: calc(60px + env(safe-area-inset-bottom));
   }
 }
