@@ -23,6 +23,11 @@ const NavigationBarTop = () => {
     initialize();
   }, [initialize]);
 
+  // cheerup 페이지에서는 네비게이션바 숨김
+  if (location.pathname.startsWith("/cheerup/")) {
+    return null;
+  }
+
   // 포인트 불러오기 함수
   async function fetchData() {
     try {
@@ -48,9 +53,9 @@ const NavigationBarTop = () => {
     if (shouldFetch) {
       fetchData();
     }
-  }, [token, isLoggedIn, location.pathname]); // ← 페이지 이동 시마다 새로 갱신
+  }, [token, isLoggedIn, location.pathname]);
 
-  // 결제 성공 시 즉시 포인트 업데이트 (CheckoutPage에서 dispatchEvent로 호출 가능)
+  // 결제 성공 시 즉시 포인트 업데이트
   useEffect(() => {
     const handlePointUpdate = () => {
       if (token && isLoggedIn) {
@@ -114,7 +119,6 @@ const NavigationBarTop = () => {
             <button className="chatlist-btn" onClick={goChatList}>
               채팅방
             </button>
-
             <button className="ypay-charge-btn" onClick={goMyPoint}>
               충전하기
             </button>

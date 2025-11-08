@@ -1,21 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChatMessages } from '../hooks/useChatMessages';
 import GameHeader from '../components/GameHeader';
-import MessageList from '../components/MessageList';
+import MessageItem from '../components/MessageItem';
 import ImageUpload from '../components/ImageUpload';
+import useAuthStore from '../../stores/authStore';
 import "../styles/ImageUpload.css";
+import "../styles/ChatGamePage.css";
 
 /**
- * 채팅 게임 메인 페이지
+ * 채팅 게임 메인 페이지 (헤더/업로드 고정)
  */
 export default function ChatGamePage() {
   const { roomKey } = useParams();
   const [room, setRoom] = useState(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   const { messages, loading: loadingMessages, error } = useChatMessages(roomKey);
+  
+  const { user, isLoggedIn } = useAuthStore();
+  const myId = user?.id || localStorage.getItem("memberId");
+  const myNickname = user?.nickname || localStorage.getItem("nickname");
 
   useEffect(() => {
     if (!roomKey) return;
@@ -33,6 +42,20 @@ export default function ChatGamePage() {
       setLoadingRoom(false);
     }, 500);
   }, [roomKey]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages.length]);
+
+  const handleScroll = (e) => {
+    const el = e.target;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+    setShowScrollButton(!nearBottom);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
@@ -53,14 +76,11 @@ export default function ChatGamePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">채팅방 오류</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
-          >
+      <div className="error-container">
+        <div className="error-box">
+          <h2>채팅방 오류</h2>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>
             새로고침
           </button>
         </div>
@@ -70,30 +90,71 @@ export default function ChatGamePage() {
 
   if (!roomKey) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">채팅방을 찾을 수 없습니다</h2>
-          <p className="text-gray-600">올바른 채팅방 링크로 접속해주세요.</p>
+      <div className="error-container">
+        <div className="error-box">
+          <h2>채팅방을 찾을 수 없습니다</h2>
+          <p>올바른 채팅방 링크로 접속해주세요.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-28">
-      <div className="bg-white shadow-sm sticky top-0 z-10 p-4">
+    <div className="chat-page-container">
+      {/* 고정된 헤더 */}
+      <div className="chat-header-fixed">
         <GameHeader room={loadingRoom ? null : room} />
       </div>
 
-      <div className="max-w-4xl mx-auto p-4">
-        <MessageList
-          messages={messages}
-          loading={loadingMessages}
-          onImageClick={handleImageClick}
-        />
+      {/* 스크롤 가능한 메시지 영역 */}
+      <div 
+        className="chat-messages-container"
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+      >
+        {loadingMessages ? (
+          <div className="message-loading">
+            <div className="spinner"></div>
+            <p>불러오는 중...</p>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="message-empty">
+            <p>아직 메시지가 없습니다</p>
+          </div>
+        ) : (
+          <div className="messages-wrapper">
+            {messages.map((msg) => {
+              const isMine =
+                (msg.senderId?.toString() === myId?.toString() ||
+                  msg.memberId?.toString() === myId?.toString() ||
+                  msg.nickname === myNickname ||
+                  msg.senderNickname === myNickname ||
+                  msg.writerNickname === myNickname) &&
+                isLoggedIn;
+
+              return (
+                <MessageItem
+                  key={msg.id}
+                  message={msg}
+                  onImageClick={handleImageClick}
+                  isMine={isMine}
+                />
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
 
-      <div className="chat-input-bar">
+      {/* 스크롤 버튼 */}
+      {showScrollButton && (
+        <button className="scroll-btn" onClick={scrollToBottom}>
+          ↓
+        </button>
+      )}
+
+      {/* 고정된 이미지 업로드 바 */}
+      <div className="chat-upload-fixed">
         <ImageUpload
           roomKey={roomKey}
           onUploadSuccess={handleUploadSuccess}
@@ -101,18 +162,11 @@ export default function ChatGamePage() {
         />
       </div>
 
+      {/* 이미지 확대 모달 */}
       {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4"
-          style={{ zIndex: 2000 }}
-          onClick={closeModal}
-        >
-          <div className="relative max-w-4xl max-h-full">
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-200 transition-colors"
-              style={{ zIndex: 2001 }}
-            >
+        <div className="image-modal-overlay" onClick={closeModal}>
+          <div className="image-modal-content">
+            <button onClick={closeModal} className="image-modal-close">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -120,7 +174,7 @@ export default function ChatGamePage() {
             <img
               src={selectedImage}
               alt="확대 보기"
-              className="max-w-full max-h-[90vh] rounded-lg"
+              className="image-modal-img"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
