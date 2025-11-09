@@ -107,7 +107,10 @@ public class UsedItemChatRoomService {
      * 내가 참여한 중고거래 채팅방 목록 (판매자 or 구매자)
      */
     public List<UsedItemChatRoom> getMyUsedItemChatRooms(Long memberId) {
-        return usedItemChatRoomRepository.findByMemberId(memberId);
+        log.info("📋 [UsedItemChatRoom] Getting chat rooms for memberId: {}", memberId);
+        List<UsedItemChatRoom> rooms = usedItemChatRoomRepository.findByMemberId(memberId);
+        log.info("📋 [UsedItemChatRoom] Found {} chat rooms", rooms.size());
+        return rooms;
     }
 
     /**
