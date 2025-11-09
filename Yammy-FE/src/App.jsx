@@ -6,7 +6,9 @@ import "./App.css"
 
 function App() {
   const location = useLocation();
-  const hideTopBar = location.pathname === '/mypage';
+  const hideTopBar = location.pathname === '/mypage' ||
+                     location.pathname === '/ticket/create' ||
+                     location.pathname.startsWith('/ticket/');
 
   return (
     <div className="app-container">

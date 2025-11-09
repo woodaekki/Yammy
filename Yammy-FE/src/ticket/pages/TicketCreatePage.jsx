@@ -181,31 +181,16 @@ const TicketCreatePage = () => {
         setShowMatchModal(false);
     };
 
-    const nextStep = () => {
-        if (currentStep === 1) {
-            if (!formData.game || !formData.date || !formData.location || !formData.seat || !formData.comment) {
-                alert('모든 필수 항목을 입력해주세요.');
-                return;
-            }
-        }
-        if (currentStep === 2) {
-            if (!formData.photoPreview) {
-                alert('사진을 선택해주세요.');
-                return;
-            }
-        }
-        if (currentStep < 3) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
-
-    const prevStep = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
-
     const handleSubmit = async () => {
+        // 필수 항목 검증
+        if (!formData.game || !formData.date || !formData.location || !formData.seat || !formData.comment) {
+            alert('모든 필수 항목을 입력해주세요.');
+            return;
+        }
+        if (!formData.photoPreview) {
+            alert('사진을 선택해주세요.');
+            return;
+        }
         try {
             await createTicket(formData);
             alert('티켓이 발급되었습니다!');
@@ -233,36 +218,31 @@ const TicketCreatePage = () => {
                 <button
                     onClick={() => setShowTeamModal(true)}
                     className="team-select-btn"
-                    style={{ color: teamColors.textColor }}
+                    style={{
+                        color: teamColors.textColor,
+                        borderBottom: `3px solid ${teamColors.textColor}`
+                    }}
                     title="팀 변경"
                 >
+                    <span style={{ marginRight: '4px' }}>⚾</span>
                     {selectedTeam ? selectedTeam.split(' ')[0] : '팀선택'}
                 </button>
             </div>
 
-            {/* 진행 단계 */}
-            <div className="progress-steps">
-                <div className={`step ${currentStep >= 1 ? 'active' : ''}`}>
-                    <div className="step-circle">✓</div>
-                    <div className="step-label">경기결과</div>
-                </div>
-                <div className="step-line"></div>
-                <div className={`step ${currentStep >= 2 ? 'active' : ''}`}>
-                    <div className="step-circle">✗</div>
-                    <div className="step-label">사진선택</div>
-                </div>
-                <div className="step-line"></div>
-                <div className={`step ${currentStep >= 3 ? 'active' : ''}`}>
-                    <div className="step-circle">✗</div>
-                    <div className="step-label">필수정보</div>
-                </div>
+            {/* 팀 선택 안내 */}
+            <div className="team-info-banner" style={{
+                backgroundColor: `${teamColors.bgColor}15`,
+                borderLeft: `4px solid ${teamColors.bgColor}`
+            }}>
+                <span style={{ fontSize: '16px', marginRight: '8px' }}>⚾</span>
+                <span style={{ fontSize: '13px', color: '#666' }}>
+                    우측 상단에서 <strong style={{ color: teamColors.bgColor }}>팀을 선택</strong>하면 해당 팀 디자인의 티켓으로 발급됩니다
+                </span>
             </div>
 
-            {/* 단계별 폼 */}
+            {/* 통합 폼 */}
             <div className="ticket-form-container">
-                {/* 1단계: 경기결과 */}
-                {currentStep === 1 && (
-                    <div className="form-step">
+                <div className="form-step">
                         <div className="form-group">
                             <label>Date*</label>
                             <input
@@ -287,22 +267,6 @@ const TicketCreatePage = () => {
                                 placeholder={formData.date ? "날짜의 KBO 경기를 선택하세요" : "먼저 날짜를 선택해주세요"}
                                 readOnly
                             />
-                            <button
-                                type="button"
-                                className="direct-input-toggle-btn"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    const input = document.querySelector('input[name="game"]');
-                                    if (input) {
-                                        input.readOnly = false;
-                                        input.focus();
-                                        input.placeholder = "경기명을 직접 입력하세요 (예: LG vs KIA)";
-                                    }
-                                }}
-                                style={{ marginTop: '8px', fontSize: '12px', color: teamColors.bgColor, cursor: 'pointer' }}
-                            >
-                                직접 입력하기
-                            </button>
                         </div>
 
                         <div className="form-group">
@@ -339,21 +303,89 @@ const TicketCreatePage = () => {
                             />
                         </div>
 
+                        {/* 사진 업로드 */}
+                        <div className="form-group">
+                            <label>Photo*</label>
+                            <label htmlFor="photo-input" className="photo-preview-inline" style={{ position: 'relative', cursor: 'pointer' }}>
+                                {ticketBackground && (
+                                    <img
+                                        src={ticketBackground}
+                                        alt="티켓 배경"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            opacity: 0.3,
+                                            pointerEvents: 'none'
+                                        }}
+                                    />
+                                )}
+                                {formData.photoPreview ? (
+                                    <img src={formData.photoPreview} alt="미리보기" style={{ position: 'relative', zIndex: 1 }} />
+                                ) : (
+                                    <div className="photo-placeholder" style={{ position: 'relative', zIndex: 1 }}>
+                                        <div className="photo-icon">📷</div>
+                                        <p>사진 선택</p>
+                                    </div>
+                                )}
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhotoChange}
+                                style={{ display: 'none' }}
+                                id="photo-input"
+                            />
+                        </div>
+
+                        {/* 추가 정보 */}
+                        <div className="form-group">
+                            <label>Score</label>
+                            <div className="score-inputs">
+                                <input
+                                    type="number"
+                                    name="awayScore"
+                                    value={formData.awayScore}
+                                    onChange={handleChange}
+                                    placeholder="Away"
+                                />
+                                <span>:</span>
+                                <input
+                                    type="number"
+                                    name="homeScore"
+                                    value={formData.homeScore}
+                                    onChange={handleChange}
+                                    placeholder="Home"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Review</label>
+                            <textarea
+                                name="review"
+                                value={formData.review}
+                                onChange={handleChange}
+                                rows={6}
+                                placeholder="상세 리뷰를 작성해주세요..."
+                            />
+                        </div>
+
                         {/* 승패 결과 표시 */}
                         {formData.result && (
                             <div className="result-display" style={{
                                 marginTop: '16px',
-                                padding: '12px 16px',
-                                borderRadius: '8px',
-                                backgroundColor: formData.result === '승리' ? '#e8f5e9' : (formData.result === '패배' ? '#ffebee' : '#fff3e0'),
-                                border: `2px solid ${formData.result === '승리' ? '#4caf50' : (formData.result === '패배' ? '#f44336' : '#ff9800')}`,
-                                textAlign: 'center'
+                                padding: '12px 0',
+                                textAlign: 'left'
                             }}>
                                 <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
                                     {formData.myTeam}
                                 </div>
                                 <div style={{
-                                    fontSize: '24px',
+                                    fontSize: '20px',
                                     fontWeight: 700,
                                     color: formData.result === '승리' ? '#4caf50' : (formData.result === '패배' ? '#f44336' : '#ff9800')
                                 }}>
@@ -366,6 +398,7 @@ const TicketCreatePage = () => {
                         {matches.length > 0 && (
                             <div className="match-results-summary" style={{
                                 marginTop: '20px',
+                                marginBottom: '32px',
                                 padding: '16px',
                                 borderRadius: '8px',
                                 backgroundColor: '#f5f5f5'
@@ -407,7 +440,7 @@ const TicketCreatePage = () => {
                                                 </div>
                                             ) : (
                                                 <div style={{ color: '#999', fontSize: '12px' }}>
-                                                    경기 예정
+                                                    취소된 경기
                                                 </div>
                                             )}
                                         </div>
@@ -416,117 +449,10 @@ const TicketCreatePage = () => {
                             </div>
                         )}
 
-                        <button className="next-btn" onClick={nextStep} style={{ backgroundColor: teamColors.bgColor }}>
-                            다음
+                        <button className="submit-btn" onClick={handleSubmit} style={{ backgroundColor: teamColors.bgColor }}>
+                            티켓 발급하기
                         </button>
                     </div>
-                )}
-
-                {/* 2단계: 사진선택 */}
-                {currentStep === 2 && (
-                    <div className="form-step">
-                        <div className="photo-upload-section">
-                            <div className="photo-preview" style={{ position: 'relative' }}>
-                                {ticketBackground && (
-                                    <img
-                                        src={ticketBackground}
-                                        alt="티켓 배경"
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            opacity: 0.3,
-                                            pointerEvents: 'none'
-                                        }}
-                                    />
-                                )}
-                                {formData.photoPreview ? (
-                                    <img src={formData.photoPreview} alt="미리보기" style={{ position: 'relative', zIndex: 1 }} />
-                                ) : (
-                                    <div className="photo-placeholder" style={{ position: 'relative', zIndex: 1 }}>
-                                        <div className="photo-icon">📷</div>
-                                        <p>사진 선택</p>
-                                        {selectedTeam && <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>{selectedTeam} 티켓</p>}
-                                    </div>
-                                )}
-                            </div>
-                            <p className="photo-guide">필수값(*)을 채워 관람한 경기를 티켓으로 완성하세요.</p>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handlePhotoChange}
-                                style={{ display: 'none' }}
-                                id="photo-input"
-                            />
-                            <label htmlFor="photo-input" className="photo-upload-btn" style={{ backgroundColor: teamColors.bgColor }}>
-                                사진 선택
-                            </label>
-                        </div>
-
-                        <div className="form-buttons">
-                            <button className="prev-btn" onClick={prevStep}>이전</button>
-                            <button className="next-btn" onClick={nextStep} style={{ backgroundColor: teamColors.bgColor }}>다음</button>
-                        </div>
-                    </div>
-                )}
-
-                {/* 3단계: 필수정보 */}
-                {currentStep === 3 && (
-                    <div className="form-step">
-                        <div className="form-group">
-                            <label>Type</label>
-                            <input
-                                type="text"
-                                name="type"
-                                value={formData.type}
-                                onChange={handleChange}
-                                placeholder="관람한 종목을 선택해주세요."
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Score</label>
-                            <div className="score-inputs">
-                                <input
-                                    type="number"
-                                    name="awayScore"
-                                    value={formData.awayScore}
-                                    onChange={handleChange}
-                                    placeholder="Away"
-                                />
-                                <span>:</span>
-                                <input
-                                    type="number"
-                                    name="homeScore"
-                                    value={formData.homeScore}
-                                    onChange={handleChange}
-                                    placeholder="Home"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Review</label>
-                            <textarea
-                                name="review"
-                                value={formData.review}
-                                onChange={handleChange}
-                                rows={6}
-                                placeholder="상세 리뷰를 작성해주세요..."
-                            />
-                        </div>
-
-                        <div className="form-buttons">
-                            <button className="prev-btn" onClick={prevStep}>이전</button>
-                            <button className="submit-btn" onClick={handleSubmit} style={{ backgroundColor: teamColors.bgColor }}>
-                                티켓 발급하기
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
 
             {/* 경기 선택 모달 */}
