@@ -67,6 +67,7 @@ const MyPage = () => {
     setFormData((prev) => ({
       ...prev,
       team: teamName,
+      bio: `⚾ ${teamName}`, // 팀 변경 시 bio 자동 업데이트
     }));
   };
 
@@ -228,7 +229,7 @@ const MyPage = () => {
             />
           </div>
 
-          <div className="profile-info">
+          <div className="mypage-profile-info">
             <div className="info-group">
               <label className="info-label">닉네임</label>
               <input

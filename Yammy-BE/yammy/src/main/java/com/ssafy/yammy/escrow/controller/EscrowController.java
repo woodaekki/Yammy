@@ -1,60 +1,73 @@
 package com.ssafy.yammy.escrow.controller;
 
-import com.ssafy.yammy.config.JwtTokenProvider;
-import com.ssafy.yammy.escrow.dto.EscrowDepositRequest;
+import com.ssafy.yammy.config.CustomUserDetails;
+import com.ssafy.yammy.escrow.dto.EscrowRequest;
 import com.ssafy.yammy.escrow.dto.EscrowResponse;
 import com.ssafy.yammy.escrow.service.EscrowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-@CrossOrigin(origins = "http://localhost:5173")
-@Tag(name = "Escrow API", description = "중고거래 에스크로 송금 API")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@Slf4j
+@Tag(name = "Escrow", description = "야미페이 에스크로 API")
 @RestController
 @RequestMapping("/api/escrow")
 @RequiredArgsConstructor
 public class EscrowController {
 
     private final EscrowService escrowService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    @Operation(summary = "에스크로 송금", description = "구매자가 판매자에게 에스크로로 송금합니다.")
-    @PostMapping("/deposit")
+    @Operation(summary = "채팅방 송금")
+    @PostMapping("/{roomKey}")
     public ResponseEntity<EscrowResponse> deposit(
-            HttpServletRequest request,
-            @RequestBody EscrowDepositRequest depositRequest
-    ) {
-        System.out.println("[EscrowController] deposit 호출됨");
-        System.out.println("[EscrowController] Request: " + depositRequest);
-        Long memberId = extractMemberIdFromToken(request);
-        System.out.println("[EscrowController] memberId: " + memberId);
-        EscrowResponse response = escrowService.deposit(memberId, depositRequest);
-        return ResponseEntity.ok(response);
-    }
+            @PathVariable String roomKey,
+            @RequestBody EscrowRequest request,
+            @AuthenticationPrincipal CustomUserDetails user) {
 
-    @Operation(summary = "에스크로 받기", description = "판매자가 에스크로 금액을 받습니다.")
-    @PostMapping("/release/{escrowId}")
-    public ResponseEntity<EscrowResponse> release(
-            HttpServletRequest request,
-            @PathVariable Long escrowId
-    ) {
-        Long memberId = extractMemberIdFromToken(request);
-        EscrowResponse response = escrowService.release(escrowId, memberId);
-        return ResponseEntity.ok(response);
-    }
-
-    // JWT 토큰에서 memberId 추출
-    private Long extractMemberIdFromToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증 토큰이 없습니다.");
+        if (user == null) {
+            log.error("인증된 사용자 정보가 없습니다!");
+            throw new IllegalStateException("인증이 필요합니다.");
         }
-        String token = authHeader.substring(7);
-        return jwtTokenProvider.getMemberId(token);
+
+        EscrowResponse response = escrowService.createEscrow(
+                roomKey,
+                user.getMemberId(),
+                request.getAmount()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "거래 확정")
+    @PostMapping("/{escrowId}/confirmed")
+    public ResponseEntity<String> confirmed(
+            @PathVariable Long escrowId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        if (user == null) {
+            throw new IllegalStateException("인증이 필요합니다.");
+        }
+
+        escrowService.confirmedEscrow(escrowId);
+        return ResponseEntity.ok("거래 완료: 포인트 지급 완료");
+    }
+
+    @Operation(summary = "거래 취소")
+    @PostMapping("/{escrowId}/cancel")
+    public ResponseEntity<String> cancel(
+            @PathVariable Long escrowId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        if (user == null) {
+            throw new IllegalStateException("인증이 필요합니다.");
+        }
+
+        escrowService.cancelEscrow(escrowId);
+        return ResponseEntity.ok("거래 취소: 포인트 환불 완료");
     }
 }

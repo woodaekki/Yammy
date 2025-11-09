@@ -26,6 +26,7 @@ Test_Build_BE:
     - name: redis:latest
       alias: redis
   variables:
+#   mysql, redis 임시 이미지를 사용하기 때문에 값도 일회용
     MYSQL_DATABASE: testdb
     MYSQL_ROOT_PASSWORD: root_password
     DB_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul
@@ -74,9 +75,7 @@ FE_Image:
   script:
     - cd ${FRONTEND_DIR}
 
-    - echo "VITE_KAKAO_REST_API_KEY=${VITE_KAKAO_REST_API_KEY}" > .env
-    - echo "생성된 .env 파일 내용:"
-    - cat .env
+    - echo "$Frontend_env" > .env
 
     - apk add --no-cache python3 py3-pip
     - pip install awscli

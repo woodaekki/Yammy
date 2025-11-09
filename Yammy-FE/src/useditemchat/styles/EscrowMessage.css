@@ -1,7 +1,7 @@
-/* 에스크로 메시지 아이템 */
+/* === 에스크로 메시지 아이템 === */
 .escrow-message-item {
   display: flex;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .escrow-message-item.mine {
@@ -12,46 +12,50 @@
   justify-content: flex-start;
 }
 
-/* 에스크로 카드 */
+/* === 에스크로 카드 (봉투) === */
 .escrow-message-card {
-  max-width: 280px;
+  max-width: 230px;
   background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+  border-radius: 12px; 
+  padding: 12px 14px; 
+  box-shadow: 0 3px 8px rgba(255, 107, 53, 0.25);
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: flex-start;
 }
 
+/* === 아이콘 === */
 .escrow-message-icon {
-  font-size: 32px;
+  font-size: 24px; 
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
+/* === 본문 === */
 .escrow-message-content {
   flex: 1;
   color: white;
 }
 
-/* 헤더 */
+/* === 헤더 === */
 .escrow-message-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .escrow-message-label {
-  font-size: 13px;
+  font-size: 12px; 
   font-weight: 500;
   opacity: 0.9;
 }
 
 .escrow-message-status {
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 12px;
+  margin-left: 4px;
+  font-size: 10px; /* ✅ 작게 */
+  padding: 2px 6px;
+  border-radius: 10px;
   font-weight: 600;
 }
 
@@ -60,29 +64,35 @@
 }
 
 .escrow-message-status.completed {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
-/* 금액 */
+.escrow-message-status.cancelled {
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: line-through;
+}
+
+/* === 금액 === */
 .escrow-message-amount {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
+  font-size: 18px; 
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
 }
 
-/* 받기 버튼 */
+/* === 받기 버튼 === */
 .escrow-message-receive-btn {
-  width: 100%;
-  padding: 10px;
+  width: 75%; 
+  padding: 6px 0;
   background-color: white;
   color: #ff6b35;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-size: 13px; 
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  margin-top: 6px;
 }
 
 .escrow-message-receive-btn:hover:not(:disabled) {
@@ -99,10 +109,10 @@
   transform: translateY(0);
 }
 
-/* 완료 시간 */
+/* === 완료 시간 === */
 .escrow-message-time {
-  font-size: 11px;
-  opacity: 0.8;
-  margin-top: 8px;
+  font-size: 10px; 
+  opacity: 0.75;
+  margin-top: 6px;
   text-align: center;
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost, updatePost } from './api/snsApi';
+import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost } from './api/snsApi';
 import { getTeamColors } from './utils/teamColors';
 import './styles/SNSPage.css';
 
@@ -125,8 +125,6 @@ const SNSPage = () => {
     const [hasMore, setHasMore] = useState(true);
     const [nextCursor, setNextCursor] = useState(null);
     const [openMenuPostId, setOpenMenuPostId] = useState(null);
-    const [editingPostId, setEditingPostId] = useState(null);
-    const [editingCaption, setEditingCaption] = useState('');
     const observerTarget = useRef(null);
     const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
     const teamColors = getTeamColors();
@@ -223,37 +221,9 @@ const SNSPage = () => {
         }
     };
 
-    // 게시글 수정 모드 시작
-    const handleEditPost = (postId, currentCaption) => {
-        setEditingPostId(postId);
-        setEditingCaption(currentCaption || '');
-        setOpenMenuPostId(null);
-    };
-
-    // 게시글 수정 저장
-    const handleSaveEdit = async (postId) => {
-        try {
-            await updatePost(postId, editingCaption);
-
-            // 로컬 상태 업데이트
-            setPosts(posts.map(post =>
-                post.id === postId
-                    ? { ...post, caption: editingCaption }
-                    : post
-            ));
-
-            setEditingPostId(null);
-            setEditingCaption('');
-        } catch (error) {
-            console.error('게시글 수정 실패:', error);
-            alert('게시글 수정에 실패했습니다.');
-        }
-    };
-
-    // 게시글 수정 취소
-    const handleCancelEdit = () => {
-        setEditingPostId(null);
-        setEditingCaption('');
+    // 게시글 수정 페이지로 이동
+    const handleEditPost = (postId) => {
+        navigate(`/post/edit/${postId}`);
     };
 
     // 게시글 삭제
@@ -315,7 +285,7 @@ const SNSPage = () => {
                                     </button>
                                     {openMenuPostId === post.id && (
                                         <div className="post-menu-dropdown">
-                                            <button onClick={() => handleEditPost(post.id, post.caption)}>
+                                            <button onClick={() => handleEditPost(post.id)}>
                                                 <i className="fas fa-edit"></i> 수정
                                             </button>
                                             <button onClick={() => handleDeletePost(post.id)} className="delete-btn">
@@ -328,35 +298,9 @@ const SNSPage = () => {
                         </div>
 
                         {/* 게시물 내용 */}
-                        {(post.caption || editingPostId === post.id) && (
+                        {post.caption && (
                             <div className="post-content">
-                                {editingPostId === post.id ? (
-                                    <div className="post-edit-container">
-                                        <textarea
-                                            className="post-edit-textarea"
-                                            value={editingCaption}
-                                            onChange={(e) => setEditingCaption(e.target.value)}
-                                            placeholder="게시글 내용을 입력하세요..."
-                                            autoFocus
-                                        />
-                                        <div className="post-edit-actions">
-                                            <button
-                                                className="edit-save-btn"
-                                                onClick={() => handleSaveEdit(post.id)}
-                                            >
-                                                저장
-                                            </button>
-                                            <button
-                                                className="edit-cancel-btn"
-                                                onClick={handleCancelEdit}
-                                            >
-                                                취소
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <p>{post.caption}</p>
-                                )}
+                                <p>{post.caption}</p>
                             </div>
                         )}
 

@@ -4,23 +4,21 @@ import EscrowMessageItem from './EscrowMessageItem';
 import '../styles/UsedItemMessageItem.css';
 
 /**
- * 중고거래 채팅 메시지 아이템 (양끝 정렬 완전 버전)
- * - 내 메시지는 오른쪽 끝
- * - 상대 메시지는 왼쪽 끝
+ * 중고거래 채팅 메시지 아이템 (카카오톡 스타일)
+ * - 내 메시지 오른쪽, 상대방 왼쪽
+ * - 닉네임 위 / 시간은 말풍선 옆
  */
 export default function UsedItemMessageItem({ message, onImageClick }) {
-  // ✅ 모든 hooks를 먼저 호출 (조건부 return 이전에!)
   const user = useAuthStore((state) => state.user);
   const [imageLoaded, setImageLoaded] = useState(false);
-
   const isMine = user && message.uid === String(user.memberId);
 
-  // ✅ hooks 호출 후 조건부 return
-  // 에스크로 메시지 타입 처리
+  // 에스크로 메시지 처리
   if (message.type === 'escrow') {
     return <EscrowMessageItem message={message} isMine={isMine} />;
   }
 
+  // 빈 메시지 방어
   if (!message || (!message.message && !message.imageUrl)) {
     return null;
   }
@@ -28,37 +26,47 @@ export default function UsedItemMessageItem({ message, onImageClick }) {
   return (
     <div className={`chat-row ${isMine ? 'mine' : 'theirs'}`}>
       <div className="chat-content">
-        {!isMine && <span className="chat-nickname">{message.nickname}</span>}
-
-        <div className={`chat-bubble ${isMine ? 'mine' : 'theirs'}`}>
-          {message.type === 'text' && (
-            <p className="chat-text">{message.message}</p>
-          )}
-
-          {message.type === 'image' && message.imageUrl && (
-            <div className="chat-image-wrapper">
-              {!imageLoaded && (
-                <div className="chat-image-loading">
-                  <div className="chat-spinner"></div>
-                </div>
-              )}
-              <img
-                src={message.imageUrl}
-                alt="message"
-                className={`chat-image ${imageLoaded ? 'visible' : ''}`}
-                onLoad={() => setImageLoaded(true)}
-                onClick={() => onImageClick && onImageClick(message.imageUrl)}
-              />
-            </div>
-          )}
-        </div>
-
-        <span className="chat-time">
-          {message.createdAt?.toLocaleString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
+        {/* === 닉네임 === */}
+        <span className="chat-nickname">
+          {message.nickname || (isMine ? user?.nickname : '')}
         </span>
+
+        {/* === 말풍선 + 시간 === */}
+        <div className="chat-bubble-wrapper">
+          <div className={`chat-bubble ${isMine ? 'mine' : 'theirs'}`}>
+            {message.type === 'text' && (
+              <p className="chat-text">{message.message}</p>
+            )}
+
+            {message.type === 'image' && message.imageUrl && (
+              <div className="chat-image-wrapper">
+                {!imageLoaded && (
+                  <div className="chat-image-loading">
+                    <div className="chat-spinner"></div>
+                  </div>
+                )}
+                <img
+                  src={message.imageUrl}
+                  alt="message"
+                  className={`chat-image ${imageLoaded ? 'visible' : ''}`}
+                  onLoad={() => setImageLoaded(true)}
+                  onClick={() => onImageClick && onImageClick(message.imageUrl)}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* === 시간 (말풍선 옆) === */}
+          <span className="chat-time">
+            {message.createdAt
+              ? new Date(message.createdAt).toLocaleTimeString('ko-KR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                })
+              : ''}
+          </span>
+        </div>
       </div>
     </div>
   );

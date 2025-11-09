@@ -32,4 +32,17 @@ public class Point {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    // 포인트 증가
+    public void increase(Long amount) {
+        this.balance += amount;
+    }
+
+    // 포인트 감소
+    public void decrease(Long amount) {
+        if (this.balance < amount) {
+            throw new IllegalStateException("포인트 잔액이 부족합니다.");
+        }
+        this.balance -= amount;
+    }
 }
