@@ -33,6 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        // OPTIONS 요청은 무조건 통과 (CORS preflight)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 공개 경로는 JWT 필터 건너뛰기
         String path = request.getRequestURI();
         if (path.startsWith("/api/auth/signup") ||
