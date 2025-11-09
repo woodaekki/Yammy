@@ -6,7 +6,7 @@ import './styles/predict.css';
 
 const PredictPage = () => {
   const navigate = useNavigate();
-  
+
   // 오늘 날짜 가져오기
   const today = new Date();
   const year = today.getFullYear();
@@ -21,6 +21,11 @@ const PredictPage = () => {
 
   // 오늘 경기만 필터링
   const todayMatches = matches.filter(match => match.date === todayDateString);
+
+  // 사용자 팀 컬러 가져오기
+  const userTeam = localStorage.getItem('team') || 'LG 트윈스';
+  const userTeamColor = TEAM_COLORS[userTeam]?.bgColor || '#4CAF50';
+  const userTeamTextColor = TEAM_COLORS[userTeam]?.textColor || '#ffffff';
 
   // 팀 컬러 가져오기 함수
   const getTeamColor = (teamName) => {
@@ -51,9 +56,9 @@ const PredictPage = () => {
 
   return (
     <div className="predict-page">
-      <div className="predict-header">
-        <h1>⚾ 승부 예측</h1>
-        <p>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
+      <div className="predict-header" style={{ backgroundColor: userTeamColor }}>
+        <h1 style={{ color: userTeamTextColor }}>⚾ 승부 예측</h1>
+        <p style={{ color: userTeamTextColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
       </div>
       
       <div className="predict-schedule">
@@ -87,28 +92,28 @@ const PredictPage = () => {
                     <div className="match-time-header">{match.gameTime}</div>
                     <div className="match-prediction-card">
                       {/* 홈팀 */}
-                      <div 
+                      <div
                         className="team-section home-team-section"
                         style={{ backgroundColor: getTeamColor(match.homeTeam) }}
                       >
                         <div className="team-label">HOME</div>
                         <div className="team-name">{match.homeTeam} ({match.homeWinningRate}%)</div>
-                        <div className="prediction-score">50%</div>
+                        <div className="prediction-score">2.0배</div>
                       </div>
-                      
+
                       {/* 중앙 VS */}
                       <div className="vs-section">
                         <span className="vs-text">VS</span>
                       </div>
-                      
+
                       {/* 원정팀 */}
-                      <div 
+                      <div
                         className="team-section away-team-section"
                         style={{ backgroundColor: getTeamColor(match.awayTeam) }}
                       >
                         <div className="team-label">AWAY</div>
                         <div className="team-name">{match.awayTeam} ({match.awayWinningRate}%)</div>
-                        <div className="prediction-score">50%</div>
+                        <div className="prediction-score">2.0배</div>
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>
