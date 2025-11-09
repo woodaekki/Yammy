@@ -25,7 +25,7 @@ public class Scoreboard {
     private String matchcode;
 
     @Column(name = "idx")
-    private Integer idx;
+    private Long idx;
 
     private String team;
     private String result;

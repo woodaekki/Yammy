@@ -53,6 +53,7 @@ const UserProfile = () => {
                     avatar: firstPost.profileImage || DEFAULT_PROFILE_IMAGE,
                     postsCount: userPosts.length,
                     team: firstPost.team,
+                    bio: firstPost.bio || '',
                 });
             } else {
                 // 게시글이 없을 경우 기본 프로필 정보만 표시
@@ -62,6 +63,7 @@ const UserProfile = () => {
                     avatar: DEFAULT_PROFILE_IMAGE,
                     postsCount: 0,
                     team: '',
+                    bio: '',
                 });
             }
         } catch (error) {
@@ -137,7 +139,7 @@ const UserProfile = () => {
 
             {/* 프로필 정보 */}
             <div className="profile-info-section">
-                <div className="profile-main">
+                <div className="profile-top">
                     <div className="avatar-wrapper">
                         <img
                             src={profileData.avatar}
@@ -148,46 +150,46 @@ const UserProfile = () => {
                             }}
                         />
                     </div>
-
-                    <div className="profile-details">
-                        <h2 className="profile-name">{profileData.name}</h2>
-                        <p className="profile-username">{profileData.username}</p>
-
-                        <div className="profile-stats">
-                            <div className="stat-item">
-                                <div className="stat-number">{profileData.postsCount}</div>
-                                <div className="stat-label">게시물</div>
-                            </div>
-                            <button
-                                className="stat-item"
-                                onClick={() => {
-                                    setFollowModalTab('followers');
-                                    setShowFollowModal(true);
-                                }}
-                            >
-                                <div className="stat-number">{followersCount.toLocaleString()}</div>
-                                <div className="stat-label">팔로워</div>
-                            </button>
-                            <button
-                                className="stat-item"
-                                onClick={() => {
-                                    setFollowModalTab('following');
-                                    setShowFollowModal(true);
-                                }}
-                            >
-                                <div className="stat-number">{followingCount.toLocaleString()}</div>
-                                <div className="stat-label">팔로잉</div>
-                            </button>
+                    <div className="profile-info">
+                        <h2 className="profile-name">{profileData.name} {profileData.username}</h2>
+                        <div className="bio-container">
+                            {profileData.team && (
+                                <p className="bio-text">⚾ {profileData.team}</p>
+                            )}
+                            {profileData.bio && profileData.bio !== `⚾ ${profileData.team}` && (
+                                <p className="bio-text">{profileData.bio}</p>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* 소개 */}
-                {profileData.team && (
-                    <div className="bio-section">
-                        <p className="bio-text">⚾ {profileData.team}</p>
+                {/* 게시물/팔로워/팔로잉 통계 */}
+                <div className="profile-stats">
+                    <div className="stat-item">
+                        <div className="stat-label">게시글</div>
+                        <div className="stat-number">{profileData.postsCount}</div>
                     </div>
-                )}
+                    <button
+                        className="stat-item"
+                        onClick={() => {
+                            setFollowModalTab('followers');
+                            setShowFollowModal(true);
+                        }}
+                    >
+                        <div className="stat-label">팔로워</div>
+                        <div className="stat-number">{followersCount.toLocaleString()}</div>
+                    </button>
+                    <button
+                        className="stat-item"
+                        onClick={() => {
+                            setFollowModalTab('following');
+                            setShowFollowModal(true);
+                        }}
+                    >
+                        <div className="stat-label">팔로잉</div>
+                        <div className="stat-number">{followingCount.toLocaleString()}</div>
+                    </button>
+                </div>
 
                 {/* 액션 버튼 */}
                 <div className="action-buttons">

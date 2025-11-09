@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFollowers, getFollowing, followUser, unfollowUser } from '../api/snsApi';
+import { getTeamColors } from '../utils/teamColors';
 import '../styles/FollowListModal.css';
 
 const FollowListModal = ({ isOpen, onClose, userId, initialTab = 'followers' }) => {
@@ -9,12 +10,20 @@ const FollowListModal = ({ isOpen, onClose, userId, initialTab = 'followers' }) 
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const teamColors = getTeamColors();
+
+    useEffect(() => {
+        if (isOpen) {
+            setActiveTab(initialTab); // 모달이 열릴 때 initialTab으로 설정
+            loadData();
+        }
+    }, [isOpen, userId]);
 
     useEffect(() => {
         if (isOpen) {
             loadData();
         }
-    }, [isOpen, activeTab, userId]);
+    }, [activeTab]);
 
     const loadData = async () => {
         setIsLoading(true);
@@ -59,7 +68,14 @@ const FollowListModal = ({ isOpen, onClose, userId, initialTab = 'followers' }) 
 
     return (
         <div className="follow-modal-overlay" onClick={onClose}>
-            <div className="follow-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div
+                className="follow-modal-content"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                    '--team-color': teamColors.bgColor,
+                    '--team-text-color': teamColors.textColor
+                }}
+            >
                 {/* 헤더 */}
                 <div className="follow-modal-header">
                     <h2>팔로우</h2>

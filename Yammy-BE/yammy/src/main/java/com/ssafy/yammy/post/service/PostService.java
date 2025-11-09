@@ -183,6 +183,7 @@ public class PostService {
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
                 .team(member.getTeam())
+                .bio(member.getBio())
                 .caption(post.getCaption())
                 .imageUrls(imageUrls)
                 .likeCount(post.getLikeCount())

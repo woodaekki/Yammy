@@ -31,8 +31,9 @@ public class PointTransaction {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(name = "type", length = 50)  // CHARGE, ESCROW_DEPOSIT, ESCROW_RELEASE, ESCROW_CANCEL 등
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 50,  nullable = false)
+    private TransactionType type;
 
     @Column(name = "amount")
     private Long amount;
