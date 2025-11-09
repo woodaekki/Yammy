@@ -38,7 +38,7 @@
 
 /* 컨텐츠 */
 .mypage-content {
-  padding: 24px 16px;
+  padding: 24px 0;
 }
 
 /* 프로필 섹션 */
@@ -46,7 +46,7 @@
   background-color: white;
   border-radius: 16px;
   padding: 24px;
-  margin-bottom: 24px;
+  margin: 0 16px 24px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -110,12 +110,13 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding: 0;
 }
 
 .info-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .info-label {
@@ -136,13 +137,16 @@
 .info-value.readonly {
   background-color: #e5e7eb;
   color: #6b7280;
+  border-radius: 8px;
+  text-align: left;
+  padding: 14px;
 }
 
 .info-input,
 .info-textarea {
   font-size: 16px;
   color: #111827;
-  padding: 12px;
+  padding: 14px;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-family: inherit;
@@ -162,7 +166,8 @@
 
 /* 저장 버튼 */
 .save-btn {
-  width: 100%;
+  width: calc(100% - 32px);
+  margin: 0 16px;
   padding: 16px;
   background-color: var(--team-color);
   color: white;
