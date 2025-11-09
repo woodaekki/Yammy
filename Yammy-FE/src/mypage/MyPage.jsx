@@ -229,7 +229,7 @@ const MyPage = () => {
             />
           </div>
 
-          <div className="profile-info">
+          <div className="mypage-profile-info">
             <div className="info-group">
               <label className="info-label">닉네임</label>
               <input

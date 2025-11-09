@@ -106,7 +106,7 @@
 }
 
 /* 정보 그룹 */
-.profile-info {
+.mypage-profile-info {
   display: flex;
   flex-direction: column;
   gap: 24px;
