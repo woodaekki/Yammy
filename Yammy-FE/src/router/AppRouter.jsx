@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route, Navigate, useLocation } from "react-router-dom"
 import SNSPage from "../sns/SNSPage"
 import CommentPage from "../sns/components/CommentPage"
 import UserProfile from "../sns/components/UserProfile"
@@ -32,6 +32,7 @@ import AdminChatPage from "../chatgames/pages/AdminChatPage";
 import AdminRoute from "./AdminRoute"; 
 
 export default function AppRouter() {
+  const location = useLocation();
   return (
     <Routes>
       {/* Auth Routes - 로그인 필요 없음 */}
@@ -54,16 +55,20 @@ export default function AppRouter() {
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
       <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
+       {/* UsedItem Chat Routes */}
+      <Route
+        path="/useditem/chat/:roomKey"
+        element={<UsedItemChatPage key={location.pathname} />}
+      />
+      <Route path="/chatlist" element={<UsedItemChatList />} />
+
       {/* UsedItem Routes */}
       <Route path="/useditem" element={<UsedItemPage />} />
       <Route path="/useditem/:id" element={<UsedItemDetail />} />
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
 
-      {/* UsedItem Chat Routes */}
-      <Route path="/useditem/chat/:roomKey" element={<UsedItemChatPage />} />
-      <Route path="/chatlist" element={<UsedItemChatList />} />
-      
+
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />
       <Route path="/checkout" element={<CheckoutPage />} />

@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { usedItemChatApi } from '../api/usedItemChatApi';
-import { getUsedItemById } from '../../useditem/api/usedItemApi';
-import { useUsedItemChatMessages } from '../hooks/useUsedItemChatMessages';
-import { getMyPoint } from '../../payment/api/pointAPI';
-import { deposit } from '../../payment/api/escrowApi';
-import useAuthStore from '../../stores/authStore';
-import UsedItemMessageList from './UsedItemMessageList';
-import UsedItemChatInput from './UsedItemChatInput';
-import TransferModal from './TransferModal';
-import '../styles/UsedItemChatPage.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { usedItemChatApi } from "../api/usedItemChatApi";
+import { getUsedItemById } from "../../useditem/api/usedItemApi";
+import { useUsedItemChatMessages } from "../hooks/useUsedItemChatMessages";
+import { getMyPoint } from "../../payment/api/pointAPI";
+import { deposit } from "../../payment/api/escrowApi";
+import useAuthStore from "../../stores/authStore";
+import UsedItemMessageList from "./UsedItemMessageList";
+import UsedItemChatInput from "./UsedItemChatInput";
+import TransferModal from "./TransferModal";
+import "../styles/UsedItemChatPage.css";
 
 export default function UsedItemChatPage() {
   const { roomKey } = useParams();
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
+  const { user, initialize } = useAuthStore(); 
 
   const [chatRoomInfo, setChatRoomInfo] = useState(null);
   const [itemInfo, setItemInfo] = useState(null);
@@ -28,16 +28,39 @@ export default function UsedItemChatPage() {
     useUsedItemChatMessages(roomKey);
 
   useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  // 데이터 로드
+  // NOTE: user를 의존성에 추가해서, 로그인 정보가 늦게 로드될 때도
+  // 채팅 초기화(initChat)가 재실행되도록 함.
+  useEffect(() => {
     if (!roomKey) return;
 
     const initChat = async () => {
+      console.log('🔧 initChat start, roomKey=', roomKey, 'user=', user);
       try {
         setLoading(true);
-        if (!user?.memberId) {
-          alert('로그인이 필요합니다.');
-          navigate('/login');
+
+        // 로그인 확인 (user가 아직 null일 때 localStorage에서 fallback)
+        // memberId가 즉시 없을 경우, 짧게 재시도하여 auth가 늦게 채워지는 케이스를 허용합니다.
+  let memberId = user?.memberId || localStorage.getItem("memberId");
+        const maxAttempts = 3;
+        let attempt = 0;
+        while (!memberId && attempt < maxAttempts) {
+          // 짧게 대기
+          await new Promise((res) => setTimeout(res, 200));
+          memberId = user?.memberId || localStorage.getItem("memberId");
+          attempt += 1;
+        }
+
+        if (!memberId) {
+          console.log('🔒 initChat: no memberId after retries, redirecting');
+          alert("로그인이 필요합니다.");
+          navigate("/login");
           return;
         }
+        console.log('✅ initChat: memberId=', memberId);
 
         const chatRoom = await usedItemChatApi.getChatRoom(roomKey);
         setChatRoomInfo(chatRoom);
@@ -48,10 +71,10 @@ export default function UsedItemChatPage() {
         const pointData = await getMyPoint();
         setMyBalance(pointData.balance);
       } catch (err) {
-        console.error('채팅방 초기화 실패:', err);
+        console.error("채팅방 초기화 실패:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {
-          alert('로그인이 필요합니다.');
-          navigate('/login');
+          alert("로그인이 필요합니다.");
+          navigate("/login");
           return;
         }
         setError(err.response?.data?.message || err.message);
@@ -61,12 +84,13 @@ export default function UsedItemChatPage() {
     };
 
     initChat();
-  }, [roomKey, user, navigate]);
+  }, [roomKey, navigate, user]); 
 
   const handleOpenTransferModal = () => {
-    if (!user?.memberId) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
+    const memberId = user?.memberId || localStorage.getItem("memberId");
+    if (!memberId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
       return;
     }
     setIsTransferModalOpen(true);
@@ -76,27 +100,28 @@ export default function UsedItemChatPage() {
 
   const handleTransferSubmit = async (amount) => {
     try {
-      if (!user?.memberId) {
-        alert('로그인이 필요합니다.');
-        navigate('/login');
+      const memberId = user?.memberId || localStorage.getItem("memberId");
+      if (!memberId) {
+        alert("로그인이 필요합니다.");
+        navigate("/login");
         return;
       }
 
       await deposit(roomKey, amount);
-      alert('송금이 완료되었습니다.');
+      alert("송금이 완료되었습니다.");
 
       const updated = await getMyPoint();
       setMyBalance(updated.balance);
-      window.dispatchEvent(new Event('pointUpdated'));
+      window.dispatchEvent(new Event("pointUpdated"));
     } catch (error) {
-      console.error('송금 실패:', error);
+      console.error("송금 실패:", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
-        alert('인증이 만료되었습니다. 다시 로그인해주세요.');
-        navigate('/login');
+        alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/login");
       } else if (error.response?.status === 400) {
-        alert(error.response?.data?.message || '잘못된 요청입니다.');
+        alert(error.response?.data?.message || "잘못된 요청입니다.");
       } else {
-        alert(error.response?.data?.message || '송금에 실패했습니다.');
+        alert(error.response?.data?.message || "송금에 실패했습니다.");
       }
     }
   };
@@ -109,7 +134,7 @@ export default function UsedItemChatPage() {
           <h2 className="chat-error-title">채팅방 오류</h2>
           <p className="chat-error-message">{error || messageError}</p>
           <button
-            onClick={() => navigate('/chatlist')}
+            onClick={() => navigate("/chatlist")}
             className="chat-error-button"
           >
             채팅방 목록으로 돌아가기
@@ -132,13 +157,13 @@ export default function UsedItemChatPage() {
 
   return (
     <div className="chat-page">
-      {/* 헤더 */}
+      {/* === 헤더 === */}
       <div className="chat-header">
         <div className="chat-header-inner">
           <div className="chat-header-content">
             <div className="chat-header-left">
               <button
-                onClick={() => navigate('/chatlist')}
+                onClick={() => navigate("/chatlist")}
                 className="chat-back-button"
               >
                 <svg
@@ -187,6 +212,7 @@ export default function UsedItemChatPage() {
         </div>
       </div>
 
+      {/* === 메시지 영역 === */}
       <div className="chat-message-area">
         <UsedItemMessageList
           messages={messages}
@@ -195,8 +221,10 @@ export default function UsedItemChatPage() {
         />
       </div>
 
+      {/* === 입력창 === */}
       {roomKey && <UsedItemChatInput roomKey={roomKey} />}
 
+      {/* === 이미지 확대 === */}
       {selectedImage && (
         <div className="chat-image-modal" onClick={() => setSelectedImage(null)}>
           <div className="chat-image-modal-inner">
@@ -227,6 +255,7 @@ export default function UsedItemChatPage() {
         </div>
       )}
 
+      {/* === 송금 모달 === */}
       <TransferModal
         isOpen={isTransferModalOpen}
         onClose={handleCloseTransferModal}

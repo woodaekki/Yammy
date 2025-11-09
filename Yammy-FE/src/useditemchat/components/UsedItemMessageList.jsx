@@ -5,23 +5,20 @@ import "../styles/UsedItemMessageList.css";
 
 /**
  * 중고거래 채팅 메시지 리스트
- * - 내 메시지: 오른쪽
- * - 상대 메시지: 왼쪽
- * - localStorage 기반으로 로그인 정보 유지
  */
 export default function UsedItemMessageList({ messages, loading, onImageClick }) {
   const messagesEndRef = useRef(null);
+  const messageListRef = useRef(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  // Zustand + localStorage 혼합 유저 정보
-  const { user, isLoggedIn } = useAuthStore();
+  const { user } = useAuthStore();
   const myId = user?.memberId || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
 
-  // 메시지 추가 시 맨 아래로 스크롤
+  // messages 배열이 변경될 때마다 스크롤
   useEffect(() => {
     scrollToBottom();
-  }, [messages.length]);
+  }, [messages]);
 
   const handleScroll = (e) => {
     const el = e.target;
@@ -44,14 +41,13 @@ export default function UsedItemMessageList({ messages, loading, onImageClick })
 
   return (
     <div className="chat-container">
-      <div className="message-list" onScroll={handleScroll}>
+      <div className="message-list" ref={messageListRef} onScroll={handleScroll}>
         {messages.length === 0 ? (
           <div className="message-empty">
             <p>아직 메시지가 없습니다</p>
           </div>
         ) : (
           messages.map((msg) => {
-            // 내 메시지 판별 (id 또는 닉네임 기준)
             const isMine =
               msg.senderId?.toString() === myId?.toString() ||
               msg.memberId?.toString() === myId?.toString() ||
