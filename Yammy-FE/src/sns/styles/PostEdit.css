@@ -1,4 +1,4 @@
-.post-create-container {
+.post-edit-container {
   max-width: 600px;
   margin: 0 auto;
   background: #fff;
@@ -7,7 +7,7 @@
 }
 
 /* 헤더 */
-.post-create-header {
+.post-edit-header {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -16,7 +16,7 @@
   margin-bottom: 1rem;
 }
 
-.post-create-back-btn {
+.post-edit-back-btn {
   background: none;
   border: none;
   font-size: 1.4rem;
@@ -24,13 +24,13 @@
   color: #333;
 }
 
-.post-create-header-title {
+.post-edit-header-title {
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 /* 폼 전체 */
-.post-create-form {
+.post-edit-form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -39,59 +39,27 @@
 }
 
 /* 이미지 영역 */
-.post-create-images {
+.post-edit-images {
   width: 100%;
   margin-bottom: 0.8rem;
   box-sizing: border-box;
 }
 
-.post-create-images h4 {
+.post-edit-images h4 {
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
   color: #555;
 }
 
-/* 업로드 라벨 */
-.post-create-upload-label {
-  display: block;
-  cursor: pointer;
-  width: 100%;
-}
-
-.post-create-upload-placeholder {
-  border: 2px dashed #dbdbdb;
-  border-radius: 8px;
-  padding: 60px 20px;
-  text-align: center;
-  color: #8e8e8e;
-}
-
-.post-create-upload-placeholder svg {
-  margin-bottom: 15px;
-  color: #bbb;
-}
-
-.post-create-upload-placeholder p {
-  margin: 10px 0;
-  font-size: 18px;
-  font-weight: 500;
-  color: #333;
-}
-
-.post-create-upload-hint {
-  font-size: 14px;
-  color: #999;
-}
-
 /* 이미지 프리뷰 영역 */
-.post-create-image-list {
+.post-edit-image-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   width: 100%;
 }
 
-.post-create-image-item {
+.post-edit-image-item {
   position: relative;
   width: 95px;
   height: 95px;
@@ -102,13 +70,13 @@
   flex-shrink: 0;
 }
 
-.post-create-image-preview {
+.post-edit-image-preview {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.post-create-remove-btn {
+.post-edit-remove-btn {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -125,16 +93,43 @@
   font-size: 16px;
 }
 
-.post-create-remove-btn:hover {
+.post-edit-remove-btn:hover {
   background: rgba(0, 0, 0, 0.8);
 }
 
+/* 업로드 라벨 */
+.post-edit-upload-label {
+  display: block;
+  cursor: pointer;
+  width: 100%;
+}
+
+.post-edit-upload-placeholder {
+  border: 2px dashed #dbdbdb;
+  border-radius: 8px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #8e8e8e;
+}
+
+.post-edit-upload-placeholder svg {
+  margin-bottom: 15px;
+  color: #bbb;
+}
+
+.post-edit-upload-placeholder p {
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
 /* 추가 버튼 */
-.post-create-add-more {
+.post-edit-add-more {
   cursor: pointer;
 }
 
-.post-create-add-placeholder {
+.post-edit-add-placeholder {
   width: 95px;
   height: 95px;
   border: 2px dashed #dbdbdb;
@@ -146,13 +141,13 @@
   background-color: #fafafa;
 }
 
-.post-create-add-placeholder span {
+.post-edit-add-placeholder span {
   font-size: 36px;
   color: #bbb;
 }
 
 /* 텍스트 영역 */
-.post-create-textarea-field {
+.post-edit-textarea-field {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -167,12 +162,12 @@
   font-family: inherit;
 }
 
-.post-create-textarea-field:focus {
+.post-edit-textarea-field:focus {
   border-color: #999;
   box-shadow: 0 0 0 2px rgba(153, 153, 153, 0.15);
 }
 
-.post-create-counter {
+.post-edit-counter {
   text-align: right;
   font-size: 0.9rem;
   color: #999;
@@ -181,7 +176,7 @@
 }
 
 /* 버튼 그룹 */
-.post-create-button-group {
+.post-edit-button-group {
   display: flex;
   justify-content: flex-end;
   gap: 0.8rem;
@@ -191,25 +186,45 @@
   box-sizing: border-box;
 }
 
-.post-create-submit-btn {
+.post-edit-submit-btn,
+.post-edit-cancel-btn {
   border: none;
   border-radius: 6px;
   padding: 0.5rem 1.1rem;
   font-size: 0.95rem;
   cursor: pointer;
   transition: opacity 0.2s;
+}
+
+.post-edit-submit-btn {
   background-color: #0095f6;
   color: white;
 }
 
-.post-create-submit-btn:disabled {
+.post-edit-cancel-btn {
+  background-color: #dbdbdb;
+  color: #333;
+}
+
+.post-edit-submit-btn:disabled,
+.post-edit-cancel-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* 반응형 */
-@media (max-width: 768px) {
-  .post-create-container {
-    max-width: 100%;
-  }
+/* 기존 이미지 텍스트 */
+.post-edit-text {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0.5rem 0;
+}
+
+/* 로딩 */
+.post-edit-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.1rem;
+  color: #888;
 }

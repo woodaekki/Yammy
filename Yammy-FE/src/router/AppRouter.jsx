@@ -4,6 +4,7 @@ import CommentPage from "../sns/components/CommentPage"
 import UserProfile from "../sns/components/UserProfile"
 import UsedItemPage from "../useditem/UsedItemPage"
 import PostCreate from "../sns/components/PostCreate";
+import PostEdit from "../sns/components/PostEdit";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
@@ -49,6 +50,7 @@ export default function AppRouter() {
       <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
       <Route path="/sns" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
       <Route path="/post/create" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
+      <Route path="/post/edit/:postId" element={<ProtectedRoute><PostEdit /></ProtectedRoute>} />
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
       <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 

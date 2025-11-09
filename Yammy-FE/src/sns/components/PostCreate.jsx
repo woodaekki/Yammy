@@ -108,33 +108,29 @@ const PostCreate = () => {
 
     return (
         <div className="post-create-container">
+            {/* 헤더 */}
             <div className="post-create-header">
-                <button className="cancel-btn" onClick={handleCancel} disabled={isUploading}>
-                    취소
+                <button className="post-create-back-btn" onClick={handleCancel} disabled={isUploading}>
+                    ←
                 </button>
-                <h2>새 게시물</h2>
-                <button
-                    className="submit-btn"
-                    onClick={handleSubmit}
-                    disabled={isUploading || selectedFiles.length === 0}
-                >
-                    {isUploading ? '업로드 중...' : '공유하기'}
-                </button>
+                <h1 className="post-create-header-title">게시글 등록</h1>
             </div>
 
-            <div className="post-create-content">
-                {/* 이미지 선택 영역 */}
-                <div className="image-upload-section">
+            <div className="post-create-form">
+                {/* 이미지 업로드 */}
+                <div className="post-create-images">
+                    <h4>이미지 등록</h4>
                     {previewUrls.length === 0 ? (
-                        <label className="image-upload-label">
+                        <label className="post-create-upload-label">
                             <input
                                 type="file"
                                 accept="image/*"
                                 multiple
                                 onChange={handleFileSelect}
                                 style={{ display: 'none' }}
+                                disabled={isUploading}
                             />
-                            <div className="upload-placeholder">
+                            <div className="post-create-upload-placeholder">
                                 <svg
                                     width="60"
                                     height="60"
@@ -148,16 +144,16 @@ const PostCreate = () => {
                                     <polyline points="21 15 16 10 5 21" />
                                 </svg>
                                 <p>사진을 선택하세요</p>
-                                <span className="upload-hint">최대 3장까지 업로드 가능</span>
+                                <span className="post-create-upload-hint">최대 3장까지</span>
                             </div>
                         </label>
                     ) : (
-                        <div className="image-preview-grid">
+                        <div className="post-create-image-list">
                             {previewUrls.map((url, index) => (
-                                <div key={index} className="preview-item">
-                                    <img src={url} alt={`preview ${index + 1}`} />
+                                <div key={index} className="post-create-image-item">
+                                    <img src={url} alt={`preview ${index + 1}`} className="post-create-image-preview" />
                                     <button
-                                        className="remove-image-btn"
+                                        className="post-create-remove-btn"
                                         onClick={() => removeImage(index)}
                                         disabled={isUploading}
                                     >
@@ -166,7 +162,7 @@ const PostCreate = () => {
                                 </div>
                             ))}
                             {previewUrls.length < 3 && (
-                                <label className="add-more-label">
+                                <label className="post-create-add-more">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -175,9 +171,8 @@ const PostCreate = () => {
                                         style={{ display: 'none' }}
                                         disabled={isUploading}
                                     />
-                                    <div className="add-more-placeholder">
+                                    <div className="post-create-add-placeholder">
                                         <span>+</span>
-                                        <p>추가</p>
                                     </div>
                                 </label>
                             )}
@@ -185,17 +180,25 @@ const PostCreate = () => {
                     )}
                 </div>
 
-                {/* 캡션 입력 영역 */}
-                <div className="caption-section">
-                    <textarea
-                        className="caption-input"
-                        placeholder="문구를 입력하세요..."
-                        value={caption}
-                        onChange={(e) => setCaption(e.target.value)}
-                        disabled={isUploading}
-                        rows={5}
-                    />
-                    <div className="caption-counter">{caption.length} / 2000</div>
+                {/* 캡션 입력 */}
+                <textarea
+                    className="post-create-textarea-field"
+                    placeholder="문구를 입력하세요..."
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                    disabled={isUploading}
+                />
+                <div className="post-create-counter">{caption.length} / 2000</div>
+
+                {/* 등록 버튼 */}
+                <div className="post-create-button-group">
+                    <button
+                        className="post-create-submit-btn"
+                        onClick={handleSubmit}
+                        disabled={isUploading || selectedFiles.length === 0}
+                    >
+                        {isUploading ? '업로드 중...' : '등록'}
+                    </button>
                 </div>
             </div>
         </div>

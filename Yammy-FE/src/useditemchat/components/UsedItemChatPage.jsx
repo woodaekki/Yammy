@@ -33,8 +33,6 @@ export default function UsedItemChatPage() {
     const initChat = async () => {
       try {
         setLoading(true);
-        
-        // 인증 확인
         if (!user?.memberId) {
           alert('로그인이 필요합니다.');
           navigate('/login');
@@ -51,14 +49,11 @@ export default function UsedItemChatPage() {
         setMyBalance(pointData.balance);
       } catch (err) {
         console.error('채팅방 초기화 실패:', err);
-        
-        // 인증 에러 처리
         if (err.response?.status === 401 || err.response?.status === 403) {
           alert('로그인이 필요합니다.');
           navigate('/login');
           return;
         }
-        
         setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
@@ -79,7 +74,6 @@ export default function UsedItemChatPage() {
 
   const handleCloseTransferModal = () => setIsTransferModalOpen(false);
 
-  // 송금 실행 
   const handleTransferSubmit = async (amount) => {
     try {
       if (!user?.memberId) {
@@ -88,21 +82,14 @@ export default function UsedItemChatPage() {
         return;
       }
 
-      console.log('송금 요청:', { roomKey, amount, userId: user.memberId });
-
-      await deposit(roomKey, amount); 
-
+      await deposit(roomKey, amount);
       alert('송금이 완료되었습니다.');
 
-      // 잔액 갱신
       const updated = await getMyPoint();
       setMyBalance(updated.balance);
       window.dispatchEvent(new Event('pointUpdated'));
-      
     } catch (error) {
       console.error('송금 실패:', error);
-      
-      // 상세한 에러 처리
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert('인증이 만료되었습니다. 다시 로그인해주세요.');
         navigate('/login');
@@ -149,26 +136,50 @@ export default function UsedItemChatPage() {
       <div className="chat-header">
         <div className="chat-header-inner">
           <div className="chat-header-content">
-            <button onClick={() => navigate('/chatlist')} className="chat-back-button">
-              <svg className="chat-back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            <div className="chat-header-left">
+              <button
+                onClick={() => navigate('/chatlist')}
+                className="chat-back-button"
+              >
+                <svg
+                  className="chat-back-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
 
-            {itemInfo && (
-              <div className="chat-item-info">
-                {itemInfo.imageUrls?.[0] && (
-                  <img src={itemInfo.imageUrls[0]} alt={itemInfo.title} className="chat-item-image" />
-                )}
-                <div className="chat-item-text">
-                  <h2 className="chat-item-title">{itemInfo.title}</h2>
-                  <p className="chat-item-price">{itemInfo.price?.toLocaleString()}원</p>
+              {itemInfo && (
+                <div className="chat-item-info">
+                  {itemInfo.imageUrls?.[0] && (
+                    <img
+                      src={itemInfo.imageUrls[0]}
+                      alt={itemInfo.title}
+                      className="chat-item-image"
+                    />
+                  )}
+                  <div className="chat-item-text">
+                    <h2 className="chat-item-title">{itemInfo.title}</h2>
+                    <p className="chat-item-price">
+                      {itemInfo.price?.toLocaleString()}원
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {chatRoomInfo && (
-              <button className="chat-transfer-btn" onClick={handleOpenTransferModal}>
+              <button
+                className="chat-transfer-btn"
+                onClick={handleOpenTransferModal}
+              >
                 송금
               </button>
             )}
@@ -177,7 +188,11 @@ export default function UsedItemChatPage() {
       </div>
 
       <div className="chat-message-area">
-        <UsedItemMessageList messages={messages} loading={loadingMessages} onImageClick={setSelectedImage} />
+        <UsedItemMessageList
+          messages={messages}
+          loading={loadingMessages}
+          onImageClick={setSelectedImage}
+        />
       </div>
 
       {roomKey && <UsedItemChatInput roomKey={roomKey} />}
@@ -185,12 +200,29 @@ export default function UsedItemChatPage() {
       {selectedImage && (
         <div className="chat-image-modal" onClick={() => setSelectedImage(null)}>
           <div className="chat-image-modal-inner">
-            <button onClick={() => setSelectedImage(null)} className="chat-image-close">
-              <svg className="chat-close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="chat-image-close"
+            >
+              <svg
+                className="chat-close-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
-            <img src={selectedImage} alt="확대 보기" className="chat-image-full" />
+            <img
+              src={selectedImage}
+              alt="확대 보기"
+              className="chat-image-full"
+            />
           </div>
         </div>
       )}
