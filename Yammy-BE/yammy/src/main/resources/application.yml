@@ -64,9 +64,9 @@ jwt:
   accessExpiration: ${JWT_ACCESS_EXPIRATION:900000}
   refreshExpiration: ${JWT_REFRESH_EXPIRATION:1209600000}
 
-#firebase:
-#  service-account: classpath:firebase-service-account.json
-#  storage-bucket: yammy-chat-games.firebasestorage.app
+firebase:
+  service-account: classpath:firebase-service-account.json
+  storage-bucket: yammy-chat-games.firebasestorage.app
 # 카카오 OAuth 설정
 kakao:
   rest:
@@ -76,16 +76,16 @@ kakao:
   redirect-uri: ${KAKAO_REDIRECT_URI}
 
 
-firebase:
-  type: ${FIREBASE_TYPE}
-  project-id: ${FIREBASE_PROJECT_ID}
-  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
-  private-key: ${FIREBASE_PRIVATE_KEY}
-  client-email: ${FIREBASE_CLIENT_EMAIL}
-  client-id: ${FIREBASE_CLIENT_ID}
-  auth-uri: ${FIREBASE_AUTH_URI}
-  token-uri: ${FIREBASE_TOKEN_URI}
-  auth-provider-cert-url: ${FIREBASE_AUTH_PROVIDER_CERT_URL}
-  client-cert-url: ${FIREBASE_CLIENT_CERT_URL}
-  universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
-  storage-bucket: ${FIREBASE_STORAGE_BUCKET}
+#firebase:
+#  type: ${FIREBASE_TYPE}
+#  project-id: ${FIREBASE_PROJECT_ID}
+#  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
+#  private-key: ${FIREBASE_PRIVATE_KEY}
+#  client-email: ${FIREBASE_CLIENT_EMAIL}
+#  client-id: ${FIREBASE_CLIENT_ID}
+#  auth-uri: ${FIREBASE_AUTH_URI}
+#  token-uri: ${FIREBASE_TOKEN_URI}
+#  auth-provider-cert-url: ${FIREBASE_AUTH_PROVIDER_CERT_URL}
+#  client-cert-url: ${FIREBASE_CLIENT_CERT_URL}
+#  universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
+#  storage-bucket: ${FIREBASE_STORAGE_BUCKET}
