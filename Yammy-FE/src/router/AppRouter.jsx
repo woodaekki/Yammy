@@ -28,7 +28,9 @@ import TestChatPage from "../chatgames/pages/TestChatPage";
 import ChatGamePage from "../chatgames/pages/ChatGamePage";
 import ChatRoomListPage from "../chatgames/pages/ChatRoomListPage";
 import AdminChatPage from "../chatgames/pages/AdminChatPage";
-import AdminRoute from "./AdminRoute"; 
+import AdminRoute from "./AdminRoute";
+import PredictPage from "../predict/PredictPage"; 
+import PrecitDetailPage from "../predict/components/BettingPage";
 
 export default function AppRouter() {
   return (
@@ -77,6 +79,10 @@ export default function AppRouter() {
       <Route path="/match" element={<MatchResultPage />} />
       <Route path="/match/:matchcode" element={<MatchResultDetailPage />} />
       
+      {/* Predict Routes */}
+      <Route path="/prediction" element={<PredictPage />} />
+      <Route path="/prediction/:matchId" element={<PrecitDetailPage />} />
+
       {/* 임시챗팅방 */}
       <Route path="/test-chat" element={<TestChatPage />} />
 
