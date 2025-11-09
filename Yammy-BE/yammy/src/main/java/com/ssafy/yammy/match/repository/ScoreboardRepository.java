@@ -18,10 +18,10 @@ public interface ScoreboardRepository extends JpaRepository<Scoreboard, Long> {
     List<Scoreboard> findByMatchcode(String matchcode);
 
     // 최근 경기 목록 조회 (날짜 내림차순)
-    @Query("SELECT DISTINCT s.matchcode, s.matchdate, s.home, s.away, s.place " +
+    @Query("SELECT s.matchcode, s.matchdate, s.home, s.away, s.place " +
            "FROM Scoreboard s " +
-           "WHERE s.idx = 0 " +
-           "ORDER BY s.matchdate DESC")
+           "WHERE s.id IN (SELECT MIN(s2.id) FROM Scoreboard s2 GROUP BY s2.matchcode) " +
+           "ORDER BY s.id DESC")
     Page<Object[]> findRecentMatches(Pageable pageable);
 
     // 특정 날짜의 경기 조회
@@ -29,15 +29,17 @@ public interface ScoreboardRepository extends JpaRepository<Scoreboard, Long> {
     List<Scoreboard> findByMatchdate(@Param("date") LocalDate date);
 
     // 특정 팀의 최근 경기 조회
-    @Query("SELECT DISTINCT s FROM Scoreboard s " +
-           "WHERE (s.home = :team OR s.away = :team) AND s.idx = 0 " +
-           "ORDER BY s.matchdate DESC")
+    @Query("SELECT s FROM Scoreboard s " +
+           "WHERE (s.home = :team OR s.away = :team) " +
+           "AND s.id IN (SELECT MIN(s2.id) FROM Scoreboard s2 GROUP BY s2.matchcode) " +
+           "ORDER BY s.id DESC")
     Page<Scoreboard> findByTeam(@Param("team") String team, Pageable pageable);
 
     // 날짜 범위로 경기 조회
-    @Query("SELECT DISTINCT s FROM Scoreboard s " +
-           "WHERE s.matchdate BETWEEN :startDate AND :endDate AND s.idx = 0 " +
-           "ORDER BY s.matchdate DESC")
+    @Query("SELECT s FROM Scoreboard s " +
+           "WHERE s.matchdate BETWEEN :startDate AND :endDate " +
+           "AND s.id IN (SELECT MIN(s2.id) FROM Scoreboard s2 GROUP BY s2.matchcode) " +
+           "ORDER BY s.id DESC")
     Page<Scoreboard> findByDateRange(@Param("startDate") LocalDate startDate,
                                       @Param("endDate") LocalDate endDate,
                                       Pageable pageable);

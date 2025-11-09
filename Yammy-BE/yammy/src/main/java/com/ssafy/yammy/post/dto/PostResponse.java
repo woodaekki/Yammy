@@ -16,6 +16,7 @@ public class PostResponse {
     private String nickname;
     private String profileImage;
     private String team;
+    private String bio;
     private String caption;
     private List<String> imageUrls;
     private Integer likeCount;

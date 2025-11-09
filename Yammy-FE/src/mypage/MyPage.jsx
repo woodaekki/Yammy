@@ -67,6 +67,7 @@ const MyPage = () => {
     setFormData((prev) => ({
       ...prev,
       team: teamName,
+      bio: `⚾ ${teamName}`, // 팀 변경 시 bio 자동 업데이트
     }));
   };
 

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
 import { createTicket } from '../api/ticketApi';
-import { getRecentMatches } from '../api/matchApi';
+import { getRecentMatches, getMatchesByDate } from '../api/matchApi';
+import { normalizeStadiumName, KBO_STADIUMS } from '../utils/stadiumMapper';
 import '../styles/TicketCreatePage.css';
 
 // 팀별 티켓 배경 이미지 매핑
@@ -50,27 +51,18 @@ const TicketCreatePage = () => {
         review: '',
         photo: null,
         photoPreview: null,
+        myTeam: '',  // 내 응원팀
+        result: '',  // 승리/패배
     });
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [showMatchModal, setShowMatchModal] = useState(false);
     const [showTeamModal, setShowTeamModal] = useState(false);
     const [matches, setMatches] = useState([]);
     const [loadingMatches, setLoadingMatches] = useState(false);
+    const [selectedMatch, setSelectedMatch] = useState(null); // 선택된 경기 정보
 
-    // 경기장 목록
-    const stadiums = [
-        '강릉종합운동장',
-        '강화SSG퓨처스필드',
-        '경남e스포츠상설경기장',
-        '경민대학교 기념관',
-        '경주축구공원',
-        '계양체육관',
-        '고양국기대표아구훈련장',
-        '고양소노아레나',
-        '고척스카이돔',
-        '광양축구전용구장',
-        '광주-기아챔피언스필드'
-    ];
+    // KBO 구장 목록 (stadiumMapper에서 가져옴)
+    const stadiums = KBO_STADIUMS;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -103,11 +95,20 @@ const TicketCreatePage = () => {
         setShowLocationModal(false);
     };
 
-    const loadMatches = async () => {
+    const loadMatches = async (selectedDate) => {
+        if (!selectedDate) {
+            alert('먼저 날짜를 선택해주세요.');
+            return;
+        }
+
         setLoadingMatches(true);
         try {
-            const response = await getRecentMatches(0, 50);
-            setMatches(response.content || response);
+            const response = await getMatchesByDate(selectedDate);
+            console.log('경기 목록 응답:', response);
+            // response가 배열이면 그대로, 아니면 response.data 사용
+            const matchList = Array.isArray(response) ? response : (response.data || []);
+            setMatches(matchList);
+            console.log('설정된 경기 수:', matchList.length);
         } catch (error) {
             console.error('경기 목록 불러오기 실패:', error);
             setMatches([]);
@@ -117,22 +118,65 @@ const TicketCreatePage = () => {
     };
 
     const handleMatchModalOpen = () => {
-        setShowMatchModal(true);
-        if (matches.length === 0) {
-            loadMatches();
+        if (!formData.date) {
+            alert('먼저 날짜를 선택해주세요.');
+            return;
         }
+        setShowMatchModal(true);
+        loadMatches(formData.date);
+    };
+
+    const handleDateChange = (e) => {
+        const newDate = e.target.value;
+        setFormData(prev => ({
+            ...prev,
+            date: newDate
+        }));
+        // 날짜가 변경되면 경기 목록 초기화
+        setMatches([]);
     };
 
     const handleMatchSelect = (match) => {
+        // 선택된 경기 정보 저장
+        setSelectedMatch(match);
+
+        // 내 응원팀과 승패 판단
+        let myTeam = '';
+        let result = '';
+
+        if (match.homeScore !== null && match.awayScore !== null) {
+            // 점수가 있는 경우 승패 판단
+            const homeWin = match.homeScore > match.awayScore;
+            const awayWin = match.awayScore > match.homeScore;
+
+            // 내가 응원하는 팀 찾기 (localStorage의 team)
+            const supportTeam = selectedTeam;
+
+            if (supportTeam) {
+                if (match.home.includes(supportTeam.split(' ')[0]) || supportTeam.includes(match.home)) {
+                    myTeam = match.home;
+                    result = homeWin ? '승리' : (awayWin ? '패배' : '무승부');
+                } else if (match.away.includes(supportTeam.split(' ')[0]) || supportTeam.includes(match.away)) {
+                    myTeam = match.away;
+                    result = awayWin ? '승리' : (homeWin ? '패배' : '무승부');
+                }
+            }
+        }
+
+        // 구장명 정규화
+        const normalizedPlace = match.place ? normalizeStadiumName(match.place) : '';
+
         setFormData(prev => ({
             ...prev,
             matchcode: match.matchcode,
             game: `${match.away} vs ${match.home}`,
             date: match.matchdate,
-            location: match.place || '',
+            location: normalizedPlace,
             awayScore: match.awayScore || '',
             homeScore: match.homeScore || '',
-            type: '야구'
+            type: '야구',
+            myTeam: myTeam,
+            result: result
         }));
         setShowMatchModal(false);
     };
@@ -220,6 +264,19 @@ const TicketCreatePage = () => {
                 {currentStep === 1 && (
                     <div className="form-step">
                         <div className="form-group">
+                            <label>Date*</label>
+                            <input
+                                type="date"
+                                name="date"
+                                value={formData.date}
+                                onChange={handleDateChange}
+                            />
+                            <p style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                                날짜를 먼저 선택하면 해당 날짜의 경기를 조회할 수 있습니다.
+                            </p>
+                        </div>
+
+                        <div className="form-group">
                             <label>Game*</label>
                             <input
                                 type="text"
@@ -227,7 +284,7 @@ const TicketCreatePage = () => {
                                 value={formData.game}
                                 onChange={handleChange}
                                 onClick={handleMatchModalOpen}
-                                placeholder="KBO 경기를 선택하거나 직접 입력하세요"
+                                placeholder={formData.date ? "날짜의 KBO 경기를 선택하세요" : "먼저 날짜를 선택해주세요"}
                                 readOnly
                             />
                             <button
@@ -246,16 +303,6 @@ const TicketCreatePage = () => {
                             >
                                 직접 입력하기
                             </button>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Date*</label>
-                            <input
-                                type="date"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleChange}
-                            />
                         </div>
 
                         <div className="form-group">
@@ -291,6 +338,83 @@ const TicketCreatePage = () => {
                                 placeholder="직관한 경기 한줄평을 남겨주세요."
                             />
                         </div>
+
+                        {/* 승패 결과 표시 */}
+                        {formData.result && (
+                            <div className="result-display" style={{
+                                marginTop: '16px',
+                                padding: '12px 16px',
+                                borderRadius: '8px',
+                                backgroundColor: formData.result === '승리' ? '#e8f5e9' : (formData.result === '패배' ? '#ffebee' : '#fff3e0'),
+                                border: `2px solid ${formData.result === '승리' ? '#4caf50' : (formData.result === '패배' ? '#f44336' : '#ff9800')}`,
+                                textAlign: 'center'
+                            }}>
+                                <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
+                                    {formData.myTeam}
+                                </div>
+                                <div style={{
+                                    fontSize: '24px',
+                                    fontWeight: 700,
+                                    color: formData.result === '승리' ? '#4caf50' : (formData.result === '패배' ? '#f44336' : '#ff9800')
+                                }}>
+                                    {formData.result}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 오늘의 경기 결과 요약 */}
+                        {matches.length > 0 && (
+                            <div className="match-results-summary" style={{
+                                marginTop: '20px',
+                                padding: '16px',
+                                borderRadius: '8px',
+                                backgroundColor: '#f5f5f5'
+                            }}>
+                                <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700, color: '#333' }}>
+                                    {formData.date} 경기 결과
+                                </h4>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    {matches.map(match => (
+                                        <div key={match.matchcode} style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '8px 12px',
+                                            backgroundColor: '#fff',
+                                            borderRadius: '6px',
+                                            fontSize: '13px',
+                                            opacity: match.matchStatus === '취소' ? 0.6 : 1
+                                        }}>
+                                            <div style={{ flex: 1 }}>
+                                                {match.away} vs {match.home}
+                                            </div>
+                                            {match.matchStatus === '취소' ? (
+                                                <div style={{
+                                                    color: '#f44336',
+                                                    fontSize: '12px',
+                                                    fontWeight: 600
+                                                }}>
+                                                    경기 취소
+                                                </div>
+                                            ) : (match.awayScore !== null && match.homeScore !== null) ? (
+                                                <div style={{
+                                                    fontWeight: 700,
+                                                    color: teamColors.bgColor,
+                                                    minWidth: '60px',
+                                                    textAlign: 'right'
+                                                }}>
+                                                    {match.awayScore} : {match.homeScore}
+                                                </div>
+                                            ) : (
+                                                <div style={{ color: '#999', fontSize: '12px' }}>
+                                                    경기 예정
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         <button className="next-btn" onClick={nextStep} style={{ backgroundColor: teamColors.bgColor }}>
                             다음
@@ -410,14 +534,21 @@ const TicketCreatePage = () => {
                 <div className="location-modal" onClick={() => setShowMatchModal(false)}>
                     <div className="location-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowMatchModal(false)}>✕</button>
-                        <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 700 }}>KBO 경기 선택</h3>
+                        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>KBO 경기 선택</h3>
+                        <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#666' }}>
+                            {formData.date} 경기 목록
+                        </p>
                         {loadingMatches ? (
                             <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
                                 경기 목록을 불러오는 중...
                             </div>
                         ) : matches.length === 0 ? (
                             <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                                조회된 경기가 없습니다.
+                                <p style={{ marginBottom: '8px' }}>해당 날짜에 조회된 경기가 없습니다.</p>
+                                <p style={{ fontSize: '12px', color: '#aaa' }}>
+                                    다른 날짜를 선택하거나<br/>
+                                    경기 정보를 직접 입력해주세요.
+                                </p>
                             </div>
                         ) : (
                             <div className="stadium-list">
@@ -426,15 +557,31 @@ const TicketCreatePage = () => {
                                         key={match.matchcode}
                                         className="stadium-item match-item"
                                         onClick={() => handleMatchSelect(match)}
+                                        style={{
+                                            opacity: match.matchStatus === '취소' ? 0.6 : 1
+                                        }}
                                     >
                                         <div style={{ flex: 1 }}>
                                             <div style={{ fontWeight: 700, fontSize: '15px', marginBottom: '4px' }}>
                                                 {match.away} vs {match.home}
+                                                {match.matchStatus === '취소' && (
+                                                    <span style={{
+                                                        marginLeft: '8px',
+                                                        fontSize: '12px',
+                                                        color: '#f44336',
+                                                        fontWeight: 600,
+                                                        padding: '2px 6px',
+                                                        backgroundColor: '#ffebee',
+                                                        borderRadius: '4px'
+                                                    }}>
+                                                        취소됨
+                                                    </span>
+                                                )}
                                             </div>
                                             <div style={{ fontSize: '12px', color: '#666' }}>
                                                 {match.matchdate} • {match.place}
                                             </div>
-                                            {(match.awayScore !== null && match.homeScore !== null) && (
+                                            {match.matchStatus !== '취소' && (match.awayScore !== null && match.homeScore !== null) && (
                                                 <div style={{ fontSize: '13px', color: teamColors.bgColor, marginTop: '4px', fontWeight: 600 }}>
                                                     스코어: {match.awayScore} : {match.homeScore}
                                                 </div>

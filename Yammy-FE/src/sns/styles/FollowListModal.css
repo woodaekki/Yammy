@@ -80,8 +80,8 @@
 }
 
 .follow-modal-tabs .tab.active {
-    color: #4CAF50;
-    border-bottom-color: #4CAF50;
+    color: var(--team-color, #4CAF50);
+    border-bottom-color: var(--team-color, #4CAF50);
     font-weight: 700;
 }
 
@@ -148,8 +148,8 @@
 /* 팔로우 버튼 */
 .follow-btn {
     padding: 6px 16px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--team-color, #4CAF50);
+    color: var(--team-text-color, white);
     border: none;
     border-radius: 6px;
     font-size: 13px;
@@ -159,7 +159,7 @@
 }
 
 .follow-btn:hover {
-    background-color: #45A049;
+    filter: brightness(0.9);
 }
 
 .follow-btn.following {

@@ -92,7 +92,7 @@ public class SecurityConfig {
                         // 경기 정보 조회
                         .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
 
-                        // 티켓
+                        // 티켓 - 인증 필요
                         .requestMatchers("/api/tickets/**").authenticated()
 
                         .requestMatchers("/api/v1/ai/**").permitAll()
@@ -118,6 +118,7 @@ public class SecurityConfig {
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // JWT 쿠키/헤더 모두 허용
         configuration.setMaxAge(3600L);
 
