@@ -94,6 +94,7 @@ public class SecurityConfig {
 
                         // 승부예측 조회
                         .requestMatchers(HttpMethod.GET, "/api/predict/**").permitAll()
+                        
                         // 티켓 - 인증 필요
                         .requestMatchers("/api/tickets/**").authenticated()
 

@@ -14,9 +14,25 @@ const BettingPage = () => {
   // 현재 경기 찾기
   const match = matches.find(m => m.id === parseInt(matchId));
 
-  // 팀 컬러 가져오기 함수
+  // 팀 컬러 가져오기 함수 (짧은 이름 → 전체 이름 매핑)
   const getTeamColor = (teamName) => {
-    return TEAM_COLORS[teamName]?.bgColor || '#4CAF50';
+    // 짧은 팀 이름을 전체 팀 이름으로 매핑
+    const teamNameMapping = {
+      'KIA': 'KIA 타이거즈',
+      '삼성': '삼성 라이온즈', 
+      'LG': 'LG 트윈스',
+      '두산': '두산 베어스',
+      'KT': 'KT 위즈',
+      'SSG': 'SSG 랜더스',
+      '롯데': '롯데 자이언츠',
+      '한화': '한화 이글스',
+      'NC': 'NC 다이노스',
+      '키움': '키움 히어로즈'
+    };
+    
+    const fullTeamName = teamNameMapping[teamName] || teamName;
+    console.log('🎨 BettingPage 팀 컬러 매핑:', teamName, '->', fullTeamName, TEAM_COLORS[fullTeamName]?.bgColor);
+    return TEAM_COLORS[fullTeamName]?.bgColor || '#4CAF50';
   };
 
   // 경기 진행 여부 확인 함수
@@ -130,7 +146,7 @@ const BettingPage = () => {
                 <div className="team-label">HOME</div>
                 <div className="team-name">{match.homeTeam}</div>
                 <div className="team-rate">예상승률 {match.homeWinningRate}%</div>
-                <div className="team-odds">배당률 2.00</div>
+                <div className="team-odds">1.00</div>
               </div>
             </div>
 
@@ -146,7 +162,7 @@ const BettingPage = () => {
                 <div className="team-label">AWAY</div>
                 <div className="team-name">{match.awayTeam}</div>
                 <div className="team-rate">예상승률 {match.awayWinningRate}%</div>
-                <div className="team-odds">배당률 2.00</div>
+                <div className="team-odds">1.00</div>
               </div>
             </div>
           </div>
@@ -183,14 +199,14 @@ const BettingPage = () => {
                 style={{ backgroundColor: getTeamColor(match.homeTeam) }}
               >
                 <span className="bet-team">{match.homeTeam}</span>
-                <span className="bet-odds">2.00배</span>
+                <span className="bet-odds">1.00</span>
               </button>
               <button 
                 className="betting-button away-betting"
                 style={{ backgroundColor: getTeamColor(match.awayTeam) }}
               >
                 <span className="bet-team">{match.awayTeam}</span>
-                <span className="bet-odds">2.00배</span>
+                <span className="bet-odds">1.00</span>
               </button>
             </div>
           </div>

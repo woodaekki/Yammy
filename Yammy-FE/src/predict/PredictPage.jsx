@@ -119,7 +119,7 @@ const PredictPage = () => {
                       >
                         <div className="team-label">HOME</div>
                         <div className="team-name">{match.homeTeam} ({match.homeWinningRate}%)</div>
-                        <div className="prediction-score">2.0배</div>
+                        <div className="prediction-score">1.00</div>
                       </div>
 
                       {/* 중앙 VS */}
@@ -134,7 +134,7 @@ const PredictPage = () => {
                       >
                         <div className="team-label">AWAY</div>
                         <div className="team-name">{match.awayTeam} ({match.awayWinningRate}%)</div>
-                        <div className="prediction-score">2.0배</div>
+                        <div className="prediction-score">1.00</div>
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>

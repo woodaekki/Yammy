@@ -9,18 +9,39 @@ export const usePredict = () => {
 
   // 백엔드 데이터를 프론트엔드 형식으로 변환
   const transformMatchData = (backendMatch) => {
+    // 팀별 홈구장 매핑
+    const homeStadiums = {
+      'KIA': 'KIA 챔피언스 필드',
+      '삼성': '대구 삼성 라이온즈 파크',
+      'LG': '잠실야구장',
+      '두산': '잠실야구장',
+      'KT': '수원 KT 위즈 파크',
+      'SSG': '인천 SSG 랜더스필드',
+      '롯데': '사직야구장',
+      '한화': '한화생명 이글스파크',
+      'NC': '창원 NC 파크',
+      '키움': '고척 스카이돔'
+    };
+
+    // 기본 경기 시간 (주중: 18:30, 주말: 17:00)
+    const getGameTime = () => {
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // 0=일요일, 6=토요일
+      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '18:30';
+    };
+
     return {
       id: backendMatch.id,
       homeTeam: backendMatch.home,
       awayTeam: backendMatch.away,
-      gameTime: '18:30', // 기본값
-      stadium: '-', // 백엔드에 stadium 정보가 없으므로 기본값
+      gameTime: getGameTime(),
+      stadium: homeStadiums[backendMatch.home] || `${backendMatch.home} 홈구장`,
       date: backendMatch.matchDate,
       matchStatus: backendMatch.matchStatus,
       gameid: backendMatch.gameid,
       year: backendMatch.year,
-      homeWinningRate: 1.00, // 기본값
-      awayWinningRate: 1.00, // 기본값
+      homeWinningRate: 50, // 기본값 - 추후 AI 예측 결과로 대체
+      awayWinningRate: 50, // 기본값 - 추후 AI 예측 결과로 대체
     };
   };
 

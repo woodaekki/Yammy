@@ -1,8 +1,8 @@
 package com.ssafy.yammy.predict.service;
 
 import com.ssafy.yammy.predict.dto.MatchScheduleResponse;
-import com.ssafy.yammy.predict.entity.MatchSchedule;
-import com.ssafy.yammy.predict.repository.MatchScheduleRepository;
+import com.ssafy.yammy.predict.entity.PredictMatchSchedule;
+import com.ssafy.yammy.predict.repository.PredictMatchScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class PredictService {
 
-    private final MatchScheduleRepository matchScheduleRepository;
+    private final PredictMatchScheduleRepository predictMatchScheduleRepository;
 
     /**
      * 특정 날짜의 경기 목록 조회
@@ -28,7 +28,7 @@ public class PredictService {
         log.info("특정 날짜의 경기 조회 요청: {}", matchDate);
         
         // Repository에서 해당 날짜의 경기 목록 조회
-        List<MatchSchedule> matchSchedules = matchScheduleRepository.findByMatchDate(matchDate);
+        List<PredictMatchSchedule> matchSchedules = predictMatchScheduleRepository.findByMatchDate(matchDate);
         
         // Entity를 DTO로 변환하여 반환
         return matchSchedules.stream()

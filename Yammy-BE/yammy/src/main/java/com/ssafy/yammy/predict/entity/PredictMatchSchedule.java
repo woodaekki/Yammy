@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MatchSchedule {
+public class PredictMatchSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,6 @@
 package com.ssafy.yammy.predict.dto;
 
-import com.ssafy.yammy.predict.entity.MatchSchedule;
+import com.ssafy.yammy.predict.entity.PredictMatchSchedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,7 +43,7 @@ public class MatchScheduleResponse {
     }
 
     // Entity를 DTO로 변환하는 정적 메소드
-    public static MatchScheduleResponse from(MatchSchedule matchSchedule) {
+    public static MatchScheduleResponse from(PredictMatchSchedule matchSchedule) {
         return MatchScheduleResponse.builder()
                 .id(matchSchedule.getId())
                 .matchStatus(matchSchedule.getMatchStatus())
