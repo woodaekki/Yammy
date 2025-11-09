@@ -1,8 +1,13 @@
 package com.ssafy.yammy.match.service;
 
 import com.ssafy.yammy.match.dto.MatchResponse;
+import com.ssafy.yammy.match.entity.GameInfo;
+import com.ssafy.yammy.match.entity.MatchSchedule;
 import com.ssafy.yammy.match.entity.Scoreboard;
+import com.ssafy.yammy.match.repository.GameInfoRepository;
+import com.ssafy.yammy.match.repository.MatchScheduleRepository;
 import com.ssafy.yammy.match.repository.ScoreboardRepository;
+import com.ssafy.yammy.match.util.TeamNameMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,17 +29,41 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     private final ScoreboardRepository scoreboardRepository;
+    private final MatchScheduleRepository matchScheduleRepository;
+    private final GameInfoRepository gameInfoRepository;
 
     /**
-     * 최근 경기 목록 조회 (페이징)
+     * 최근 경기 목록 조회 (페이징) - match_schedule 기반
      */
     public Page<MatchResponse> getRecentMatches(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Object[]> results = scoreboardRepository.findRecentMatches(pageable);
+        Page<MatchSchedule> schedules = matchScheduleRepository.findAll(
+            PageRequest.of(page, size, org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.DESC, "matchDate"
+            ))
+        );
 
-        return results.map(result -> {
-            String matchcode = (String) result[0];
-            return getMatchDetail(matchcode);
+        return schedules.map(schedule -> {
+            // matchcode 생성: YYYYMMDD_gameid 형식
+            String matchcode = schedule.getMatchDate().toString().replace("-", "") + "_" + schedule.getGameid();
+
+            try {
+                return getMatchDetail(matchcode);
+            } catch (Exception e) {
+                log.warn("경기 상세 정보 조회 실패 - matchcode: {}, 스케줄 정보로 대체", matchcode);
+                // 약자를 풀네임으로 변환
+                String homeFullName = TeamNameMapper.codeToFullName(schedule.getHome());
+                String awayFullName = TeamNameMapper.codeToFullName(schedule.getAway());
+
+                // 스케줄 정보만이라도 반환
+                return MatchResponse.builder()
+                    .matchcode(matchcode)
+                    .matchdate(schedule.getMatchDate())
+                    .home(homeFullName)
+                    .away(awayFullName)
+                    .matchStatus(schedule.getMatchStatus())
+                    .build();
+            }
         });
     }
 
@@ -83,16 +112,75 @@ public class MatchService {
     }
 
     /**
-     * 특정 날짜의 경기 목록 조회
+     * 특정 날짜의 경기 목록 조회 - match_schedule 기반
      */
     public List<MatchResponse> getMatchesByDate(LocalDate date) {
-        List<Scoreboard> scoreboards = scoreboardRepository.findByMatchdate(date);
+        log.info("날짜별 경기 조회 시작 - date: {}", date);
+        List<MatchSchedule> schedules = matchScheduleRepository.findByMatchDate(date);
+        log.info("조회된 스케줄 수: {}", schedules.size());
 
-        // matchcode별로 그룹화
-        return scoreboards.stream()
-                .map(Scoreboard::getMatchcode)
-                .distinct()
-                .map(this::getMatchDetail)
+        return schedules.stream()
+                .map(schedule -> {
+                    String matchcode = schedule.getMatchDate().toString().replace("-", "") + "_" + schedule.getGameid();
+                    log.info("처리 중인 경기 - matchcode: {}, home: {}, away: {}",
+                            matchcode, schedule.getHome(), schedule.getAway());
+
+                    // 약자를 풀네임으로 변환 (기본값)
+                    String homeFullName = TeamNameMapper.codeToFullName(schedule.getHome());
+                    String awayFullName = TeamNameMapper.codeToFullName(schedule.getAway());
+
+                    // scoreboard에서 추가 정보 조회 (선택적)
+                    List<Scoreboard> scoreboards = scoreboardRepository.findByMatchcode(matchcode);
+
+                    if (!scoreboards.isEmpty()) {
+                        Scoreboard firstBoard = scoreboards.get(0);
+                        Integer homeScore = null;
+                        Integer awayScore = null;
+
+                        for (Scoreboard sb : scoreboards) {
+                            if (sb.getTeam().equals(firstBoard.getHome())) {
+                                homeScore = sb.getRun();
+                            } else if (sb.getTeam().equals(firstBoard.getAway())) {
+                                awayScore = sb.getRun();
+                            }
+                        }
+
+                        // 홈팀의 구장 조회
+                        String stadium = TeamNameMapper.getHomeStadium(firstBoard.getHome());
+                        // DB의 구장명이 있으면 정규화, 없으면 홈팀 구장 사용
+                        String finalPlace = stadium;
+                        if (firstBoard.getPlace() != null && !firstBoard.getPlace().isEmpty()) {
+                            String normalized = TeamNameMapper.normalizeStadiumName(firstBoard.getPlace());
+                            if (!normalized.isEmpty()) {
+                                finalPlace = normalized;
+                            }
+                        }
+
+                        return MatchResponse.builder()
+                                .matchcode(matchcode)
+                                .matchdate(schedule.getMatchDate())
+                                .home(firstBoard.getHome())
+                                .away(firstBoard.getAway())
+                                .place(finalPlace)
+                                .homeScore(homeScore)
+                                .awayScore(awayScore)
+                                .matchStatus(schedule.getMatchStatus())
+                                .build();
+                    } else {
+                        // scoreboard에 데이터가 없으면 스케줄 정보만 반환
+                        // 홈팀의 구장 조회
+                        String stadium = TeamNameMapper.getHomeStadium(homeFullName);
+
+                        return MatchResponse.builder()
+                                .matchcode(matchcode)
+                                .matchdate(schedule.getMatchDate())
+                                .home(homeFullName)
+                                .away(awayFullName)
+                                .place(stadium)
+                                .matchStatus(schedule.getMatchStatus())
+                                .build();
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
@@ -114,6 +202,21 @@ public class MatchService {
         Page<Scoreboard> scoreboards = scoreboardRepository.findByDateRange(startDate, endDate, pageable);
 
         return scoreboards.map(sb -> getMatchDetail(sb.getMatchcode()));
+    }
+
+    /**
+     * 특정 날짜의 경기 스케줄 조회
+     */
+    public List<MatchSchedule> getScheduleByDate(LocalDate date) {
+        return matchScheduleRepository.findByMatchDate(date);
+    }
+
+    /**
+     * matchcode로 경기 정보 조회 (GameInfo 포함)
+     */
+    public GameInfo getGameInfo(String matchcode) {
+        return gameInfoRepository.findByMatchcode(matchcode)
+                .orElse(null);
     }
 
     /**
