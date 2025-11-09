@@ -1,70 +1,55 @@
 package com.ssafy.yammy.escrow.entity;
 
 import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.useditemchat.entity.UsedItemChatRoom;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name="escrow")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "escrow")
 public class Escrow {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_member_id", nullable = false)
-    private Member fromMember;  // 송금하는 사람 (구매자)
+    @JoinColumn(name = "chatroom_id", nullable = false)
+    private UsedItemChatRoom usedItemChatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_member_id", nullable = false)
-    private Member toMember;    // 받는 사람 (판매자)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Member seller;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private Member buyer;
 
     @Column(nullable = false)
-    private Long amount;        // 에스크로 금액
+    private Long amount;
 
-    @Column(nullable = false, length = 100)
-    private String roomKey;     // 채팅방 키
-
-    @Column(name = "used_item_id")
-    private Long usedItemId;    // 중고 게시물 ID (선택)
-
+    // Enum 매핑 - DB에는 문자열로 저장
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EscrowStatus status;  // 에스크로 상태
+    private EscrowStatus status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "completed_at")
-    private LocalDateTime completedAt;
-
     @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = EscrowStatus.PENDING;
-        }
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now(); // 현재 시각 자동 설정
+        if (status == null) this.status = EscrowStatus.HOLD; // 송금 상태 “HOLD”로 기본 지정
     }
 
-    // 에스크로 완료 처리
-    public void complete() {
-        this.status = EscrowStatus.COMPLETED;
-        this.completedAt = LocalDateTime.now();
-    }
 
-    // 에스크로 취소 처리
-    public void cancel() {
-        this.status = EscrowStatus.CANCELLED;
-        this.completedAt = LocalDateTime.now();
-    }
+
+
+
 }
