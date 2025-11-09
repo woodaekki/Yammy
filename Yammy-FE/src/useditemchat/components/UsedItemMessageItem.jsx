@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useAuthStore from '../../stores/authStore';
+import EscrowMessageItem from './EscrowMessageItem';
 import '../styles/UsedItemMessageItem.css';
 
 /**
@@ -11,7 +12,12 @@ export default function UsedItemMessageItem({ message, onImageClick }) {
   const user = useAuthStore((state) => state.user);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const isMine = user && message.uid === String(user.id);
+  const isMine = user && message.uid === String(user.memberId);
+
+  // 에스크로 메시지 타입 처리
+  if (message.type === 'escrow') {
+    return <EscrowMessageItem message={message} isMine={isMine} />;
+  }
 
   if (!message || (!message.message && !message.imageUrl)) {
     return null;

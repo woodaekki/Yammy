@@ -1,0 +1,108 @@
+/* 에스크로 메시지 아이템 */
+.escrow-message-item {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.escrow-message-item.mine {
+  justify-content: flex-end;
+}
+
+.escrow-message-item.other {
+  justify-content: flex-start;
+}
+
+/* 에스크로 카드 */
+.escrow-message-card {
+  max-width: 280px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.escrow-message-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.escrow-message-content {
+  flex: 1;
+  color: white;
+}
+
+/* 헤더 */
+.escrow-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.escrow-message-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.escrow-message-status {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.escrow-message-status.pending {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.escrow-message-status.completed {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 금액 */
+.escrow-message-amount {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+/* 받기 버튼 */
+.escrow-message-receive-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  color: #ff6b35;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.escrow-message-receive-btn:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  transform: translateY(-1px);
+}
+
+.escrow-message-receive-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.escrow-message-receive-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 완료 시간 */
+.escrow-message-time {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 8px;
+  text-align: center;
+}

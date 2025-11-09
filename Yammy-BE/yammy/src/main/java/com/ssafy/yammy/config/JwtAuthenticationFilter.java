@@ -56,6 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        log.info("[JwtAuthFilter] Path: {}, AuthHeader exists: {}", path, authHeader != null);
+
         // Authorization 헤더 확인
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -63,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 if (jwtTokenProvider.validateToken(token)) {
                     String loginId = jwtTokenProvider.getLoginId(token);
+                    log.info("[JwtAuthFilter] Valid token for loginId: {}", loginId);
 
                     // DB에서 UserDetails 조회 (로그인 ID 기반)
                     UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
@@ -96,6 +99,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.getWriter().write("{\"error\":\"Token processing error\"}");
                 return;
             }
+        } else {
+            log.warn("[JwtAuthFilter] No valid Authorization header for path: {}", path);
         }
 
         filterChain.doFilter(request, response);

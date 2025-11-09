@@ -1,10 +1,16 @@
 import { useRef, useEffect, useState } from "react";
+import useAuthStore from "../../stores/authStore";
 import MessageItem from "./MessageItem";
 import "../styles/MessageList.css";
 
 export default function MessageList({ messages, loading, onImageClick }) {
   const messagesEndRef = useRef(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+
+  // 현재 로그인한 유저 정보
+  const { user, isLoggedIn } = useAuthStore();
+  const myId = user?.id || localStorage.getItem("memberId");
+  const myNickname = user?.nickname || localStorage.getItem("nickname");
 
   useEffect(() => {
     scrollToBottom();
@@ -37,13 +43,25 @@ export default function MessageList({ messages, loading, onImageClick }) {
             <p>아직 메시지가 없습니다</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageItem
-              key={msg.id}
-              message={msg}
-              onImageClick={onImageClick}
-            />
-          ))
+          messages.map((msg) => {
+            // 내 메시지 판별 로직 (id 또는 닉네임 일치)
+            const isMine =
+              (msg.senderId?.toString() === myId?.toString() ||
+                msg.memberId?.toString() === myId?.toString() ||
+                msg.nickname === myNickname ||
+                msg.senderNickname === myNickname ||
+                msg.writerNickname === myNickname) &&
+              isLoggedIn;
+
+            return (
+              <MessageItem
+                key={msg.id}
+                message={msg}
+                onImageClick={onImageClick}
+                isMine={isMine}
+              />
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>

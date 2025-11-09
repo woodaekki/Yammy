@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api';
+//const API_URL = 'http://k13c205.p.ssafy.io:8080/api';
 
 // 토큰 가져오기
 const getAuthToken = () => {

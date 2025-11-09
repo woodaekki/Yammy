@@ -80,6 +80,29 @@
   margin-top: 2px;
 }
 
+/* === 송금 버튼 === */
+.chat-transfer-btn {
+  padding: 8px 16px;
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.chat-transfer-btn:hover {
+  background-color: #e55a28;
+  transform: translateY(-1px);
+}
+
+.chat-transfer-btn:active {
+  transform: translateY(0);
+}
+
 /* === 메시지 영역 === */
 .chat-message-area {
   max-width: 720px;

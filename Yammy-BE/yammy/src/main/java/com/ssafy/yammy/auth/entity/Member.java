@@ -1,5 +1,6 @@
 package com.ssafy.yammy.auth.entity;
 
+import com.ssafy.yammy.payment.entity.Point;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -69,6 +70,9 @@ public class Member {
 
     @Column(name = "kakao_id", unique = true)
     private String kakaoId;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Point point;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
