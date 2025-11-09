@@ -9,13 +9,11 @@ import '../styles/UsedItemMessageItem.css';
  * - 상대 메시지는 왼쪽 끝
  */
 export default function UsedItemMessageItem({ message, onImageClick }) {
-  // ✅ 모든 hooks를 먼저 호출 (조건부 return 이전에!)
   const user = useAuthStore((state) => state.user);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const isMine = user && message.uid === String(user.memberId);
 
-  // ✅ hooks 호출 후 조건부 return
   // 에스크로 메시지 타입 처리
   if (message.type === 'escrow') {
     return <EscrowMessageItem message={message} isMine={isMine} />;

@@ -1,32 +1,32 @@
-import { useState } from "react"
-import "../styles/TransferModal.css"
+import { useState } from "react";
+import "../styles/TransferModal.css";
 
 function TransferModal({ isOpen, onClose, onSubmit, currentBalance }) {
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(0);
 
-  const addAmount = (value) => setAmount((prev) => prev + value)
-  const format = (num) => num.toLocaleString()
+  const addAmount = (value) => setAmount((prev) => prev + value);
+  const format = (num) => num.toLocaleString();
 
   const handleSubmit = () => {
     if (amount <= 0) {
-      alert("송금 금액을 입력해주세요.")
-      return
+      alert("송금 금액을 입력해주세요.");
+      return;
     }
     if (amount > currentBalance) {
-      alert("잔액이 부족합니다.")
-      return
+      alert("잔액이 부족합니다.");
+      return;
     }
-    onSubmit(amount)
-    setAmount(0)
-    onClose()
-  }
+    onSubmit(amount);
+    setAmount(0);
+    onClose();
+  };
 
   const handleClose = () => {
-    setAmount(0)
-    onClose()
-  }
+    setAmount(0);
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="transfer-modal-overlay" onClick={handleClose}>
@@ -48,8 +48,8 @@ function TransferModal({ isOpen, onClose, onSubmit, currentBalance }) {
             value={amount ? format(amount) : ""}
             placeholder="금액을 입력하세요."
             onChange={(e) => {
-              const value = e.target.value.replace(/,/g, "")
-              if (!isNaN(value)) setAmount(Number(value))
+              const value = e.target.value.replace(/,/g, "");
+              if (!isNaN(value)) setAmount(Number(value));
             }}
           />
           <div className="transfer-modal-buttons">
@@ -73,7 +73,7 @@ function TransferModal({ isOpen, onClose, onSubmit, currentBalance }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default TransferModal
+export default TransferModal;
