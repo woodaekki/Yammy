@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8080/api';
-// const API_BASE_URL = 'http://k13c205.p.ssafy.io/api/v1';
+import apiClient, { API_BASE_URL } from '../../api/apiClient';
 
 /**
  * 카카오 로그인 처리 (인증 코드를 백엔드로 전송)
+ * ⚠️ 주의: OAuth 콜백 단계이므로 axios 직접 사용 (토큰 없는 상태)
  */
 export const loginWithKakao = async (code) => {
   try {
@@ -20,10 +19,11 @@ export const loginWithKakao = async (code) => {
 
 /**
  * 카카오 회원 탈퇴
+ * ✅ 인증이 필요한 API이므로 apiClient 사용
  */
 export const withdrawKakao = async (code) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/oauth/kakao/withdraw`, null, {
+    const response = await apiClient.post('/oauth/kakao/withdraw', null, {
       params: { code },
     });
     return response.data;
