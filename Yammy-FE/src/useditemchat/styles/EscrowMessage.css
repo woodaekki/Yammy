@@ -39,7 +39,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .escrow-message-label {
@@ -49,8 +49,9 @@
 }
 
 .escrow-message-status {
+  margin-left: 5px;
   font-size: 11px;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 12px;
   font-weight: 600;
 }
@@ -67,14 +68,13 @@
 .escrow-message-amount {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 12px;
   letter-spacing: -0.5px;
 }
 
 /* 받기 버튼 */
 .escrow-message-receive-btn {
-  width: 100%;
-  padding: 10px;
+  width: 80%;
+  padding: 7px 2px;
   background-color: white;
   color: #ff6b35;
   border: none;
@@ -83,6 +83,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
+  margin-top: 8px;
 }
 
 .escrow-message-receive-btn:hover:not(:disabled) {
