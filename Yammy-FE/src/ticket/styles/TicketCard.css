@@ -172,6 +172,12 @@
     padding: 20px 24px;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.ticket-back-content::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
 }
 
 .info-row {
