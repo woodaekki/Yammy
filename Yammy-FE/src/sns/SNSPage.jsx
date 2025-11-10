@@ -102,6 +102,7 @@ const ImageCarousel = ({ images, postId }) => {
 };
 
 const SNSPage = () => {
+<<<<<<< HEAD
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -116,6 +117,26 @@ const SNSPage = () => {
   useEffect(() => {
     loadPosts();
   }, []);
+=======
+    const navigate = useNavigate();
+    const [posts, setPosts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [nextCursor, setNextCursor] = useState(null);
+    const [openMenuPostId, setOpenMenuPostId] = useState(null);
+    const observerTarget = useRef(null);
+    const initialLoadRef = useRef(false); // 초기 로드 추적용 ref
+    const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
+    const teamColors = getTeamColors();
+
+    // 초기 게시글 로드 (StrictMode 대응)
+    useEffect(() => {
+        if (!initialLoadRef.current) {
+            initialLoadRef.current = true;
+            loadPosts();
+        }
+    }, []);
+>>>>>>> develop2
 
   const loadPosts = async () => {
     if (isLoading || !hasMore) return;

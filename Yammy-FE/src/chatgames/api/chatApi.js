@@ -14,6 +14,14 @@ export const chatRoomApi = {
   },
 
   /**
+   * 특정 채팅방 조회 (roomKey)
+   */
+  getRoomByKey: async (roomKey) => {
+    const response = await apiClient.get(`/chat/rooms/${roomKey}`);
+    return response.data;
+  },
+
+  /**
    * 채팅방 생성 (ADMIN만)
    */
   createRoom: async (roomData) => {

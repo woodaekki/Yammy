@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ticket")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -57,7 +58,33 @@ public class Ticket {
     private String review;  // 상세 리뷰
 
     @Column(name = "photo_url", columnDefinition = "TEXT")
-    private String photoUrl;  // S3 사진 URL
+    private String photoUrl;  // S3 사진 URL (NFT 미발급 시)
+
+    @Column(name = "ipfs_image_hash", columnDefinition = "TEXT")
+    private String ipfsImageHash;  // IPFS 이미지 해시 (NFT 발급 시)
+
+    @Column(name = "ipfs_metadata_hash", columnDefinition = "TEXT")
+    private String ipfsMetadataHash;  // IPFS 메타데이터 해시 (재시도 시 재사용)
+
+    // NFT 관련 필드
+    @Column(name = "nft_token_id")
+    private Long nftTokenId;  // NFT 토큰 ID
+
+    @Column(name = "nft_minted")
+    @Builder.Default
+    private Boolean nftMinted = false;  // NFT 발급 여부
+
+    @Column(name = "nft_metadata_uri", columnDefinition = "TEXT")
+    private String nftMetadataUri;  // IPFS 메타데이터 URI
+
+    @Column(name = "nft_transaction_hash", columnDefinition = "TEXT")
+    private String nftTransactionHash;  // 발급 트랜잭션 해시
+
+    @Column(name = "nft_minted_at")
+    private LocalDateTime nftMintedAt;  // NFT 발급 시간
+
+    @Column(length = 50)
+    private String team;  // 응원 팀 (티켓 배경용)
 
     // 메타데이터
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -80,7 +107,7 @@ public class Ticket {
     // 수정 메서드
     public void update(String game, LocalDate date, String location, String seat,
                        String comment, String type, Integer awayScore, Integer homeScore,
-                       String review, String photoUrl, String matchcode) {
+                       String review, String photoUrl, String matchcode, String team) {
         this.game = game;
         this.date = date;
         this.location = location;
@@ -94,5 +121,15 @@ public class Ticket {
             this.photoUrl = photoUrl;
         }
         this.matchcode = matchcode;
+        this.team = team;
+    }
+
+    // NFT 발급 완료 메서드
+    public void markNftMinted(Long tokenId, String metadataUri, String txHash) {
+        this.nftTokenId = tokenId;
+        this.nftMinted = true;
+        this.nftMetadataUri = metadataUri;
+        this.nftTransactionHash = txHash;
+        this.nftMintedAt = LocalDateTime.now();
     }
 }

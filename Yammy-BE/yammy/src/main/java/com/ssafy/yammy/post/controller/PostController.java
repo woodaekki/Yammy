@@ -41,7 +41,7 @@ public class PostController {
             throw new IllegalArgumentException("게시글에는 1~3개의 이미지만 업로드할 수 있습니다.");
         }
 
-        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(count, contentType);
+        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(count, contentType, "post");
         return ResponseEntity.ok(responses);
     }
 

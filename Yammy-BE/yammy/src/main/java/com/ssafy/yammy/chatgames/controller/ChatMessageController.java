@@ -33,6 +33,13 @@ public class ChatMessageController {
         return ResponseEntity.ok(rooms);
     }
 
+    @Operation(summary = "채팅방 단건 조회", description = "roomKey로 특정 채팅방 정보 조회")
+    @GetMapping("/rooms/{roomKey}")
+    public ResponseEntity<ChatRoom> getRoomByKey(@PathVariable String roomKey) {
+        ChatRoom room = chatRoomService.findByRoomKey(roomKey);
+        return ResponseEntity.ok(room);
+    }
+
     @Operation(summary = "이미지 업로드", description = "채팅방에 이미지 전송")
     @PostMapping(value = "/rooms/{roomKey}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResponse> uploadImage(

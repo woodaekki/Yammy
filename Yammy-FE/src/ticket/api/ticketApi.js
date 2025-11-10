@@ -41,6 +41,7 @@ export const createTicket = async (ticketData) => {
       awayScore: ticketData.awayScore ?? null,
       homeScore: ticketData.homeScore ?? null,
       review: ticketData.review || '',
+      team: ticketData.team || null,
     };
 
     // Multipart JSON 파트
@@ -83,6 +84,7 @@ export const updateTicket = async (ticketId, ticketData) => {
       awayScore: ticketData.awayScore ?? null,
       homeScore: ticketData.homeScore ?? null,
       review: ticketData.review || '',
+      team: ticketData.team || null,
     };
 
     formData.append(

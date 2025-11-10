@@ -11,7 +11,12 @@ const DEFAULT_PROFILE_IMAGE = '/nomal.jpg';
 const UserProfile = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
-
+    const currentUser = {
+                            nickname: localStorage.getItem('nickname'),
+                            team: localStorage.getItem('team'),
+                            profileImage: localStorage.getItem('profileImage'),
+                            bio: localStorage.getItem('bio')
+                        };
     const [profileData, setProfileData] = useState(null);
     const [posts, setPosts] = useState([]);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -56,14 +61,14 @@ const UserProfile = () => {
                     bio: firstPost.bio || '',
                 });
             } else {
-                // 게시글이 없을 경우 기본 프로필 정보만 표시
+                // 게시글이 없을 경우 localStorage 데이터 사용
                 setProfileData({
-                    name: '사용자',
-                    username: '@user',
-                    avatar: DEFAULT_PROFILE_IMAGE,
+                    name: currentUser.nickname || '사용자',
+                    username: `@${currentUser.nickname || 'user'}`,
+                    avatar: currentUser.profileImage || DEFAULT_PROFILE_IMAGE,
                     postsCount: 0,
-                    team: '',
-                    bio: '',
+                    team: currentUser.team || '',
+                    bio: currentUser.bio || '',
                 });
             }
         } catch (error) {
@@ -142,8 +147,8 @@ const UserProfile = () => {
                 <div className="profile-top">
                     <div className="avatar-wrapper">
                         <img
-                            src={profileData.avatar}
-                            alt={profileData.name}
+                            src={profileData.avatar || currentUser.profileImage || DEFAULT_PROFILE_IMAGE}
+                            alt={profileData.name || currentUser.nickname || '사용자'}
                             className="profile-avatar"
                             onError={(e) => {
                                 e.target.src = DEFAULT_PROFILE_IMAGE;
@@ -151,13 +156,21 @@ const UserProfile = () => {
                         />
                     </div>
                     <div className="profile-info">
-                        <h2 className="profile-name">{profileData.name} {profileData.username}</h2>
+                        <h2 className="profile-name">
+                            {profileData.name || currentUser.nickname || '사용자'}
+                            {' '}
+                            {profileData.username || `@${currentUser.nickname || 'user'}`}
+                        </h2>
                         <div className="bio-container">
-                            {profileData.team && (
-                                <p className="bio-text">⚾ {profileData.team}</p>
+                            {(profileData.team || currentUser.team) && (
+                                <p className="bio-text">
+                                    ⚾ {profileData.team || currentUser.team}
+                                </p>
                             )}
-                            {profileData.bio && profileData.bio !== `⚾ ${profileData.team}` && (
-                                <p className="bio-text">{profileData.bio}</p>
+                            {(profileData.bio || currentUser.bio) && (
+                                <p className="bio-text">
+                                    {profileData.bio || currentUser.bio}
+                                </p>
                             )}
                         </div>
                     </div>

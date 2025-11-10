@@ -22,4 +22,5 @@ public class TicketRequest {
     private Integer awayScore; // 원정팀 점수
     private Integer homeScore; // 홈팀 점수
     private String review;     // 상세 리뷰
+    private String team;       // 응원 팀 (티켓 배경용)
 }

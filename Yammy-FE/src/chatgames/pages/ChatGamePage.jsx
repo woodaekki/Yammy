@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChatMessages } from '../hooks/useChatMessages';
+import { chatRoomApi } from '../api/chatApi';
 import GameHeader from '../components/GameHeader';
 import MessageItem from '../components/MessageItem';
 import ImageUpload from '../components/ImageUpload';
@@ -29,18 +30,15 @@ export default function ChatGamePage() {
   useEffect(() => {
     if (!roomKey) return;
 
-    setTimeout(() => {
-      setRoom({
-        roomKey: roomKey,
-        name: "채팅 게임",
-        homeTeam: "KIA",
-        awayTeam: "LG",
-        doubleHeader: false,
-        startAt: new Date().toISOString(),
-        status: "ACTIVE"
+    chatRoomApi.getRoomByKey(roomKey)
+      .then(roomData => {
+        setRoom(roomData);
+        setLoadingRoom(false);
+      })
+      .catch(error => {
+        console.error('채팅방 정보 로드 실패:', error);
+        setLoadingRoom(false);
       });
-      setLoadingRoom(false);
-    }, 500);
   }, [roomKey]);
 
   useEffect(() => {
