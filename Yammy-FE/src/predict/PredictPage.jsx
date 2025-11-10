@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePredict } from './hooks/usePredict';
-import { TEAM_COLORS } from '../sns/utils/teamColors';
+import { TEAM_COLORS, getTeamColors } from '../sns/utils/teamColors';
 import './styles/predict.css';
 
 const PredictPage = () => {
   const navigate = useNavigate();
+  const [teamColors, setTeamColors] = useState(getTeamColors());
 
   // 오늘 날짜 가져오기
   const today = new Date();
@@ -22,10 +23,19 @@ const PredictPage = () => {
   // 오늘 경기만 필터링
   const todayMatches = matches.filter(match => match.date === todayDateString);
 
-  // 사용자 팀 컬러 가져오기
-  const userTeam = localStorage.getItem('team') || 'LG 트윈스';
-  const userTeamColor = TEAM_COLORS[userTeam]?.bgColor || '#4CAF50';
-  const userTeamTextColor = TEAM_COLORS[userTeam]?.textColor || '#ffffff';
+  // 팀 컬러 업데이트
+  useEffect(() => {
+    setTeamColors(getTeamColors());
+  }, []);
+
+  // 팀 변경 이벤트 감지
+  useEffect(() => {
+    const handleTeamChange = () => {
+      setTeamColors(getTeamColors());
+    };
+    window.addEventListener('teamChanged', handleTeamChange);
+    return () => window.removeEventListener('teamChanged', handleTeamChange);
+  }, []);
 
   // 팀 컬러 가져오기 함수
   const getTeamColor = (teamName) => {
@@ -56,9 +66,9 @@ const PredictPage = () => {
 
   return (
     <div className="predict-page">
-      <div className="predict-header" style={{ backgroundColor: userTeamColor }}>
-        <h1 style={{ color: userTeamTextColor }}>⚾ 승부 예측</h1>
-        <p style={{ color: userTeamTextColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
+      <div className="predict-header" style={{ backgroundColor: teamColors.bgColor }}>
+        <h1 style={{ color: teamColors.textColor }}>⚾ 승부 예측</h1>
+        <p style={{ color: teamColors.textColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
       </div>
       
       <div className="predict-schedule">

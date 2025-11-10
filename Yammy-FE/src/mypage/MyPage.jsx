@@ -27,6 +27,15 @@ const MyPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
+  // 팀 변경 이벤트 감지
+  useEffect(() => {
+    const handleTeamChange = () => {
+      setTeamColors(getTeamColors());
+    };
+    window.addEventListener('teamChanged', handleTeamChange);
+    return () => window.removeEventListener('teamChanged', handleTeamChange);
+  }, []);
+
   useEffect(() => {
     initialize();
     if (!isLoggedIn) {
@@ -168,9 +177,12 @@ const MyPage = () => {
       alert('프로필이 업데이트되었습니다!');
       setSelectedFile(null);
 
-      // 팀 변경 시 페이지 새로고침 (팀 컬러 반영)
+      // 팀 변경 시 팀 컬러 업데이트
       if (formData.team !== originalTeam) {
-        window.location.reload();
+        setTeamColors(getTeamColors());
+        setOriginalTeam(formData.team);
+        // 팀 변경 이벤트 발생
+        window.dispatchEvent(new Event('teamChanged'));
       }
     } catch (error) {
       console.error('프로필 업데이트 실패:', error);

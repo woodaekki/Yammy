@@ -34,8 +34,16 @@ const TICKET_BACKGROUNDS = {
 const TicketCreatePage = () => {
     const navigate = useNavigate();
     const [selectedTeam, setSelectedTeam] = useState(localStorage.getItem('team') || null);
-    const teamColors = selectedTeam ? TEAM_COLORS[selectedTeam] : { bgColor: '#4CAF50', textColor: '#ffffff' };
-    const ticketBackground = selectedTeam ? TICKET_BACKGROUNDS[selectedTeam] : null;
+    const [teamColors, setTeamColors] = useState(selectedTeam ? TEAM_COLORS[selectedTeam] : { bgColor: '#4CAF50', textColor: '#ffffff' });
+    const [ticketBackground, setTicketBackground] = useState(selectedTeam ? TICKET_BACKGROUNDS[selectedTeam] : null);
+
+    // 팀 변경 시 색상과 배경 업데이트
+    useEffect(() => {
+        if (selectedTeam) {
+            setTeamColors(TEAM_COLORS[selectedTeam] || { bgColor: '#4CAF50', textColor: '#ffffff' });
+            setTicketBackground(TICKET_BACKGROUNDS[selectedTeam] || null);
+        }
+    }, [selectedTeam]);
 
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -534,7 +542,7 @@ const TicketCreatePage = () => {
                                     className="stadium-item team-item"
                                     onClick={() => {
                                         setSelectedTeam(team);
-                                        localStorage.setItem('team', team);
+                                        // 티켓 발급에서는 일시적으로만 팀 선택 (localStorage 업데이트 안함)
                                         setShowTeamModal(false);
                                     }}
                                     style={{
