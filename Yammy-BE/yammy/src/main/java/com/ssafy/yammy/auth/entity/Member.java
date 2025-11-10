@@ -71,6 +71,9 @@ public class Member {
     @Column(name = "kakao_id", unique = true)
     private String kakaoId;
 
+    @Column(name = "wallet_address", unique = true, length = 42)
+    private String walletAddress;
+
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Point point;
 

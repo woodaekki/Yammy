@@ -75,6 +75,20 @@ kakao:
   client-secret: ${KAKAO_CLIENT_SECRET:}
   redirect-uri: ${KAKAO_REDIRECT_URI}
 
+# NFT 설정
+nft:
+  contract-address: ${NFT_CONTRACT_ADDRESS:0xC3411A874DC352569927A57556E3b35682CfaEBE}
+  network: ${NFT_NETWORK:sepolia}
+  rpc-url: ${NFT_RPC_URL:https://rpc.sepolia.org}
+  private-key: ${NFT_PRIVATE_KEY}
+  owner-address: ${NFT_OWNER_ADDRESS:0xD8aC392887BEad44D2da842B4Dbb5b12d5c48CE6}
+
+# IPFS 설정 (Pinata)
+ipfs:
+  api-key: ${PINATA_API_KEY}
+  api-secret: ${PINATA_API_SECRET}
+  gateway: ${PINATA_GATEWAY:https://gateway.pinata.cloud/ipfs/}
+
 
 #firebase:
 #  type: ${FIREBASE_TYPE}

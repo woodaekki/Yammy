@@ -29,7 +29,20 @@ public class TicketResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // NFT 관련 필드
+    private Long nftTokenId;
+    private Boolean nftMinted;
+    private String nftMetadataUri;
+    private String nftTransactionHash;
+    private LocalDateTime nftMintedAt;
+    private String ipfsImageHash;  // IPFS 이미지 해시
+
     public static TicketResponse from(Ticket ticket) {
+        // IPFS 이미지 해시가 있으면 게이트웨이 URL 생성, 없으면 기존 photoUrl 사용
+        String photoUrl = ticket.getIpfsImageHash() != null
+                ? "https://gateway.pinata.cloud/ipfs/" + ticket.getIpfsImageHash()
+                : ticket.getPhotoUrl();
+
         return TicketResponse.builder()
                 .id(ticket.getTicketId())
                 .matchcode(ticket.getMatchcode())
@@ -42,9 +55,15 @@ public class TicketResponse {
                 .awayScore(ticket.getAwayScore())
                 .homeScore(ticket.getHomeScore())
                 .review(ticket.getReview())
-                .photoPreview(ticket.getPhotoUrl())
+                .photoPreview(photoUrl)
                 .createdAt(ticket.getCreatedAt())
                 .updatedAt(ticket.getUpdatedAt())
+                .nftTokenId(ticket.getNftTokenId())
+                .nftMinted(ticket.getNftMinted())
+                .nftMetadataUri(ticket.getNftMetadataUri())
+                .nftTransactionHash(ticket.getNftTransactionHash())
+                .nftMintedAt(ticket.getNftMintedAt())
+                .ipfsImageHash(ticket.getIpfsImageHash())
                 .build();
     }
 }

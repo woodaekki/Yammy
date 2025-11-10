@@ -35,7 +35,7 @@ public class TicketController {
     public ResponseEntity<PhotoUploadResponse> getPresignedUrl(
             @RequestParam(defaultValue = "image/jpeg") String contentType) {
 
-        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(1, contentType);
+        List<PhotoUploadResponse> responses = photoService.generatePresignedUrls(1, contentType, "ticket");
         return ResponseEntity.ok(responses.get(0));
     }
 
@@ -47,18 +47,20 @@ public class TicketController {
     public ResponseEntity<TicketResponse> createTicket(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestPart("ticket") TicketRequest request,
-            @RequestPart(value = "photo", required = false) MultipartFile photo) {
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            @RequestParam(value = "mintNft", required = false, defaultValue = "false") boolean mintNft) {
 
         Long memberId = userDetails.getMemberId();
-        log.info("티켓 발급 요청 - memberId: {}, game: {}", memberId, request.getGame());
+        log.info("티켓 발급 요청 - memberId: {}, game: {}, mintNft: {}", memberId, request.getGame(), mintNft);
 
+        // 직관 사진을 S3에 업로드
         String photoUrl = null;
         if (photo != null && !photo.isEmpty()) {
-            // S3에 사진 업로드
-            photoUrl = photoService.uploadPhoto(photo);
+            photoUrl = photoService.uploadPhoto(photo, "ticket");
+            log.info("티켓 사진 S3 업로드 완료 - memberId: {}, photoUrl: {}", memberId, photoUrl);
         }
 
-        TicketResponse response = ticketService.createTicket(memberId, request, photoUrl);
+        TicketResponse response = ticketService.createTicket(memberId, request, photoUrl, mintNft);
         return ResponseEntity.ok(response);
     }
 
@@ -109,7 +111,8 @@ public class TicketController {
 
         String photoUrl = null;
         if (photo != null && !photo.isEmpty()) {
-            photoUrl = photoService.uploadPhoto(photo);
+            // S3에 사진 업로드 (ticket 폴더)
+            photoUrl = photoService.uploadPhoto(photo, "ticket");
         }
 
         TicketResponse response = ticketService.updateTicket(ticketId, memberId, request, photoUrl);
