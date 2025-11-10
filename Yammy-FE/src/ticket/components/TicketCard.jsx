@@ -86,6 +86,16 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                 canvas.toBlob(resolve, 'image/png');
             });
 
+            console.log('Blob 생성 확인:', {
+                blobExists: !!blob,
+                blobSize: blob?.size,
+                blobType: blob?.type
+            });
+
+            if (!blob) {
+                throw new Error('이미지 캡처에 실패했습니다.');
+            }
+
             // File 객체로 변환
             const ticketId = ticket.id || ticket.ticketId;
             const ticketImageFile = new File([blob], `ticket-${ticketId}.png`, {
@@ -100,7 +110,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
 
             setMintStatus('NFT 발급 중...');
 
-            // NFT 발급
+            // NFT 발급 (캡처된 이미지를 NFT용으로 전송)
             const response = await mintNFT(ticketId, ticketImageFile, null);
 
             // 원래 상태로 복원
@@ -255,6 +265,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                     <img
                                         src={ticket.photoUrl || ticket.photoPreview}
                                         alt="직관사진"
+                                        crossOrigin="anonymous"
                                         style={{
                                             width: '100%',
                                             height: 'auto',
