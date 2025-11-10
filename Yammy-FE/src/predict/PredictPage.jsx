@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePredict } from './hooks/usePredict';
+import { usePredict, getTeamColor } from './hooks/usePredict';
 import { TEAM_COLORS } from '../sns/utils/teamColors';
 import './styles/predict.css';
 
@@ -26,32 +26,10 @@ const PredictPage = () => {
   console.log('🎯 전체 경기:', matches);
   console.log('🎯 오늘 경기:', todayMatches);
 
-  // 팀 컬러 가져오기 함수 (짧은 이름 → 전체 이름 매핑)
   // 사용자 팀 컬러 가져오기
-  const userTeam = localStorage.getItem('team') || 'LG 트윈스';
+  const userTeam = localStorage.getItem('team');
   const userTeamColor = TEAM_COLORS[userTeam]?.bgColor || '#4CAF50';
   const userTeamTextColor = TEAM_COLORS[userTeam]?.textColor || '#ffffff';
-
-  // 팀 컬러 가져오기 함수
-  const getTeamColor = (teamName) => {
-    // 짧은 팀 이름을 전체 팀 이름으로 매핑
-    const teamNameMapping = {
-      'KIA': 'KIA 타이거즈',
-      '삼성': '삼성 라이온즈', 
-      'LG': 'LG 트윈스',
-      '두산': '두산 베어스',
-      'KT': 'KT 위즈',
-      'SSG': 'SSG 랜더스',
-      '롯데': '롯데 자이언츠',
-      '한화': '한화 이글스',
-      'NC': 'NC 다이노스',
-      '키움': '키움 히어로즈'
-    };
-    
-    const fullTeamName = teamNameMapping[teamName] || teamName;
-    console.log('🎨 팀 컬러 매핑:', teamName, '->', fullTeamName, TEAM_COLORS[fullTeamName]?.bgColor);
-    return TEAM_COLORS[fullTeamName]?.bgColor || '#4CAF50';
-  };
 
   // 경기 진행 여부 확인 함수
   const isGameInProgress = (gameTime) => {
