@@ -158,8 +158,8 @@ const UserProfile = () => {
                     <div className="profile-info">
                         <h2 className="profile-name">
                             {profileData.name || currentUser.nickname || '사용자'}
-                            {' '}
-                            {profileData.username || `@${currentUser.nickname || 'user'}`}
+                            {/* {' '} */}
+                            {/* {profileData.username || `@${currentUser.nickname || 'user'}`} */}
                         </h2>
                         <div className="bio-container">
                             {(profileData.team || currentUser.team) && (
