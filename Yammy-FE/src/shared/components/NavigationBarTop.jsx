@@ -38,12 +38,9 @@ const NavigationBarTop = () => {
   }, []);
 
   // cheerup 하위경로 또는 useditem/chat 하위경로일 때만 네브바 숨김
-  if (
+  const shouldHideNav =
     location.pathname.startsWith("/cheerup/") ||
-    location.pathname.startsWith("/useditem/chat/")
-  ) {
-    return null;
-  }
+    location.pathname.startsWith("/useditem/chat/");
 
   // 포인트 불러오기 함수
   async function fetchData() {
@@ -79,6 +76,9 @@ const NavigationBarTop = () => {
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
+
+  // 렌더 직전에 네비게이션 숨김 조건 처리 (훅 호출 순서가 항상 동일하도록)
+  if (shouldHideNav) return null;
 
   const handleLogout = () => {
     setShowUserMenu(false);
