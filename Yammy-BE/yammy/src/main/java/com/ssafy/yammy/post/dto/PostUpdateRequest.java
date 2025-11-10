@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUpdateRequest {
-    private String caption;  // 캡션만 수정 가능
+    private String caption;
+    private List<String> imageUrls;
 }

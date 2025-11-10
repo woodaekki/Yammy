@@ -138,19 +138,37 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "게시글을 수정할 권한이 없습니다.");
         }
 
-        // 수정 시 욕설 필터링
-//        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
+        // === 1. 캡션 수정 ===
+        if (request.getCaption() != null) {
+            post.updateCaption(request.getCaption());
+            postRepository.save(post);
+        }
 
-        post.updateCaption(request.getCaption());
-        Post updatedPost = postRepository.save(post);
+        // === 2. 이미지 교체 ===
+        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            // 기존 이미지 전부 삭제
+            postImageRepository.deleteByPostId(postId);
 
+            // 새 이미지 저장
+            int order = 1;
+            for (String url : request.getImageUrls()) {
+                PostImage newImg = PostImage.builder()
+                        .postId(postId)
+                        .imageUrl(url)
+                        .imageOrder(order++)
+                        .build();
+                postImageRepository.save(newImg);
+            }
+        }
+
+        // === 3. 결과 반환 ===
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "작성자를 찾을 수 없습니다."));
 
         List<PostImage> postImages = postImageRepository.findByPostIdOrderByImageOrder(postId);
         boolean isLiked = postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
 
-        return buildPostResponse(updatedPost, member, postImages, isLiked);
+        return buildPostResponse(post, member, postImages, isLiked);
     }
 
     // 게시글 삭제
