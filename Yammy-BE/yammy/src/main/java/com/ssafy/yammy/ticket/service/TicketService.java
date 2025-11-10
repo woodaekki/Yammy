@@ -2,9 +2,7 @@ package com.ssafy.yammy.ticket.service;
 
 import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.auth.repository.MemberRepository;
-import com.ssafy.yammy.match.entity.GameInfo;
 import com.ssafy.yammy.match.entity.Scoreboard;
-import com.ssafy.yammy.match.repository.GameInfoRepository;
 import com.ssafy.yammy.match.repository.ScoreboardRepository;
 import com.ssafy.yammy.match.util.TeamNameMapper;
 import com.ssafy.yammy.ticket.dto.TicketRequest;
@@ -28,13 +26,20 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final MemberRepository memberRepository;
     private final ScoreboardRepository scoreboardRepository;
-    private final GameInfoRepository gameInfoRepository;
 
     /**
      * 티켓 생성
      */
     @Transactional
     public TicketResponse createTicket(Long memberId, TicketRequest request, String photoUrl) {
+        return createTicket(memberId, request, photoUrl, false);
+    }
+
+    /**
+     * 티켓 생성 (NFT 발급 옵션 포함)
+     */
+    @Transactional
+    public TicketResponse createTicket(Long memberId, TicketRequest request, String photoUrl, boolean mintNft) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
@@ -99,10 +104,23 @@ public class TicketService {
                 .build();
 
         Ticket savedTicket = ticketRepository.save(ticket);
-        log.info("티켓 생성 완료 - ticketId: {}, memberId: {}", savedTicket.getTicketId(), memberId);
+        log.info("티켓 생성 완료 - ticketId: {}, memberId: {}, photoUrl: {}",
+                savedTicket.getTicketId(), memberId, photoUrl);
+
+        // NFT 발급 요청 시 처리
+        if (mintNft && member.getWalletAddress() != null) {
+            try {
+                // NFT 발급 시에는 이미지 해시 없이 발급 (나중에 NFT 발급 버튼으로 발급)
+                log.info("즉시 NFT 발급은 지원하지 않음 - ticketId: {}", savedTicket.getTicketId());
+            } catch (Exception e) {
+                log.error("NFT 발급 실패 (티켓은 생성됨) - ticketId: {}",
+                        savedTicket.getTicketId(), e);
+            }
+        }
 
         return TicketResponse.from(savedTicket);
     }
+
 
     /**
      * 사용자의 티켓 목록 조회

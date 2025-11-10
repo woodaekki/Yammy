@@ -126,12 +126,16 @@ const SNSPage = () => {
     const [nextCursor, setNextCursor] = useState(null);
     const [openMenuPostId, setOpenMenuPostId] = useState(null);
     const observerTarget = useRef(null);
+    const initialLoadRef = useRef(false); // 초기 로드 추적용 ref
     const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
     const teamColors = getTeamColors();
 
-    // 초기 게시글 로드
+    // 초기 게시글 로드 (StrictMode 대응)
     useEffect(() => {
-        loadPosts();
+        if (!initialLoadRef.current) {
+            initialLoadRef.current = true;
+            loadPosts();
+        }
     }, []);
 
     // 게시글 로드 함수
