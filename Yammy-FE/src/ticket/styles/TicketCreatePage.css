@@ -2,7 +2,7 @@
 .ticket-create-page {
     min-height: 100vh;
     background-color: #FFF9E6;
-    padding-bottom: 80px;
+    padding-bottom: 20px;
 }
 
 /* 헤더 */
@@ -33,17 +33,62 @@
 .team-select-btn {
     background: none;
     border: none;
+    border-bottom: 3px solid;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: all 0.2s;
-    min-width: 60px;
+    padding: 6px 12px 8px 12px;
+    border-radius: 0;
+    transition: all 0.3s;
+    min-width: 80px;
+    position: relative;
+}
+
+.team-select-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: currentColor;
+    transform: scaleX(1);
+    animation: pulse-underline 2s infinite;
 }
 
 .team-select-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+@keyframes pulse-underline {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 팀 선택 안내 배너 */
+.team-info-banner {
+    margin: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    animation: slide-down 0.5s ease-out;
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* 진행 단계 */
@@ -123,19 +168,21 @@
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    padding: 12px 4px;
+    border: none;
+    border-bottom: 2px solid #e5e7eb;
+    border-radius: 0;
     font-size: 14px;
     font-family: inherit;
     transition: all 0.2s;
     box-sizing: border-box;
+    background: transparent;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--team-color);
+    border-bottom-color: var(--team-color);
 }
 
 .form-group input::placeholder,
@@ -165,7 +212,55 @@
     color: #6b7280;
 }
 
-/* 사진 업로드 */
+/* 사진 업로드 - 인라인 */
+.photo-upload-section-inline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.photo-preview-inline {
+    width: 120px;
+    height: 160px;
+    background-color: #f9fafb;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.photo-preview-inline:hover {
+    border-color: var(--team-color);
+    background-color: #f0f0f0;
+}
+
+.photo-preview-inline img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-upload-btn-inline {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.photo-upload-btn-inline:hover {
+    filter: brightness(1.1);
+}
+
+/* 사진 업로드 - 전체화면 (사용안함) */
 .photo-upload-section {
     text-align: center;
 }
@@ -193,12 +288,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     color: #9ca3af;
 }
 
 .photo-icon {
-    font-size: 48px;
+    font-size: 32px;
 }
 
 .photo-placeholder p {
@@ -240,6 +335,7 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    margin-top: 32px;
 }
 
 .next-btn,
@@ -277,7 +373,8 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    z-index: 1000;
+    z-index: 9999;
+    padding-bottom: 60px;
 }
 
 .location-modal-content {
@@ -285,10 +382,12 @@
     border-radius: 24px 24px 0 0;
     width: 100%;
     max-width: 500px;
-    max-height: 80vh;
+    max-height: 75vh;
     padding: 24px;
+    padding-bottom: 24px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .modal-close {
@@ -320,6 +419,7 @@
     flex: 1;
     overflow-y: auto;
     margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .stadium-item {

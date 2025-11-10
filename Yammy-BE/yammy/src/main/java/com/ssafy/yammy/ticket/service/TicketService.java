@@ -4,6 +4,11 @@ import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.nft.dto.NftMintResponse;
 import com.ssafy.yammy.nft.service.NftService;
+import com.ssafy.yammy.match.entity.GameInfo;
+import com.ssafy.yammy.match.entity.Scoreboard;
+import com.ssafy.yammy.match.repository.GameInfoRepository;
+import com.ssafy.yammy.match.repository.ScoreboardRepository;
+import com.ssafy.yammy.match.util.TeamNameMapper;
 import com.ssafy.yammy.ticket.dto.TicketRequest;
 import com.ssafy.yammy.ticket.dto.TicketResponse;
 import com.ssafy.yammy.ticket.entity.Ticket;
@@ -25,6 +30,8 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final MemberRepository memberRepository;
     private final NftService nftService;
+    private final ScoreboardRepository scoreboardRepository;
+    private final GameInfoRepository gameInfoRepository;
 
     /**
      * 티켓 생성
@@ -52,17 +59,61 @@ public class TicketService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        // matchcode가 있으면 경기 데이터 자동 채우기
+        String game = request.getGame();
+        String location = request.getLocation();
+        Integer awayScore = request.getAwayScore();
+        Integer homeScore = request.getHomeScore();
+
+        if (request.getMatchcode() != null && !request.getMatchcode().isEmpty()) {
+            try {
+                List<Scoreboard> scoreboards = scoreboardRepository.findByMatchcode(request.getMatchcode());
+                if (!scoreboards.isEmpty()) {
+                    Scoreboard firstScoreboard = scoreboards.get(0);
+
+                    // 경기명 자동 채우기 (홈팀 vs 원정팀)
+                    if (game == null || game.isEmpty()) {
+                        game = firstScoreboard.getAway() + " vs " + firstScoreboard.getHome();
+                    }
+
+                    // 경기장 자동 채우기
+                    if (location == null || location.isEmpty()) {
+                        location = TeamNameMapper.normalizeStadiumName(firstScoreboard.getPlace());
+                        // 정규화된 이름이 없으면 원본 사용
+                        if (location == null || location.isEmpty()) {
+                            location = firstScoreboard.getPlace();
+                        }
+                    }
+
+                    // 점수 자동 채우기
+                    for (Scoreboard sb : scoreboards) {
+                        if (sb.getTeam().equals(firstScoreboard.getHome())) {
+                            homeScore = sb.getRun();
+                        } else if (sb.getTeam().equals(firstScoreboard.getAway())) {
+                            awayScore = sb.getRun();
+                        }
+                    }
+
+                    log.info("matchcode로 경기 데이터 자동 채움 - matchcode: {}, game: {}, location: {}",
+                            request.getMatchcode(), game, location);
+                }
+            } catch (Exception e) {
+                log.warn("matchcode로 경기 데이터 조회 실패 - matchcode: {}, error: {}",
+                        request.getMatchcode(), e.getMessage());
+            }
+        }
+
         Ticket ticket = Ticket.builder()
                 .member(member)
                 .matchcode(request.getMatchcode())
-                .game(request.getGame())
+                .game(game != null ? game : request.getGame())
                 .date(request.getDate())
-                .location(request.getLocation())
+                .location(location != null ? location : request.getLocation())
                 .seat(request.getSeat())
                 .comment(request.getComment())
                 .type(request.getType())
-                .awayScore(request.getAwayScore())
-                .homeScore(request.getHomeScore())
+                .awayScore(awayScore)
+                .homeScore(homeScore)
                 .review(request.getReview())
                 .build();
 
@@ -153,15 +204,59 @@ public class TicketService {
             throw new RuntimeException("권한이 없습니다.");
         }
 
+        // matchcode가 있으면 경기 데이터 자동 채우기
+        String game = request.getGame();
+        String location = request.getLocation();
+        Integer awayScore = request.getAwayScore();
+        Integer homeScore = request.getHomeScore();
+
+        if (request.getMatchcode() != null && !request.getMatchcode().isEmpty()) {
+            try {
+                List<Scoreboard> scoreboards = scoreboardRepository.findByMatchcode(request.getMatchcode());
+                if (!scoreboards.isEmpty()) {
+                    Scoreboard firstScoreboard = scoreboards.get(0);
+
+                    // 경기명 자동 채우기 (홈팀 vs 원정팀)
+                    if (game == null || game.isEmpty()) {
+                        game = firstScoreboard.getAway() + " vs " + firstScoreboard.getHome();
+                    }
+
+                    // 경기장 자동 채우기
+                    if (location == null || location.isEmpty()) {
+                        location = TeamNameMapper.normalizeStadiumName(firstScoreboard.getPlace());
+                        // 정규화된 이름이 없으면 원본 사용
+                        if (location == null || location.isEmpty()) {
+                            location = firstScoreboard.getPlace();
+                        }
+                    }
+
+                    // 점수 자동 채우기
+                    for (Scoreboard sb : scoreboards) {
+                        if (sb.getTeam().equals(firstScoreboard.getHome())) {
+                            homeScore = sb.getRun();
+                        } else if (sb.getTeam().equals(firstScoreboard.getAway())) {
+                            awayScore = sb.getRun();
+                        }
+                    }
+
+                    log.info("matchcode로 경기 데이터 자동 채움 - matchcode: {}, game: {}, location: {}",
+                            request.getMatchcode(), game, location);
+                }
+            } catch (Exception e) {
+                log.warn("matchcode로 경기 데이터 조회 실패 - matchcode: {}, error: {}",
+                        request.getMatchcode(), e.getMessage());
+            }
+        }
+
         ticket.update(
-                request.getGame(),
+                game != null ? game : request.getGame(),
                 request.getDate(),
-                request.getLocation(),
+                location != null ? location : request.getLocation(),
                 request.getSeat(),
                 request.getComment(),
                 request.getType(),
-                request.getAwayScore(),
-                request.getHomeScore(),
+                awayScore,
+                homeScore,
                 request.getReview(),
                 photoUrl,
                 request.getMatchcode()

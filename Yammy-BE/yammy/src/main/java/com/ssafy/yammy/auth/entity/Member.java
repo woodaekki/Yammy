@@ -1,5 +1,6 @@
 package com.ssafy.yammy.auth.entity;
 
+import com.ssafy.yammy.payment.entity.Point;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -70,8 +71,8 @@ public class Member {
     @Column(name = "kakao_id", unique = true)
     private String kakaoId;
 
-    @Column(name = "wallet_address", length = 42)
-    private String walletAddress;  // Ethereum 지갑 주소 (0x...)
+    @Column(name = "wallet_address", unique = true, length = 42)
+    private String walletAddress;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

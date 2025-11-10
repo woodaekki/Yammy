@@ -1,89 +1,11 @@
 import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8080/api';
-
-// Axios 인스턴스 생성
-const authApi = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request 인터셉터: Authorization 헤더 자동 추가
-authApi.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response 인터셉터: 401 에러 시 토큰 재발급 시도
-authApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    // 401 에러이고 재시도하지 않은 경우
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const refreshToken = localStorage.getItem('refreshToken');
-      const accessToken = localStorage.getItem('accessToken');
-
-      if (refreshToken && accessToken) {
-        try {
-          // 리프레시 토큰으로 액세스 토큰 재발급 (Header 방식)
-          const response = await axios.post(
-            `${API_BASE_URL}/auth/refresh`,
-            {},
-            {
-              headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'X-Refresh-Token': refreshToken,
-              }
-            }
-          );
-
-          const newAccessToken = response.data.accessToken;
-
-          // 새 토큰 저장
-          localStorage.setItem('accessToken', newAccessToken);
-
-          // 원래 요청 재시도
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return authApi(originalRequest);
-        } catch (refreshError) {
-          // 리프레시 실패 시 로그아웃 처리
-          console.error('토큰 재발급 실패:', refreshError);
-          localStorage.clear();
-          alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/login';
-          return Promise.reject(refreshError);
-        }
-      } else {
-        // 리프레시 토큰이나 accessToken이 없는 경우
-        localStorage.clear();
-        alert('로그인이 필요한 서비스입니다.');
-        window.location.href = '/login';
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+import apiClient, { API_BASE_URL } from '../../api/apiClient';
 
 /**
  * 로그인
  */
 export const login = async (loginData) => {
-  const response = await authApi.post('/auth/login', loginData);
+  const response = await apiClient.post('/auth/login', loginData);
   return response.data;
 };
 
@@ -91,7 +13,7 @@ export const login = async (loginData) => {
  * 회원가입
  */
 export const signup = async (signupData) => {
-  const response = await authApi.post('/auth/signup', signupData);
+  const response = await apiClient.post('/auth/signup', signupData);
   return response.data;
 };
 
@@ -99,7 +21,7 @@ export const signup = async (signupData) => {
  * 로그아웃
  */
 export const logout = async (loginId) => {
-  const response = await authApi.post(`/auth/logout?id=${loginId}`);
+  const response = await apiClient.post(`/auth/logout?id=${loginId}`);
   return response.data;
 };
 
@@ -107,7 +29,7 @@ export const logout = async (loginId) => {
  * 이메일 인증 코드 발송
  */
 export const sendVerificationCode = async (email) => {
-  const response = await authApi.post(`/auth/email/send?email=${encodeURIComponent(email)}`);
+  const response = await apiClient.post(`/auth/email/send?email=${encodeURIComponent(email)}`);
   return response.data;
 };
 
@@ -115,7 +37,7 @@ export const sendVerificationCode = async (email) => {
  * 이메일 인증 코드 확인
  */
 export const verifyEmail = async (email, code) => {
-  const response = await authApi.post(
+  const response = await apiClient.post(
     `/auth/email/verify?email=${encodeURIComponent(email)}&code=${code}`
   );
   return response.data;
@@ -123,6 +45,7 @@ export const verifyEmail = async (email, code) => {
 
 /**
  * 토큰 갱신
+ * ⚠️ 주의: 이 함수는 axios를 직접 사용합니다 (apiClient 사용 시 순환 참조 발생)
  */
 export const refreshAccessToken = async (accessToken, refreshToken) => {
   const response = await axios.post(
@@ -142,7 +65,7 @@ export const refreshAccessToken = async (accessToken, refreshToken) => {
  * 비밀번호 변경
  */
 export const changePassword = async (passwordData) => {
-  const response = await authApi.put('/auth/password', passwordData);
+  const response = await apiClient.put('/auth/password', passwordData);
   return response.data;
 };
 
@@ -150,7 +73,7 @@ export const changePassword = async (passwordData) => {
  * 회원 정보 수정
  */
 export const updateMember = async (updateData) => {
-  const response = await authApi.put('/auth/update', updateData);
+  const response = await apiClient.put('/auth/update', updateData);
   return response.data;
 };
 
@@ -158,8 +81,6 @@ export const updateMember = async (updateData) => {
  * 회원 탈퇴
  */
 export const deleteMember = async () => {
-  const response = await authApi.delete('/auth/delete');
+  const response = await apiClient.delete('/auth/delete');
   return response.data;
 };
-
-export default authApi;

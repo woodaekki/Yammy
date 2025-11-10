@@ -1,61 +1,88 @@
-import { useEffect, useState } from 'react';
+// ============================================
+// 1. useUsedItemChatMessages.js (Hook)
+// ============================================
+import { useEffect, useState, useRef } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../../chatgames/config/firebase';
 
 /**
  * 중고거래 채팅방 메시지 실시간 구독 Hook
- * @param {string} roomKey - 채팅방 키
- * @param {number} messageLimit - 최대 메시지 수 (기본: 200)
- * @returns {{ messages: Array, loading: boolean, error: string|null }}
  */
 export function useUsedItemChatMessages(roomKey, messageLimit = 200) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const unsubscribeRef = useRef(null);
 
   useEffect(() => {
-    // roomKey가 없으면 로딩 종료
+    // roomKey가 없으면 초기화하고 종료
     if (!roomKey) {
+      setMessages([]);
       setLoading(false);
+      setError(null);
       return;
     }
 
+    // 상태 초기화
+    setLoading(true);
+    setError(null);
+    setMessages([]); // 이전 메시지 초기화
+
     console.log('🔥 [UsedItem] Subscribing to room:', roomKey);
 
-    // Firestore 쿼리 생성 (useditem-chats 컬렉션)
-    const q = query(
-      collection(db, `useditem-chats/${roomKey}/messages`),
-      orderBy('createdAt', 'asc'),
-      limit(messageLimit)
-    );
+    // 이전 구독이 있으면 해제
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+    }
 
-    // 실시간 구독 시작
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const msgs = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          // Firestore Timestamp를 Date로 변환
-          createdAt: doc.data().createdAt?.toDate()
-        }));
+    try {
+      // Firestore 쿼리 생성
+      const q = query(
+        collection(db, `useditem-chats/${roomKey}/messages`),
+        orderBy('createdAt', 'asc'),
+        limit(messageLimit)
+      );
 
-        console.log(`📨 [UsedItem] Received ${msgs.length} messages`);
-        setMessages(msgs);
-        setLoading(false);
-        setError(null);
-      },
-      (err) => {
-        console.error('❌ [UsedItem] Firestore subscription error:', err);
-        setError(err.message);
-        setLoading(false);
-      }
-    );
+      // 실시간 구독 시작
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          console.log(`📨 [UsedItem] Snapshot received - ${snapshot.docs.length} messages`);
+          
+          const msgs = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate()
+          }));
 
-    // 컴포넌트 언마운트 시 구독 해제
+          console.log(`✅ [UsedItem] Messages loaded:`, msgs.length);
+          setMessages(msgs);
+          setLoading(false);
+          setError(null);
+        },
+        (err) => {
+          console.error('❌ [UsedItem] Firestore subscription error:', err);
+          setError(err.message);
+          setLoading(false);
+          setMessages([]);
+        }
+      );
+
+      unsubscribeRef.current = unsubscribe;
+    } catch (err) {
+      console.error('❌ [UsedItem] Query setup error:', err);
+      setError(err.message);
+      setLoading(false);
+      setMessages([]);
+    }
+
+    // 클린업 함수
     return () => {
       console.log('🔥 [UsedItem] Unsubscribing from room:', roomKey);
-      unsubscribe();
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
     };
   }, [roomKey, messageLimit]);
 

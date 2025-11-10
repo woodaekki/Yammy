@@ -17,17 +17,30 @@
 }
 
 .chat-header-inner {
-  max-width: 720px;
+  width: 100%;
+  max-width: calc(720px - 2rem);
   margin: 0 auto;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .chat-header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 
+/* === 왼쪽 영역 (← + 상품정보 묶음) === */
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* === 뒤로가기 버튼 === */
 .chat-back-button {
   background: none;
   border: none;
@@ -40,16 +53,13 @@
   height: 26px;
 }
 
-.chat-back-button:hover {
-  color: #222;
-}
-
-/* === 물품 정보 === */
+/* === 상품 정보 === */
 .chat-item-info {
   display: flex;
   align-items: center;
   gap: 10px;
   flex: 1;
+  min-width: 0;
 }
 
 .chat-item-image {
@@ -80,139 +90,59 @@
   margin-top: 2px;
 }
 
-/* === 메시지 영역 === */
-.chat-message-area {
-  max-width: 720px;
-  margin: 0 auto;
+/* === 송금 버튼 === */
+.chat-transfer-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
-/* === 로딩 === */
-.chat-loading-container {
-  min-height: 100vh;
+.chat-transfer-btn:hover {
+  background-color: #e55a28;
+  transform: translateY(-1px);
+}
+
+/* === 메시지 영역 === */
+.chat-message-area {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 16px 14px 80px 14px;
+  box-sizing: border-box;
   background-color: #f5f7fa;
+  display: block;
+}
+
+/* === 로딩 / 에러 상태 === */
+.chat-loading-container,
+.chat-error-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 70vh;
 }
 
-.chat-loading-box {
+.chat-loading-box,
+.chat-error-box {
   text-align: center;
 }
 
 .chat-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #d1d5db;
-  border-bottom-color: #3b82f6;
+  width: 36px;
+  height: 36px;
+  border: 4px solid #ccc;
+  border-top-color: #1c8bff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 12px auto;
-}
-
-.chat-loading-text {
-  color: #555;
-  font-size: 0.9rem;
-}
-
-/* === 에러 화면 === */
-.chat-error-container {
-  min-height: 100vh;
-  background-color: #f5f7fa;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-}
-
-.chat-error-box {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  max-width: 400px;
-  text-align: center;
-}
-
-.chat-error-icon {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.chat-error-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-.chat-error-message {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 12px;
-}
-
-.chat-error-button {
-  background-color: #1d4ed8;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-}
-
-.chat-error-button:hover {
-  background-color: #1e40af;
-}
-
-/* === 이미지 모달 === */
-.chat-image-modal {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  z-index: 50;
-}
-
-.chat-image-modal-inner {
-  position: relative;
-  max-width: 900px;
-  max-height: 90vh;
-}
-
-.chat-image-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: white;
-  color: #222;
-  border: none;
-  border-radius: 50%;
-  padding: 6px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.chat-image-close:hover {
-  background: #e5e7eb;
-}
-
-.chat-close-icon {
-  width: 22px;
-  height: 22px;
-}
-
-.chat-image-full {
-  max-width: 100%;
-  max-height: 90vh;
-  border-radius: 10px;
-}
-
-.chat-message-area {
-  flex: 1; 
-  overflow-y: auto; 
+  margin: 0 auto 10px;
 }
 
 @keyframes spin {
@@ -221,4 +151,64 @@
   }
 }
 
+.chat-error-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
 
+.chat-error-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.chat-error-button {
+  background-color: #1c8bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.chat-error-button:hover {
+  background-color: #1778e6;
+}
+
+/* === 이미지 모달 === */
+.chat-image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.chat-image-modal-inner {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.chat-image-full {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+
+.chat-image-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-close-icon {
+  width: 32px;
+  height: 32px;
+}

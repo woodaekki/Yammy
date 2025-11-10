@@ -1,0 +1,226 @@
+/* 승부예측 관련 스타일 */
+
+.predict-page {
+  min-height: 100vh;
+  background-color: #FFF9E6;
+  padding-bottom: 80px;
+}
+
+.predict-header {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.predict-header h1 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.predict-header p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.predict-schedule {
+  text-align: center;
+  margin: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+}
+
+.predict-schedule h2 {
+  font-size: 18px;
+  color: #333;
+  margin: 0;
+  font-weight: 700;
+}
+
+.predict-content {
+  padding: 0 16px;
+}
+
+.today-matches {
+  background: transparent;
+  padding: 0;
+}
+
+.today-matches h2 {
+  color: #333;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+/* 로딩, 에러, 빈 상태 스타일 */
+.loading, .error, .no-matches {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-size: 14px;
+  background: white;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.error {
+  color: #f44336;
+  background: white;
+  border: none;
+}
+
+/* 경기 목록 스타일 */
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 경기 카드 컨테이너 */
+.match-card-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.match-card-container:hover {
+  transform: translateY(-2px);
+}
+
+/* 경기 시간 헤더 */
+.match-time-header {
+  background: #f5f5f5;
+  color: #333;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 예측 카드 메인 */
+.match-prediction-card {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  min-height: 80px;
+  padding: 12px 0;
+}
+
+/* 팀 섹션 */
+.team-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  color: white;
+  position: relative;
+  z-index: 1;
+  border-radius: 12px;
+  margin: 0 8px;
+}
+
+.home-team-section {
+  margin-left: 16px;
+}
+
+.away-team-section {
+  margin-right: 16px;
+}
+
+.team-label {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.team-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.prediction-score {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 0;
+}
+
+/* VS 섹션 */
+.vs-section {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 44px;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+  z-index: 10;
+  border: 2px solid #e0e0e0;
+}
+
+.vs-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: #333;
+}
+
+/* 경기장 정보 */
+.match-stadium {
+  text-align: center;
+  padding: 12px;
+  background: #fafafa;
+  color: #666;
+  font-size: 13px;
+  border-top: 1px solid #f0f0f0;
+  font-weight: 500;
+}
+
+/* 경기 진행중 스타일 */
+.game-in-progress {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.game-in-progress .match-prediction-card {
+  filter: blur(1px);
+}
+
+.game-progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  z-index: 15;
+}
+
+.progress-message {
+  background: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #666;
+  text-align: center;
+}
+

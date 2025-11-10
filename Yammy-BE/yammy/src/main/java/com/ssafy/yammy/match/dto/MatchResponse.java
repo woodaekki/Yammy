@@ -22,6 +22,7 @@ public class MatchResponse {
     private Integer awayScore;
     private String gametime;
     private Integer audience;
+    private String matchStatus;  // 경기 상태 (취소 등)
     private List<InningScore> innings;
 
     @Getter

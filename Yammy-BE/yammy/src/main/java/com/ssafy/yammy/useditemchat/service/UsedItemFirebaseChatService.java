@@ -2,6 +2,7 @@ package com.ssafy.yammy.useditemchat.service;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.FirestoreClient;
@@ -35,8 +36,8 @@ public class UsedItemFirebaseChatService {
 
         Blob blob = bucket.create(path, file.getBytes(), file.getContentType());
 
-        // 1일 만료 Signed URL 생성
-        String imageUrl = blob.signUrl(1, TimeUnit.DAYS).toString();
+        // 7일 만료 Signed URL 생성
+        String imageUrl = blob.signUrl(7, TimeUnit.DAYS).toString();
 
         log.info("✅ Used item chat image uploaded: {} (size: {} bytes)", path, file.getSize());
         return imageUrl;
@@ -86,5 +87,59 @@ public class UsedItemFirebaseChatService {
 
         log.info("✅ Used item chat text message saved: {} in room: {}", docRef.getId(), roomKey);
         return docRef.getId();
+    }
+
+    /**
+     * Firestore에 에스크로 메시지 저장
+     * @return 생성된 메시지 ID
+     */
+    public String saveEscrowMessage(String roomKey, Long fromMemberId, String nickname, Long escrowId, Long amount) throws Exception {
+        Firestore firestore = FirestoreClient.getFirestore();
+
+        var docRef = firestore.collection("useditem-chats")
+                .document(roomKey)
+                .collection("messages")
+                .add(Map.of(
+                        "uid", fromMemberId.toString(),
+                        "nickname", nickname,
+                        "type", "escrow",
+                        "escrowId", escrowId,
+                        "amount", amount,
+                        "status", "pending",
+                        "createdAt", Timestamp.now()
+                ))
+                .get();
+
+        log.info("✅ Escrow message saved: {} in room: {} (escrowId: {}, amount: {})",
+                docRef.getId(), roomKey, escrowId, amount);
+        return docRef.getId();
+    }
+
+    /**
+     * Firestore에서 에스크로 메시지 상태 업데이트
+     */
+    public void updateEscrowMessageStatus(String roomKey, Long escrowId, String status) throws Exception {
+        Firestore firestore = FirestoreClient.getFirestore();
+
+        Query query = firestore
+                .collection("useditem-chats")
+                .document(roomKey)
+                .collection("messages")
+                .whereEqualTo("type", "escrow")
+                .whereEqualTo("escrowId", escrowId)
+                .limit(1);
+
+        var documents = query.get().get().getDocuments();
+
+        if (!documents.isEmpty()) {
+            documents.get(0).getReference().update(Map.of(
+                    "status", status,
+                    "completedAt", Timestamp.now()
+            )).get();
+
+            log.info("✅ Escrow message status updated: escrowId={}, status={}", escrowId, status);
+        } else {
+            log.warn("⚠️ Escrow message not found: escrowId={}", escrowId);
+        }
     }
 }

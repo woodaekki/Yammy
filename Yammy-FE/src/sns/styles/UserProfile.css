@@ -36,18 +36,25 @@
     border: none;
     border-radius: 12px;
     margin: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 }
 
-.profile-main {
+.profile-top {
     display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
 }
 
 .avatar-wrapper {
     position: relative;
+    width: 80px;
+    height: 80px;
     flex-shrink: 0;
+    z-index: 1;
+    margin-right: 32px;
 }
 
 .profile-avatar {
@@ -55,7 +62,7 @@
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: none;
+    display: block;
 }
 
 .verified-badge {
@@ -72,49 +79,111 @@
     justify-content: center;
     font-size: 14px;
     border: 2px solid white;
+    z-index: 2;
 }
 
-.profile-details {
+.profile-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    padding-left: 48px;
+}
+
+.profile-info h2,
+.profile-info p {
+    margin: 0;
+    margin-block: 0;
+    margin-inline: 0;
+    padding: 0;
+    display: block;
 }
 
 .profile-name {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
-    margin: 0 0 4px 0;
+    line-height: 1.2;
+    margin-bottom: 8px;
 }
 
 .profile-username {
     font-size: 14px;
     color: #666;
-    margin: 0 0 12px 0;
+    line-height: 1.2;
+}
+
+.bio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.bio-text {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #333;
+    margin: 0;
+    padding: 0;
 }
 
 .profile-stats {
     display: flex;
-    gap: 20px;
+    gap: 0;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 70px;
+    margin-bottom: 16px;
+    padding: 12px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: none;
-    border: none;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
     cursor: pointer;
     padding: 0;
+    box-shadow: none !important;
+    flex: 1 1 0;
+    outline: none !important;
 }
 
-.stat-number {
-    font-size: 18px;
-    font-weight: 700;
-    color: #333;
+.stat-item:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.stat-item:active {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .stat-label {
     font-size: 13px;
     color: #666;
-    margin-top: 2px;
+    margin-bottom: 4px;
+    background: transparent !important;
+    box-shadow: none !important;
+    white-space: nowrap;
+}
+
+.stat-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 /* 소개 */

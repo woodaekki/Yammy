@@ -1,9 +1,10 @@
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route, Navigate, useLocation } from "react-router-dom"
 import SNSPage from "../sns/SNSPage"
 import CommentPage from "../sns/components/CommentPage"
 import UserProfile from "../sns/components/UserProfile"
 import UsedItemPage from "../useditem/UsedItemPage"
 import PostCreate from "../sns/components/PostCreate";
+import PostEdit from "../sns/components/PostEdit";
 import UsedItemDetail from "../useditem/components/UsedItemDetail"
 import UsedItemEdit from "../useditem/components/UsedItemEdit"
 import UsedItemCreate from "../useditem/components/UsedItemCreate"
@@ -28,9 +29,12 @@ import TestChatPage from "../chatgames/pages/TestChatPage";
 import ChatGamePage from "../chatgames/pages/ChatGamePage";
 import ChatRoomListPage from "../chatgames/pages/ChatRoomListPage";
 import AdminChatPage from "../chatgames/pages/AdminChatPage";
-import AdminRoute from "./AdminRoute"; 
+import AdminRoute from "./AdminRoute";
+import PredictPage from "../predict/PredictPage"; 
+import PrecitDetailPage from "../predict/components/BettingPage";
 
 export default function AppRouter() {
+  const location = useLocation();
   return (
     <Routes>
       {/* Auth Routes - 로그인 필요 없음 */}
@@ -49,8 +53,16 @@ export default function AppRouter() {
       <Route path="/" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
       <Route path="/sns" element={<ProtectedRoute><SNSPage /></ProtectedRoute>} />
       <Route path="/post/create" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
+      <Route path="/post/edit/:postId" element={<ProtectedRoute><PostEdit /></ProtectedRoute>} />
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
       <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+
+       {/* UsedItem Chat Routes */}
+      <Route
+        path="/useditem/chat/:roomKey"
+        element={<UsedItemChatPage key={location.pathname} />}
+      />
+      <Route path="/chatlist" element={<UsedItemChatList />} />
 
       {/* UsedItem Routes */}
       <Route path="/useditem" element={<UsedItemPage />} />
@@ -58,10 +70,7 @@ export default function AppRouter() {
       <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
       <Route path="/useditem/create" element={<UsedItemCreate />} />
 
-      {/* UsedItem Chat Routes */}
-      <Route path="/useditem/chat/:roomKey" element={<UsedItemChatPage />} />
-      <Route path="/chatlist" element={<UsedItemChatList />} />
-      
+
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />
       <Route path="/checkout" element={<CheckoutPage />} />
@@ -77,6 +86,10 @@ export default function AppRouter() {
       <Route path="/match" element={<MatchResultPage />} />
       <Route path="/match/:matchcode" element={<MatchResultDetailPage />} />
       
+      {/* Predict Routes */}
+      <Route path="/prediction" element={<PredictPage />} />
+      <Route path="/prediction/:matchId" element={<PrecitDetailPage />} />
+
       {/* 임시챗팅방 */}
       <Route path="/test-chat" element={<TestChatPage />} />
 

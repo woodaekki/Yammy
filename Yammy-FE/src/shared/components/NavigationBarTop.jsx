@@ -22,6 +22,10 @@ const NavigationBarTop = () => {
   useEffect(() => {
     initialize();
   }, [initialize]);
+  // cheerup 하위경로 또는 useditem/chat 하위경로일 때만 네브바 숨김
+  const shouldHideNav =
+    location.pathname.startsWith("/cheerup/") ||
+    location.pathname.startsWith("/useditem/chat/");
 
   // 포인트 불러오기 함수
   async function fetchData() {
@@ -33,7 +37,6 @@ const NavigationBarTop = () => {
     }
   }
 
-  // 로그인 상태 + 특정 페이지일 때마다 balance 갱신
   useEffect(() => {
     const shouldFetch =
       token &&
@@ -45,12 +48,10 @@ const NavigationBarTop = () => {
         location.pathname.startsWith("/success") ||
         location.pathname.startsWith("/fail"));
 
-    if (shouldFetch) {
-      fetchData();
-    }
-  }, [token, isLoggedIn, location.pathname]); // ← 페이지 이동 시마다 새로 갱신
+    if (shouldFetch) fetchData();
+  }, [token, isLoggedIn, location.pathname]);
 
-  // 결제 성공 시 즉시 포인트 업데이트 (CheckoutPage에서 dispatchEvent로 호출 가능)
+  // 결제 성공 시 즉시 포인트 업데이트
   useEffect(() => {
     const handlePointUpdate = () => {
       if (token && isLoggedIn) {
@@ -60,6 +61,9 @@ const NavigationBarTop = () => {
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
+
+  // 렌더 직전에 네비게이션 숨김 조건 처리 (훅 호출 순서가 항상 동일하도록)
+  if (shouldHideNav) return null;
 
   const handleLogout = () => {
     setShowUserMenu(false);
@@ -81,7 +85,6 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/success") ||
       location.pathname.startsWith("/fail"));
 
-  // 페이지별 로고 변경
   const currentLogo =
     location.pathname.startsWith("/useditem") ||
     location.pathname === "/mypoint" ||
@@ -114,7 +117,6 @@ const NavigationBarTop = () => {
             <button className="chatlist-btn" onClick={goChatList}>
               채팅방
             </button>
-
             <button className="ypay-charge-btn" onClick={goMyPoint}>
               충전하기
             </button>

@@ -1,65 +1,76 @@
-import { useRef, useEffect, useState } from 'react';
-import UsedItemMessageItem from './UsedItemMessageItem';
-import '../styles/UsedItemMessageList.css';
+import { useRef, useEffect, useState } from "react";
+import useAuthStore from "../../stores/authStore";
+import UsedItemMessageItem from "./UsedItemMessageItem";
+import "../styles/UsedItemMessageList.css";
 
 /**
- * 중고거래 채팅 메시지 목록
- * - 자동 스크롤
- * - 스크롤 버튼
+ * 중고거래 채팅 메시지 리스트
  */
 export default function UsedItemMessageList({ messages, loading, onImageClick }) {
-  const messagesEndRef = useRef(null);      // 스크롤 끝 지점 ref
-  const containerRef = useRef(null);        // 스크롤 컨테이너 ref
-  const [showScrollButton, setShowScrollButton] = useState(false); // 하단 버튼 표시 여부
+  const messagesEndRef = useRef(null);
+  const messageListRef = useRef(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
-  // 새 메시지 오면 자동 스크롤
+  const { user } = useAuthStore();
+  const myId = user?.memberId || localStorage.getItem("memberId");
+  const myNickname = user?.nickname || localStorage.getItem("nickname");
+
+  // messages 배열이 변경될 때마다 스크롤
   useEffect(() => {
     scrollToBottom();
-  }, [messages.length]);
+  }, [messages]);
 
-  // 스크롤 감지 (맨 밑 근처일 때 버튼 숨김)
   const handleScroll = (e) => {
     const el = e.target;
     const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
     setShowScrollButton(!nearBottom);
   };
 
-  // 스크롤 최하단 이동
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   if (loading) {
     return (
       <div className="message-loading">
-        <div className="loading-spinner"></div>
-        <p className="loading-text">메시지 불러오는 중...</p>
+        <div className="spinner"></div>
+        <p>불러오는 중...</p>
       </div>
     );
   }
 
   return (
-    <div className="message-list-wrapper">
-      <div ref={containerRef} onScroll={handleScroll} className="message-scroll-container">
+    <div className="chat-container">
+      <div className="message-list" ref={messageListRef} onScroll={handleScroll}>
         {messages.length === 0 ? (
           <div className="message-empty">
             <p>아직 메시지가 없습니다</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <UsedItemMessageItem
-              key={msg.id}
-              message={msg}
-              onImageClick={onImageClick}
-            />
-          ))
+          messages.map((msg) => {
+            const isMine =
+              msg.senderId?.toString() === myId?.toString() ||
+              msg.memberId?.toString() === myId?.toString() ||
+              msg.uid?.toString() === myId?.toString() ||
+              msg.nickname === myNickname ||
+              msg.senderNickname === myNickname ||
+              msg.writerNickname === myNickname;
+
+            return (
+              <UsedItemMessageItem
+                key={msg.id || `${msg.nickname}-${msg.createdAt}`}
+                message={msg}
+                onImageClick={onImageClick}
+                isMine={isMine}
+              />
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 스크롤 맨 아래로 버튼 */}
       {showScrollButton && (
-        <button onClick={scrollToBottom} className="scroll-bottom-btn" title="맨 아래로">
+        <button className="scroll-btn" onClick={scrollToBottom}>
           ↓
         </button>
       )}

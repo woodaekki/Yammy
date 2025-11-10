@@ -10,7 +10,6 @@
 .ticket-card {
     position: relative;
     width: 100%;
-    aspect-ratio: 3/4;
     transform-style: preserve-3d;
     transition: transform 0.6s;
 }
@@ -22,18 +21,16 @@
 /* 앞면/뒷면 공통 */
 .ticket-front,
 .ticket-back {
-    position: absolute;
     width: 100%;
-    height: 100%;
     backface-visibility: hidden;
-    border-radius: 16px;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 /* 앞면 */
 .ticket-front {
-    background: linear-gradient(135deg, var(--team-color) 0%, rgba(255, 255, 255, 0.95) 100%);
+    background: transparent;
 }
 
 .ticket-perforated-edge {
@@ -145,17 +142,15 @@
 
 /* 뒷면 */
 .ticket-back {
-    background: var(--team-color);
+    background: transparent;
     transform: rotateY(180deg);
-    color: white;
-    display: flex;
-    flex-direction: column;
+    color: #333;
 }
 
 .ticket-back-header {
     padding: 24px 24px 16px 24px;
     text-align: center;
-    border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
 }
 
 .ticket-back-header h3 {
@@ -176,6 +171,7 @@
     flex: 1;
     padding: 20px 24px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .info-row {
@@ -183,7 +179,7 @@
     justify-content: space-between;
     align-items: flex-start;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .info-row:last-child {
@@ -193,6 +189,7 @@
 .info-label {
     font-size: 12px;
     font-weight: 600;
+    color: #000;
     opacity: 0.8;
     min-width: 60px;
 }
@@ -202,6 +199,9 @@
     font-weight: 600;
     text-align: right;
     flex: 1;
+    background: none;
+    padding: 0;
+    border-radius: 0;
 }
 
 .score-row {
@@ -226,7 +226,7 @@
 .review-section {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 2px dashed rgba(255, 255, 255, 0.3);
+    border-top: 2px dashed rgba(0, 0, 0, 0.1);
 }
 
 .review-section .info-label {
@@ -244,7 +244,6 @@
 
 .ticket-back-footer {
     padding: 16px 24px;
-    background: rgba(0, 0, 0, 0.2);
 }
 
 .barcode {
@@ -262,7 +261,7 @@
 
 .barcode-lines span {
     width: 2px;
-    background: white;
+    background: #333;
     height: 100%;
     opacity: 0.8;
 }

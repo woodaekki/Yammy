@@ -1,28 +1,4 @@
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
-// axios 인스턴스 생성
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// 요청 인터셉터 (JWT 토큰 자동 추가)
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+import apiClient from '../../api/apiClient';
 
 /**
  * 중고거래 채팅방 API
@@ -35,7 +11,7 @@ export const usedItemChatApi = {
    * @returns {Promise} - { roomKey, usedItemId, sellerId, buyerId, status, createdAt }
    */
   createOrEnterChatRoom: async (usedItemId) => {
-    const response = await apiClient.post(`/api/useditem/chat/${usedItemId}`);
+    const response = await apiClient.post(`/useditem/chat/${usedItemId}`);
     return response.data;
   },
 
@@ -44,7 +20,7 @@ export const usedItemChatApi = {
    * @returns {Promise} - 채팅방 배열
    */
   getMyChatRooms: async () => {
-    const response = await apiClient.get('/api/useditem/chat/rooms');
+    const response = await apiClient.get('/useditem/chat/rooms');
     return response.data;
   },
 
@@ -54,7 +30,7 @@ export const usedItemChatApi = {
    * @returns {Promise} - 채팅방 정보
    */
   getChatRoom: async (roomKey) => {
-    const response = await apiClient.get(`/api/useditem/chat/room/${roomKey}`);
+    const response = await apiClient.get(`/useditem/chat/room/${roomKey}`);
     return response.data;
   },
 
@@ -69,7 +45,7 @@ export const usedItemChatApi = {
     formData.append('file', file);
 
     const response = await apiClient.post(
-      `/api/useditem/chat/room/${roomKey}/images`,
+      `/useditem/chat/room/${roomKey}/images`,
       formData,
       {
         headers: {
@@ -77,7 +53,7 @@ export const usedItemChatApi = {
         },
       }
     );
-    return response.data; // { messageId, imageUrl }
+    return response.data;
   },
 
   /**
@@ -88,9 +64,9 @@ export const usedItemChatApi = {
    */
   sendTextMessage: async (roomKey, message) => {
     const response = await apiClient.post(
-      `/api/useditem/chat/room/${roomKey}/messages`,
+      `/useditem/chat/room/${roomKey}/messages`,
       { message }
     );
-    return response.data; // { messageId, imageUrl: null }
+    return response.data;
   },
 };

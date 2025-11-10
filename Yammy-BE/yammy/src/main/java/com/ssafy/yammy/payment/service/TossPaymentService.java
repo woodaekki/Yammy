@@ -7,6 +7,7 @@ import com.ssafy.yammy.payment.dto.TossPaymentResponse;
 import com.ssafy.yammy.payment.entity.Point;
 import com.ssafy.yammy.payment.entity.PointTransaction;
 import com.ssafy.yammy.payment.entity.TossPayment;
+import com.ssafy.yammy.payment.entity.TransactionType;
 import com.ssafy.yammy.payment.repository.PointRepository;
 import com.ssafy.yammy.payment.repository.PointTransactionRepository;
 import com.ssafy.yammy.payment.repository.TossPaymentRepository;
@@ -103,7 +104,7 @@ public class TossPaymentService {
         pointTransaction.setMember(member);
         pointTransaction.setPoint(point);
         pointTransaction.setTossPayment(tossPayment);
-        pointTransaction.setType("CHARGE");
+        pointTransaction.setType(TransactionType.CHARGE);
         pointTransaction.setAmount(amount);
         pointTransaction.setCreatedAt(LocalDateTime.now());
         pointTransactionRepository.save(pointTransaction);

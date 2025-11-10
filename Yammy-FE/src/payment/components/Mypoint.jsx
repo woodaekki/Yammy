@@ -58,7 +58,7 @@ function MyPoint() {
           <button onClick={() => addAmount(10000)}>+1만</button>
           <button onClick={() => addAmount(50000)}>+5만</button>
           <button onClick={() => addAmount(100000)}>+10만</button>
-          <button onClick={() => addAmount(1000000)}>+50만</button>
+          <button onClick={() => addAmount(500000)}>+50만</button>
         </div>
       </div>
 
