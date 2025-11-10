@@ -25,7 +25,15 @@ export const mintNFT = async (ticketId, photo = null, walletAddress = null) => {
 
     // photo (optional)
     if (photo) {
+      console.log('Photo 파일 정보:', {
+        name: photo.name,
+        size: photo.size,
+        type: photo.type
+      });
       formData.append('photo', photo);
+      console.log('FormData에 photo 추가 완료');
+    } else {
+      console.log('Photo가 null입니다.');
     }
 
     const token = localStorage.getItem('accessToken');

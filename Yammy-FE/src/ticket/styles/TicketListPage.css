@@ -61,7 +61,7 @@
 .tickets-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    gap: 96px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -117,7 +117,7 @@
 @media (max-width: 768px) {
     .tickets-grid {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 96px;
     }
 }
 

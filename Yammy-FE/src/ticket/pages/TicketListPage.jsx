@@ -29,6 +29,21 @@ const TicketListPage = () => {
         }
     };
 
+    const handleNftMinted = (ticketId, nftResponse) => {
+        setTickets(prevTickets =>
+            prevTickets.map(ticket =>
+                ticket.id === ticketId
+                    ? {
+                        ...ticket,
+                        nftMinted: true,
+                        nftTokenId: nftResponse.tokenId,
+                        nftTransactionHash: nftResponse.transactionHash
+                    }
+                    : ticket
+            )
+        );
+    };
+
     return (
         <div
             className="ticket-list-page"
@@ -77,7 +92,7 @@ const TicketListPage = () => {
                     <div className="tickets-grid">
                         {tickets.map(ticket => (
                             <div key={ticket.id} className="ticket-item">
-                                <TicketCard ticket={ticket} />
+                                <TicketCard ticket={ticket} onNftMinted={handleNftMinted} />
                             </div>
                         ))}
                     </div>

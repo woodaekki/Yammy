@@ -73,18 +73,52 @@ const TicketCard = ({ ticket, onNftMinted }) => {
 
             setMintStatus('티켓 캡처 중...');
 
-            // 티켓 카드 캡처
-            const canvas = await html2canvas(ticketCardRef.current, {
+            // 뒷면만 캡처
+            const ticketCardElement = ticketCardRef.current;
+            const ticketBackElement = ticketCardElement.querySelector('.ticket-back');
+            const nftSection = ticketBackElement.querySelector('.nft-section');
+
+            // NFT 섹션 임시로 숨기기
+            if (nftSection) {
+                nftSection.style.display = 'none';
+            }
+
+            // .ticket-card의 flipped 클래스 제거 및 .ticket-back의 transform 제거
+            ticketCardElement.classList.remove('flipped');
+            const originalTransform = ticketBackElement.style.transform;
+            ticketBackElement.style.transform = 'rotateY(0deg)';
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            // 티켓 카드 캡처 (뒷면만)
+            const canvas = await html2canvas(ticketBackElement, {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true,
                 logging: false
             });
 
+            // NFT 섹션 다시 표시 및 원래 상태 복원
+            if (nftSection) {
+                nftSection.style.display = '';
+            }
+            ticketBackElement.style.transform = originalTransform;
+            ticketCardElement.classList.add('flipped');
+
             // Blob 변환
             const blob = await new Promise((resolve) => {
                 canvas.toBlob(resolve, 'image/png');
             });
+
+            console.log('Blob 생성 확인:', {
+                blobExists: !!blob,
+                blobSize: blob?.size,
+                blobType: blob?.type
+            });
+
+            if (!blob) {
+                throw new Error('이미지 캡처에 실패했습니다.');
+            }
 
             // File 객체로 변환
             const ticketId = ticket.id || ticket.ticketId;
@@ -100,7 +134,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
 
             setMintStatus('NFT 발급 중...');
 
-            // NFT 발급
+            // NFT 발급 (캡처된 이미지를 NFT용으로 전송)
             const response = await mintNFT(ticketId, ticketImageFile, null);
 
             // 원래 상태로 복원
@@ -227,11 +261,13 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                     margin: '20px',
                                     backgroundColor: 'rgba(255, 255, 255, 0.3)',
                                     borderRadius: '12px',
-                                    overflow: 'hidden',
+                                    overflow: 'auto',
                                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    maxHeight: 'calc(100% - 40px)'
+                                    maxHeight: 'calc(100% - 40px)',
+                                    scrollbarWidth: 'none',
+                                    msOverflowStyle: 'none'
                                 }}>
                                     <div className="ticket-back-header">
                         <h3>{ticket.game}</h3>
@@ -255,6 +291,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                     <img
                                         src={ticket.photoUrl || ticket.photoPreview}
                                         alt="직관사진"
+                                        crossOrigin="anonymous"
                                         style={{
                                             width: '100%',
                                             height: 'auto',
@@ -307,7 +344,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         <div className="nft-section" onClick={(e) => e.stopPropagation()}>
                             {ticket.nftMinted ? (
                                 <div className="nft-status">
-                                    <span className="nft-badge">✅ NFT 발급 완료</span>
+                                    <span className="nft-badge">NFT 발급 완료</span>
                                     {ticket.nftTokenId && (
                                         <div className="nft-links">
                                             <a
