@@ -13,7 +13,7 @@ const NavigationBarTop = () => {
   const token = localStorage.getItem("accessToken");
   const { isLoggedIn, user, logOut, initialize } = useAuthStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [teamColors] = useState(getTeamColors());
+  const [teamColors, setTeamColors] = useState(getTeamColors());
   const [balance, setBalance] = useState(null);
   const [error, setError] = useState(null);
 
@@ -22,6 +22,21 @@ const NavigationBarTop = () => {
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  // 팀 컬러 업데이트
+  useEffect(() => {
+    setTeamColors(getTeamColors());
+  }, [isLoggedIn]);
+
+  // 팀 변경 이벤트 감지
+  useEffect(() => {
+    const handleTeamChange = () => {
+      setTeamColors(getTeamColors());
+    };
+    window.addEventListener('teamChanged', handleTeamChange);
+    return () => window.removeEventListener('teamChanged', handleTeamChange);
+  }, []);
+
   // cheerup 하위경로 또는 useditem/chat 하위경로일 때만 네브바 숨김
   const shouldHideNav =
     location.pathname.startsWith("/cheerup/") ||
