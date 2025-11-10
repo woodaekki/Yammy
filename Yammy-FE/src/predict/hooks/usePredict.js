@@ -63,6 +63,9 @@ export const usePredict = () => {
       year: backendMatch.year,
       homeWinningRate: 50, // 기본값 - 추후 AI 예측 결과로 대체
       awayWinningRate: 50, // 기본값 - 추후 AI 예측 결과로 대체
+      // 🔥 백엔드에서 받은 실제 배당률 사용
+      homeOdds: backendMatch.homeOdds || 2.0, // 홈팀 배당률 (기본값 2.0)
+      awayOdds: backendMatch.awayOdds || 2.0, // 원정팀 배당률 (기본값 2.0)
     };
   };
 

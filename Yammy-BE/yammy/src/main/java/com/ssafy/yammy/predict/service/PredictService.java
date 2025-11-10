@@ -30,7 +30,7 @@ public class PredictService {
         // Repository에서 해당 날짜의 경기 목록 조회
         List<PredictMatchSchedule> matchSchedules = predictMatchScheduleRepository.findByMatchDate(matchDate);
         
-        // Entity를 DTO로 변환하여 반환
+        // Entity를 DTO로 변환하여 반환 (배당률은 컨트롤러에서 처리)
         return matchSchedules.stream()
                 .map(MatchScheduleResponse::from)
                 .collect(Collectors.toList());

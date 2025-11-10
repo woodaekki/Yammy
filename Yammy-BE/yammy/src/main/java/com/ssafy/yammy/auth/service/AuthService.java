@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.yammy.auth.dto.LoginRequest;
 import com.ssafy.yammy.auth.dto.LoginResponse;
+import com.ssafy.yammy.auth.dto.MemberInfoResponse;
 import com.ssafy.yammy.auth.dto.MemberUpdateRequest;
 import com.ssafy.yammy.auth.dto.MemberUpdateResponse;
 import com.ssafy.yammy.auth.dto.PasswordChangeRequest;
@@ -234,5 +235,17 @@ public class AuthService {
 
         // Refresh Token 삭제
         refreshTokenRepository.deleteByLoginId(loginId);
+    }
+
+    public MemberInfoResponse getMemberInfo(String loginId) {
+        Member member = memberRepository.findById(loginId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        
+        // 탈퇴 회원 체크 (Soft Delete)
+        if (member.getDeletedAt() != null) {
+            throw new IllegalArgumentException("탈퇴한 회원입니다.");
+        }
+        
+        return MemberInfoResponse.from(member);
     }
 }

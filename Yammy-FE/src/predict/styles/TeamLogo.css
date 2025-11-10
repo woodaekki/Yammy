@@ -1,0 +1,116 @@
+/* 팀 로고 공통 스타일 */
+.team-logo {
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.team-logo:hover {
+  transform: scale(1.05);
+  border-color: #007bff;
+}
+
+/* 로고 크기별 스타일 */
+.team-logo-small {
+  width: 24px;
+  height: 24px;
+}
+
+.team-logo-medium {
+  width: 40px;
+  height: 40px;
+}
+
+.team-logo-large {
+  width: 60px;
+  height: 60px;
+}
+
+.team-logo-xl {
+  width: 80px;
+  height: 80px;
+}
+
+/* 로고 플레이스홀더 (로고가 없을 때) */
+.team-logo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  border: 2px solid #f0f0f0;
+}
+
+.team-logo-placeholder.team-logo-small {
+  font-size: 12px;
+}
+
+.team-logo-placeholder.team-logo-medium {
+  font-size: 16px;
+}
+
+.team-logo-placeholder.team-logo-large {
+  font-size: 24px;
+}
+
+.team-logo-placeholder.team-logo-xl {
+  font-size: 32px;
+}
+
+/* 팀 정보 컨테이너 */
+.team-info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-info-container .team-logo {
+  flex-shrink: 0;
+}
+
+.team-name {
+  font-weight: 600;
+  /* color: #333; 제거 - team-section의 color: white이 상속되도록 */
+}
+
+/* 매치업 컨테이너 (vs 스타일) */
+.matchup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.matchup-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.matchup-vs {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #666;
+  padding: 0 16px;
+}
+
+/* 선택된 팀 스타일 */
+.team-selected {
+  background-color: #e3f2fd;
+  border-color: #2196f3 !important;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.team-selected .team-logo {
+  border-color: #2196f3;
+}

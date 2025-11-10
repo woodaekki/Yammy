@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePredict } from './hooks/usePredict';
+import { usePredict, getTeamColor } from './hooks/usePredict';
 import { TEAM_COLORS, getTeamColors } from '../sns/utils/teamColors';
+import { TeamLogo } from './utils/teamLogo.jsx';
 import './styles/predict.css';
+import './styles/TeamLogo.css';
 
 const PredictPage = () => {
   const navigate = useNavigate();
@@ -102,8 +104,14 @@ const PredictPage = () => {
                         style={{ backgroundColor: getTeamColor(match.homeTeam) }}
                       >
                         <div className="team-label">HOME</div>
-                        <div className="team-name">{match.homeTeam} ({match.homeWinningRate}%)</div>
-                        <div className="prediction-score">1.00</div>
+                        <div className="team-info-container home-team-info">
+                          <TeamLogo teamName={match.homeTeam} size="medium" />
+                          <div className="team-details">
+                            <div className="team-name">{match.homeTeam}</div>
+                            <div className="team-stats">({match.homeWinningRate}%)</div>
+                          </div>
+                        </div>
+                        <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
                       </div>
 
                       {/* 중앙 VS */}
@@ -117,8 +125,14 @@ const PredictPage = () => {
                         style={{ backgroundColor: getTeamColor(match.awayTeam) }}
                       >
                         <div className="team-label">AWAY</div>
-                        <div className="team-name">{match.awayTeam} ({match.awayWinningRate}%)</div>
-                        <div className="prediction-score">1.00</div>
+                        <div className="team-info-container away-team-info">
+                          <div className="team-details">
+                            <div className="team-name">{match.awayTeam}</div>
+                            <div className="team-stats">({match.awayWinningRate}%)</div>
+                          </div>
+                          <TeamLogo teamName={match.awayTeam} size="medium" />
+                        </div>
+                        <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>

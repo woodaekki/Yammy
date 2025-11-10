@@ -86,9 +86,9 @@ export default function AppRouter() {
       <Route path="/match" element={<MatchResultPage />} />
       <Route path="/match/:matchcode" element={<MatchResultDetailPage />} />
       
-      {/* Predict Routes - 로그인 필수 */}
-      <Route path="/prediction" element={<ProtectedRoute><PredictPage /></ProtectedRoute>} />
-      <Route path="/prediction/:matchId" element={<ProtectedRoute><PrecitDetailPage /></ProtectedRoute>} />
+      {/* Predict Routes - 경기 조회는 공개, 배팅은 로그인 필요 */}
+      <Route path="/prediction" element={<PredictPage />} />
+      <Route path="/prediction/:matchId" element={<PrecitDetailPage />} />
 
       {/* 임시챗팅방 */}
       <Route path="/test-chat" element={<TestChatPage />} />

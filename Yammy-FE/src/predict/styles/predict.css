@@ -137,16 +137,44 @@
   font-size: 11px;
   font-weight: 600;
   opacity: 0.8;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.team-info-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  justify-content: center;
+}
+
+.home-team-info {
+  flex-direction: row;
+}
+
+.away-team-info {
+  flex-direction: row;
+}
+
+.team-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .team-name {
   font-size: 15px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 0.25rem;
   text-align: center;
+}
+
+.team-stats {
+  font-size: 0.85rem;
+  opacity: 0.9;
 }
 
 .prediction-score {

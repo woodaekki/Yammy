@@ -52,6 +52,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/oauth/**").permitAll() // 카카오 OAuth
 
+                        // 경기 정보 조회 (공개)
+                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
+
+                        // 승부예측 API 세분화 (임시: 모든 API 공개)
+                        .requestMatchers("/api/predict/**").permitAll()
+
                         // 인증 필요한 Auth 엔드포인트
                         .requestMatchers(HttpMethod.PUT, "/api/auth/password").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/auth/update").authenticated()
@@ -88,12 +94,6 @@ public class SecurityConfig {
                         // 포인트 충전 및 조회
                         .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/points/**").authenticated()
-
-                        // 경기 정보 조회
-                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
-
-                        // 승부예측 조회
-                        .requestMatchers(HttpMethod.GET, "/api/predict/**").permitAll()
                         
                         // 티켓 - 인증 필요
                         .requestMatchers("/api/tickets/**").authenticated()

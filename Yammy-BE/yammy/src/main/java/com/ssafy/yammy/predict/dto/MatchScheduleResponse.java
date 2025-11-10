@@ -22,6 +22,10 @@ public class MatchScheduleResponse {
     private String away;
     private String gameid;
     private Integer year;
+    
+    // 배당률 추가
+    private Double homeOdds;  // 홈팀 배당률
+    private Double awayOdds;  // 원정팀 배당률
 
     // 팀 코드를 팀 이름으로 변환하는 매핑
     private static final Map<String, String> TEAM_NAME_MAP = new HashMap<String, String>() {{
@@ -42,8 +46,8 @@ public class MatchScheduleResponse {
         return TEAM_NAME_MAP.getOrDefault(teamCode, teamCode);
     }
 
-    // Entity를 DTO로 변환하는 정적 메소드
-    public static MatchScheduleResponse from(PredictMatchSchedule matchSchedule) {
+    // Entity를 DTO로 변환하는 정적 메소드 (배당률 포함)
+    public static MatchScheduleResponse from(PredictMatchSchedule matchSchedule, Double homeOdds, Double awayOdds) {
         return MatchScheduleResponse.builder()
                 .id(matchSchedule.getId())
                 .matchStatus(matchSchedule.getMatchStatus())
@@ -52,6 +56,13 @@ public class MatchScheduleResponse {
                 .away(convertTeamName(matchSchedule.getAway()))
                 .gameid(matchSchedule.getGameid())
                 .year(matchSchedule.getYear())
+                .homeOdds(homeOdds)
+                .awayOdds(awayOdds)
                 .build();
+    }
+    
+    // 배당률 없이 변환하는 기존 메소드 (호환성 유지)
+    public static MatchScheduleResponse from(PredictMatchSchedule matchSchedule) {
+        return from(matchSchedule, null, null);
     }
 }
