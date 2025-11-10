@@ -86,14 +86,14 @@ public class UsedItemService {
         }
 
         // 게시물 작성 시 제목 및 글 내용 욕설 필터링
-        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
-        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
+//        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
+//        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
 
         UsedItem usedItem = new UsedItem();
         usedItem.setMember(member);
         usedItem.setNickname(member.getNickname());
-        usedItem.setTitle(cleanTitle);
-        usedItem.setDescription(cleanDesc);
+        usedItem.setTitle(dto.getTitle());
+        usedItem.setDescription(dto.getDescription());
         usedItem.setPrice(dto.getPrice());
         usedItem.setTeam(dto.getTeam());
 
@@ -141,11 +141,11 @@ public class UsedItemService {
         }
 
         // 게시물 수정 시 제목 및 글 내용 욕설 필터링
-        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
-        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
+//        String cleanTitle = badWordsFilterUtil.maskBadWords(dto.getTitle());
+//        String cleanDesc = badWordsFilterUtil.maskBadWords(dto.getDescription());
 
-        usedItem.setTitle(cleanTitle);
-        usedItem.setDescription(cleanDesc);
+        usedItem.setTitle(dto.getTitle());
+        usedItem.setDescription(dto.getDescription());
         usedItem.setPrice(dto.getPrice());
         usedItem.setTeam(dto.getTeam());
 

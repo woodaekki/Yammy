@@ -54,10 +54,10 @@ export const getUserPosts = async (userId, cursor = null) => {
 };
 
 /**
- * 게시글 수정 (캡션만)
+ * 게시글 수정 
  */
-export const updatePost = async (postId, caption) => {
-  const response = await apiClient.patch(`/posts/${postId}`, { caption });
+export const updatePost = async (postId, caption, imageUrls) => {
+  const response = await apiClient.patch(`/posts/${postId}`, { caption, imageUrls });
   return response.data;
 };
 

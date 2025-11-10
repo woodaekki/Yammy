@@ -51,12 +51,12 @@ public class PostService {
         }
 
         // 게시글 작성 시 욕설 필터링
-        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
+//        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
 
         // 게시글 저장
         Post post = Post.builder()
                 .memberId(memberId)
-                .caption(cleanCaption)
+                .caption(request.getCaption())
                 .build();
         Post savedPost = postRepository.save(post);
 
@@ -139,9 +139,9 @@ public class PostService {
         }
 
         // 수정 시 욕설 필터링
-        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
+//        String cleanCaption = badWordsFilterUtil.maskBadWords(request.getCaption());
 
-        post.updateCaption(cleanCaption);
+        post.updateCaption(request.getCaption());
         Post updatedPost = postRepository.save(post);
 
         Member member = memberRepository.findById(memberId)

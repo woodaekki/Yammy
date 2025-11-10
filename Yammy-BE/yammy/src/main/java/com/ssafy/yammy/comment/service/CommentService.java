@@ -46,13 +46,13 @@ public class CommentService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
+//        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
 
         // 댓글 저장
         Comment comment = Comment.builder()
                 .postId(postId)
                 .memberId(memberId)
-                .content(cleanContent)
+                .content(request.getContent())
                 .build();
         Comment savedComment = commentRepository.save(comment);
 
@@ -121,9 +121,9 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다.");
         }
 
-        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
+//        String cleanContent = badWordsFilterUtil.maskBadWords(request.getContent());
 
-        comment.updateContent(cleanContent);
+        comment.updateContent(request.getContent());
         Comment updatedComment = commentRepository.save(comment);
 
         Member member = memberRepository.findById(memberId)
