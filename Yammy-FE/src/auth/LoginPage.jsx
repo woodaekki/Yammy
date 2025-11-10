@@ -4,6 +4,7 @@ import { login } from './api/authApi';
 import { getKakaoAuthUrl } from './config/kakaoConfig';
 import useAuthStore from '../stores/authStore';
 import './styles/auth.css';
+import logo from '../assets/images/gugong.png';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ export default function LoginPage() {
         {/* 로고 섹션 */}
         <div className="auth-logo-section">
           <div className="auth-logo-icon">
-            <i className="fas fa-trophy"></i>
+            <img src={logo} alt="Yammy Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 className="auth-title">Yammy</h1>
           <p className="auth-subtitle">스포츠 팬들의 소셜 네트워크</p>
