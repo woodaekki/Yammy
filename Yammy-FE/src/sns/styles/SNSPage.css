@@ -79,7 +79,7 @@
 .post-author-follow {
     display: flex;
     align-items: center;
-    gap: 10px; /* 닉네임과 팔로우 버튼 간격 */
+    gap: 18px; /* 닉네임과 팔로우 버튼 간격 */
     flex-wrap: nowrap;
 }
 
@@ -101,9 +101,9 @@
     margin: 0;
 }
 
-/* ✅ 닉네임 오른쪽 팔로우 버튼 */
+/*  닉네임 오른쪽 팔로우 버튼 */
 .follow-btn {
-    padding: 5px 12px;
+    padding: 7px 12px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 500;
@@ -240,24 +240,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 0 16px;
 }
 
 .action-buttons {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 /* 좋아요 버튼 (채워진 하트 스타일) */
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 0 2px;
   color: #6b7280;
   transition: color 0.25s ease, transform 0.15s ease;
 }
@@ -277,8 +278,14 @@
 }
 
 .action-icon {
-  font-size: 22px;
+  font-size: 20px;
   transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.action-icon.send-icon {
+  font-size: 20px;
+  transform: rotate(22deg);
+  transform-origin: center;
 }
 
 .action-btn.liked:hover .action-icon {
@@ -287,23 +294,8 @@
 
 
 .action-count {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-}
-
-/* 좋아요 수 */
-.post-likes {
-    padding: 0 16px 12px 16px;
-}
-
-.post-likes span {
-    font-size: 14px;
-    color: #6b7280;
-    font-weight: 600;
-}
-
-.post-likes span::first-letter {
-    color: #111827;
 }
 
 /* 무한 스크롤 관련 스타일 */
@@ -377,4 +369,11 @@
 
 .empty-message button:hover {
     filter: brightness(1.1);
+}
+
+.comment-icon {
+  font-size: 22px;   
+  transform: translateY(1px); 
+  transform: rotate(12deg);    
+  transform-origin: center; 
 }

@@ -22,6 +22,7 @@ const formatTimeAgo = (dateString) => {
   return date.toLocaleDateString('ko-KR');
 };
 
+// 이미지 캐러셀 컴포넌트
 const ImageCarousel = ({ images, postId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -197,52 +198,46 @@ const SNSPage = () => {
                   alt={post.nickname}
                   className="author-avatar"
                   onError={(e) => (e.target.src = '/nomal.jpg')}
+                  onClick={() => navigate(`/profile/${post.memberId}`)}
                 />
-
-                {/* 닉네임 + 팔로우 버튼 */}
-                <div className="post-author-follow">
-                  <div className="author-info">
-                    <h3 className="author-name">{post.nickname}</h3>
-                    <p className="post-time">{formatTimeAgo(post.createdAt)}</p>
-                  </div>
-
-                  {post.memberId !== currentUserId && (
-                    <button
-                      className={`follow-btn ${post.isFollowing ? 'following' : ''}`}
-                      onClick={() =>
-                        handleToggleFollow(post.memberId, post.isFollowing)
-                      }
-                    >
-                      {post.isFollowing ? '팔로잉' : '팔로우'}
-                    </button>
-                  )}
+                <div className="author-info">
+                  <h3 className="author-name">{post.nickname}</h3>
+                  <p className="post-time">{formatTimeAgo(post.createdAt)}</p>
                 </div>
               </div>
 
-              {/* ⋯ 버튼 (그대로 유지) */}
-              {post.memberId === currentUserId && (
-                <div className="post-menu-wrapper">
+              <div className="post-header-right">
+                {post.memberId === currentUserId ? (
+                  <div className="post-menu-wrapper">
+                    <button
+                      className="post-menu-btn"
+                      onClick={() => handleToggleMenu(post.id)}
+                    >
+                      ⋯
+                    </button>
+                    {openMenuPostId === post.id && (
+                      <div className="post-menu-dropdown">
+                        <button onClick={() => handleEditPost(post.id)}>
+                          <i className="fas fa-edit"></i> 수정
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="delete-btn"
+                        >
+                          <i className="fas fa-trash"></i> 삭제
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
                   <button
-                    className="post-menu-btn"
-                    onClick={() => handleToggleMenu(post.id)}
+                    className={`follow-btn ${post.isFollowing ? 'following' : ''}`}
+                    onClick={() => handleToggleFollow(post.memberId, post.isFollowing)}
                   >
-                    ⋯
+                    {post.isFollowing ? '팔로잉' : '팔로우'}
                   </button>
-                  {openMenuPostId === post.id && (
-                    <div className="post-menu-dropdown">
-                      <button onClick={() => handleEditPost(post.id)}>
-                        <i className="fas fa-edit"></i> 수정
-                      </button>
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="delete-btn"
-                      >
-                        <i className="fas fa-trash"></i> 삭제
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             {/* 게시물 내용 */}
@@ -269,18 +264,13 @@ const SNSPage = () => {
                   className="action-btn"
                   onClick={() => navigate(`/post/${post.id}/comments`)}
                 >
-                  <FiMessageCircle className="action-icon" />
+                  <FiMessageCircle className="action-icon comment-icon" />
                   <span className="action-count">{post.commentCount}</span>
                 </button>
                 <button className="action-btn">
-                  <FiSend className="action-icon" />
+                  <FiSend className="action-icon send-icon" />
                 </button>
               </div>
-            </div>
-
-            {/* 좋아요 수 */}
-            <div className="post-likes">
-              <span>좋아요 {post.likeCount}개</span>
             </div>
           </div>
         ))}
