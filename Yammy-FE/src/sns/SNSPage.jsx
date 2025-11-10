@@ -108,6 +108,7 @@ const SNSPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(null);
   const [openMenuPostId, setOpenMenuPostId] = useState(null);
+  const [followingInProgress, setFollowingInProgress] = useState(new Set());
   const observerTarget = useRef(null);
   const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
   const teamColors = getTeamColors();
@@ -158,20 +159,70 @@ const SNSPage = () => {
   };
 
   const handleToggleFollow = async (memberId, isFollowing) => {
+    // 이미 처리 중이면 무시
+    if (followingInProgress.has(memberId)) {
+      console.log('이미 처리 중입니다.');
+      return;
+    }
+
+    // 처리 중 상태 추가
+    setFollowingInProgress(prev => new Set([...prev, memberId]));
+
     try {
-      if (isFollowing) await unfollowUser(memberId);
-      else await followUser(memberId);
+      console.log('팔로우 토글 시도:', { memberId, isFollowing });
+      
+      if (isFollowing) {
+        await unfollowUser(memberId);
+        console.log('언팔로우 성공');
+      } else {
+        await followUser(memberId);
+        console.log('팔로우 성공');
+      }
+      
+      // 성공 시 UI 업데이트
       setPosts((prev) =>
         prev.map((p) =>
           p.memberId === memberId ? { ...p, isFollowing: !isFollowing } : p
         )
       );
     } catch (err) {
-      console.error(err);
+      console.error('팔로우 토글 실패:', err);
+      console.error('에러 상세:', err.response?.data);
+      
+      // 사용자에게 친절한 에러 메시지 표시
+      const errorMessage = err.response?.data?.message || err.message;
+      
+      if (errorMessage && errorMessage.includes('이미 팔로우')) {
+        alert('이미 팔로우한 사용자입니다.');
+        // UI 상태를 서버 상태와 동기화
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.memberId === memberId ? { ...p, isFollowing: true } : p
+          )
+        );
+      } else if (errorMessage && errorMessage.includes('팔로우 중이 아닙니다')) {
+        alert('이미 언팔로우한 사용자입니다.');
+        // UI 상태를 서버 상태와 동기화
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.memberId === memberId ? { ...p, isFollowing: false } : p
+          )
+        );
+      } else {
+        alert('팔로우 처리 중 오류가 발생했습니다.');
+      }
+    } finally {
+      // 처리 중 상태 제거
+      setFollowingInProgress(prev => {
+        const next = new Set(prev);
+        next.delete(memberId);
+        return next;
+      });
     }
   };
 
   const handleEditPost = (id) => navigate(`/post/edit/${id}`);
+  
   const handleDeletePost = async (id) => {
     if (!window.confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
     try {
@@ -180,6 +231,7 @@ const SNSPage = () => {
       setOpenMenuPostId(null);
     } catch (err) {
       console.error(err);
+      alert('게시글 삭제 중 오류가 발생했습니다.');
     }
   };
 
@@ -198,7 +250,7 @@ const SNSPage = () => {
                   alt={post.nickname}
                   className="author-avatar"
                   onError={(e) => (e.target.src = '/nomal.jpg')}
-                  onClick={() => navigate(`/profile/${post.memberId}`)}
+                  onClick={() => navigate(`/user/${post.memberId}`)}
                 />
                 <div className="author-info">
                   <h3 className="author-name">{post.nickname}</h3>
@@ -233,8 +285,11 @@ const SNSPage = () => {
                   <button
                     className={`follow-btn ${post.isFollowing ? 'following' : ''}`}
                     onClick={() => handleToggleFollow(post.memberId, post.isFollowing)}
+                    disabled={followingInProgress.has(post.memberId)}
                   >
-                    {post.isFollowing ? '팔로잉' : '팔로우'}
+                    {followingInProgress.has(post.memberId) 
+                      ? '처리중...' 
+                      : post.isFollowing ? '팔로잉' : '팔로우'}
                   </button>
                 )}
               </div>
