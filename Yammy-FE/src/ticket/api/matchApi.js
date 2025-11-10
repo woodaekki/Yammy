@@ -1,41 +1,9 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8080/api';
-//const API_URL = 'http://k13c205.p.ssafy.io:8080/api';
-
-// 토큰 가져오기
-const getAuthToken = () => {
-    return localStorage.getItem('accessToken');
-};
-
-// axios 인스턴스 생성 (토큰 필요)
-const axiosInstance = axios.create({
-    baseURL: API_URL,
-});
-
-// 요청 인터셉터 - 모든 요청에 토큰 추가
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// 공개 API용 axios 인스턴스 (토큰 불필요)
-const publicAxiosInstance = axios.create({
-    baseURL: API_URL,
-});
+import apiClient from "../../api/apiClient";
 
 // 최근 경기 목록 조회 (페이징 지원) - 공개 API
 export const getRecentMatches = async (page = 0, size = 20) => {
     try {
-        const response = await publicAxiosInstance.get('/matches', {
+        const response = await apiClient.get('/matches', {
             params: { page, size }
         });
         return response.data;
@@ -48,7 +16,7 @@ export const getRecentMatches = async (page = 0, size = 20) => {
 // 특정 경기 상세 조회 - 공개 API
 export const getMatchDetail = async (matchcode) => {
     try {
-        const response = await publicAxiosInstance.get(`/matches/${matchcode}`);
+        const response = await apiClient.get(`/matches/${matchcode}`);
         return response.data;
     } catch (error) {
         console.error('경기 상세 조회 실패:', error);
@@ -59,7 +27,7 @@ export const getMatchDetail = async (matchcode) => {
 // 특정 날짜의 경기 목록 조회 - 공개 API
 export const getMatchesByDate = async (date) => {
     try {
-        const response = await publicAxiosInstance.get(`/matches/date/${date}`);
+        const response = await apiClient.get(`/matches/date/${date}`);
         return response.data;
     } catch (error) {
         console.error('날짜별 경기 조회 실패:', error);
@@ -70,7 +38,7 @@ export const getMatchesByDate = async (date) => {
 // 특정 팀의 최근 경기 조회 - 공개 API
 export const getMatchesByTeam = async (team, page = 0, size = 20) => {
     try {
-        const response = await publicAxiosInstance.get(`/matches/team/${team}`, {
+        const response = await apiClient.get(`/matches/team/${team}`, {
             params: { page, size }
         });
         return response.data;
@@ -83,7 +51,7 @@ export const getMatchesByTeam = async (team, page = 0, size = 20) => {
 // 날짜 범위로 경기 조회 - 공개 API
 export const getMatchesByDateRange = async (startDate, endDate, page = 0, size = 20) => {
     try {
-        const response = await publicAxiosInstance.get('/matches/range', {
+        const response = await apiClient.get('/matches/range', {
             params: { startDate, endDate, page, size }
         });
         return response.data;

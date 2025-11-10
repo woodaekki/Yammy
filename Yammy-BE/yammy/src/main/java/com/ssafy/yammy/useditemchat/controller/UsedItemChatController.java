@@ -2,6 +2,9 @@ package com.ssafy.yammy.useditemchat.controller;
 
 import com.ssafy.yammy.chatgames.dto.MessageResponse;
 import com.ssafy.yammy.config.CustomUserDetails;
+import com.ssafy.yammy.payment.entity.Photo;
+import com.ssafy.yammy.payment.entity.UsedItem;
+import com.ssafy.yammy.payment.repository.UsedItemRepository;
 import com.ssafy.yammy.useditemchat.dto.SendTextMessageRequest;
 import com.ssafy.yammy.useditemchat.dto.UsedItemChatRoomResponse;
 import com.ssafy.yammy.useditemchat.entity.UsedChatRoomStatus;
@@ -31,6 +34,7 @@ public class UsedItemChatController {
 
     private final UsedItemChatRoomService usedItemChatRoomService;
     private final UsedItemFirebaseChatService usedItemFirebaseChatService;
+    private final UsedItemRepository usedItemRepository;
 
     /**
      * 채팅방 생성 또는 기존 방 입장
@@ -148,15 +152,26 @@ public class UsedItemChatController {
      * Entity를 Response DTO로 변환
      */
     private UsedItemChatRoomResponse toResponse(UsedItemChatRoom chatRoom) {
-        return UsedItemChatRoomResponse.builder()
+        UsedItemChatRoomResponse.UsedItemChatRoomResponseBuilder builder = UsedItemChatRoomResponse.builder()
                 .id(chatRoom.getId())
                 .roomKey(chatRoom.getRoomKey())
                 .usedItemId(chatRoom.getUsedItemId())
                 .sellerId(chatRoom.getSellerId())
                 .buyerId(chatRoom.getBuyerId())
                 .status(chatRoom.getStatus())
-                .createdAt(chatRoom.getCreatedAt())
-                // TODO: 물품 정보 조회해서 추가 (itemTitle, itemImageUrl 등)
-                .build();
+                .createdAt(chatRoom.getCreatedAt());
+
+        // 중고거래 물품 정보 조회 및 추가
+        usedItemRepository.findById(chatRoom.getUsedItemId()).ifPresent(usedItem -> {
+            builder.itemTitle(usedItem.getTitle());
+            builder.itemPrice(usedItem.getPrice());
+
+            // 첫 번째 이미지 URL 추가
+            if (!usedItem.getPhotos().isEmpty()) {
+                builder.itemImageUrl(usedItem.getPhotos().get(0).getFileUrl());
+            }
+        });
+
+        return builder.build();
     }
 }

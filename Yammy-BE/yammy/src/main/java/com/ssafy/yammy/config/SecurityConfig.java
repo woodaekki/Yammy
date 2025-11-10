@@ -98,6 +98,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/ai/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/admin/chat-rooms/**").hasRole("ADMIN")
+                        // 채팅방 조회는 공개, 메시지 전송은 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/chat/rooms/**").permitAll()
                         .requestMatchers("/api/chat/**").authenticated()
                         .anyRequest().authenticated()
                 )

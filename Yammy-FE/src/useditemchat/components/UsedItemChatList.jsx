@@ -91,16 +91,14 @@ function UsedItemChatList() {
                     <div className="chat-list-item-info">
                       <div className="chat-list-item-title">
                         <span className="chat-list-item-name">
-                          {isMyRoomAsSeller
-                            ? `구매자 (ID: ${otherPersonId})`
-                            : `판매자 (ID: ${otherPersonId})`}
+                          {room.itemTitle || '제목 없음'}
                         </span>
                         <span className="chat-list-item-badge">
                           {room.status === "ACTIVE" ? "활성" : "비활성"}
                         </span>
                       </div>
                       <p className="chat-list-item-preview">
-                        물품 ID: {room.usedItemId}
+                        {isMyRoomAsSeller ? '구매자' : '판매자'}와의 대화
                       </p>
                     </div>
                   </div>
