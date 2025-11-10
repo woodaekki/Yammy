@@ -15,6 +15,8 @@ function UsedItemPage() {
   const [searchParams, setSearchParams] = useState({ keyword: "", team: "" })
   const [teamColors, setTeamColors] = useState(getTeamColors())
   const loaderRef = useRef(null)
+  const [isSearchMode, setIsSearchMode] = useState(false)
+  const [totalPages, setTotalPages] = useState(1)
 
   // 데이터 불러오기 (검색어 여부에 따라)
   const loadItems = async () => {
@@ -23,20 +25,42 @@ function UsedItemPage() {
 
     try {
       let data
+      const size = 6
+
       if (searchParams.keyword || searchParams.team) {
         // 검색 중이면 검색 결과 페이징
+        setIsSearchMode(true)
         data = await searchUsedItems({
           ...searchParams,
           page,
-          size: 6,
+          size,
         })
+
+        // API가 totalPages 제공 시 처리
+        if (data.totalPages !== undefined) {
+          setTotalPages(data.totalPages)
+          if (page + 1 >= data.totalPages) {
+            setHasMore(false)
+          }
+          data = data.content || data.items || [] // 실제 목록 필드
+        } else {
+          // fallback: 데이터 길이 기반
+          if (!data || data.length < size) {
+            setHasMore(false)
+          }
+        }
       } else {
         // 전체 목록
-        data = await getAllUsedItems(page, 6)
+        setIsSearchMode(false)
+        data = await getAllUsedItems(page, size)
+        if (!data || data.length < size) {
+          setHasMore(false)
+        }
       }
 
-      if (data.length === 0) {
-        setHasMore(false)
+      // page === 0일 때는 새로 세팅, 아닐 때는 누적
+      if (page === 0) {
+        setItems(data)
       } else {
         setItems((prev) => [...prev, ...data])
       }
@@ -54,14 +78,18 @@ function UsedItemPage() {
 
   // IntersectionObserver (무한 스크롤)
   useEffect(() => {
+    // 검색 중인데 totalPages가 1이면 무한스크롤 비활성화
+    if (isSearchMode && totalPages <= 1) return
+
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !loading) {
         setPage((prev) => prev + 1)
       }
     })
+
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
-  }, [hasMore, loading])
+  }, [hasMore, loading, searchParams, totalPages, isSearchMode])
 
   // 검색 실행 (새 검색 시 기존 데이터 리셋)
   async function handleSearch({ keyword, team }) {

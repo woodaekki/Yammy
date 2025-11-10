@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPost, getPostPresignedUrls } from '../api/snsApi';
+import { getPost, getPostPresignedUrls, updatePost } from '../api/snsApi';
 import axios from 'axios';
 import '../styles/PostEdit.css';
 
@@ -85,15 +85,7 @@ const PostEdit = () => {
             }
 
             // 게시글 수정 API 호출 (caption + imageUrls)
-            await axios.patch(
-                `/api/posts/${postId}`,
-                { caption, imageUrls },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                    }
-                }
-            );
+            await updatePost(postId, caption, imageUrls);
 
             alert('게시글이 수정되었습니다!');
             navigate('/sns');

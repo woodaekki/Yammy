@@ -24,7 +24,7 @@ public class FollowService {
     private final MemberRepository memberRepository;
 
     /**
-     * 팔로우 하기
+     * 팔로우 하기 (Idempotent - 여러 번 호출해도 같은 결과)
      */
     @Transactional
     public FollowResponse follow(Long followerId, Long followingId) {
@@ -36,8 +36,11 @@ public class FollowService {
         }
 
         // 이미 팔로우 중인지 확인
-        if (followRepository.existsByFollowerIdAndFollowingId(followerId, followingId)) {
-            throw new IllegalStateException("이미 팔로우 중입니다.");
+        boolean alreadyFollowing = followRepository.existsByFollowerIdAndFollowingId(followerId, followingId);
+        if (alreadyFollowing) {
+            log.info("[FollowService] 이미 팔로우 중입니다 (Idempotent): followerId={}, followingId={}", followerId, followingId);
+            // 에러 대신 성공 응답 반환 (Idempotent)
+            return new FollowResponse(true, "팔로우 성공");
         }
 
         // 팔로우 대상 회원 존재 확인
@@ -57,14 +60,17 @@ public class FollowService {
     }
 
     /**
-     * 언팔로우 하기
+     * 언팔로우 하기 (Idempotent - 여러 번 호출해도 같은 결과)
      */
     @Transactional
     public FollowResponse unfollow(Long followerId, Long followingId) {
         log.info("[FollowService] 언팔로우 요청: followerId={}, followingId={}", followerId, followingId);
 
-        if (!followRepository.existsByFollowerIdAndFollowingId(followerId, followingId)) {
-            throw new IllegalStateException("팔로우 중이 아닙니다.");
+        boolean isFollowing = followRepository.existsByFollowerIdAndFollowingId(followerId, followingId);
+        if (!isFollowing) {
+            log.info("[FollowService] 이미 언팔로우 상태입니다 (Idempotent): followerId={}, followingId={}", followerId, followingId);
+            // 에러 대신 성공 응답 반환 (Idempotent)
+            return new FollowResponse(false, "언팔로우 성공");
         }
 
         followRepository.deleteByFollowerIdAndFollowingId(followerId, followingId);
