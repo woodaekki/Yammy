@@ -344,7 +344,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         <div className="nft-section" onClick={(e) => e.stopPropagation()}>
                             {ticket.nftMinted ? (
                                 <div className="nft-status">
-                                    <span className="nft-badge">✅ NFT 발급 완료</span>
+                                    <span className="nft-badge">NFT 발급 완료</span>
                                     {ticket.nftTokenId && (
                                         <div className="nft-links">
                                             <a
