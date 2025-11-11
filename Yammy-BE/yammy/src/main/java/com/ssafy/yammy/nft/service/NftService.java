@@ -23,6 +23,7 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.RawTransactionManager;
@@ -419,19 +420,44 @@ public class NftService {
     /**
      * 트랜잭션 영수증에서 토큰 ID 파싱
      * TicketMinted 이벤트: event TicketMinted(uint256 indexed tokenId, uint256 indexed ticketId, address indexed owner, string tokenURI)
+     * - Topic[0]: 이벤트 시그니처
+     * - Topic[1]: indexed tokenId
+     * - Topic[2]: indexed ticketId
+     * - Topic[3]: indexed owner
      */
     private Long parseTokenIdFromReceipt(TransactionReceipt receipt) {
-        // 이벤트 로그에서 tokenId 추출
-        // 로그의 첫 번째 topic은 이벤트 시그니처, 두 번째가 tokenId (indexed)
-        if (receipt.getLogs() != null && !receipt.getLogs().isEmpty()) {
-            try {
-                String tokenIdHex = receipt.getLogs().get(0).getTopics().get(1);
-                return new BigInteger(tokenIdHex.substring(2), 16).longValue();
-            } catch (Exception e) {
-                log.warn("토큰 ID 파싱 실패, 0 반환", e);
-                return 0L;
-            }
+        if (receipt.getLogs() == null || receipt.getLogs().isEmpty()) {
+            log.error("트랜잭션 영수증에 로그가 없습니다. txHash: {}", receipt.getTransactionHash());
+            return 0L;
         }
-        return 0L;
+
+        try {
+            // Transfer 이벤트 시그니처 (정확한 구분을 위해)
+            final String TRANSFER_EVENT_SIG = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+            // 모든 로그를 순회하면서 TicketMinted 이벤트 찾기
+            for (Log eventLog : receipt.getLogs()) {
+                if (eventLog.getTopics().size() == 4) {
+                    String eventSignature = eventLog.getTopics().get(0);
+
+                    // Transfer 이벤트는 건너뜀
+                    if (TRANSFER_EVENT_SIG.equals(eventSignature)) {
+                        continue;
+                    }
+
+                    // Transfer가 아닌 Topics 4개 이벤트 = TicketMinted
+                    String tokenIdHex = eventLog.getTopics().get(1);
+                    Long tokenId = new BigInteger(tokenIdHex.substring(2), 16).longValue();
+                    log.info("NFT Token ID 파싱 완료: {}", tokenId);
+                    return tokenId;
+                }
+            }
+
+            log.error("TicketMinted 이벤트를 찾을 수 없습니다");
+            return 0L;
+        } catch (Exception e) {
+            log.error("Token ID 파싱 실패", e);
+            return 0L;
+        }
     }
 }
