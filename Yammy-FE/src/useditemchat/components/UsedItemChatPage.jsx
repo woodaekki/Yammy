@@ -193,7 +193,7 @@ export default function UsedItemChatPage() {
                   <div className="chat-item-text">
                     <h2 className="chat-item-title">{itemInfo.title}</h2>
                     <p className="chat-item-price">
-                      {itemInfo.price?.toLocaleString()}원
+                      {itemInfo.price?.toLocaleString()}얌
                     </p>
                   </div>
                 </div>

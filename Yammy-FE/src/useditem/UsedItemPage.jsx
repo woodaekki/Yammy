@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { getAllUsedItems, searchUsedItems } from "../useditem/api/usedItemApi"
 import { getTeamColors } from "../sns/utils/teamColors"
+import emptyImage from "../assets/images/tunggugong.png"
 import UsedItemSearch from "../useditem/components/UsedItemSearch"
 import UsedItemList from "../useditem/components/UsedItemList"
 import "../useditem/styles/usedItem.css"
@@ -109,12 +110,28 @@ function UsedItemPage() {
       <UsedItemSearch onSearch={handleSearch} />
 
       {/* 리스트 */}
-      <UsedItemList items={items} />
+       {items.length > 0 ? (
+        <UsedItemList items={items} />
+          ) : (
+            !loading && (
+              <div className="empty-state">
+                <img
+                  src={emptyImage}
+                  alt="상품 없음"
+                  className="empty-image"
+                />
+                <p className="empty-text">
+                  등록된 상품이 없습니다
+                </p>
+              </div>
+            )
+          )}
 
       {/* 로딩 / 끝 메시지 */}
       {loading && <p className="loading-text">상품 불러오는 중...</p>}
-      {!hasMore && <p className="end-message">모든 상품을 확인했습니다</p>}
-
+      {!loading && !hasMore && items.length > 0 && (
+        <p className="end-message">모든 상품을 확인했습니다</p>
+      )}
       {/* 감시용 div */}
       <div ref={loaderRef} style={{ height: "40px" }} />
 

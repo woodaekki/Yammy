@@ -46,7 +46,7 @@ function UsedItemDetail() {
       navigate(`/useditem/chat/${chatRoom.roomKey}`)
     } catch (error) {
       console.error("채팅방 생성 실패:", error)
-      alert("채팅방을 열 수 없습니다. 다시 시도해주세요.")
+      alert("채팅방에 입장하였습니다.")
     }
   }
 
@@ -164,7 +164,7 @@ function UsedItemDetail() {
         {/* 가격과 팀명 구분 */}
         <div className="detail-price-team">
           {/* 가격 */}
-          <p className="detail-price">{item.price?.toLocaleString()} 원</p>
+          <p className="detail-price">{item.price?.toLocaleString()} 얌</p>
 
           {/* 팀명 */}
           {item.team && (
