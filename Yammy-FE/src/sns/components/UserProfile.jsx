@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUserPosts, getFollowStatus, followUser, unfollowUser } from '../api/snsApi';
+import { getTickets } from '../../ticket/api/ticketApi';
 import FollowListModal from './FollowListModal';
+import TicketCard from '../../ticket/components/TicketCard';
 import { getTeamColors } from '../utils/teamColors';
 import '../styles/UserProfile.css';
 
@@ -19,15 +21,19 @@ const UserProfile = () => {
                         };
     const [profileData, setProfileData] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [tickets, setTickets] = useState([]);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
     const [activeTab, setActiveTab] = useState('posts');
     const [showOptions, setShowOptions] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [ticketsLoading, setTicketsLoading] = useState(false);
     const [showFollowModal, setShowFollowModal] = useState(false);
     const [followModalTab, setFollowModalTab] = useState('followers');
     const [teamColors, setTeamColors] = useState(getTeamColors());
+    const currentMemberId = localStorage.getItem('memberId');
+    const isOwnProfile = userId === currentMemberId;
 
     // 프로필 데이터 로드
     useEffect(() => {
@@ -39,6 +45,13 @@ const UserProfile = () => {
     useEffect(() => {
         setTeamColors(getTeamColors());
     }, []);
+
+    // 티켓 탭 활성화 시 티켓 로드
+    useEffect(() => {
+        if (activeTab === 'tickets' && isOwnProfile) {
+            loadTickets();
+        }
+    }, [activeTab, isOwnProfile]);
 
     const loadProfile = async () => {
         setIsLoading(true);
@@ -81,11 +94,27 @@ const UserProfile = () => {
     const loadFollowStatus = async () => {
         try {
             const status = await getFollowStatus(userId);
-            setIsFollowing(status.isFollowing);
+            console.log('팔로우 상태 응답:', status);
+            setIsFollowing(status.following || false);
             setFollowersCount(status.followerCount || 0);
             setFollowingCount(status.followingCount || 0);
         } catch (error) {
             console.error('팔로우 상태 로드 실패:', error);
+        }
+    };
+
+    const loadTickets = async () => {
+        if (!isOwnProfile) return; // 본인 프로필이 아니면 티켓 로드 안 함
+
+        setTicketsLoading(true);
+        try {
+            const response = await getTickets();
+            setTickets(response || []);
+        } catch (error) {
+            console.error('티켓 목록 로드 실패:', error);
+            setTickets([]);
+        } finally {
+            setTicketsLoading(false);
         }
     };
 
@@ -103,6 +132,8 @@ const UserProfile = () => {
                 setFollowersCount(followersCount + 1);
             }
             setIsFollowing(!isFollowing);
+            // 팔로우 상태 다시 로드
+            await loadFollowStatus();
         } catch (error) {
             console.error('팔로우 토글 실패:', error);
             alert('팔로우 처리에 실패했습니다.');
@@ -158,8 +189,6 @@ const UserProfile = () => {
                     <div className="profile-info">
                         <h2 className="profile-name">
                             {profileData.name || currentUser.nickname || '사용자'}
-                            {' '}
-                            {profileData.username || `@${currentUser.nickname || 'user'}`}
                         </h2>
                         <div className="bio-container">
                             {(profileData.team || currentUser.team) && (
@@ -205,14 +234,16 @@ const UserProfile = () => {
                 </div>
 
                 {/* 액션 버튼 */}
-                <div className="action-buttons">
-                    <button
-                        className={`follow-button ${isFollowing ? 'following' : ''}`}
-                        onClick={toggleFollow}
-                    >
-                        {isFollowing ? '팔로잉' : '팔로우'}
-                    </button>
-                </div>
+                {!isOwnProfile && (
+                    <div className="action-buttons">
+                        <button
+                            className={`follow-button ${isFollowing ? 'following' : ''}`}
+                            onClick={toggleFollow}
+                        >
+                            {isFollowing ? '언팔로우' : '팔로우'}
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* 탭 */}
@@ -257,10 +288,30 @@ const UserProfile = () => {
                 )}
 
                 {activeTab === 'tickets' && (
-                    <div className="tickets-grid">
-                        <div style={{ gridColumn: '1 / -1', padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
-                            발급받은 티켓이 없습니다.
-                        </div>
+                    <div className="tickets-section">
+                        {!isOwnProfile ? (
+                            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
+                                다른 사용자의 티켓은 볼 수 없습니다.
+                            </div>
+                        ) : ticketsLoading ? (
+                            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
+                                티켓을 불러오는 중...
+                            </div>
+                        ) : tickets.length === 0 ? (
+                            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
+                                발급받은 티켓이 없습니다.
+                            </div>
+                        ) : (
+                            <div className="tickets-grid">
+                                {tickets.map(ticket => (
+                                    <TicketCard
+                                        key={ticket.id || ticket.ticketId}
+                                        ticket={ticket}
+                                        onNftMinted={loadTickets}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

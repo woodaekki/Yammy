@@ -55,7 +55,7 @@ export default function AppRouter() {
       <Route path="/post/create" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
       <Route path="/post/edit/:postId" element={<ProtectedRoute><PostEdit /></ProtectedRoute>} />
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
-      <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+      <Route path="/user/:userId" element={<ProtectedRoute><UserProfile key={location.pathname} /></ProtectedRoute>} />
 
        {/* UsedItem Chat Routes */}
       <Route
