@@ -396,8 +396,24 @@ public class NftService {
             }
         }
 
-        return receiptOptional.orElseThrow(() ->
+        TransactionReceipt receipt = receiptOptional.orElseThrow(() ->
             new RuntimeException("트랜잭션 영수증을 받을 수 없습니다 (30초 타임아웃): " + transactionHash));
+
+        // 트랜잭션 성공 여부 확인
+        if (!"0x1".equals(receipt.getStatus())) {
+            String errorMessage = "트랜잭션이 실패했습니다 (reverted): " + transactionHash;
+
+            // 로그에서 에러 원인 추출 시도
+            if (receipt.getLogs() != null && receipt.getLogs().isEmpty()) {
+                // 로그가 비어있으면 실행 실패
+                errorMessage += " - execution reverted (가능한 원인: Ticket already minted)";
+            }
+
+            log.error("블록체인 트랜잭션 실패 - txHash: {}, status: {}", transactionHash, receipt.getStatus());
+            throw new RuntimeException(errorMessage);
+        }
+
+        return receipt;
     }
 
     /**

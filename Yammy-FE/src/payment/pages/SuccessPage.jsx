@@ -17,7 +17,7 @@ function SuccessPage() {
 
     axios
       .post(
-        "http://localhost:8080/api/payments/confirm",
+        "http://k13c205.p.ssafy.io:8080/api/payments/confirm",
         { paymentKey, orderId, amount },
         {
           headers: {

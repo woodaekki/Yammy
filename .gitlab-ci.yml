@@ -26,7 +26,7 @@ Test_Build_BE:
     - name: redis:latest
       alias: redis
   variables:
-#   mysql, redis 임시 이미지를 사용하기 때문에 값도 일회용
+    #   mysql, redis 임시 이미지를 사용하기 때문에 값도 일회용
     MYSQL_DATABASE: testdb
     MYSQL_ROOT_PASSWORD: root_password
     DB_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul
@@ -35,13 +35,14 @@ Test_Build_BE:
     SPRING_DATA_REDIS_HOST: redis
     SPRING_DATA_REDIS_PORT: 6379
     SPRING_DATA_REDIS_PASSWORD:
+
   before_script:
     - cd ${BACKEND_DIR}
     - chmod +x gradlew
     - apt-get update -qq && apt-get install -y --no-install-recommends wait-for-it
     - wait-for-it mysql-db:3306 -t 30 -- echo "MySQL is up and running!"
     - wait-for-it redis:6379 -t 30 -- echo "Redis is up and running!"
-    - | 
+    - |
       MYSQL_HOST_IP=$(getent hosts mysql-db | awk '{ print $1 }');
       if [ -z "$MYSQL_HOST_IP" ]; then 
         MYSQL_HOST_IP="mysql-db"; 
@@ -52,6 +53,7 @@ Test_Build_BE:
     - export DB_PASSWORD=$DB_PASSWORD
     - rm -f src/main/resources/application.yml
     - echo "$CI_APPLICATION_YML" > src/main/resources/application.yml
+    - printf '%s' "$FIREBASE_KEY" > src/main/resources/firebase-service-account.json
     - echo "application.yml created successfully with CI variables."
 
   script:
@@ -114,6 +116,7 @@ BE_Image:
     - rm -f src/main/resources/application.yml
     - echo "$PROD_APPLICATION_YML" > src/main/resources/application.yml
     - echo "Production application-prod.yml created successfully."
+    - printf '%s' "$FIREBASE_KEY" > src/main/resources/firebase-service-account.json
     - ./gradlew clean build -x test
     - echo "Production JAR built successfully."
     - docker build -t $ECR_REPOSITORY_URI:$BE_IMAGE_TAG .
