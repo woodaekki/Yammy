@@ -4,7 +4,7 @@ import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import logo from "../../assets/images/logo.png";
-import gugong from "../../assets/images/gugong.png";
+import gugong from "../../assets/images/logo.png";
 import "./NavigationBar.css";
 
 const NavigationBarTop = () => {

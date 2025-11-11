@@ -53,7 +53,7 @@
 
 .escrow-message-status {
   margin-left: 4px;
-  font-size: 10px; /* ✅ 작게 */
+  font-size: 10px; 
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 600;
@@ -115,4 +115,18 @@
   opacity: 0.75;
   margin-top: 6px;
   text-align: center;
+}
+
+.escrow-message-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+ 
+}
+
+.escrow-icon-img {
+  width: 50px;
+  height: 50px;
 }

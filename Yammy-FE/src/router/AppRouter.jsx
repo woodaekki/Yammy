@@ -65,11 +65,10 @@ export default function AppRouter() {
       <Route path="/chatlist" element={<UsedItemChatList />} />
 
       {/* UsedItem Routes */}
-      <Route path="/useditem" element={<UsedItemPage />} />
-      <Route path="/useditem/:id" element={<UsedItemDetail />} />
-      <Route path="/useditem/edit/:id" element={<UsedItemEdit />} />
-      <Route path="/useditem/create" element={<UsedItemCreate />} />
-
+      <Route path="/useditem" element={<ProtectedRoute><UsedItemPage /></ProtectedRoute>} />
+      <Route path="/useditem/:id" element={<ProtectedRoute><UsedItemDetail /></ProtectedRoute>} />
+      <Route path="/useditem/edit/:id" element={<ProtectedRoute><UsedItemEdit /></ProtectedRoute>} />
+      <Route path="/useditem/create" element={<ProtectedRoute><UsedItemCreate /></ProtectedRoute>} />
 
       {/* Point Routes */}
       <Route path="/mypoint" element={<MyPoint />} />

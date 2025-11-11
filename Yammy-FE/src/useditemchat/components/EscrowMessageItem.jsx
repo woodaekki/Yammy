@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { confirmed } from "../../payment/api/escrowApi";
 import "../styles/EscrowMessage.css";
+import coingugong from '../../assets/images/coingugong.png';
 
 function EscrowMessageItem({ message, isMine }) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -33,15 +34,21 @@ function EscrowMessageItem({ message, isMine }) {
     }
   };
 
-  // 🔹 내가 보낸 사람이면 → “송금했습니다” / 상대가 받는 중
-  // 🔹 내가 아닌 사람이면 → “송금이 도착했습니다” / 내가 받기 버튼 클릭 대상
+  // 내가 보낸 사람이면 → “송금했습니다” / 상대가 받는 중
+  // 내가 아닌 사람이면 → “송금이 도착했습니다” / 내가 받기 버튼 클릭 대상
   const isReceiver = !isMine; // 판매자에게만 “받기” 버튼 보이게
   const roleLabel = isMine ? "송금했습니다" : "송금이 도착했습니다";
 
   return (
     <div className={`escrow-message-item ${isMine ? "mine" : "other"}`}>
       <div className="escrow-message-card">
-        <div className="escrow-message-icon">💰</div>
+        <div className="escrow-message-icon">
+        <img
+          src={coingugong}
+          alt="coin"
+          className="escrow-icon-img"
+        />
+      </div>
         <div className="escrow-message-content">
           <div className="escrow-message-header">
             <span className="escrow-message-label">{roleLabel}</span>

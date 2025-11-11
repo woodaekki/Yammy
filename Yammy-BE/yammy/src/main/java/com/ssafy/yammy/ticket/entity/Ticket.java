@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
     private Long ticketId;
 
@@ -95,8 +94,22 @@ public class Ticket {
 
     @PrePersist
     protected void onCreate() {
+        // ticketId가 없으면 난수 생성 (Long 범위: 1,000,000,000 ~ 9,999,999,999)
+        if (this.ticketId == null) {
+            this.ticketId = generateRandomTicketId();
+        }
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 난수 ticketId 생성 (10자리 숫자)
+     * 범위: 1,000,000,000 ~ 9,999,999,999
+     */
+    private Long generateRandomTicketId() {
+        long min = 1_000_000_000L;
+        long max = 9_999_999_999L;
+        return min + (long) (Math.random() * (max - min));
     }
 
     @PreUpdate
