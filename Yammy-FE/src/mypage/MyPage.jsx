@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import { getTeamColors, TEAM_COLORS } from '../sns/utils/teamColors';
-import { updateMember } from '../auth/api/authApi';
+import { updateMember, changePassword, deleteMember } from '../auth/api/authApi';
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { getTickets } from '../ticket/api/ticketApi';
 import { getEtherscanNFTUrl } from '../ticket/api/nftApi';
@@ -13,7 +13,7 @@ const DEFAULT_PROFILE_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.or
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const { user, isLoggedIn, initialize } = useAuthStore();
+  const { user, isLoggedIn, initialize, logOut } = useAuthStore();
   const [teamColors, setTeamColors] = useState(getTeamColors());
   const [formData, setFormData] = useState({
     nickname: '',
@@ -23,6 +23,11 @@ const MyPage = () => {
     bio: '',
     profileImage: '',
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [originalTeam, setOriginalTeam] = useState('');
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
@@ -30,6 +35,9 @@ const MyPage = () => {
   const [nftTickets, setNftTickets] = useState([]);
   const [loadingNFTs, setLoadingNFTs] = useState(false);
   const fileInputRef = useRef(null);
+
+  // 카카오 로그인 여부 확인
+  const isKakaoLogin = localStorage.getItem('loginType') === 'kakao';
 
   // 팀 변경 이벤트 감지
   useEffect(() => {
@@ -216,6 +224,88 @@ const MyPage = () => {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      alert('모든 비밀번호 필드를 입력해주세요.');
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('새 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      alert('새 비밀번호는 최소 8자 이상이어야 합니다.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+
+      alert('비밀번호가 변경되었습니다!');
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    } catch (error) {
+      console.error('비밀번호 변경 실패:', error);
+      alert(error.response?.data?.message || '비밀번호 변경에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      '정말로 탈퇴하시겠습니까?\n\n⚠️ 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.\n\n- 보유 중인 포인트는 모두 소멸됩니다.\n- 작성한 게시글과 댓글은 삭제되지 않습니다.\n- 탈퇴 후 같은 아이디로 재가입할 수 없습니다.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const doubleConfirmed = window.confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+
+    if (!doubleConfirmed) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log('회원탈퇴 API 호출 시작');
+      const response = await deleteMember();
+      console.log('회원탈퇴 API 응답:', response);
+
+      alert('회원탈퇴가 완료되었습니다.');
+
+      // localStorage 완전히 비우기
+      localStorage.clear();
+
+      logOut();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('회원탈퇴 실패:', error);
+      console.error('에러 상세:', error.response);
+      alert(error.response?.data?.message || '회원탈퇴에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className="mypage-container"
@@ -287,6 +377,66 @@ const MyPage = () => {
               <p className="info-value readonly">{formData.email || '없음'}</p>
             </div>
 
+            {/* 비밀번호 변경 - 카카오 로그인이 아닐 때만 */}
+            {!isKakaoLogin && (
+              <>
+                <div className="info-group">
+                  <label className="info-label">현재 비밀번호</label>
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    className="info-input"
+                    placeholder="비밀번호를 변경하려면 입력하세요"
+                    disabled={loading}
+                  />
+                </div>
+
+                {passwordData.currentPassword && (
+                  <div className="info-group">
+                    <label className="info-label">새 비밀번호</label>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      className="info-input"
+                      placeholder="새 비밀번호 (최소 8자)"
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+
+                {passwordData.currentPassword && passwordData.newPassword && (
+                  <div className="info-group">
+                    <label className="info-label">새 비밀번호 확인</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      className="info-input"
+                      placeholder="새 비밀번호를 다시 입력하세요"
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+
+                {passwordData.currentPassword && passwordData.newPassword && passwordData.confirmPassword && (
+                  <div className="info-group">
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={loading}
+                      className="password-change-btn-inline"
+                    >
+                      {loading ? '변경 중...' : '비밀번호 변경'}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+
             <div className="info-group">
               <label className="info-label">좋아하는 야구팀</label>
               <div className="team-toggle-container">
@@ -318,6 +468,17 @@ const MyPage = () => {
                 placeholder="자기소개를 입력하세요"
                 rows={4}
               />
+            </div>
+
+            {/* 회원 탈퇴 */}
+            <div className="info-group">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={loading}
+                className="delete-account-btn"
+              >
+                회원 탈퇴
+              </button>
             </div>
           </div>
         </div>
