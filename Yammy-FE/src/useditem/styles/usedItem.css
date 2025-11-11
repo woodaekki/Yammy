@@ -15,25 +15,6 @@
   margin-bottom: 5rem;
 }
 
-/* === 카드 === */
-.item-card {
-  border: 1px solid #d5d4d4b2;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.15s;
-  animation: fadeIn 0.4s ease forwards;
-}
-
-.item-card:hover {
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
 /* 이미지 */
 .item-image-container {
   width: 100%;
@@ -65,14 +46,33 @@
   font-size: 0.9rem;
 }
 
-/* 카드 정보 */
+/* === 카드 === */
+.item-card {
+  border: 1px solid rgba(230, 230, 230, 0.8); 
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); 
+}
+
+.item-card:hover {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);  
+  border-color: rgba(220, 220, 220, 0.7);   
+}
+
 .item-info {
   padding: 0.6rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.1rem;
 }
 
+/* 제목 */
 .item-title {
   font-size: 0.9rem;
   font-weight: 500;
@@ -80,14 +80,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0.2rem 0 0 0;
 }
 
+/* 가격 */
 .item-price {
   font-size: 1rem;
   font-weight: 700;
-  color: #2563eb;
-  margin-top: 0.1rem;
+  margin-top: 0.3rem;
 }
+
 
 .item-meta {
   display: flex;
@@ -97,7 +99,6 @@
 }
 
 .item-team {
-  background-color: #f59e0b;
   color: white;
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
@@ -182,3 +183,90 @@
     transform: translateY(0);
   }
 }
+
+
+.image-preview-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.image-preview-item {
+  position: relative;
+}
+
+.preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.photo-uploader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.photo-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-btn {
+  background-color: #ff7f50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+  background-color: #ff5a24;
+}
+
+.photo-preview-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.photo-preview-item {
+  position: relative;
+}
+
+.photo-preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.photo-remove-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.photo-counter {
+  color: gray;
+  font-size: 0.9rem;
+}
+

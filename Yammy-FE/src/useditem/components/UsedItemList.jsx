@@ -16,7 +16,7 @@ function UsedItemList({ items }) {
     navigate("/useditem/" + id)
   }
 
-  // ✅ 판매 중 / 거래 완료 상품 분리
+  // 판매 중 / 거래 완료 상품 분리
   const activeItems = items.filter(
     (item) => !["CONFIRMED", "COMPLETED", "CLOSED", "RELEASED"].includes(item.status)
   )
@@ -71,7 +71,8 @@ function UsedItemList({ items }) {
               </div>
               <div className="item-info">
                 <h3 className="item-title">{item.title}</h3>
-                <p className="item-price">{item.price.toLocaleString()}얌</p>
+                <p className="item-price">
+                  {item.price.toLocaleString()}얌</p>
               </div>
             </div>
           ))}
