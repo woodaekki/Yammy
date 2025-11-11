@@ -33,18 +33,15 @@ const TICKET_BACKGROUNDS = {
 
 const TicketCreatePage = () => {
     const navigate = useNavigate();
-    const [selectedTeam, setSelectedTeam] = useState(localStorage.getItem('team') || null);
+    const team = localStorage.getItem('team');
+
+    // 팀이 없거나 유효하지 않은 경우 (미정, 빈 문자열 등) null로 처리
+    const isValidTeam = team && team !== '미정' && TEAM_COLORS[team];
+    const validTeam = isValidTeam ? team : null;
+
+    const [selectedTeam, setSelectedTeam] = useState(validTeam);
     const [teamColors, setTeamColors] = useState(selectedTeam ? TEAM_COLORS[selectedTeam] : { bgColor: '#4CAF50', textColor: '#ffffff' });
     const [ticketBackground, setTicketBackground] = useState(selectedTeam ? TICKET_BACKGROUNDS[selectedTeam] : null);
-
-    // 팀 변경 시 색상과 배경 업데이트
-    useEffect(() => {
-        if (selectedTeam) {
-            setTeamColors(TEAM_COLORS[selectedTeam] || { bgColor: '#4CAF50', textColor: '#ffffff' });
-            setTicketBackground(TICKET_BACKGROUNDS[selectedTeam] || null);
-        }
-    }, [selectedTeam]);
-
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         matchcode: '',
@@ -71,6 +68,47 @@ const TicketCreatePage = () => {
 
     // KBO 구장 목록 (stadiumMapper에서 가져옴)
     const stadiums = KBO_STADIUMS;
+
+    // 팀이 없거나 유효하지 않으면 즉시 리다이렉트
+    useEffect(() => {
+        if (!validTeam) {
+            alert('티켓을 발급하려면 먼저 마이페이지에서 좋아하는 팀을 선택해주세요.');
+            navigate('/mypage', { replace: true });
+        }
+    }, [validTeam, navigate]);
+
+    // 팀 변경 시 색상과 배경 업데이트
+    useEffect(() => {
+        if (selectedTeam) {
+            setTeamColors(TEAM_COLORS[selectedTeam] || { bgColor: '#4CAF50', textColor: '#ffffff' });
+            setTicketBackground(TICKET_BACKGROUNDS[selectedTeam] || null);
+        }
+    }, [selectedTeam]);
+
+    // 팀 변경 시 경기 결과 재계산
+    useEffect(() => {
+        if (selectedMatch && selectedTeam && formData.awayScore !== '' && formData.homeScore !== '') {
+            let myTeam = '';
+            let result = '';
+
+            const homeWin = formData.homeScore > formData.awayScore;
+            const awayWin = formData.awayScore > formData.homeScore;
+
+            if (selectedMatch.home.includes(selectedTeam.split(' ')[0]) || selectedTeam.includes(selectedMatch.home)) {
+                myTeam = selectedMatch.home;
+                result = homeWin ? '승리' : (awayWin ? '패배' : '무승부');
+            } else if (selectedMatch.away.includes(selectedTeam.split(' ')[0]) || selectedTeam.includes(selectedMatch.away)) {
+                myTeam = selectedMatch.away;
+                result = awayWin ? '승리' : (homeWin ? '패배' : '무승부');
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                myTeam: myTeam,
+                result: result
+            }));
+        }
+    }, [selectedTeam, selectedMatch]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -140,8 +178,9 @@ const TicketCreatePage = () => {
             ...prev,
             date: newDate
         }));
-        // 날짜가 변경되면 경기 목록 초기화
+        // 날짜가 변경되면 경기 목록과 선택된 경기 초기화
         setMatches([]);
+        setSelectedMatch(null);
     };
 
     const handleMatchSelect = (match) => {
@@ -214,6 +253,11 @@ const TicketCreatePage = () => {
         }
     };
 
+    // 팀이 없거나 유효하지 않으면 아무것도 렌더링하지 않음
+    if (!validTeam) {
+        return null;
+    }
+
     return (
         <div
             className="ticket-create-page"
@@ -279,6 +323,10 @@ const TicketCreatePage = () => {
                                 onClick={handleMatchModalOpen}
                                 placeholder={formData.date ? "날짜의 KBO 경기를 선택하세요" : "먼저 날짜를 선택해주세요"}
                                 readOnly
+                                style={{
+                                    backgroundColor: selectedMatch ? '#f3f4f6' : 'white',
+                                    cursor: 'pointer'
+                                }}
                             />
                         </div>
 
@@ -288,9 +336,13 @@ const TicketCreatePage = () => {
                                 type="text"
                                 name="location"
                                 value={formData.location}
-                                onClick={() => setShowLocationModal(true)}
+                                onClick={() => !selectedMatch && setShowLocationModal(true)}
                                 placeholder="경기장을 선택해주세요"
                                 readOnly
+                                style={{
+                                    backgroundColor: selectedMatch ? '#f3f4f6' : 'white',
+                                    cursor: selectedMatch ? 'not-allowed' : 'pointer'
+                                }}
                             />
                         </div>
 
@@ -364,6 +416,11 @@ const TicketCreatePage = () => {
                                     value={formData.awayScore}
                                     onChange={handleChange}
                                     placeholder="Away"
+                                    readOnly={!!selectedMatch}
+                                    style={{
+                                        backgroundColor: selectedMatch ? '#f3f4f6' : 'white',
+                                        cursor: selectedMatch ? 'not-allowed' : 'text'
+                                    }}
                                 />
                                 <span>:</span>
                                 <input
@@ -372,6 +429,11 @@ const TicketCreatePage = () => {
                                     value={formData.homeScore}
                                     onChange={handleChange}
                                     placeholder="Home"
+                                    readOnly={!!selectedMatch}
+                                    style={{
+                                        backgroundColor: selectedMatch ? '#f3f4f6' : 'white',
+                                        cursor: selectedMatch ? 'not-allowed' : 'text'
+                                    }}
                                 />
                             </div>
                         </div>
