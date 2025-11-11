@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePredict } from './hooks/usePredict';
+import { usePredict, getTeamColor } from './hooks/usePredict';
 import { TEAM_COLORS, getTeamColors } from '../sns/utils/teamColors';
+import { TeamLogo } from './utils/teamLogo.jsx';
 import './styles/predict.css';
+import './styles/TeamLogo.css';
 
 const PredictPage = () => {
   const navigate = useNavigate();
@@ -14,14 +16,17 @@ const PredictPage = () => {
   const month = today.getMonth() + 1; // 0부터 시작하므로 +1
   const day = today.getDate();
 
-  // 오늘 날짜 문자열 생성 (YYYY-MM-DD 형식)
+  // 오늘 날짜 문자열 생성 (YYYY-MM-DD 형식으로 백엔드 데이터와 맞춤)
   const todayDateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
   // 경기 데이터 가져오기
   const { matches, loading, error } = usePredict();
 
-  // 오늘 경기만 필터링
-  const todayMatches = matches.filter(match => match.date === todayDateString);
+  // 오늘 경기만 필터링 (날짜 형식 맞춤: YYYY-MM-DD)
+  const todayMatches = matches.filter(match => {
+    console.log(`🔍 날짜 비교: match.date="${match.date}" vs today="${todayDateString}" → ${match.date === todayDateString}`);
+    return match.date === todayDateString;
+  });
 
   // 팀 컬러 업데이트
   useEffect(() => {
@@ -36,11 +41,6 @@ const PredictPage = () => {
     window.addEventListener('teamChanged', handleTeamChange);
     return () => window.removeEventListener('teamChanged', handleTeamChange);
   }, []);
-
-  // 팀 컬러 가져오기 함수
-  const getTeamColor = (teamName) => {
-    return TEAM_COLORS[teamName]?.bgColor || '#4CAF50';
-  };
 
   // 경기 진행 여부 확인 함수
   const isGameInProgress = (gameTime) => {
@@ -92,6 +92,11 @@ const PredictPage = () => {
               {todayMatches.map((match) => {
                 const gameInProgress = isGameInProgress(match.gameTime);
                 
+                // 배당률 비율 계산
+                const totalOdds = match.homeOdds + match.awayOdds;
+                const homeRatio = match.homeOdds / totalOdds;
+                const awayRatio = match.awayOdds / totalOdds;
+                
                 return (
                   <div 
                     key={match.id} 
@@ -100,15 +105,47 @@ const PredictPage = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <div className="match-time-header">{match.gameTime}</div>
-                    <div className="match-prediction-card">
+                    
+                    {/* 배당률 비율 그래프 바 */}
+                    <div className="odds-ratio-bar">
+                      <div 
+                        className="home-odds-bar"
+                        style={{ 
+                          width: `${homeRatio * 100}%`,
+                          backgroundColor: getTeamColor(match.homeTeam)
+                        }}
+                      >
+                        <span className="odds-percentage">{(homeRatio * 100).toFixed(1)}%</span>
+                      </div>
+                      <div 
+                        className="away-odds-bar"
+                        style={{ 
+                          width: `${awayRatio * 100}%`,
+                          backgroundColor: getTeamColor(match.awayTeam)
+                        }}
+                      >
+                        <span className="odds-percentage">{(awayRatio * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="match-prediction-card" style={{ display: 'flex' }}>
                       {/* 홈팀 */}
                       <div
                         className="team-section home-team-section"
-                        style={{ backgroundColor: getTeamColor(match.homeTeam) }}
+                        style={{ 
+                          backgroundColor: getTeamColor(match.homeTeam),
+                          flex: homeRatio
+                        }}
                       >
                         <div className="team-label">HOME</div>
-                        <div className="team-name">{match.homeTeam} ({match.homeWinningRate}%)</div>
-                        <div className="prediction-score">2.0배</div>
+                        <div className="team-info-container home-team-info">
+                          <TeamLogo teamName={match.homeTeam} size="medium" />
+                          <div className="team-details">
+                            <div className="team-name">{match.homeTeam}</div>
+                            <div className="team-stats">({match.homeWinningRate}%)</div>
+                          </div>
+                        </div>
+                        <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
                       </div>
 
                       {/* 중앙 VS */}
@@ -119,11 +156,20 @@ const PredictPage = () => {
                       {/* 원정팀 */}
                       <div
                         className="team-section away-team-section"
-                        style={{ backgroundColor: getTeamColor(match.awayTeam) }}
+                        style={{ 
+                          backgroundColor: getTeamColor(match.awayTeam),
+                          flex: awayRatio
+                        }}
                       >
                         <div className="team-label">AWAY</div>
-                        <div className="team-name">{match.awayTeam} ({match.awayWinningRate}%)</div>
-                        <div className="prediction-score">2.0배</div>
+                        <div className="team-info-container away-team-info">
+                          <div className="team-details">
+                            <div className="team-name">{match.awayTeam}</div>
+                            <div className="team-stats">({match.awayWinningRate}%)</div>
+                          </div>
+                          <TeamLogo teamName={match.awayTeam} size="medium" />
+                        </div>
+                        <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>

@@ -160,4 +160,23 @@ public class AuthController {
                 .body(Map.of("error", "회원탈퇴 처리 중 오류가 발생했습니다."));
         }
     }
+
+    // 내 정보 조회
+    @GetMapping("/myinfo")
+    @Operation(summary = "내 정보 조회")
+    public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails user) {
+        try {
+            log.info("내 정보 조회 요청: user={}", user.getUsername());
+            MemberInfoResponse response = authService.getMemberInfo(user.getUsername());
+            log.info("내 정보 조회 성공: user={}", user.getUsername());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            log.warn("내 정보 조회 실패: user={}, 이유={}", user.getUsername(), e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("내 정보 조회 중 서버 오류: user={}", user.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "내 정보 조회 처리 중 오류가 발생했습니다."));
+        }
+    }
 }

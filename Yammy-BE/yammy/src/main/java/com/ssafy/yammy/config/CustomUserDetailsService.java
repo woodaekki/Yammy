@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -19,10 +21,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        log.info("🔍 [UserDetailsService] 로그인 ID로 사용자 조회: {}", loginId);
+        
         // 로그인 ID로 회원 조회
         Member member = memberRepository.findById(loginId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with login ID: " + loginId));
+                .orElseThrow(() -> {
+                    log.error("🚫 [UserDetailsService] 사용자 찾기 실패: {}", loginId);
+                    return new UsernameNotFoundException("User not found with login ID: " + loginId);
+                });
 
-        return new CustomUserDetails(member);
+        log.info("🚀 [UserDetailsService] 사용자 발견: {} (memberId: {}, nickname: {})", 
+                member.getId(), member.getMemberId(), member.getNickname());
+        
+        CustomUserDetails userDetails = new CustomUserDetails(member);
+        log.info("🎉 [UserDetailsService] CustomUserDetails 생성 완료");
+        
+        return userDetails;
     }
 }
