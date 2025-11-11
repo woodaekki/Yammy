@@ -216,3 +216,50 @@
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+
+/* 비밀번호 변경 버튼 */
+.password-change-btn-inline {
+  padding: 12px 24px;
+  background-color: var(--team-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.password-change-btn-inline:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.password-change-btn-inline:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* 회원 탈퇴 버튼 */
+.delete-account-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 2px solid #fee2e2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-account-btn:hover:not(:disabled) {
+  background-color: #fee2e2;
+  border-color: #fecaca;
+}
+
+.delete-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

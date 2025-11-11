@@ -73,18 +73,112 @@
   max-width: 75%;
 }
 
-/* 내 말풍선 */
-.chat-bubble.mine {
-  background: linear-gradient(135deg, #d9f1ff, #aee4ff);
-  border: 1px solid #bde6ff;
-  border-bottom-right-radius: 4px;
-}
-
 /* 상대 말풍선 */
 .chat-bubble.theirs {
   background: #f3f5f7;
   border: 1px solid #e2e5e8;
   border-bottom-left-radius: 4px;
+}
+
+/* === 이미지 메시지 === */
+.chat-image-wrapper {
+  position: relative;
+  width: 220px;           
+  height: 220px;          
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 이미지 자체 */
+.chat-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.chat-image:hover {
+  transform: scale(1.02);  
+}
+
+/* 로딩 중 회전 스피너 영역 */
+.chat-image-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+/* 로딩 스피너 */
+.chat-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid #888;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === 내 말풍선 (파란 배경) === */
+.chat-bubble.mine {
+  background: linear-gradient(135deg, #d9f1ff, #aee4ff);
+  border: 1px solid #bde6ff;
+  border-bottom-right-radius: 4px;
+  border-radius: 14px;
+  padding: 10px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === 이미지 전용일 때 (파란 배경 안쪽에 여백 있는 형태) === */
+.chat-bubble.image {
+  padding: 10px; 
+  background: linear-gradient(135deg, #d9f1ff, #aee4ff);
+  border: 1px solid #bde6ff;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === 이미지 박스 === */
+.chat-image-wrapper {
+  width: 230px;       
+  height: 230px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f6f6f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === 이미지 === */
+.chat-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     
+  border-radius: 10px;
+  transition: transform 0.25s ease;
+}
+
+.chat-image:hover {
+  transform: scale(1.02);
 }
 
 /* === 텍스트 === */
@@ -104,7 +198,7 @@
   user-select: none;
 }
 
-/* === 💰 송금 메시지 === */
+/* === 송금 메시지 === */
 .chat-escrow-bubble {
   display: flex;
   align-items: center;
@@ -152,4 +246,197 @@
   font-size: 0.75rem;
   opacity: 0.9;
   margin-top: 6px;
+}
+
+/* === 이미지 확대 (카톡 스타일) === */
+.chat-image-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+  cursor: zoom-out;
+  animation: fadeInOverlay 0.25s ease forwards;
+}
+
+/* 확대된 이미지 */
+.chat-image-zoomed {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  object-fit: contain;
+  transform: scale(0.9);
+  opacity: 0;
+  animation: zoomInSmooth 0.25s ease forwards;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* 부드러운 확대 */
+@keyframes zoomInSmooth {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 배경 페이드 인 */
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* === 이미지 확대 (카톡 스타일) === */
+.chat-image-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+  animation: fadeInOverlay 0.25s ease forwards;
+  touch-action: none; 
+}
+
+/* 확대된 이미지 */
+.chat-image-zoomed {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  object-fit: contain;
+  transform: scale(0.9);
+  opacity: 0;
+  animation: zoomInSmooth 0.25s ease forwards;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s ease;
+  touch-action: pinch-zoom; 
+}
+
+/* 닫기 버튼 */
+.chat-image-close {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 4100;
+}
+
+.chat-image-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 확대 애니메이션 */
+@keyframes zoomInSmooth {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 배경 페이드 인 */
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* === 이미지 확대 (카톡 스타일) === */
+.chat-image-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+  animation: fadeInOverlay 0.25s ease forwards;
+  touch-action: none; 
+}
+
+/* 확대된 이미지 */
+.chat-image-zoomed {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  object-fit: contain;
+  transform: scale(0.9);
+  opacity: 0;
+  animation: zoomInSmooth 0.25s ease forwards;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s ease;
+  touch-action: pinch-zoom; 
+}
+
+/* 닫기 버튼 (✕) */
+.chat-image-close {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 4100;
+}
+
+.chat-image-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 확대 애니메이션 */
+@keyframes zoomInSmooth {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 배경 페이드 인 */
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

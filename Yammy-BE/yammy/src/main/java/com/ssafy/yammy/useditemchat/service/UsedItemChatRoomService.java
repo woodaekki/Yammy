@@ -63,24 +63,28 @@ public class UsedItemChatRoomService {
     private UsedItemChatRoom createNewUsedItemChatRoom(Long usedItemId, Long sellerId, Long buyerId) throws Exception {
         Firestore firestore = FirestoreClient.getFirestore();
 
+        // usedItemId를 엔티티로 직접 조회해서 연결
+        UsedItem usedItem = usedItemRepository.findById(usedItemId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 물품입니다."));
+
         // roomKey 생성
         String roomKey = UsedItemChatRoom.generateRoomKey(usedItemId, buyerId);
 
         // MySQL 저장
         UsedItemChatRoom chatRoom = UsedItemChatRoom.builder()
                 .roomKey(roomKey)
-                .usedItemId(usedItemId)
+                .usedItem(usedItem) //
                 .sellerId(sellerId)
                 .buyerId(buyerId)
                 .status(UsedChatRoomStatus.ACTIVE)
                 .build();
 
         UsedItemChatRoom saved = usedItemChatRoomRepository.save(chatRoom);
-        log.info("✅ Created used item chat room: {}", saved.getRoomKey());
+        log.info("Created used item chat room: {}", saved.getRoomKey());
 
         // Firestore 동기화
         Map<String, Object> firestoreData = new HashMap<>();
-        firestoreData.put("usedItemId", saved.getUsedItemId());
+        firestoreData.put("usedItemId", usedItem.getId());
         firestoreData.put("sellerId", saved.getSellerId());
         firestoreData.put("buyerId", saved.getBuyerId());
         firestoreData.put("status", saved.getStatus().name());
@@ -91,7 +95,7 @@ public class UsedItemChatRoomService {
                 .set(firestoreData)
                 .get();
 
-        log.info("✅ Synced to Firestore: useditem-chats/{}", saved.getRoomKey());
+        log.info("Synced to Firestore: useditem-chats/{}", saved.getRoomKey());
         return saved;
     }
 
@@ -107,9 +111,9 @@ public class UsedItemChatRoomService {
      * 내가 참여한 중고거래 채팅방 목록 (판매자 or 구매자)
      */
     public List<UsedItemChatRoom> getMyUsedItemChatRooms(Long memberId) {
-        log.info("📋 [UsedItemChatRoom] Getting chat rooms for memberId: {}", memberId);
+        log.info("[UsedItemChatRoom] Getting chat rooms for memberId: {}", memberId);
         List<UsedItemChatRoom> rooms = usedItemChatRoomRepository.findByMemberId(memberId);
-        log.info("📋 [UsedItemChatRoom] Found {} chat rooms", rooms.size());
+        log.info("[UsedItemChatRoom] Found {} chat rooms", rooms.size());
         return rooms;
     }
 
@@ -137,7 +141,7 @@ public class UsedItemChatRoomService {
                 .update("status", status.name())
                 .get();
 
-        log.info("✅ Updated used item chat room status: {} -> {}", roomKey, status);
+        log.info("Updated used item chat room status: {} -> {}", roomKey, status);
     }
 
     /**
@@ -158,6 +162,6 @@ public class UsedItemChatRoomService {
         // MySQL 삭제
         usedItemChatRoomRepository.delete(room);
 
-        log.info("✅ Deleted used item chat room: {}", roomKey);
+        log.info("Deleted used item chat room: {}", roomKey);
     }
 }

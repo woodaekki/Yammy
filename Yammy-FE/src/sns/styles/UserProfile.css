@@ -341,6 +341,84 @@
     padding: 12px;
 }
 
+/* 티켓 섹션 전용 그리드 설정 */
+.tickets-section .tickets-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    padding: 16px !important;
+}
+
+/* 티켓 섹션 - UserProfile 내에서 사용 */
+.tickets-section .ticket-card-container {
+    max-width: 100% !important;
+    width: 100%;
+    transform: scale(0.7);
+    transform-origin: top center;
+    margin-bottom: -80px;
+}
+
+.tickets-section .ticket-card {
+    width: 100%;
+}
+
+.tickets-section .ticket-front,
+.tickets-section .ticket-back {
+    width: 100%;
+}
+
+/* 티켓 앞면 크기 조정 */
+.tickets-section .ticket-front img {
+    width: 100%;
+    height: auto;
+}
+
+/* 플립 시 스케일 유지 */
+.tickets-section .ticket-card.flipped {
+    transform: rotateY(180deg);
+}
+
+/* 뒷면 폰트 크기 조정 */
+.tickets-section .ticket-back-header h3 {
+    font-size: 18px;
+}
+
+.tickets-section .ticket-subtitle {
+    font-size: 11px;
+}
+
+.tickets-section .info-label {
+    font-size: 11px;
+}
+
+.tickets-section .info-value {
+    font-size: 13px;
+}
+
+.tickets-section .score-value {
+    font-size: 20px;
+}
+
+.tickets-section .review-text {
+    font-size: 12px;
+}
+
+.tickets-section .nft-mint-button {
+    font-size: 13px;
+    padding: 10px 20px;
+}
+
+.tickets-section .nft-badge {
+    font-size: 12px;
+}
+
+.tickets-section .nft-link {
+    font-size: 11px;
+}
+
+.tickets-section .nft-info-text {
+    font-size: 11px;
+}
+
 .nft-card {
     aspect-ratio: 1;
     border-radius: 12px;

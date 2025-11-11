@@ -92,6 +92,20 @@ function UsedItemPage() {
     return () => observer.disconnect()
   }, [hasMore, loading, searchParams, totalPages, isSearchMode])
 
+  // 거래 완료 시 목록 새로 고침
+   useEffect(() => {
+    const handlePointUpdated = () => {
+      setItems([])       // 기존 데이터 초기화
+      setPage(0)         // 첫 페이지부터 다시 시작
+      setHasMore(true)   // 무한스크롤 다시 활성화
+      loadItems()        // 최신 목록 다시 불러오기
+    }
+
+    window.addEventListener("pointUpdated", handlePointUpdated)
+    return () => window.removeEventListener("pointUpdated", handlePointUpdated)
+  }, [])
+
+
   // 검색 실행 (새 검색 시 기존 데이터 리셋)
   async function handleSearch({ keyword, team }) {
     setSearchParams({ keyword, team })
