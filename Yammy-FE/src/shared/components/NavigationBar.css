@@ -26,13 +26,6 @@
   object-fit: contain;
 }
 
-/* 오른쪽 영역 */
-.nav-bar-top .header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 /* 얌미페이 전체 박스 */
 .ypay-baseball-wrapper {
   display: flex;
@@ -138,22 +131,6 @@
   position: relative;
 }
 
-.nav-bar-top .user-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: #f9fafb;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.nav-bar-top .user-button:hover {
-  background-color: #f1f3f5;
-}
-
 .nav-bar-top .user-button i.fa-user-circle {
   font-size: 1.25rem;
   color: #4f46e5;
@@ -169,7 +146,7 @@
   white-space: nowrap;
 }
 
-.nav-bar-top .user-button i.fa-chevron-down {
+.nav-bar-top . i.fa-chevron-down {
   font-size: 0.75rem;
   color: #6b7280;
   transition: transform 0.2s;
@@ -252,4 +229,89 @@
 .nav-bar-bottom a:hover,
 .nav-bar-bottom a.active {
   color: #007bff;
+}
+
+/* 기존: 닉네임 스타일 */
+.nav-bar-top .user-nickname {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-bar-top .rotate {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+
+/* 오른쪽 전체 컨테이너 */
+.nav-bar-top .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 조금 여유 있게 */
+  margin-right: 4px; /* 오른쪽 끝 여백 살짝 */
+}
+
+/* 프로필 버튼 */
+.nav-bar-top .user-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.nav-bar-top .user-button:hover {
+  transform: scale(1.05);
+}
+
+/* 프로필 이미지 */
+.nav-bar-top .user-profile-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff; 
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-bar-top .user-profile-img:hover {
+  transform: scale(1.0);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+
+/* 드롭다운 아이콘 */
+.nav-bar-top .user-button i.fa-chevron-down {
+  margin-left: 5px;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  position: relative;
+  top: 1px;
+  transition: transform 0.2s ease;
+}
+
+.nav-bar-top .user-button i.fa-chevron-down.rotate {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.nav-bar-top .user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  overflow: hidden;
+  z-index: 100;
 }
