@@ -138,7 +138,7 @@ const NavigationBarTop = () => {
               채팅방
             </button>
             <button className="ypay-charge-btn" onClick={goMyPoint}>
-              충전하기
+              충전
             </button>
           </div>
         ) : (
