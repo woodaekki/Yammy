@@ -4,6 +4,8 @@ import useAuthStore from '../stores/authStore';
 import { getTeamColors, TEAM_COLORS } from '../sns/utils/teamColors';
 import { updateMember } from '../auth/api/authApi';
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
+import { getTickets } from '../ticket/api/ticketApi';
+import { getEtherscanNFTUrl } from '../ticket/api/nftApi';
 import './styles/MyPage.css';
 
 // 기본 프로필 이미지 (SVG data URI)
@@ -25,6 +27,8 @@ const MyPage = () => {
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [nftTickets, setNftTickets] = useState([]);
+  const [loadingNFTs, setLoadingNFTs] = useState(false);
   const fileInputRef = useRef(null);
 
   // 팀 변경 이벤트 감지
@@ -62,7 +66,26 @@ const MyPage = () => {
     // 프로필 이미지가 없거나 빈 문자열이면 기본 이미지 사용
     setPreviewImage(profileImage && profileImage.trim() !== '' ? profileImage : DEFAULT_PROFILE_IMAGE);
     setOriginalTeam(team);
+
+    // NFT 티켓 목록 로드
+    loadNFTTickets();
   }, [isLoggedIn, navigate, initialize]);
+
+  // NFT 티켓 목록 가져오기
+  const loadNFTTickets = async () => {
+    setLoadingNFTs(true);
+    try {
+      const tickets = await getTickets();
+      // NFT가 발급된 티켓만 필터링
+      const nftOnlyTickets = tickets.filter(ticket => ticket.nftMinted === true);
+      setNftTickets(nftOnlyTickets);
+      console.log('NFT 티켓 목록:', nftOnlyTickets);
+    } catch (error) {
+      console.error('NFT 티켓 목록 로드 실패:', error);
+    } finally {
+      setLoadingNFTs(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -306,6 +329,65 @@ const MyPage = () => {
         >
           {loading ? '저장 중...' : '저장하기'}
         </button>
+
+        {/* 내 NFT 목록 */}
+        <div className="nft-list-section">
+          <h2 className="nft-list-title">내 NFT 티켓</h2>
+          {loadingNFTs ? (
+            <p className="nft-loading">NFT 목록을 불러오는 중...</p>
+          ) : nftTickets.length === 0 ? (
+            <p className="nft-empty">발급된 NFT 티켓이 없습니다.</p>
+          ) : (
+            <div className="nft-grid">
+              {nftTickets.map((ticket) => (
+                <div key={ticket.id} className="nft-card">
+                  <div className="nft-card-header">
+                    <h3>{ticket.game}</h3>
+                    <span className="nft-badge">NFT</span>
+                  </div>
+                  <div className="nft-card-body">
+                    <div className="nft-info-row">
+                      <span className="nft-label">날짜</span>
+                      <span className="nft-value">{ticket.date}</span>
+                    </div>
+                    <div className="nft-info-row">
+                      <span className="nft-label">장소</span>
+                      <span className="nft-value">{ticket.location}</span>
+                    </div>
+                    <div className="nft-info-row">
+                      <span className="nft-label">좌석</span>
+                      <span className="nft-value">{ticket.seat}</span>
+                    </div>
+                    {ticket.nftTokenId && ticket.nftTokenId > 0 && (
+                      <div className="nft-info-row">
+                        <span className="nft-label">Token ID</span>
+                        <span className="nft-value">#{ticket.nftTokenId}</span>
+                      </div>
+                    )}
+                  </div>
+                  {ticket.nftTokenId && ticket.nftTokenId > 0 ? (
+                    <div className="nft-card-footer">
+                      <a
+                        href={getEtherscanNFTUrl(ticket.nftTokenId)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="nft-etherscan-link"
+                      >
+                        Etherscan에서 보기 →
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="nft-card-footer">
+                      <p style={{ textAlign: 'center', color: '#6b7280', margin: 0, fontSize: '13px' }}>
+                        NFT 발급 처리 중 또는 Token ID를 찾을 수 없습니다
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

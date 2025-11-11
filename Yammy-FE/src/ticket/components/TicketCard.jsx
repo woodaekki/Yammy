@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { getTeamColors } from '../../sns/utils/teamColors';
-import { mintNFT, canMintNFT, getNFTStatusMessage, getEtherscanNFTUrl, getOpenSeaNFTUrl } from '../api/nftApi';
+import { mintNFT, canMintNFT, getNFTStatusMessage, getEtherscanNFTUrl } from '../api/nftApi';
 import html2canvas from 'html2canvas';
 import '../styles/TicketCard.css';
 
@@ -354,14 +354,6 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                                 className="nft-link"
                                             >
                                                 Etherscan에서 보기
-                                            </a>
-                                            <a
-                                                href={getOpenSeaNFTUrl(ticket.nftTokenId)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="nft-link"
-                                            >
-                                                OpenSea에서 보기
                                             </a>
                                         </div>
                                     )}
