@@ -123,7 +123,12 @@ const NavigationBarTop = () => {
               <div className="ypay-logo-circle">⚾</div>
               <span className="ypay-balance">
                 {balance !== null
-                  ? `${format(balance)}얌`
+                  ? (() => {
+                      const str = format(balance);
+                      return str.length > 5
+                        ? `${str.slice(0, 3)}...`
+                        : `${str}얌`;
+                    })()
                   : error
                   ? "오류"
                   : "로딩 중..."}

@@ -104,3 +104,40 @@
 .list-point-button:hover {
   opacity: 0.9;
 }
+
+.item-card--disabled {
+  position: relative;
+  filter: grayscale(50%) brightness(0.9);
+  opacity: 0.6; 
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* 거래 완료 라벨 */
+.item-card--disabled::before {
+  content: "거래 완료";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-weight: 500;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  letter-spacing: -0.3px;
+  z-index: 2;
+}
+
+/* 카드 내부 텍스트까지 흐리게 */
+.item-card--disabled .item-title,
+.item-card--disabled .item-price {
+  opacity: 0.7;
+  color: #555 !important;
+}
+
+/* 이미지 영역 */
+.item-card--disabled img {
+  filter: grayscale(70%) brightness(0.9);
+  opacity: 0.85;
+}

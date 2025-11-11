@@ -1,0 +1,85 @@
+/* 검색 영역 컨테이너 */
+.useditem-search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5%;
+  width: 95%;
+  margin: 6px auto 12px auto;
+  padding: 0.5rem 0.6rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+/* 커스텀 셀렉트 */
+.search-select {
+  flex: 0 0 22%;
+  min-width: 85px;
+  height: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  font-size: 0.8rem;
+  color: #333;
+  padding: 0 1.6rem 0 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23666' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 0.8rem;
+}
+
+.search-select:hover {
+  background-color: #f3f3f3;
+  border-color: #bbb;
+}
+
+/* 드롭다운 옵션 목록 */
+.search-select option {
+  background-color: #fff;
+  color: #333;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+}
+
+/* 입력창 */
+.search-input {
+  flex: 1;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* 버튼 */
+.search-button {
+  flex: 0 0 auto;
+  height: 2rem;
+  padding: 0 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button:hover {
+  transform: translateY(-1px);
+}
+

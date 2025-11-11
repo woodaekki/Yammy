@@ -46,12 +46,12 @@ public class UsedItemChatController {
     public ResponseEntity<UsedItemChatRoomResponse> createOrEnterChatRoom(
             @PathVariable Long usedItemId,
             @AuthenticationPrincipal CustomUserDetails user) throws Exception {
-        
+
         UsedItemChatRoom chatRoom = usedItemChatRoomService.createOrGetUsedItemChatRoom(
-                usedItemId, 
+                usedItemId,
                 user.getMemberId()
         );
-        
+
         return ResponseEntity.ok(toResponse(chatRoom));
     }
 
@@ -62,15 +62,15 @@ public class UsedItemChatController {
     @GetMapping("/rooms")
     public ResponseEntity<List<UsedItemChatRoomResponse>> getMyChatRooms(
             @AuthenticationPrincipal CustomUserDetails user) {
-        
+
         List<UsedItemChatRoom> chatRooms = usedItemChatRoomService.getMyUsedItemChatRooms(
                 user.getMemberId()
         );
-        
+
         List<UsedItemChatRoomResponse> responses = chatRooms.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(responses);
     }
 
@@ -81,9 +81,9 @@ public class UsedItemChatController {
     @GetMapping("/room/{roomKey}")
     public ResponseEntity<UsedItemChatRoomResponse> getChatRoom(
             @PathVariable String roomKey) {
-        
+
         UsedItemChatRoom chatRoom = usedItemChatRoomService.getUsedItemChatRoom(roomKey);
-        
+
         return ResponseEntity.ok(toResponse(chatRoom));
     }
 
@@ -155,22 +155,24 @@ public class UsedItemChatController {
         UsedItemChatRoomResponse.UsedItemChatRoomResponseBuilder builder = UsedItemChatRoomResponse.builder()
                 .id(chatRoom.getId())
                 .roomKey(chatRoom.getRoomKey())
-                .usedItemId(chatRoom.getUsedItemId())
+                .usedItemId(chatRoom.getUsedItem() != null ? chatRoom.getUsedItem().getId() : null)
                 .sellerId(chatRoom.getSellerId())
                 .buyerId(chatRoom.getBuyerId())
                 .status(chatRoom.getStatus())
                 .createdAt(chatRoom.getCreatedAt());
 
         // 중고거래 물품 정보 조회 및 추가
-        usedItemRepository.findById(chatRoom.getUsedItemId()).ifPresent(usedItem -> {
+        UsedItem usedItem = chatRoom.getUsedItem();
+        if (usedItem != null) {
             builder.itemTitle(usedItem.getTitle());
             builder.itemPrice(usedItem.getPrice());
 
             // 첫 번째 이미지 URL 추가
-            if (!usedItem.getPhotos().isEmpty()) {
-                builder.itemImageUrl(usedItem.getPhotos().get(0).getFileUrl());
+            List<Photo> photos = usedItem.getPhotos();
+            if (photos != null && !photos.isEmpty()) {
+                builder.itemImageUrl(photos.get(0).getFileUrl());
             }
-        });
+        }
 
         return builder.build();
     }
