@@ -16,14 +16,17 @@ const PredictPage = () => {
   const month = today.getMonth() + 1; // 0부터 시작하므로 +1
   const day = today.getDate();
 
-  // 오늘 날짜 문자열 생성 (YYYYMMDD 형식으로 백엔드 데이터와 맞춤)
-  const todayDateString = `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
+  // 오늘 날짜 문자열 생성 (YYYY-MM-DD 형식으로 백엔드 데이터와 맞춤)
+  const todayDateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
   // 경기 데이터 가져오기
   const { matches, loading, error } = usePredict();
 
-  // 오늘 경기만 필터링 (날짜 형식 맞춤)
-  const todayMatches = matches.filter(match => match.date === todayDateString);
+  // 오늘 경기만 필터링 (날짜 형식 맞춤: YYYY-MM-DD)
+  const todayMatches = matches.filter(match => {
+    console.log(`🔍 날짜 비교: match.date="${match.date}" vs today="${todayDateString}" → ${match.date === todayDateString}`);
+    return match.date === todayDateString;
+  });
 
   // 팀 컬러 업데이트
   useEffect(() => {
@@ -89,6 +92,11 @@ const PredictPage = () => {
               {todayMatches.map((match) => {
                 const gameInProgress = isGameInProgress(match.gameTime);
                 
+                // 배당률 비율 계산
+                const totalOdds = match.homeOdds + match.awayOdds;
+                const homeRatio = match.homeOdds / totalOdds;
+                const awayRatio = match.awayOdds / totalOdds;
+                
                 return (
                   <div 
                     key={match.id} 
@@ -97,11 +105,37 @@ const PredictPage = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <div className="match-time-header">{match.gameTime}</div>
-                    <div className="match-prediction-card">
+                    
+                    {/* 배당률 비율 그래프 바 */}
+                    <div className="odds-ratio-bar">
+                      <div 
+                        className="home-odds-bar"
+                        style={{ 
+                          width: `${homeRatio * 100}%`,
+                          backgroundColor: getTeamColor(match.homeTeam)
+                        }}
+                      >
+                        <span className="odds-percentage">{(homeRatio * 100).toFixed(1)}%</span>
+                      </div>
+                      <div 
+                        className="away-odds-bar"
+                        style={{ 
+                          width: `${awayRatio * 100}%`,
+                          backgroundColor: getTeamColor(match.awayTeam)
+                        }}
+                      >
+                        <span className="odds-percentage">{(awayRatio * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="match-prediction-card" style={{ display: 'flex' }}>
                       {/* 홈팀 */}
                       <div
                         className="team-section home-team-section"
-                        style={{ backgroundColor: getTeamColor(match.homeTeam) }}
+                        style={{ 
+                          backgroundColor: getTeamColor(match.homeTeam),
+                          flex: homeRatio
+                        }}
                       >
                         <div className="team-label">HOME</div>
                         <div className="team-info-container home-team-info">
@@ -122,7 +156,10 @@ const PredictPage = () => {
                       {/* 원정팀 */}
                       <div
                         className="team-section away-team-section"
-                        style={{ backgroundColor: getTeamColor(match.awayTeam) }}
+                        style={{ 
+                          backgroundColor: getTeamColor(match.awayTeam),
+                          flex: awayRatio
+                        }}
                       >
                         <div className="team-label">AWAY</div>
                         <div className="team-info-container away-team-info">

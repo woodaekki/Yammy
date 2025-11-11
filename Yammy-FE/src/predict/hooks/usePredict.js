@@ -76,6 +76,21 @@ export const usePredict = () => {
       
       const backendMatches = await getTodayMatches();
       
+      // 🔥 백엔드에서 받은 원본 데이터 먼저 확인
+      console.log('📡 백엔드에서 받은 원본 데이터:', backendMatches);
+      console.log('📊 백엔드 데이터 길이:', backendMatches ? backendMatches.length : 'null');
+      console.log('📋 백엔드 데이터 타입:', typeof backendMatches);
+      
+      // 배열인지 확인
+      if (Array.isArray(backendMatches)) {
+        console.log('✅ 배열 형태 확인됨');
+        backendMatches.forEach((match, index) => {
+          console.log(`🎯 경기 ${index + 1}:`, match);
+        });
+      } else {
+        console.log('❌ 배열이 아닌 데이터 타입:', backendMatches);
+      }
+      
       // 백엔드 데이터를 프론트엔드 형식으로 변환
       const transformedMatches = backendMatches.map(transformMatchData);
       
@@ -85,7 +100,9 @@ export const usePredict = () => {
       console.log('🎯 변환된 경기 데이터:', transformedMatches);
     } catch (err) {
       setError('경기 데이터를 불러오는데 실패했습니다.');
-      console.error('Error fetching matches:', err);
+      console.error('❌ Error fetching matches:', err);
+      console.error('❌ Error response:', err.response);
+      console.error('❌ Error message:', err.message);
       
       // 에러 발생 시 빈 배열로 설정
       setMatches([]);
@@ -107,10 +124,12 @@ export const usePredict = () => {
       setMatches(transformedMatches);
       setError(null);
       
-      console.log(`🎯 ${date} 경기 데이터:`, transformedMatches);
+      console.log(`🎯 ${date} 변환된 경기 데이터:`, transformedMatches);
     } catch (err) {
       setError('경기 데이터를 불러오는데 실패했습니다.');
-      console.error('Error fetching matches:', err);
+      console.error(`❌ ${date} Error fetching matches:`, err);
+      console.error(`❌ ${date} Error response:`, err.response);
+      console.error(`❌ ${date} Error message:`, err.message);
       
       // 에러 발생 시 빈 배열로 설정
       setMatches([]);

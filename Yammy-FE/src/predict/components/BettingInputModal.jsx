@@ -136,19 +136,73 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
         </div>
 
         <div className="betting-modal-content">
+          {/* 배당률 비교 그래프 */}
+          <div className="odds-comparison-section">
+            <h3>배당률 비교</h3>
+            <div className="odds-comparison-bar">
+              <div 
+                className={`team-odds-portion ${selectedTeam === 0 ? 'selected' : ''}`}
+                style={{ 
+                  width: `${(match.homeOdds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  backgroundColor: getTeamColor(match.homeTeam)
+                }}
+              >
+                <div className="odds-info">
+                  <span className="team-name-small">{match.homeTeam}</span>
+                  <span className="odds-value">{match.homeOdds.toFixed(2)}</span>
+                </div>
+              </div>
+              <div 
+                className={`team-odds-portion ${selectedTeam === 1 ? 'selected' : ''}`}
+                style={{ 
+                  width: `${(match.awayOdds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  backgroundColor: getTeamColor(match.awayTeam)
+                }}
+              >
+                <div className="odds-info">
+                  <span className="team-name-small">{match.awayTeam}</span>
+                  <span className="odds-value">{match.awayOdds.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* 선택된 팀 */}
           <div className="selected-team-info">
             <h3>선택한 팀</h3>
             <div 
               className="selected-team-card"
-              style={{ backgroundColor: getTeamColor(selectedTeamInfo.name) }}
+              style={{ 
+                backgroundColor: getTeamColor(selectedTeamInfo.name),
+                position: 'relative',
+                overflow: 'hidden'
+              }}
             >
-              <div className="team-label">{selectedTeamInfo.label}</div>
-              <div className="team-info-container">
-                <TeamLogo teamName={selectedTeamInfo.name} size="large" />
-                <div className="team-details">
-                  <div className="team-name">{selectedTeamInfo.name}</div>
-                  <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
+              {/* 배당률 비율 배경 */}
+              <div 
+                className="odds-ratio-background"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: `${(selectedTeamInfo.odds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  height: '100%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  zIndex: 1
+                }}
+              />
+              
+              <div style={{ position: 'relative', zIndex: 2 }}>
+                <div className="team-label">{selectedTeamInfo.label}</div>
+                <div className="team-info-container">
+                  <TeamLogo teamName={selectedTeamInfo.name} size="large" />
+                  <div className="team-details">
+                    <div className="team-name">{selectedTeamInfo.name}</div>
+                    <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
+                    <div className="odds-ratio-text">
+                      {((selectedTeamInfo.odds / (match.homeOdds + match.awayOdds)) * 100).toFixed(1)}% 비율
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -189,14 +243,6 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
               <div className="return-item">
                 <span className="return-label">배팅 팬심:</span>
                 <span className="return-value">{parseInt(betAmount).toLocaleString()}팬심</span>
-              </div>
-              <div className="return-item">
-                <span className="return-label">예상 팬심:</span>
-                <span className="return-value profit">+{parseInt(expectedProfit).toLocaleString()}팬심</span>
-              </div>
-              <div className="return-item total">
-                <span className="return-label">총 받을 팬심:</span>
-                <span className="return-value">{parseInt(expectedReturn).toLocaleString()}팬심</span>
               </div>
             </div>
           )}

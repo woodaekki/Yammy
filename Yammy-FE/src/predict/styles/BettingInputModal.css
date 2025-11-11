@@ -82,6 +82,60 @@
   padding: 1.5rem;
 }
 
+/* 배당률 비교 그래프 */
+.odds-comparison-section {
+  margin-bottom: 1.5rem;
+}
+
+.odds-comparison-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.odds-comparison-bar {
+  display: flex;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0f0f0;
+  border: 2px solid #e0e0e0;
+}
+
+.team-odds-portion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.team-odds-portion.selected {
+  border: 3px solid #FFD700;
+  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.odds-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.team-name-small {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.odds-value {
+  font-size: 16px;
+  font-weight: 800;
+}
+
 /* 선택된 팀 정보 */
 .selected-team-info {
   margin-bottom: 1.5rem;
@@ -124,6 +178,31 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.odds-ratio-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.odds-ratio-background {
+  border-radius: inherit;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* 배팅 금액 입력 */

@@ -80,10 +80,10 @@ export const createBetting = async (bettingData) => {
     
     // 🔥 배팅 생성은 인증 필요 - apiClient 사용
     const response = await apiClient.post('/predict/betting', {
-      matchId: bettingData.matchId,
-      selectedTeam: bettingData.selectedTeam,
-      betAmount: bettingData.betAmount,
-      expectedReturn: bettingData.expectedReturn
+      predictedMatchId: bettingData.matchId,    // 백엔드 DTO에 맞게 수정
+      predict: bettingData.selectedTeam,       // 백엔드 DTO에 맞게 수정
+      batAmount: bettingData.betAmount         // 백엔드 DTO에 맞게 수정
+      // expectedReturn 제거 (백엔드에서 계산)
     });
     
     console.log(`✅ 배팅 생성 성공:`, response.data);

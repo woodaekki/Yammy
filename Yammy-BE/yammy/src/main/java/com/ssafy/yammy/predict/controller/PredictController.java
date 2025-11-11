@@ -1,16 +1,9 @@
 package com.ssafy.yammy.predict.controller;
 
-import com.ssafy.yammy.predict.dto.MatchScheduleResponse;
-import com.ssafy.yammy.predict.dto.*;
-import com.ssafy.yammy.predict.entity.PredictMatchSchedule;
-import com.ssafy.yammy.predict.service.PredictService;
-import com.ssafy.yammy.predict.service.BettingService;
 import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.config.CustomUserDetails;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import com.ssafy.yammy.predict.dto.*;
+import com.ssafy.yammy.predict.service.PredictService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,171 +13,120 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/predict")
 @RequiredArgsConstructor
-@Tag(name = "Predict", description = "승부예측 API")
 public class PredictController {
 
     private final PredictService predictService;
-    private final BettingService bettingService;
 
     /**
-     * 특정 날짜의 경기 목록 조회
+     * 인증 테스트 엔드포인트
      */
-    @GetMapping("/matches")
-    @Operation(summary = "날짜별 경기 조회", description = "특정 날짜의 예정된 경기 목록을 조회합니다.")
-    public ResponseEntity<List<MatchScheduleResponse>> getMatchesByDate(
-            @RequestParam 
-            @Parameter(description = "경기 날짜 (YYYYMMDD 형식)", example = "20251110") 
-            String date) {
+    @GetMapping("/test-auth")
+    public ResponseEntity<String> testAuth(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("🧪 [TEST] 인증 테스트 API 호출!");
         
-        log.info("날짜별 경기 조회 요청 - date: {}", date);
-        
-        // 1. 기본 경기 데이터 조회
-        List<MatchScheduleResponse> matches = predictService.getMatchesByDate(date);
-        
-        // 2. 각 경기에 대한 배당률 계산 및 추가
-        List<MatchScheduleResponse> matchesWithOdds = matches.stream()
-                .map(match -> {
-                    try {
-                        // 경기에 대한 Entity 재생성 (배당률 계산을 위해)
-                        PredictMatchSchedule matchEntity = PredictMatchSchedule.builder()
-                                .id(match.getId())
-                                .matchDate(match.getMatchDate())
-                                .home(convertTeamCodeFromName(match.getHome()))
-                                .away(convertTeamCodeFromName(match.getAway()))
-                                .build();
-                        
-                        // 배당률 계산
-                        Double homeOdds = bettingService.calculateOddsForTeam(matchEntity, 0);
-                        Double awayOdds = bettingService.calculateOddsForTeam(matchEntity, 1);
-                        
-                        // 배당률이 포함된 새로운 Response 생성
-                        return MatchScheduleResponse.builder()
-                                .id(match.getId())
-                                .matchStatus(match.getMatchStatus())
-                                .matchDate(match.getMatchDate())
-                                .home(match.getHome())
-                                .away(match.getAway())
-                                .gameid(match.getGameid())
-                                .year(match.getYear())
-                                .homeOdds(homeOdds)
-                                .awayOdds(awayOdds)
-                                .build();
-                    } catch (Exception e) {
-                        log.warn("배당률 계산 실패 - 경기 ID: {}, 오류: {}", match.getId(), e.getMessage());
-                        // 배당률 계산 실패 시 기본값 사용
-                        return MatchScheduleResponse.builder()
-                                .id(match.getId())
-                                .matchStatus(match.getMatchStatus())
-                                .matchDate(match.getMatchDate())
-                                .home(match.getHome())
-                                .away(match.getAway())
-                                .gameid(match.getGameid())
-                                .year(match.getYear())
-                                .homeOdds(2.0) // 기본 배당률
-                                .awayOdds(2.0) // 기본 배당률
-                                .build();
-                    }
-                })
-                .collect(Collectors.toList());
-        
-        log.info("조회된 경기 수: {}", matchesWithOdds.size());
-        
-        return ResponseEntity.ok(matchesWithOdds);
-    }
-    
-    /**
-     * 팀 이름을 팀 코드로 역변환 (배당률 계산용)
-     */
-    private String convertTeamCodeFromName(String teamName) {
-        switch (teamName) {
-            case "KIA": return "HT";
-            case "삼성": return "SS";
-            case "LG": return "LG";
-            case "두산": return "OB";
-            case "KT": return "KT";
-            case "SSG": return "SK";
-            case "롯데": return "LT";
-            case "한화": return "HH";
-            case "NC": return "NC";
-            case "키움": return "WO";
-            default: return teamName;
+        if (userDetails == null) {
+            log.error("🚫 [TEST] userDetails is NULL!");
+            return ResponseEntity.status(403).body("userDetails is null");
         }
+        
+        Member member = userDetails.getMember();
+        if (member == null) {
+            log.error("🚫 [TEST] member is NULL!");
+            return ResponseEntity.status(403).body("member is null");
+        }
+        
+        log.info("🎉 [TEST] 인증 성공 - 사용자: {}", member.getNickname());
+        return ResponseEntity.ok("Authentication Success: " + member.getNickname());
     }
 
     /**
      * 배팅 생성
      */
     @PostMapping("/betting")
-    @Operation(summary = "배팅 생성", description = "새로운 배팅을 생성합니다.")
-    public ResponseEntity<BettingResponse> createBetting(
+    public ResponseEntity<PredictedResponse> createBetting(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody BettingCreateRequest request) {
+            @Valid @RequestBody PredictedCreateRequest request) {
         
-        log.info("배팅 생성 요청 - 사용자: {}, 요청: {}", 
-                userDetails != null ? userDetails.getUsername() : "null", request);
+        log.info("🏈 [Controller] /predict/betting 엔드포인트 진입!");
         
-        // 🔥 인증 정보 확인 디버깅
         if (userDetails == null) {
-            log.error("인증 정보가 null입니다!");
-            throw new IllegalStateException("로그인이 필요합니다.");
+            log.error("🔴 [Controller] userDetails is NULL! Authentication failed!");
+            throw new IllegalStateException("인증 정보가 없습니다.");
         }
         
         Member member = userDetails.getMember();
         if (member == null) {
-            log.error("멤버 정보가 null입니다!");
-            throw new IllegalStateException("사용자 정보가 없습니다.");
+            log.error("🔴 [Controller] member is NULL from userDetails!");
+            throw new IllegalStateException("사용자 정보를 찾을 수 없습니다.");
         }
         
-        log.info("인증된 멤버: ID={}, 로그인ID={}", member.getMemberId(), member.getId());
-        
-        BettingResponse response = bettingService.createBetting(member, request);
-        
+        log.info("🟢 [Controller] Authentication success - 사용자: {} (ID: {})", member.getNickname(), member.getId());
+        log.info("🏈 [Controller] 배팅 요청: matchId={}, predict={}, amount={}", 
+                request.getPredictedMatchId(), request.getPredict(), request.getBatAmount());
+
+        PredictedResponse response = predictService.createBetting(member, request);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 사용자의 배팅 내역 조회
+     * 사용자 배팅 내역 조회
      */
-    @GetMapping("/betting/my")
-    @Operation(summary = "내 배팅 내역 조회", description = "로그인한 사용자의 배팅 내역을 조회합니다.")
-    public ResponseEntity<Page<BettingResponse>> getUserBettings(
+    @GetMapping("/my-bets")
+    public ResponseEntity<Page<PredictedResponse>> getUserPredictions(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(required = false) 
-            @Parameter(description = "배팅 상태 (PENDING, WIN, LOSE, CANCELLED)", example = "PENDING")
-            String status,
             @PageableDefault(size = 10) Pageable pageable) {
         
-        log.info("내 배팅 내역 조회 요청 - 사용자: {}, 상태: {}", userDetails.getUsername(), status);
-        
         Member member = userDetails.getMember();
-        Page<BettingResponse> bettings = bettingService.getUserBettings(member, status, pageable);
-        
-        return ResponseEntity.ok(bettings);
+        log.info("사용자 배팅 내역 조회 - 사용자: {}", member.getId());
+
+        Page<PredictedResponse> predictions = predictService.getUserPredictions(member, pageable);
+        return ResponseEntity.ok(predictions);
     }
 
     /**
-     * 배팅 취소
+     * 경기별 배당률 조회
      */
-    @DeleteMapping("/betting/{bettingId}")
-    @Operation(summary = "배팅 취소", description = "진행중인 배팅을 취소합니다.")
-    public ResponseEntity<Void> cancelBetting(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable 
-            @Parameter(description = "배팅 ID", example = "1")
-            Long bettingId) {
-        
-        log.info("배팅 취소 요청 - 사용자: {}, 배팅 ID: {}", userDetails.getUsername(), bettingId);
-        
+    @GetMapping("/odds/{predictedMatchId}")
+    public ResponseEntity<MatchOddsResponse> getMatchOdds(@PathVariable Long predictedMatchId) {
+        log.info("경기별 배당률 조회 - 경기ID: {}", predictedMatchId);
+
+        MatchOddsResponse response = predictService.getMatchOdds(predictedMatchId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 사용자 팬심 조회
+     */
+    @GetMapping("/points")
+    public ResponseEntity<UserPointsResponse> getUserPoints(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Member member = userDetails.getMember();
-        bettingService.cancelBetting(member, bettingId);
+        log.info("사용자 팬심 조회 - 사용자: {}", member.getId());
+
+        UserPointsResponse response = predictService.getUserPoints(member);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 당일 경기 조회 (프론트엔드 호환용)
+     */
+    @GetMapping("/matches")
+    public ResponseEntity<?> getMatches(@RequestParam String date) {
+        log.info("경기 조회 요청 - 날짜: {}", date);
         
-        return ResponseEntity.ok().build();
+        try {
+            List<MatchScheduleResponse> matches = predictService.getMatchesByDate(date);
+            return ResponseEntity.ok(matches);
+        } catch (Exception e) {
+            log.error("경기 조회 실패: {}", e.getMessage());
+            return ResponseEntity.ok(new ArrayList<>());
+        }
     }
 }
