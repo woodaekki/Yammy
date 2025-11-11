@@ -1,6 +1,7 @@
 package com.ssafy.yammy.payment.dto;
 
 import com.ssafy.yammy.payment.entity.Team;
+import com.ssafy.yammy.payment.entity.UsedItemStatus;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class UsedItemResponseDto {
     private String title;
     private String description;
     private Integer price;
-    private Boolean status;
+    private UsedItemStatus status;
     private Team team;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
