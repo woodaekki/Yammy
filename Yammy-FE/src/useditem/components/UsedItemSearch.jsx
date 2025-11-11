@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { getTeamColors } from "../../sns/utils/teamColors" 
-import "../styles/usedItem.css"
+import "../styles/usedItemSearch.css"
 
 function UsedItemSearch({ onSearch }) {
   const [keyword, setKeyword] = useState("")

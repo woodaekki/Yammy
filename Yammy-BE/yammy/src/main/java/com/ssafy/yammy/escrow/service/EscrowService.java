@@ -8,6 +8,8 @@ import com.ssafy.yammy.escrow.entity.EscrowStatus;
 import com.ssafy.yammy.escrow.repository.EscrowRepository;
 import com.ssafy.yammy.payment.entity.PointTransaction;
 import com.ssafy.yammy.payment.entity.TransactionType;
+import com.ssafy.yammy.payment.entity.UsedItem;
+import com.ssafy.yammy.payment.entity.UsedItemStatus;
 import com.ssafy.yammy.payment.repository.PointTransactionRepository;
 import com.ssafy.yammy.useditemchat.entity.UsedItemChatRoom;
 import com.ssafy.yammy.useditemchat.repository.UsedItemChatRoomRepository;
@@ -77,7 +79,7 @@ public class EscrowService {
                 .build();
     }
 
-    // @Transactional
+     @Transactional
     public void confirmedEscrow(Long escrowId) {
         Escrow escrow = escrowRepository.findById(escrowId)
                 .orElseThrow(() -> new IllegalArgumentException("에스크로 정보 없음"));
@@ -97,9 +99,16 @@ public class EscrowService {
         // 실제 포인트 이동
         buyer.getPoint().decrease(amount);
         seller.getPoint().increase(amount);
-        escrow.setStatus(EscrowStatus.RELEASED);
+        escrow.setStatus(EscrowStatus.CONFIRMED);
 
-        // 거래 로그 저장
+         // 거래 완료 시, 연결된 UsedItem 상태 거래 완료로 변경
+         UsedItemChatRoom chatRoom = escrow.getUsedItemChatRoom();
+         if (chatRoom != null && chatRoom.getUsedItem() != null) {
+             UsedItem usedItem = chatRoom.getUsedItem();
+             usedItem.setStatus(UsedItemStatus.CONFIRMED);
+         }
+
+         // 거래 로그 저장
         pointTransactionRepository.save(PointTransaction.builder()
                 .member(buyer)
                 .point(buyer.getPoint())
