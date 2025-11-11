@@ -14,6 +14,17 @@ export const getTickets = async () => {
   }
 };
 
+// 특정 사용자의 티켓 목록 조회 (memberId로)
+export const getTicketsByUserId = async (memberId) => {
+  try {
+    const response = await apiClient.get(`/tickets/user/${memberId}`);
+    return response.data;
+  } catch (error) {
+    console.error('[ticketApi] 사용자 티켓 목록 조회 실패:', error);
+    throw error;
+  }
+};
+
 // 티켓 단건 조회
 export const getTicket = async (ticketId) => {
   try {
@@ -122,6 +133,7 @@ export const deleteTicket = async (ticketId) => {
 
 export default {
   getTickets,
+  getTicketsByUserId,
   getTicket,
   createTicket,
   updateTicket,

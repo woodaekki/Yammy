@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUserPosts, getFollowStatus, followUser, unfollowUser } from '../api/snsApi';
-import { getTickets } from '../../ticket/api/ticketApi';
+import { getTickets, getTicketsByUserId } from '../../ticket/api/ticketApi';
 import FollowListModal from './FollowListModal';
 import TicketCard from '../../ticket/components/TicketCard';
 import { getTeamColors } from '../utils/teamColors';
@@ -48,10 +48,10 @@ const UserProfile = () => {
 
     // 티켓 탭 활성화 시 티켓 로드
     useEffect(() => {
-        if (activeTab === 'tickets' && isOwnProfile) {
+        if (activeTab === 'tickets') {
             loadTickets();
         }
-    }, [activeTab, isOwnProfile]);
+    }, [activeTab, userId]);
 
     const loadProfile = async () => {
         setIsLoading(true);
@@ -104,11 +104,16 @@ const UserProfile = () => {
     };
 
     const loadTickets = async () => {
-        if (!isOwnProfile) return; // 본인 프로필이 아니면 티켓 로드 안 함
-
         setTicketsLoading(true);
         try {
-            const response = await getTickets();
+            let response;
+            if (isOwnProfile) {
+                // 본인 프로필일 경우 내 티켓 조회
+                response = await getTickets();
+            } else {
+                // 다른 사용자 프로필일 경우 해당 사용자의 티켓 조회
+                response = await getTicketsByUserId(userId);
+            }
             setTickets(response || []);
         } catch (error) {
             console.error('티켓 목록 로드 실패:', error);
@@ -289,11 +294,7 @@ const UserProfile = () => {
 
                 {activeTab === 'tickets' && (
                     <div className="tickets-section">
-                        {!isOwnProfile ? (
-                            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
-                                다른 사용자의 티켓은 볼 수 없습니다.
-                            </div>
-                        ) : ticketsLoading ? (
+                        {ticketsLoading ? (
                             <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
                                 티켓을 불러오는 중...
                             </div>
