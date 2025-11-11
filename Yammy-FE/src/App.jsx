@@ -9,7 +9,8 @@ function App() {
   const hideTopBar = location.pathname === '/mypage' ||
                      location.pathname === '/ticket/create' ||
                      location.pathname.startsWith('/ticket/') ||
-                     location.pathname.startsWith('/prediction');
+                     location.pathname.startsWith('/prediction') ||
+                     location.pathname.startsWith('/betting');
 
   return (
     <div className="app-container">

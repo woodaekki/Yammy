@@ -67,8 +67,22 @@ export default function UsedItemChatInput({ roomKey }) {
 
     try {
       setSending(true);
-      const compressedFile = await compressImage(file); // 압축
+      
+      // GIF 파일은 압축하지 않고 원본 사용 (애니메이션 유지)
+      let compressedFile;
+      if (file.type === 'image/gif') {
+        compressedFile = file;  // 일단 원본 사용
+        
+        // GIF가 10MB 넘으면 정적 이미지로 압축
+        if (compressedFile.size > 10 * 1024 * 1024) {
+          console.log("GIF 파일이 10MB를 초과하여 압축합니다.");
+          compressedFile = await compressImage(file);  // 압축 (애니메이션 손실)
+        }
+      } else {
+        compressedFile = await compressImage(file);  // 다른 이미지만 압축
+      }
 
+      // 압축 후에도 10MB 초과 시 차단
       if (compressedFile.size > 10 * 1024 * 1024) {
         alert('파일 크기는 10MB 이하만 가능합니다.');
         return;

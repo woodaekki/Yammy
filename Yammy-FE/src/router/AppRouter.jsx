@@ -55,7 +55,7 @@ export default function AppRouter() {
       <Route path="/post/create" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
       <Route path="/post/edit/:postId" element={<ProtectedRoute><PostEdit /></ProtectedRoute>} />
       <Route path="/post/:postId/comments" element={<ProtectedRoute><CommentPage /></ProtectedRoute>} />
-      <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+      <Route path="/user/:userId" element={<ProtectedRoute><UserProfile key={location.pathname} /></ProtectedRoute>} />
 
        {/* UsedItem Chat Routes */}
       <Route
@@ -85,7 +85,7 @@ export default function AppRouter() {
       <Route path="/match" element={<MatchResultPage />} />
       <Route path="/match/:matchcode" element={<MatchResultDetailPage />} />
       
-      {/* Predict Routes */}
+      {/* Predict Routes - 경기 조회는 공개, 배팅은 로그인 필요 */}
       <Route path="/prediction" element={<PredictPage />} />
       <Route path="/prediction/:matchId" element={<PrecitDetailPage />} />
 

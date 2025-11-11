@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
@@ -11,17 +11,44 @@ const NavigationBarTop = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("accessToken");
-  const { isLoggedIn, user, logOut, initialize } = useAuthStore();
+  const { isLoggedIn, user, logOut, initialize, syncFromLocalStorage } = useAuthStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [teamColors, setTeamColors] = useState(getTeamColors());
   const [balance, setBalance] = useState(null);
   const [error, setError] = useState(null);
+  const dropdownRef = useRef(null); 
 
   const format = (num) => num.toLocaleString();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  // localStorage 변화 감지
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (["profileImage", "nickname", "team"].includes(e.key)) {
+        syncFromLocalStorage();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [syncFromLocalStorage]);
+
+  // ✅ 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    if (showUserMenu) {
+      window.addEventListener("click", handleClickOutside);
+    } else {
+      window.removeEventListener("click", handleClickOutside);
+    }
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, [showUserMenu]);
 
   // 팀 컬러 업데이트
   useEffect(() => {
@@ -30,19 +57,15 @@ const NavigationBarTop = () => {
 
   // 팀 변경 이벤트 감지
   useEffect(() => {
-    const handleTeamChange = () => {
-      setTeamColors(getTeamColors());
-    };
-    window.addEventListener('teamChanged', handleTeamChange);
-    return () => window.removeEventListener('teamChanged', handleTeamChange);
+    const handleTeamChange = () => setTeamColors(getTeamColors());
+    window.addEventListener("teamChanged", handleTeamChange);
+    return () => window.removeEventListener("teamChanged", handleTeamChange);
   }, []);
 
-  // cheerup 하위경로 또는 useditem/chat 하위경로일 때만 네브바 숨김
   const shouldHideNav =
     location.pathname.startsWith("/cheerup/") ||
     location.pathname.startsWith("/useditem/chat/");
 
-  // 포인트 불러오기 함수
   async function fetchData() {
     try {
       const res = await getMyPoint(token);
@@ -62,22 +85,17 @@ const NavigationBarTop = () => {
         location.pathname === "/checkout" ||
         location.pathname.startsWith("/success") ||
         location.pathname.startsWith("/fail"));
-
     if (shouldFetch) fetchData();
   }, [token, isLoggedIn, location.pathname]);
 
-  // 결제 성공 시 즉시 포인트 업데이트
   useEffect(() => {
     const handlePointUpdate = () => {
-      if (token && isLoggedIn) {
-        getMyPoint(token).then((res) => setBalance(res.balance));
-      }
+      if (token && isLoggedIn) getMyPoint(token).then((res) => setBalance(res.balance));
     };
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
 
-  // 렌더 직전에 네비게이션 숨김 조건 처리 (훅 호출 순서가 항상 동일하도록)
   if (shouldHideNav) return null;
 
   const handleLogout = () => {
@@ -100,15 +118,7 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/success") ||
       location.pathname.startsWith("/fail"));
 
-  const currentLogo =
-    location.pathname.startsWith("/useditem") ||
-    location.pathname === "/mypoint" ||
-    location.pathname === "/chatlist" ||
-    location.pathname === "/checkout" ||
-    location.pathname.startsWith("/success") ||
-    location.pathname.startsWith("/fail")
-      ? gugong
-      : logo;
+  const currentLogo = shouldShowBalanceButton ? gugong : logo;
 
   return (
     <nav className="nav-bar-top" style={{ backgroundColor: teamColors.bgColor }}>
@@ -123,7 +133,10 @@ const NavigationBarTop = () => {
               <div className="ypay-logo-circle">⚾</div>
               <span className="ypay-balance">
                 {balance !== null
-                  ? `${format(balance)}얌`
+                  ? (() => {
+                      const str = format(balance);
+                      return str.length > 5 ? `${str.slice(0, 3)}...` : `${str}얌`;
+                    })()
                   : error
                   ? "오류"
                   : "로딩 중..."}
@@ -133,21 +146,25 @@ const NavigationBarTop = () => {
               채팅방
             </button>
             <button className="ypay-charge-btn" onClick={goMyPoint}>
-              충전하기
+              충전
             </button>
           </div>
         ) : (
           <>
             {isLoggedIn ? (
-              <div className="user-menu-wrapper">
+              <div className="user-menu-wrapper" ref={dropdownRef}>
                 <button
                   className="user-button"
-                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 버튼 클릭 시 외부 클릭 이벤트 막기
+                    setShowUserMenu(!showUserMenu);
+                  }}
                 >
-                  <i className="fas fa-user-circle"></i>
-                  <span className="user-nickname">
-                    {user?.nickname || "사용자"}
-                  </span>
+                  <img
+                    src={user?.profileImage}
+                    alt="프로필"
+                    className="user-profile-img"
+                  />
                   <i
                     className={`fas fa-chevron-down ${
                       showUserMenu ? "rotate" : ""
@@ -158,21 +175,16 @@ const NavigationBarTop = () => {
                 {showUserMenu && (
                   <div className="user-dropdown">
                     <button onClick={() => navigate("/mypage")}>
-                      <i className="fas fa-user"></i>
-                      내 프로필
+                      <i className="fas fa-user"></i> 내 프로필
                     </button>
                     <button onClick={handleLogout}>
-                      <i className="fas fa-sign-out-alt"></i>
-                      로그아웃
+                      <i className="fas fa-sign-out-alt"></i> 로그아웃
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <button
-                className="login-button"
-                onClick={() => navigate("/login")}
-              >
+              <button className="login-button" onClick={() => navigate("/login")}>
                 로그인
               </button>
             )}

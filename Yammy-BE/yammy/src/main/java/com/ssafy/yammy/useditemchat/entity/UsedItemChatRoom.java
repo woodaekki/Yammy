@@ -1,5 +1,6 @@
 package com.ssafy.yammy.useditemchat.entity;
 
+import com.ssafy.yammy.payment.entity.UsedItem;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,12 +30,6 @@ public class UsedItemChatRoom {
      */
     @Column(unique = true, nullable = false, length = 100)
     private String roomKey;
-
-    /**
-     * 중고거래 물품 ID
-     */
-    @Column(nullable = false)
-    private Long usedItemId;
 
     /**
      * 판매자 ID
@@ -70,10 +65,15 @@ public class UsedItemChatRoom {
         }
     }
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "useditem_id")
+    private UsedItem usedItem;
+
     /**
      * roomKey 생성 헬퍼 메서드
      */
     public static String generateRoomKey(Long usedItemId, Long buyerId) {
-        return String.format("useditem_%d_%d", usedItemId, buyerId);
+        return "useditem_" + java.util.UUID.randomUUID().toString();
     }
 }

@@ -44,8 +44,8 @@ public class UsedItem {
     @Column(nullable = false, length = 20)
     private Team team;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean status = false;
+    @Enumerated(EnumType.STRING)
+    private UsedItemStatus status;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)

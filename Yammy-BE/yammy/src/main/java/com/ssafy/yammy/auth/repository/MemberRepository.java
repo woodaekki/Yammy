@@ -3,6 +3,8 @@ package com.ssafy.yammy.auth.repository;
 import com.ssafy.yammy.auth.entity.Member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,7 +13,8 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 로그인 ID로 조회 (주의: PK가 아닌 일반 필드 'id'로 조회)
-    Optional<Member> findById(String id);
+    @Query("SELECT m FROM Member m WHERE m.id = :loginId")
+    Optional<Member> findById(@Param("loginId") String loginId);
 
     // 이메일로 조회
     Optional<Member> findByEmail(String email);
@@ -20,7 +23,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByNickname(String nickname);
 
     // 로그인 ID 중복 확인
-    boolean existsById(String id);
+    @Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.id = :loginId")
+    boolean existsById(@Param("loginId") String loginId);
 
     // 이메일 중복 확인
     boolean existsByEmail(String email);

@@ -97,5 +97,22 @@ public class Member {
         updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * 팬심(경험치) 차감
+     */
+    public void decreaseExp(Long amount) {
+        if (this.exp < amount) {
+            throw new IllegalStateException("팬심이 부족합니다.");
+        }
+        this.exp -= amount;
+    }
+
+    /**
+     * 팬심(경험치) 증가
+     */
+    public void increaseExp(Long amount) {
+        this.exp += amount;
+    }
+
 
 }

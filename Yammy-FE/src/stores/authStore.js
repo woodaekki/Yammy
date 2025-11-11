@@ -42,6 +42,21 @@ const useAuthStore = create(
         });
       },
 
+      // 프로필 정보 실시간 동기화용 (MyPage → NavigationBarTop)
+      setUser: (newUserData) => {
+        // localStorage 업데이트
+        Object.entries(newUserData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            localStorage.setItem(key, value);
+          }
+        });
+
+        // Zustand 전역 상태 업데이트
+        set((state) => ({
+          user: { ...state.user, ...newUserData },
+        }));
+      },
+
       // 로그아웃 처리
       logOut: () => {
         localStorage.removeItem('accessToken');

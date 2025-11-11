@@ -80,6 +80,20 @@ public class TicketController {
     }
 
     /**
+     * 특정 사용자의 티켓 목록 조회
+     */
+    @GetMapping("/user/{memberId}")
+    @Operation(summary = "특정 사용자 티켓 목록 조회", description = "특정 사용자의 티켓 목록을 조회합니다.")
+    public ResponseEntity<List<TicketResponse>> getUserTickets(
+            @PathVariable Long memberId) {
+
+        log.info("사용자 티켓 목록 조회 요청 - memberId: {}", memberId);
+
+        List<TicketResponse> tickets = ticketService.getMyTickets(memberId);
+        return ResponseEntity.ok(tickets);
+    }
+
+    /**
      * 티켓 상세 조회
      */
     @GetMapping("/{ticketId}")

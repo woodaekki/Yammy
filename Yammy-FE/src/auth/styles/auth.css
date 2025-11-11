@@ -1,3 +1,8 @@
+/* 전역 box-sizing */
+* {
+  box-sizing: border-box;
+}
+
 /* 인증 컨테이너 - 전체 화면 */
 .auth-container {
   display: flex;
@@ -10,7 +15,13 @@
 .auth-content {
   display: flex;
   flex-direction: column;
-  padding: 1rem 1.5rem 0;
+  padding: 1rem 1rem 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.auth-content > * {
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -110,6 +121,24 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.auth-form * {
+  box-sizing: border-box ;
+}
+
+.auth-form,
+.auth-form .form-group,
+.auth-form .input-wrapper,
+.auth-form .form-input,
+.auth-form .btn-primary,
+.auth-form .btn-kakao {
+  width: 100% ;
+  max-width: 100% ;
 }
 
 .signup-form {
@@ -121,13 +150,20 @@
 .form-group {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  display: block;
+  width: 100%;
 }
 
 .form-label.required::after {
@@ -137,18 +173,24 @@
 
 .input-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .form-input,
 .form-textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
+  width: 100% ;
+  padding: 0.875rem ;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
   font-size: 1rem;
   transition: all 0.2s;
+  box-sizing: border-box ;
+  margin: 0 ;
+  display: block;
 }
 
 .form-input:focus,
@@ -251,8 +293,8 @@
 
 /* 버튼 */
 .btn-primary {
-  width: 100%;
-  padding: 0.875rem;
+  width: 100% ;
+  padding: 0.875rem ;
   background-color: #6366f1;
   color: white;
   border: none;
@@ -262,10 +304,13 @@
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 1rem;
+  margin-left: 0 ;
+  margin-right: 0 ;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  box-sizing: border-box ;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -309,8 +354,8 @@
 
 /* 카카오 로그인 버튼 */
 .btn-kakao {
-  width: 100%;
-  padding: 0.875rem;
+  width: 100% ;
+  padding: 0.875rem ;
   background-color: #fee500;
   color: #000000;
   border: none;
@@ -319,10 +364,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-left: 0 ;
+  margin-right: 0 ;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  box-sizing: border-box ;
 }
 
 .btn-kakao:hover {
@@ -357,6 +405,9 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 0 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .footer-text {

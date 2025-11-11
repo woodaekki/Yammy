@@ -52,6 +52,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/oauth/**").permitAll() // 카카오 OAuth
 
+                        // 경기 정보 조회 (공개)
+                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
+
+                        // 승부예측 API 세분화 
+                        .requestMatchers(HttpMethod.GET, "/api/predict/matches").permitAll()     // 경기 조회는 공개
+                        .requestMatchers(HttpMethod.POST, "/api/predict/betting").authenticated()  // 배팅 생성은 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/predict/betting/**").authenticated() // 배팅 내역 인증 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/predict/betting/**").authenticated() // 배팅 취소 인증 필요
+
                         // 인증 필요한 Auth 엔드포인트
                         .requestMatchers(HttpMethod.PUT, "/api/auth/password").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/auth/update").authenticated()
@@ -89,10 +98,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/points/**").authenticated()
 
-                        // 경기 정보 조회
-                        .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
-
-                        // 티켓 - 인증 필요
+                        // 티켓 - 특정 사용자 티켓 조회는 공개, 나머지는 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/user/**").permitAll()
                         .requestMatchers("/api/tickets/**").authenticated()
 
                         .requestMatchers("/api/v1/ai/**").permitAll()

@@ -1,0 +1,319 @@
+package com.ssafy.yammy.predict.service;
+
+import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.auth.repository.MemberRepository;
+import com.ssafy.yammy.predict.dto.*;
+import com.ssafy.yammy.predict.entity.PredictedMatches;
+import com.ssafy.yammy.predict.entity.Predicted;
+import com.ssafy.yammy.predict.entity.PredictMatchSchedule;
+import com.ssafy.yammy.predict.repository.PredictedMatchesRepository;
+import com.ssafy.yammy.predict.repository.PredictedRepository;
+import com.ssafy.yammy.predict.repository.PredictMatchScheduleRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class PredictService {
+
+    private final PredictedRepository predictedRepository;
+    private final PredictedMatchesRepository predictedMatchesRepository;
+    private final PredictMatchScheduleRepository predictMatchScheduleRepository;
+    private final MemberRepository memberRepository;
+
+    /**
+     * 배팅 생성
+     */
+    @Transactional
+    public PredictedResponse createBetting(Member member, PredictedCreateRequest request) {
+        log.info("배팅 생성 요청 - 사용자: {}, 경기: {}, 금액: {}", 
+                member.getMemberId(), request.getPredictedMatchId(), request.getBatAmount());
+
+        // 0. 최소 배팅 금액 검사
+        final long MIN_BET_AMOUNT = 100L;
+        if (request.getBatAmount() < MIN_BET_AMOUNT) {
+            throw new IllegalArgumentException(String.format("최소 배팅 금액은 %d팬심입니다.", MIN_BET_AMOUNT));
+        }
+
+        // 1. 경기 존재 확인 (match_schedule ID로 predicted_matches 찾기)
+        PredictedMatches match = predictedMatchesRepository.findByMatchScheduleId(request.getPredictedMatchId())
+                .orElseThrow(() -> {
+                    log.error("🚫 존재하지 않는 경기 ID: {}", request.getPredictedMatchId());
+                    return new IllegalArgumentException("존재하지 않는 경기입니다.");
+                });
+        
+        log.info("🏈 경기 발견 - predicted_matches ID: {}, match_schedule ID: {}, {} vs {}", 
+                match.getId(), request.getPredictedMatchId(), match.getHome(), match.getAway());
+
+        // 2. 사용자 팬심 확인
+        if (member.getExp() < request.getBatAmount()) {
+            throw new IllegalStateException("팬심이 부족합니다.");
+        }
+
+        // 3. 배당률 계산 (참고용 - 정산시 재계산됨)
+        double odds = calculateOdds(match.getId(), request.getPredict());
+        log.info("현재 배당률: {}", odds);
+
+        // 4. 배팅 생성 (paybackAmount는 정산시 계산)
+        Predicted predicted = Predicted.builder()
+                .member(member)
+                .predictedMatch(match)
+                .predict(request.getPredict())
+                .batAmount(request.getBatAmount())
+                .paybackAmount(0L)  // 정산 전이므로 0으로 설정
+                .isSettled(0) // 정산 전
+                .build();
+
+        // 5. 팬심 차감
+        member.decreaseExp(request.getBatAmount());
+        memberRepository.save(member);
+
+        // 6. 경기의 배팅 금액 업데이트
+        log.info("🎯 배팅 금액 업데이트 전 - 홈: {}, 원정: {}", match.getHomeAmount(), match.getAwayAmount());
+        
+        if (request.getPredict() == 0) {
+            match.addHomeBetAmount(request.getBatAmount());
+            log.info("홈팀에 {}팬심 배팅 추가", request.getBatAmount());
+        } else {
+            match.addAwayBetAmount(request.getBatAmount());
+            log.info("원정팀에 {}팬심 배팅 추가", request.getBatAmount());
+        }
+        
+        log.info("🎯 배팅 금액 업데이트 후 - 홈: {}, 원정: {}", match.getHomeAmount(), match.getAwayAmount());
+        
+        // 8. 새로운 배당률 계산 및 업데이트 (메모리 기반)
+        double newHomeOdds = calculateOddsFromEntity(match, 0);
+        double newAwayOdds = calculateOddsFromEntity(match, 1);
+        
+        log.info("📊 배당률 업데이트 - 경기 ID: {}, 기존 홈: {} → 신규 홈: {}, 기존 원정: {} → 신규 원정: {}",
+                match.getId(), match.getHomeOdds(), newHomeOdds, match.getAwayOdds(), newAwayOdds);
+        
+        match.updateOdds(newHomeOdds, newAwayOdds);
+        predictedMatchesRepository.save(match);
+
+        // 9. 배팅 저장
+        Predicted savedPredicted = predictedRepository.save(predicted);
+
+        log.info("🎉 배팅 생성 완료 - 배팅 ID: {}, 현재 배당률: {} (정산시 재계산)", savedPredicted.getId(), odds);
+        return PredictedResponse.from(savedPredicted);
+    }
+
+    /**
+     * 사용자의 배팅 내역 조회
+     */
+    public Page<PredictedResponse> getUserPredictions(Member member, Pageable pageable) {
+        log.info("사용자 배팅 내역 조회 - 사용자: {}", member.getId());
+
+        Page<Predicted> predictions = predictedRepository.findByMemberOrderByIdDesc(member, pageable);
+        return predictions.map(PredictedResponse::from);
+    }
+
+    /**
+     * 특정 경기의 배당률 계산 (메모리 기반)
+     * @param predictedMatch 배팅 금액이 업데이트된 경기 엔티티
+     * @param selectedTeam 선택된 팀 (0: 홈팀, 1: 원정팀)
+     */
+    public double calculateOddsFromEntity(PredictedMatches predictedMatch, Integer selectedTeam) {
+        try {
+            // 1. 기본 배팅 금액: 각 팀에 1씩 + 현재 메모리의 배팅 금액
+            long homeBetAmount = 1L + predictedMatch.getHomeAmount();
+            long awayBetAmount = 1L + predictedMatch.getAwayAmount();
+            
+            // 2. 전체 배팅 금액
+            long totalBetAmount = homeBetAmount + awayBetAmount;
+            
+            // 3. 선택된 팀의 배팅 금액
+            long selectedTeamBetAmount = selectedTeam == 0 ? homeBetAmount : awayBetAmount;
+            
+            // 4. 배당률 계산: 전체 배팅금 / 선택팀 배팅금
+            double calculatedOdds = (double) totalBetAmount / selectedTeamBetAmount;
+            
+            // 5. 최소 배당률 제한 (1.01 이상)
+            calculatedOdds = Math.max(1.01, calculatedOdds);
+            
+            log.info("배당률 계산 (메모리 기반) - 경기 ID: {}, 선택팀: {}, 홈배팅: {}, 원정배팅: {}, 총배팅: {}, 최종배당률: {}", 
+                    predictedMatch.getId(), selectedTeam, homeBetAmount, awayBetAmount, totalBetAmount, calculatedOdds);
+            
+            return Math.round(calculatedOdds * 100.0) / 100.0; // 소수점 2자리 반올림
+            
+        } catch (Exception e) {
+            log.warn("배당률 계산 오류, 기본값 사용: {}", e.getMessage());
+            return 2.0; // 오류 시 기본 배당률
+        }
+    }
+
+    /**
+     * 특정 경기의 배당률 계산 (DB 쿠리 기반 - 기존 호환용)
+     * @param predictedMatchId predicted_matches 테이블의 PK (not match_schedule ID)
+     */
+    public double calculateOdds(Long predictedMatchId, Integer selectedTeam) {
+        try {
+            // 1. 기본 배팅 금액: 각 팀에 1씩
+            long homeBetAmount = 1L + predictedRepository.calculateHomeBetAmount(predictedMatchId);
+            long awayBetAmount = 1L + predictedRepository.calculateAwayBetAmount(predictedMatchId);
+            
+            // 2. 전체 배팅 금액
+            long totalBetAmount = homeBetAmount + awayBetAmount;
+            
+            // 3. 선택된 팀의 배팅 금액
+            long selectedTeamBetAmount = selectedTeam == 0 ? homeBetAmount : awayBetAmount;
+            
+            // 4. 배당률 계산: 전체 배팅금 / 선택팀 배팅금
+            double calculatedOdds = (double) totalBetAmount / selectedTeamBetAmount;
+            
+            // 5. 최소 배당률 제한 (1.01 이상)
+            calculatedOdds = Math.max(1.01, calculatedOdds);
+            
+            log.info("배당률 계산 (DB 기반) - predicted_match ID: {}, 선택팀: {}, 홈배팅: {}, 원정배팅: {}, 총배팅: {}, 최종배당률: {}", 
+                    predictedMatchId, selectedTeam, homeBetAmount, awayBetAmount, totalBetAmount, calculatedOdds);
+            
+            return Math.round(calculatedOdds * 100.0) / 100.0; // 소수점 2자리 반올림
+            
+        } catch (Exception e) {
+            log.warn("배당률 계산 오류, 기본값 사용: {}", e.getMessage());
+            return 2.0; // 오류 시 기본 배당률
+        }
+    }
+
+    /**
+     * 경기별 배당률 조회 (프론트엔드용)
+     * @param matchScheduleId match_schedule 테이블의 ID (프론트에서 전달하는 값)
+     */
+    public MatchOddsResponse getMatchOdds(Long matchScheduleId) {
+        // match_schedule ID로 predicted_matches 찾기
+        PredictedMatches match = predictedMatchesRepository.findByMatchScheduleId(matchScheduleId)
+                .orElseThrow(() -> {
+                    log.error("🚫 배당률 조회 실패 - match_schedule ID: {}", matchScheduleId);
+                    return new IllegalArgumentException("존재하지 않는 경기입니다.");
+                });
+                
+        // predicted_matches의 PK로 배당률 계산
+        double homeOdds = calculateOdds(match.getId(), 0);
+        double awayOdds = calculateOdds(match.getId(), 1);
+        
+        // predicted_matches의 PK로 배팅 금액 조회
+        long homeBetAmount = 1L + predictedRepository.calculateHomeBetAmount(match.getId());
+        long awayBetAmount = 1L + predictedRepository.calculateAwayBetAmount(match.getId());
+        
+        return MatchOddsResponse.of(matchScheduleId, match.getHome(), match.getAway(),
+                homeOdds, awayOdds, homeBetAmount, awayBetAmount);
+    }
+
+    /**
+     * 사용자 팬심 조회
+     */
+    public UserPointsResponse getUserPoints(Member member) {
+        log.info("사용자 팬심 조회 - 사용자: {}", member.getId());
+
+        return UserPointsResponse.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .points(member.getExp())
+                .build();
+    }
+
+    /**
+     * 날짜별 경기 조회 (기존 API 호환용)
+     */
+    @Transactional  // readOnly 제거!
+    public List<MatchScheduleResponse> getMatchesByDate(String date) {
+        log.info("경기 조회 요청 - 날짜: {}", date);
+        
+        // match_schedule 테이블에서 해당 날짜 경기 조회
+        List<PredictMatchSchedule> schedules = predictMatchScheduleRepository.findByMatchDate(date);
+        
+        return schedules.stream()
+                .map(schedule -> {
+                    // 각 경기에 대한 predicted_matches 엔티티 확인 또는 생성
+                    PredictedMatches predictedMatch = getOrCreatePredictedMatch(schedule);
+                    
+                    // 💾 DB에 저장된 배당률 사용 (realized 실시간 계산 대신)
+                    Double homeOdds = predictedMatch.getHomeOdds();
+                    Double awayOdds = predictedMatch.getAwayOdds();
+                    
+                    log.info("📊 경기 배당률 조회 - ID: {}, 홈: {} ({}) vs 원정: {} ({})", 
+                            schedule.getId(), schedule.getHome(), homeOdds, schedule.getAway(), awayOdds);
+                    
+                    return MatchScheduleResponse.from(schedule, homeOdds, awayOdds);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * match_schedule에 대응하는 predicted_match 조회 또는 생성
+     * 중복 저장 방지를 위해 synchronized 처리
+     */
+    @Transactional  // readOnly 제거!
+    public synchronized PredictedMatches getOrCreatePredictedMatch(PredictMatchSchedule schedule) {
+        try {
+            // 다시 한번 조회 (동시성 문제 방지)
+            Optional<PredictedMatches> existing = predictedMatchesRepository.findByMatchScheduleId(schedule.getId());
+            
+            if (existing.isPresent()) {
+                log.debug("기존 predicted_match 사용 - scheduleId: {}, predictedMatchId: {}", 
+                         schedule.getId(), existing.get().getId());
+                return existing.get();
+            }
+            
+            // 홈팀과 원정팀으로도 한번 더 확인 (추가 안전장치)
+            Optional<PredictedMatches> existingByTeams = predictedMatchesRepository.findByHomeAndAway(
+                schedule.getHome(), schedule.getAway());
+            
+            if (existingByTeams.isPresent()) {
+                log.warn("팀명으로 기존 경기 발견 - home: {}, away: {}, predictedMatchId: {}", 
+                        schedule.getHome(), schedule.getAway(), existingByTeams.get().getId());
+                return existingByTeams.get();
+            }
+            
+            // 새로운 predicted_matches 생성
+            PredictedMatches newMatch = PredictedMatches.builder()
+                    .matchSchedule(schedule)
+                    .home(schedule.getHome())
+                    .away(schedule.getAway())
+                    .homeAmount(1L)  // 기본 배팅금액 1
+                    .awayAmount(1L)  // 기본 배팅금액 1
+                    .homeOdds(2.0)   // 임시 기본 배당률
+                    .awayOdds(2.0)
+                    .isSettled(0)    // 정산 전
+                    .build();
+            
+            PredictedMatches saved = predictedMatchesRepository.save(newMatch);
+            
+            // 💾 실제 배당률 계산 후 업데이트 (메모리 기반)
+            double calculatedHomeOdds = calculateOddsFromEntity(saved, 0);
+            double calculatedAwayOdds = calculateOddsFromEntity(saved, 1);
+            
+            saved.updateOdds(calculatedHomeOdds, calculatedAwayOdds);
+            predictedMatchesRepository.save(saved);
+            
+            log.info("새 predicted_match 생성 완료 - scheduleId: {}, predictedMatchId: {}, home: {} ({}), away: {} ({})", 
+                    schedule.getId(), saved.getId(), schedule.getHome(), calculatedHomeOdds, 
+                    schedule.getAway(), calculatedAwayOdds);
+            
+            return saved;
+            
+        } catch (Exception e) {
+            // 데이터베이스 제약조건 위반 또는 동시성 문제 시 다시 조회
+            log.warn("생성 중 오류 발생, 다시 조회 시도 - scheduleId: {}, error: {}", 
+                    schedule.getId(), e.getMessage());
+            
+            Optional<PredictedMatches> fallback = predictedMatchesRepository.findByMatchScheduleId(schedule.getId());
+            if (fallback.isPresent()) {
+                log.info("폴백 조회 성공 - predictedMatchId: {}", fallback.get().getId());
+                return fallback.get();
+            }
+            
+            throw new RuntimeException("경기 생성/조회 실패 - scheduleId: " + schedule.getId(), e);
+        }
+    }
+}

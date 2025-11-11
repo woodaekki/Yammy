@@ -1,11 +1,11 @@
 package com.ssafy.yammy.global.util;
-import org.springframework.stereotype.Component;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.io.IOException; // IOException import 추가 (Files.readAllLines 대신)
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,36 +24,26 @@ public class BadWordsFilterUtil {
 
     // 파일에서 욕설 단어 불러오기
     private void loadBadWords() {
-//        try {
-//            List<String> badWords = Files.readAllLines(Path.of("src/main/resources/badwords.txt"));
-//
-//            for (String badWord : badWords) {
-//                String word = badWord.trim();
-//                bannedWords.add(word);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-                ClassPathResource resource = new ClassPathResource("badwords.txt");
+        ClassPathResource resource = new ClassPathResource("badwords.txt");
 
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
 
-                    String badWord;
-                    while ((badWord = reader.readLine()) != null) {
-                        String word = badWord.trim();
-                        if (!word.isEmpty()) {
-                            bannedWords.add(word);
-                        }
-                    }
-
-            } catch (IOException e) { // IOException으로 변경 (Files.readAllLines 사용 안 함)
-                System.err.println("Failed to load badwords.txt from Classpath.");
-                e.printStackTrace();
-                // 파일 로딩 실패 시 애플리케이션 시작은 되나, 비속어 필터링 기능은 작동하지 않습니다.
-            } catch (Exception e) {
-                e.printStackTrace();
+            String badWord;
+            while ((badWord = reader.readLine()) != null) {
+                String word = badWord.trim();
+                if (!word.isEmpty()) {
+                    bannedWords.add(word);
+                }
             }
+
+        } catch (IOException e) { // IOException으로 변경 (Files.readAllLines 사용 안 함)
+            System.err.println("Failed to load badwords.txt from Classpath.");
+            e.printStackTrace();
+            // 파일 로딩 실패 시 애플리케이션 시작은 되나, 비속어 필터링 기능은 작동하지 않습니다.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

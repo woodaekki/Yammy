@@ -1,0 +1,448 @@
+/* BettingInputModal.css */
+
+/* 모달 배경 */
+.betting-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* 모달 컨테이너 */
+.betting-modal-container {
+  background-color: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 모달 헤더 */
+.betting-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  border-radius: 16px 16px 0 0;
+}
+
+.betting-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.close-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* 모달 콘텐츠 */
+.betting-modal-content {
+  padding: 1.5rem;
+}
+
+/* 배당률 비교 그래프 */
+.odds-comparison-section {
+  margin-bottom: 1.5rem;
+}
+
+.odds-comparison-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.odds-comparison-bar {
+  display: flex;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0f0f0;
+  border: 2px solid #e0e0e0;
+}
+
+.team-odds-portion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.team-odds-portion.selected {
+  border: 3px solid #FFD700;
+  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.odds-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.team-name-small {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.odds-value {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* 선택된 팀 정보 */
+.selected-team-info {
+  margin-bottom: 1.5rem;
+}
+
+.selected-team-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.selected-team-card {
+  background: linear-gradient(135deg, var(--team-color), var(--team-color-dark));
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.selected-team-card .team-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+.selected-team-card .team-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.selected-team-card .team-odds {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.odds-ratio-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.odds-ratio-background {
+  border-radius: inherit;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* 배팅 금액 입력 */
+.bet-amount-section {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.amount-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bet-amount-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.current-points {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.current-points strong {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.amount-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.amount-input {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  text-align: right;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.amount-input:focus {
+  border-color: #4CAF50;
+}
+
+.amount-input.error {
+  border-color: #f44336;
+}
+
+.amount-input.error:focus {
+  border-color: #f44336;
+}
+
+.validation-message {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.validation-message.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.currency {
+  position: absolute;
+  right: 1rem;
+  color: #666;
+  font-size: 1rem;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* 예상 수익 */
+.expected-return {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.return-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.return-item:last-child {
+  border-bottom: none;
+}
+
+.return-item.total {
+  border-top: 2px solid #d0d0d0;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  font-weight: 600;
+}
+
+.return-label {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.return-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.return-value.profit {
+  color: #4CAF50;
+}
+
+.return-item.total .return-value {
+  color: #2E7D32;
+  font-size: 1.1rem;
+}
+
+/* 액션 버튼들 */
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.cancel-button,
+.bet-button {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.bet-button {
+  background: linear-gradient(135deg, var(--team-color), var(--team-color-dark));
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bet-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bet-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .betting-modal-backdrop {
+    padding: 0.5rem;
+  }
+  
+  .betting-modal-header,
+  .betting-modal-content {
+    padding: 1rem;
+  }
+  
+  .selected-team-card,
+  .bet-amount-section,
+  .expected-return {
+    padding: 1rem;
+  }
+  
+  .action-buttons {
+    gap: 0.75rem;
+  }
+}
+
+/* 팀 로고와 함께 사용하는 스타일 */
+.selected-team-card .team-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.selected-team-card .team-details {
+  text-align: left;
+}
+
+.selected-team-card .team-name {
+  margin-bottom: 0.5rem;
+}
+
+/* PredictPage에서 사용하는 팀 정보 스타일 */
+.team-section .team-info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0.5rem 0;
+}
+
+.team-section .team-details {
+  flex: 1;
+}
+
+.team-section .team-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.team-section .team-stats {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
