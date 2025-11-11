@@ -42,12 +42,11 @@
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   padding: 6px 10px;
-  gap: 6px;
+  gap: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   max-width: 240px;
 }
 
-/* 아이콘 + 포인트 */
 .ypay-info {
   display: flex;
   align-items: center;
@@ -90,7 +89,7 @@
   background-color: #fff;
   color: #333;
   border: 1px solid #d0d0d0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 4px 10px;
   font-size: 0.8rem;
   font-weight: 500;
