@@ -35,6 +35,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 카카오 ID로 조회
     Optional<Member> findByKakaoId(String kakaoId);
 
+    // 카카오 ID로 조회 (탈퇴하지 않은 회원만)
+    @Query("SELECT m FROM Member m WHERE m.kakaoId = :kakaoId AND m.deletedAt IS NULL")
+    Optional<Member> findByKakaoIdAndNotDeleted(@Param("kakaoId") String kakaoId);
+
     // 카카오 ID로 삭제
     void deleteByKakaoId(String kakaoId);
 }

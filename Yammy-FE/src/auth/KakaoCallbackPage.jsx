@@ -48,8 +48,33 @@ export default function KakaoCallbackPage() {
         // 메인 페이지로 리다이렉트
         navigate('/sns', { replace: true });
       } catch (err) {
-        console.error('Kakao login error:', err);
-        setError(err.response?.data?.message || '카카오 로그인 처리 중 오류가 발생했습니다.');
+        let errorMessage;
+
+        // 백엔드에서 전달한 에러 메시지 우선 사용
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+        // 400 Bad Request - 탈퇴한 회원 또는 비즈니스 로직 에러
+        else if (err.response?.status === 400) {
+          errorMessage = '로그인에 실패했습니다. 탈퇴한 회원이거나 잘못된 요청입니다.';
+        }
+        // 403 Forbidden - 접근 거부
+        else if (err.response?.status === 403) {
+          errorMessage = '접근이 거부되었습니다. 백엔드 서버를 확인해주세요.';
+        }
+        // 500 Internal Server Error
+        else if (err.response?.status === 500) {
+          errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        }
+        // 기타 에러
+        else if (err.message) {
+          errorMessage = err.message;
+        }
+        else {
+          errorMessage = '카카오 로그인 처리 중 오류가 발생했습니다.';
+        }
+
+        setError(errorMessage);
         setLoading(false);
         setTimeout(() => navigate('/login'), 3000);
       }

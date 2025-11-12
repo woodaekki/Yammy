@@ -119,13 +119,6 @@ public class KakaoOAuthService {
             params.add("redirect_uri", redirectUri);
             params.add("code", code);
 
-            // 디버깅용 로그
-            System.out.println("=== 카카오 토큰 요청 정보 ===");
-            System.out.println("client_id: " + restApiKey);
-            System.out.println("client_secret: " + clientSecret);
-            System.out.println("redirect_uri: " + redirectUri);
-            System.out.println("code: " + code);
-
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_TOKEN_URL, request, String.class);
 
@@ -174,10 +167,19 @@ public class KakaoOAuthService {
     private Member getOrCreateMember(KakaoUser kakaoUser) {
         String kakaoId = String.valueOf(kakaoUser.getId());
 
-        // 카카오 ID로 먼저 조회
-        Optional<Member> existingMember = memberRepository.findByKakaoId(kakaoId);
+        // 카카오 ID로 먼저 조회 (탈퇴하지 않은 회원만)
+        Optional<Member> existingMember = memberRepository.findByKakaoIdAndNotDeleted(kakaoId);
         if (existingMember.isPresent()) {
             return existingMember.get();
+        }
+
+        // 탈퇴한 회원이 다시 로그인 시도하는 경우 체크
+        Optional<Member> deletedMember = memberRepository.findByKakaoId(kakaoId);
+        if (deletedMember.isPresent()) {
+            Member member = deletedMember.get();
+            if (member.getDeletedAt() != null) {
+                throw new IllegalArgumentException("탈퇴한 회원입니다. 다시 가입하려면 고객센터에 문의하세요.");
+            }
         }
 
         // 이메일로 조회 (기존 일반 회원이 카카오로 로그인하는 경우)
@@ -253,16 +255,24 @@ public class KakaoOAuthService {
             KakaoUser kakaoUser = getUserInfo(accessToken);
             String kakaoId = String.valueOf(kakaoUser.getId());
 
-            // 3. 카카오 연결 끊기
+            // 3. DB에서 사용자 조회
+            Member member = memberRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+            // 4. Soft Delete: deletedAt에 현재 시각 설정
+            member.setDeletedAt(java.time.LocalDateTime.now());
+            memberRepository.save(member);
+
+            // 5. Refresh Token 삭제
+            refreshTokenRepository.deleteByLoginId(member.getId());
+
+            // 6. 카카오 연결 끊기
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders unlinkHeaders = new HttpHeaders();
             unlinkHeaders.setBearerAuth(accessToken);
             HttpEntity<Void> unlinkRequest = new HttpEntity<>(unlinkHeaders);
 
             restTemplate.exchange(KAKAO_UNLINK_URL, HttpMethod.POST, unlinkRequest, String.class);
-
-            // 4. DB에서 사용자 삭제
-            memberRepository.deleteByKakaoId(kakaoId);
 
         } catch (Exception e) {
             throw new RuntimeException("카카오 회원 탈퇴 처리 중 오류가 발생했습니다: " + e.getMessage(), e);
