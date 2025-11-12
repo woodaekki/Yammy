@@ -1,9 +1,9 @@
 .create-container {
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
   background: #fff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
+  min-height: 100vh;
 }
 
 /* 헤더 */
@@ -53,7 +53,7 @@
   box-sizing: border-box;
 }
 
-/* ✅ 포커스 회색톤 */
+/* 포커스 회색톤 */
 .create-input-field:focus,
 .create-textarea-field:focus,
 .create-select:focus {
@@ -84,7 +84,7 @@
   color: #555;
 }
 
-/* ✅ 이미지 프리뷰 영역 (edit 버전 동일) */
+/* 이미지 프리뷰 영역 */
 .create-image-list {
   display: flex;
   flex-wrap: wrap;
@@ -146,4 +146,3 @@
   color: #888;
   padding: 2rem 0;
 }
-
