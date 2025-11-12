@@ -2,8 +2,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.2rem 1rem;
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
   padding: 0 0.4rem; 
   background: #fff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
@@ -15,8 +14,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.2rem 1rem;
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
   padding: 1rem;
   background: #fff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;

@@ -1,9 +1,9 @@
 .edit-container {
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
   background: #fff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
+  min-height: 100vh;
 }
 
 /* 헤더 */
@@ -84,7 +84,7 @@
   color: #555;
 }
 
-/* 이미지 프리뷰 영역 (create와 동일) */
+/* 이미지 프리뷰 영역 */
 .edit-image-list {
   display: flex;
   flex-wrap: wrap;
