@@ -74,6 +74,6 @@ public class UsedItemChatRoom {
      * roomKey 생성 헬퍼 메서드
      */
     public static String generateRoomKey(Long usedItemId, Long buyerId) {
-        return String.format("useditem_%d_%d", usedItemId, buyerId);
+        return "useditem_" + java.util.UUID.randomUUID().toString();
     }
 }

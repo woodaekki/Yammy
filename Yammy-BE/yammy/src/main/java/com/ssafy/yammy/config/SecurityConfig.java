@@ -97,8 +97,9 @@ public class SecurityConfig {
                         // 포인트 충전 및 조회
                         .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/points/**").authenticated()
-                        
-                        // 티켓 - 인증 필요
+
+                        // 티켓 - 특정 사용자 티켓 조회는 공개, 나머지는 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/user/**").permitAll()
                         .requestMatchers("/api/tickets/**").authenticated()
 
                         .requestMatchers("/api/v1/ai/**").permitAll()
