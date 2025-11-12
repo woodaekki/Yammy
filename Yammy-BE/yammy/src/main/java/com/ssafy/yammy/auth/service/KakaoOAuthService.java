@@ -210,6 +210,7 @@ public class KakaoOAuthService {
                 .profileImage(kakaoUser.getProfileImageUrl())
                 .isSocial(true)
                 .kakaoId(kakaoId)
+                .exp(500L)  // 회원가입 시 500 팬심 지급
                 .build();
 
         Member savedMember = memberRepository.save(newMember);
