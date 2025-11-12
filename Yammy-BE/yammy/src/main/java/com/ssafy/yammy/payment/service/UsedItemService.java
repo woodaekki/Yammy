@@ -109,6 +109,10 @@ public class UsedItemService {
 
         UsedItem savedItem = usedItemRepository.save(usedItem);
 
+        // 게시글 작성 보상: EXP 10
+        member.increaseExp(50L);
+        memberRepository.save(member);
+
         return UsedItemResponseDto.builder()
                 .id(savedItem.getId())
                 .memberId(member.getMemberId())
