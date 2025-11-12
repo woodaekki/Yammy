@@ -29,63 +29,54 @@ function UsedItemDetail() {
 
   // 시간 포맷 함수 (한국 시간 기준)
   const formatTimeAgo = (dateString) => {
-  if (!dateString) return "방금 전";
-
-  const parsed = new Date(dateString);
+  const date = new Date(dateString);
+  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
-  let diff = Math.floor((now - parsed) / 1000);
+  const diffInMs = now - koreaTime;
+ 
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  // 미래 시간일 경우 (즉, +9시간 중복된 경우) 자동 보정
-  if (diff < 0) {
-    diff = Math.floor((now - (parsed.getTime() - 9 * 60 * 60 * 1000)) / 1000);
-  }
-
-  if (diff < 60) return `${diff}초 전`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}일 전`;
-
-  return parsed.toLocaleDateString("ko-KR", {
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
+  if (diffInMinutes < 1) return '방금 전';
+  if (diffInMinutes < 60) return `${diffInMinutes}분 전`
+  if (diffInHours < 24) return `${diffInHours}시간 전`
+  if (diffInDays < 7) return `${diffInDays}일 전`
+  return koreaTime.toLocaleDateString('ko-KR')
+}
 
   // 수정
-  const handleEdit = () => navigate(`/useditem/edit/${params.id}`);
+  const handleEdit = () => navigate(`/useditem/edit/${params.id}`)
 
   // 채팅방 입장
   const handleChat = async () => {
     try {
-      const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id);
-      navigate(`/useditem/chat/${chatRoom.roomKey}`);
+      const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id)
+      navigate(`/useditem/chat/${chatRoom.roomKey}`)
     } catch (error) {
-      console.error("채팅방 생성 실패:", error);
+      console.error("채팅방 생성 실패:", error)
       alert("채팅방에 입장하였습니다.");
     }
   };
 
   // 삭제
   const handleDelete = () => {
-    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?");
+    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?")
     if (!confirmed) return;
     deleteUsedItem(params.id)
       .then(() => {
-        alert("게시글이 삭제되었습니다.");
-        navigate("/useditem");
+        alert("게시글이 삭제되었습니다.")
+        navigate("/useditem")
       })
       .catch((error) => {
         console.error("삭제 실패:", error);
-        alert("삭제 중 오류가 발생했습니다.");
+        alert("삭제 중 오류가 발생했습니다.")
       });
   };
 
   // 로딩 / 데이터 없음 처리
-  if (loading) return <p className="loading-text">로딩 중...</p>;
-  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>;
+  if (loading) return <p className="loading-text">로딩 중...</p>
+  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>
 
   // 팀 이름 매핑
   const teamNames = {
