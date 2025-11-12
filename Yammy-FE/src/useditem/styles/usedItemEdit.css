@@ -6,22 +6,17 @@
   color: #333;
 }
 
+/* 헤더 */
 .edit-header {
-  position: relative; 
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.4rem;
   padding: 0.8rem 1rem;
   border-bottom: 1px solid #f1f1f1;
-  margin-bottom: 1rem; 
+  margin-bottom: 1rem;
 }
 
 .edit-back-btn {
-  position: absolute;
-  left: 1rem;           
-  top: 50%;            
-  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 1.4rem;
@@ -32,7 +27,6 @@
 .edit-header-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1f2937;
 }
 
 /* 폼 전체 */
@@ -59,6 +53,7 @@
   box-sizing: border-box;
 }
 
+/* 포커스 회색톤 */
 .edit-input-field:focus,
 .edit-textarea-field:focus,
 .edit-select:focus {
@@ -89,7 +84,7 @@
   color: #555;
 }
 
-/* 이미지 리스트 */
+/* 이미지 프리뷰 영역 (create와 동일) */
 .edit-image-list {
   display: flex;
   flex-wrap: wrap;
@@ -124,24 +119,31 @@
   box-sizing: border-box;
 }
 
-/* 텍스트 버튼 */
-.edit-text-btn {
-  background: none;
+/* 수정 / 취소 버튼 */
+.edit-submit-btn,
+.edit-cancel-btn {
   border: none;
-  color: #777;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0.2rem 0.5rem;
-  transition: color 0.2s;
-}
-
-.edit-text-btn:hover {
-  color: #444;
-}
-
-.edit-text {
+  border-radius: 6px;
+  padding: 0.5rem 1.1rem;
   font-size: 0.95rem;
-  color: #555;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.edit-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.edit-cancel-btn {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.edit-error-text {
+  font-size: 0.9rem;
+  color: #d33;
+  margin: -0.4rem 0 0.6rem 0.2rem;
 }
 
 /* 로딩 */
