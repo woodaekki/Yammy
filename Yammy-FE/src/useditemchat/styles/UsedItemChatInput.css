@@ -2,10 +2,8 @@
 .useditem-chat-input-bar {
   position: fixed;
   bottom: 60px; /* 네비바 높이만큼 위로 */
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
-  max-width: 600px;
   background-color: #ffffff;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);

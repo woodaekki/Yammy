@@ -9,8 +9,7 @@
 
 .payment-card {
   background-color: #fff;
-  width: 80%;
-  max-width: 400px;
+  width: 100%;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   padding: 2.2rem 1.8rem;

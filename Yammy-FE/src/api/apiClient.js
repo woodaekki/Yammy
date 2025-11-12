@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:8080/api';
-// export const API_BASE_URL = 'http://k13c205.p.ssafy.io:8080/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 공통 Axios 인스턴스 생성
 const apiClient = axios.create({

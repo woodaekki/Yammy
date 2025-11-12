@@ -13,8 +13,7 @@ variables:
 Test_Build_BE:
   stage: Test_Build
   only:
-    - CI/CD     # 삭제 예정
-    - develop   # 삭제 예정
+    - develop
     - master
   image: eclipse-temurin:17-jdk
 
@@ -62,8 +61,7 @@ Test_Build_BE:
 FE_Image:
   stage: FE_Image
   only:
-    - CI/CD     # 삭제 예정
-    - develop   # 삭제 예정
+    - develop
     - master
   image: docker:24.0.5
   tags:
@@ -91,8 +89,7 @@ FE_Image:
 BE_Image:
   stage: BE_Image
   only:
-    - CI/CD     # 삭제 예정
-    - develop   # 삭제 예정
+    - develop
     - master
   image: eclipse-temurin:17-jdk
 
@@ -125,8 +122,7 @@ BE_Image:
 Deploy:
   stage: Deploy
   only:
-    - CI/CD     # 삭제 예정
-    - develop   # 삭제 예정
+    - develop
     - master
   tags:
     - yammy-build

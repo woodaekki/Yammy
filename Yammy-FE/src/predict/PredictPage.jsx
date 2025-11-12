@@ -3,12 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { usePredict, getTeamColor } from './hooks/usePredict';
 import { TEAM_COLORS, getTeamColors } from '../sns/utils/teamColors';
 import { TeamLogo } from './utils/teamLogo.jsx';
+import SettlementModal from './components/SettlementModal';
+import { settleMatches } from './api/predictApi';
 import './styles/predict.css';
 import './styles/TeamLogo.css';
 
 const PredictPage = () => {
   const navigate = useNavigate();
   const [teamColors, setTeamColors] = useState(getTeamColors());
+  const [showSettlementModal, setShowSettlementModal] = useState(false);
+
+  // 관리자 권한 확인
+  const authority = localStorage.getItem('authority');
+  const isAdmin = authority === 'ADMIN';
+
+  console.log('🔍 현재 사용자 권한:', authority);
+  console.log('🔍 관리자 여부:', isAdmin);
 
   // 오늘 날짜 가져오기
   const today = new Date();
@@ -20,13 +30,10 @@ const PredictPage = () => {
   const todayDateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
   // 경기 데이터 가져오기
-  const { matches, loading, error } = usePredict();
+  const { matches, loading, error, fetchTodayMatches } = usePredict();
 
-  // 오늘 경기만 필터링 (날짜 형식 맞춤: YYYY-MM-DD)
-  const todayMatches = matches.filter(match => {
-    console.log(`🔍 날짜 비교: match.date="${match.date}" vs today="${todayDateString}" → ${match.date === todayDateString}`);
-    return match.date === todayDateString;
-  });
+  // 🔥 임시로 전체 경기 보여주기 (날짜 필터링 제거)
+  const todayMatches = matches; // 전체 경기 보여주기
 
   // 팀 컬러 업데이트
   useEffect(() => {
@@ -64,11 +71,40 @@ const PredictPage = () => {
     navigate(`/prediction/${matchId}`);
   };
 
+  // 정산 핸들러
+  const handleSettlement = async (settlementData) => {
+    try {
+      console.log('정산 데이터:', settlementData);
+
+      // API 호출
+      const result = await settleMatches(settlementData);
+
+      alert(`정산이 완료되었습니다.\n정산된 경기 수: ${result.settledMatchesCount || settlementData.length}개`);
+      setShowSettlementModal(false);
+
+      // 경기 목록 새로고침 (window.location.reload() 대신 리페치)
+      await fetchTodayMatches();
+    } catch (error) {
+      console.error('정산 실패:', error);
+      alert(error.message || '정산 처리 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="predict-page">
       <div className="predict-header" style={{ backgroundColor: teamColors.bgColor }}>
         <h1 style={{ color: teamColors.textColor }}>⚾ 승부 예측</h1>
-        <p style={{ color: teamColors.textColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
+        <div className="predict-header-content">
+          <p style={{ color: teamColors.textColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
+          {isAdmin && (
+            <button
+              className="settlement-button"
+              onClick={() => setShowSettlementModal(true)}
+            >
+              정산하기
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="predict-schedule">
@@ -77,7 +113,7 @@ const PredictPage = () => {
       
       <div className="predict-content">
         <div className="today-matches">
-          <h2>오늘의 경기</h2>
+          <h2>배팅 가능한 경기</h2>
           
           {loading && (
             <div className="loading">경기 데이터를 불러오는 중...</div>
@@ -92,10 +128,10 @@ const PredictPage = () => {
               {todayMatches.map((match) => {
                 const gameInProgress = isGameInProgress(match.gameTime);
                 
-                // 배당률 비율 계산
-                const totalOdds = match.homeOdds + match.awayOdds;
-                const homeRatio = match.homeOdds / totalOdds;
-                const awayRatio = match.awayOdds / totalOdds;
+                // 배팅금액 비율 계산 (homeAmount + awayAmount 기반)
+                const totalAmount = match.homeAmount + match.awayAmount;
+                const homeAmountRatio = totalAmount > 0 ? match.homeAmount / totalAmount : 0.5; // 기본값 50%
+                const awayAmountRatio = totalAmount > 0 ? match.awayAmount / totalAmount : 0.5; // 기본값 50%
                 
                 return (
                   <div 
@@ -106,35 +142,13 @@ const PredictPage = () => {
                   >
                     <div className="match-time-header">{match.gameTime}</div>
                     
-                    {/* 배당률 비율 그래프 바 */}
-                    <div className="odds-ratio-bar">
-                      <div 
-                        className="home-odds-bar"
-                        style={{ 
-                          width: `${homeRatio * 100}%`,
-                          backgroundColor: getTeamColor(match.homeTeam)
-                        }}
-                      >
-                        <span className="odds-percentage">{(homeRatio * 100).toFixed(1)}%</span>
-                      </div>
-                      <div 
-                        className="away-odds-bar"
-                        style={{ 
-                          width: `${awayRatio * 100}%`,
-                          backgroundColor: getTeamColor(match.awayTeam)
-                        }}
-                      >
-                        <span className="odds-percentage">{(awayRatio * 100).toFixed(1)}%</span>
-                      </div>
-                    </div>
-                    
                     <div className="match-prediction-card" style={{ display: 'flex' }}>
                       {/* 홈팀 */}
                       <div
                         className="team-section home-team-section"
                         style={{ 
                           backgroundColor: getTeamColor(match.homeTeam),
-                          flex: homeRatio
+                          flex: homeAmountRatio
                         }}
                       >
                         <div className="team-label">HOME</div>
@@ -146,6 +160,7 @@ const PredictPage = () => {
                           </div>
                         </div>
                         <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
+                        <div className="total-fansim">총 팬심: {match.homeAmount.toLocaleString()}</div>
                       </div>
 
                       {/* 중앙 VS */}
@@ -158,7 +173,7 @@ const PredictPage = () => {
                         className="team-section away-team-section"
                         style={{ 
                           backgroundColor: getTeamColor(match.awayTeam),
-                          flex: awayRatio
+                          flex: awayAmountRatio
                         }}
                       >
                         <div className="team-label">AWAY</div>
@@ -170,6 +185,7 @@ const PredictPage = () => {
                           <TeamLogo teamName={match.awayTeam} size="medium" />
                         </div>
                         <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
+                        <div className="total-fansim">총 팬심: {match.awayAmount.toLocaleString()}</div>
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>
@@ -187,10 +203,19 @@ const PredictPage = () => {
           )}
           
           {!loading && !error && todayMatches.length === 0 && (
-            <div className="no-matches">오늘 예정된 경기가 없습니다.</div>
+            <div className="no-matches">배팅 가능한 경기가 없습니다.</div>
           )}
         </div>
       </div>
+
+      {/* 정산 모달 */}
+      {showSettlementModal && (
+        <SettlementModal
+          matches={todayMatches}
+          onClose={() => setShowSettlementModal(false)}
+          onSubmit={handleSettlement}
+        />
+      )}
     </div>
   );
 };

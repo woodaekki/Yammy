@@ -5,7 +5,7 @@ import { TeamLogo } from '../utils/teamLogo.jsx';
 import '../styles/BettingInputModal.css';
 import '../styles/TeamLogo.css';
 
-const BettingInputModal = ({ match, selectedTeam, onClose }) => {
+const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) => {
   const [betAmount, setBetAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
@@ -100,11 +100,15 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
       console.log('배팅 데이터:', bettingData);
       
       const result = await createBetting(bettingData);
-      
+
       // 성공 처리
       alert(`배팅이 완료되었습니다!\n배팅 ID: ${result.id || 'N/A'}`);
       onClose(); // 모달 닫기
-      // navigate 제거 - 모달 닫기만 하고 현재 페이지 유지
+
+      // 배팅 성공 후 경기 목록 새로고침
+      if (onBettingSuccess) {
+        await onBettingSuccess();
+      }
     } catch (error) {
       console.error('배팅 실패:', error);
       
@@ -136,32 +140,34 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
         </div>
 
         <div className="betting-modal-content">
-          {/* 배당률 비교 그래프 */}
+          {/* 배팅금액 비교 그래프 */}
           <div className="odds-comparison-section">
-            <h3>배당률 비교</h3>
+            <h3>배팅 현황 비교</h3>
             <div className="odds-comparison-bar">
               <div 
                 className={`team-odds-portion ${selectedTeam === 0 ? 'selected' : ''}`}
                 style={{ 
-                  width: `${(match.homeOdds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  width: `${((match.homeAmount + match.awayAmount) > 0 ? 
+                            (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 : 50)}%`,
                   backgroundColor: getTeamColor(match.homeTeam)
                 }}
               >
                 <div className="odds-info">
                   <span className="team-name-small">{match.homeTeam}</span>
-                  <span className="odds-value">{match.homeOdds.toFixed(2)}</span>
+                  <span className="odds-value">{match.homeAmount.toLocaleString()}팬심</span>
                 </div>
               </div>
               <div 
                 className={`team-odds-portion ${selectedTeam === 1 ? 'selected' : ''}`}
                 style={{ 
-                  width: `${(match.awayOdds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  width: `${((match.homeAmount + match.awayAmount) > 0 ? 
+                            (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100 : 50)}%`,
                   backgroundColor: getTeamColor(match.awayTeam)
                 }}
               >
                 <div className="odds-info">
                   <span className="team-name-small">{match.awayTeam}</span>
-                  <span className="odds-value">{match.awayOdds.toFixed(2)}</span>
+                  <span className="odds-value">{match.awayAmount.toLocaleString()}팬심</span>
                 </div>
               </div>
             </div>
@@ -200,7 +206,10 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
                     <div className="team-name">{selectedTeamInfo.name}</div>
                     <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
                     <div className="odds-ratio-text">
-                      {((selectedTeamInfo.odds / (match.homeOdds + match.awayOdds)) * 100).toFixed(1)}% 비율
+                      {((match.homeAmount + match.awayAmount) > 0 ? 
+                        (selectedTeam === 0 ? 
+                         (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 : 
+                         (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100) : 50).toFixed(1)}% 비율
                     </div>
                   </div>
                 </div>

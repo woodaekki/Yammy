@@ -47,7 +47,6 @@ public class BadWordsFilterUtil {
     }
 
 
-
     // 문장 안에 욕설이 포함되어있는지 확인하기
     public boolean containsBadWord(String word) {
         if (word == null) return false;

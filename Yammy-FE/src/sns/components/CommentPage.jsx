@@ -15,23 +15,19 @@ import '../styles/CommentPage.css';
 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
-  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
-  const diffInMs = now - date;
+  const diffInMs = now - koreaTime;
+ 
   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
   const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
   if (diffInMinutes < 1) return '방금 전';
   if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
   if (diffInHours < 24) return `${diffInHours}시간 전`;
   if (diffInDays < 7) return `${diffInDays}일 전`;
-  return kstDate.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return koreaTime.toLocaleDateString('ko-KR');
 };
 
 const ImageCarousel = ({ images = [], postId }) => {
