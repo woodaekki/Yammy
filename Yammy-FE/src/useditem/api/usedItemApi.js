@@ -1,8 +1,8 @@
 import apiClient from "../../api/apiClient"
 
 // 전체 조회
-export const getAllUsedItems = async (page = 0, size = 10) => {
-  const res = await apiClient.get(`/trades?page=${page}&size=${size}`)
+export const getAllUsedItems = async (page = 0, size = 10, sort = 'createdAt,desc') => {
+  const res = await apiClient.get(`/trades?page=${page}&size=${size}&sort=${sort}`)
   return res.data.content // Page 객체에서 content만 가져오기
 }
 
