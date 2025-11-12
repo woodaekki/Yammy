@@ -1,5 +1,6 @@
 package com.ssafy.yammy.useditemchat.controller;
 
+import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.chatgames.dto.MessageResponse;
 import com.ssafy.yammy.config.CustomUserDetails;
 import com.ssafy.yammy.payment.entity.Photo;
@@ -35,6 +36,7 @@ public class UsedItemChatController {
     private final UsedItemChatRoomService usedItemChatRoomService;
     private final UsedItemFirebaseChatService usedItemFirebaseChatService;
     private final UsedItemRepository usedItemRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 채팅방 생성 또는 기존 방 입장
@@ -173,6 +175,16 @@ public class UsedItemChatController {
                 builder.itemImageUrl(photos.get(0).getFileUrl());
             }
         }
+
+        // 추가: 판매자/구매자 닉네임 조회
+        memberRepository.findById(chatRoom.getSellerId()).ifPresent(seller -> {
+            builder.sellerNickname(seller.getNickname());
+        });
+
+        memberRepository.findById(chatRoom.getBuyerId()).ifPresent(buyer -> {
+            builder.buyerNickname(buyer.getNickname());
+        });
+
 
         return builder.build();
     }
