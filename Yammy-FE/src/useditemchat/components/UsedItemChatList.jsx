@@ -50,7 +50,7 @@ function UsedItemChatList() {
     <div className="chat-list-container">
       {/* === 헤더 === */}
       <div className="chat-list-header">
-        <button onClick={() => navigate(-1)} className="chat-list-back-btn">
+        <button onClick={() => navigate("/useditem")} className="chat-list-back-btn">
           ←
         </button>
         <h1 className="chat-list-title">채팅방 목록</h1>
@@ -85,7 +85,7 @@ function UsedItemChatList() {
                   <div className="chat-list-item-left">
                     <div className="chat-list-item-avatar">
                       <div className="chat-list-item-avatar-placeholder">
-                        {isMyRoomAsSeller ? "구매자" : "판매자"}
+                        {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}
                       </div>
                     </div>
                     <div className="chat-list-item-info">
@@ -98,7 +98,7 @@ function UsedItemChatList() {
                         </span>
                       </div>
                       <p className="chat-list-item-preview">
-                        {isMyRoomAsSeller ? '구매자' : '판매자'}와의 대화
+                        {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화
                       </p>
                     </div>
                   </div>
