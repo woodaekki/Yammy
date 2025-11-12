@@ -4,7 +4,6 @@ import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import logo from "../../assets/images/logo.png";
-import gugong from "../../assets/images/logo.png";
 import "./NavigationBar.css";
 
 const NavigationBarTop = () => {
@@ -35,7 +34,7 @@ const NavigationBarTop = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [syncFromLocalStorage]);
 
-  // ✅ 외부 클릭 시 드롭다운 닫기
+  // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -118,7 +117,7 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/success") ||
       location.pathname.startsWith("/fail"));
 
-  const currentLogo = shouldShowBalanceButton ? gugong : logo;
+  const currentLogo = logo;
 
   return (
     <nav className="nav-bar-top" style={{ backgroundColor: teamColors.bgColor }}>
@@ -135,7 +134,7 @@ const NavigationBarTop = () => {
                 {balance !== null
                   ? (() => {
                       const str = format(balance);
-                      return str.length > 5 ? `${str.slice(0, 3)}...` : `${str}얌`;
+                      return str.length > 5 ? `${str.slice(0, 3)}...` : `${str}`;
                     })()
                   : error
                   ? "오류"

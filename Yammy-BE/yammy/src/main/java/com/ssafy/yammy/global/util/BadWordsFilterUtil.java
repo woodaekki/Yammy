@@ -52,7 +52,7 @@ public class BadWordsFilterUtil {
         if (word == null) return false;
 
         for (String badWord : bannedWords) {
-            if (word.contains(badWord)) {
+            if (word.contains(word)) {
                 return true;
             }
         }
