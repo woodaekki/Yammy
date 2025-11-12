@@ -182,7 +182,11 @@ export default function UsedItemChatPage() {
               </button>
 
               {itemInfo && (
-                <div className="chat-item-info">
+                <div 
+                  className="chat-item-info"
+                  onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
+                  style={{ cursor: 'pointer' }}  
+                >
                   {itemInfo.imageUrls?.[0] && (
                     <img
                       src={itemInfo.imageUrls[0]}

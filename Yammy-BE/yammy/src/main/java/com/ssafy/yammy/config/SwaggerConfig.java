@@ -29,7 +29,7 @@ public class SwaggerConfig {
                         .description("야미 서비스 API 문서")
                         .version("v1.0.0")
                         .contact(new Contact()
-                                .name("SSAFY C105 Team")
+                                .name("SSAFY C205 Team")
                                 .email("sw383@naver.com")));
     }
 }
