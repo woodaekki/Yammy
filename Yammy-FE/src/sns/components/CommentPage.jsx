@@ -15,6 +15,7 @@ import '../styles/CommentPage.css';
 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
   const diffInMs = now - date;
   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
@@ -24,7 +25,13 @@ const formatTimeAgo = (dateString) => {
   if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
   if (diffInHours < 24) return `${diffInHours}시간 전`;
   if (diffInDays < 7) return `${diffInDays}일 전`;
-  return date.toLocaleDateString('ko-KR');
+  return kstDate.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
 const ImageCarousel = ({ images = [], postId }) => {
