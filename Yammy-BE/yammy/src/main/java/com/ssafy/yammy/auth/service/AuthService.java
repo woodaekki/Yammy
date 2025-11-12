@@ -68,6 +68,7 @@ public class AuthService {
             .profileImage(request.getProfileImage())
             .authority(Member.Authority.USER)  // 기본값 USER
             .emailVerified(true)
+            .exp(500L)  // 회원가입 시 500 팬심 지급
             .build();
 
         memberRepository.save(member);
