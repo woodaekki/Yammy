@@ -30,13 +30,24 @@ const NavigationBarBottom = () => {
     { to: "/mypage", label: "프로필", icon: <FaUser /> },
   ];
 
+  // 하위 경로 포함 체크 함수
+  const isActiveLink = (linkTo) => {
+    const pathname = location.pathname;
+    // 홈(/)은 정확히 일치할 때만 활성화
+    if (linkTo === "/") {
+      return pathname === "/";
+    }
+    // 나머지는 해당 경로로 시작하면 활성화
+    return pathname.startsWith(linkTo);
+  };
+
   return (
     <nav
       className="nav-bar-bottom"
       style={{ backgroundColor: teamColors.bgColor }}
     >
       {links.map((link) => {
-        const isActive = location.pathname === link.to;
+        const isActive = isActiveLink(link.to);
         return (
           <Link
             key={link.to}
