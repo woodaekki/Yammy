@@ -66,6 +66,9 @@ export const usePredict = () => {
       // 🔥 백엔드에서 받은 실제 배당률 사용
       homeOdds: backendMatch.homeOdds || 2.0, // 홈팀 배당률 (기본값 2.0)
       awayOdds: backendMatch.awayOdds || 2.0, // 원정팀 배당률 (기본값 2.0)
+      // 🆕 백엔드에서 받은 배팅 금액 사용
+      homeAmount: backendMatch.homeAmount || 1, // 홈팀 배팅 금액 (기본값 0)
+      awayAmount: backendMatch.awayAmount || 1, // 원정팀 배팅 금액 (기본값 0)
     };
   };
 

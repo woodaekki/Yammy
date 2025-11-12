@@ -155,7 +155,8 @@ const BettingPage = () => {
                 className={`team-odds-card home-odds ${selectedTeam === 0 ? 'selected' : ''}`}
                 style={{ 
                   backgroundColor: getTeamColor(match.homeTeam),
-                  flex: match.homeOdds / (match.homeOdds + match.awayOdds)
+                  flex: (match.homeAmount + match.awayAmount) > 0 ? 
+                        match.homeAmount / (match.homeAmount + match.awayAmount) : 0.5
                 }}
                 onClick={() => handleTeamSelect(0)}
               >
@@ -178,7 +179,8 @@ const BettingPage = () => {
                 className={`team-odds-card away-odds ${selectedTeam === 1 ? 'selected' : ''}`}
                 style={{ 
                   backgroundColor: getTeamColor(match.awayTeam),
-                  flex: match.awayOdds / (match.homeOdds + match.awayOdds)
+                  flex: (match.homeAmount + match.awayAmount) > 0 ? 
+                        match.awayAmount / (match.homeAmount + match.awayAmount) : 0.5
                 }}
                 onClick={() => handleTeamSelect(1)}
               >

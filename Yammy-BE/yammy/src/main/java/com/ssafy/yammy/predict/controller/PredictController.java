@@ -26,28 +26,6 @@ public class PredictController {
     private final PredictService predictService;
 
     /**
-     * 인증 테스트 엔드포인트
-     */
-    @GetMapping("/test-auth")
-    public ResponseEntity<String> testAuth(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        log.info("🧪 [TEST] 인증 테스트 API 호출!");
-        
-        if (userDetails == null) {
-            log.error("🚫 [TEST] userDetails is NULL!");
-            return ResponseEntity.status(403).body("userDetails is null");
-        }
-        
-        Member member = userDetails.getMember();
-        if (member == null) {
-            log.error("🚫 [TEST] member is NULL!");
-            return ResponseEntity.status(403).body("member is null");
-        }
-        
-        log.info("🎉 [TEST] 인증 성공 - 사용자: {}", member.getNickname());
-        return ResponseEntity.ok("Authentication Success: " + member.getNickname());
-    }
-
-    /**
      * 배팅 생성
      */
     @PostMapping("/betting")

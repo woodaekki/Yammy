@@ -1,11 +1,9 @@
 import axios from "axios";
 import apiClient from "../../api/apiClient"; // 인증이 필요한 API용
 
-const BASE_URL = "http://localhost:8080/api";
-
-// 경기 조회용 인스턴스 (인증 불필요)
-const predictApi = axios.create({
-  baseURL: BASE_URL,
+// 인증이 불필요한 공개 API용 인스턴스 (기존 apiClient의 baseURL 재사용)
+const publicApi = axios.create({
+  baseURL: apiClient.defaults.baseURL,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -18,8 +16,8 @@ export const getMatchesByDate = async (date) => {
   try {
     console.log(`🎯 승부예측 경기 조회 요청: ${date}`);
     
-    // ✅ 경기 조회는 인증 불필요 (permitAll)
-    const response = await predictApi.get(`/predict/matches`, {
+    // ✅ 경기 조회는 인증 불필요 (permitAll) - publicApi 사용
+    const response = await publicApi.get(`/predict/matches`, {
       params: { date }
     });
     
@@ -122,6 +120,7 @@ export const getUserBettings = async (params = {}) => {
     const queryParams = { page, size };
     if (status) queryParams.status = status;
     
+    // 🔥 배팅 내역은 인증 필요 - apiClient 사용
     const response = await apiClient.get('/predict/betting/my', {
       params: queryParams
     });
@@ -142,6 +141,7 @@ export const getMemberInfo = async () => {
   try {
     console.log(`📝 회원정보 조회 요청`);
     
+    // 🔥 회원정보는 인증 필요 - apiClient 사용
     const response = await apiClient.get('/auth/myinfo');
     
     console.log(`✅ 회원정보 조회 성공:`, response.data);
@@ -161,6 +161,7 @@ export const cancelBetting = async (bettingId) => {
   try {
     console.log(`🚫 배팅 취소 요청: ${bettingId}`);
     
+    // 🔥 배팅 취소는 인증 필요 - apiClient 사용
     const response = await apiClient.delete(`/predict/betting/${bettingId}`);
     
     console.log(`✅ 배팅 취소 성공:`, response.data);

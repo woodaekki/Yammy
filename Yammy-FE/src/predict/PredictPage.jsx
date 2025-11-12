@@ -92,10 +92,10 @@ const PredictPage = () => {
               {todayMatches.map((match) => {
                 const gameInProgress = isGameInProgress(match.gameTime);
                 
-                // 배당률 비율 계산
-                const totalOdds = match.homeOdds + match.awayOdds;
-                const homeRatio = match.homeOdds / totalOdds;
-                const awayRatio = match.awayOdds / totalOdds;
+                // 배팅금액 비율 계산 (homeAmount + awayAmount 기반)
+                const totalAmount = match.homeAmount + match.awayAmount;
+                const homeAmountRatio = totalAmount > 0 ? match.homeAmount / totalAmount : 0.5; // 기본값 50%
+                const awayAmountRatio = totalAmount > 0 ? match.awayAmount / totalAmount : 0.5; // 기본값 50%
                 
                 return (
                   <div 
@@ -106,25 +106,25 @@ const PredictPage = () => {
                   >
                     <div className="match-time-header">{match.gameTime}</div>
                     
-                    {/* 배당률 비율 그래프 바 */}
+                    {/* 배팅금액 비율 그래프 바 */}
                     <div className="odds-ratio-bar">
                       <div 
                         className="home-odds-bar"
                         style={{ 
-                          width: `${homeRatio * 100}%`,
+                          width: `${homeAmountRatio * 100}%`,
                           backgroundColor: getTeamColor(match.homeTeam)
                         }}
                       >
-                        <span className="odds-percentage">{(homeRatio * 100).toFixed(1)}%</span>
+                        <span className="odds-percentage">{(homeAmountRatio * 100).toFixed(1)}%</span>
                       </div>
                       <div 
                         className="away-odds-bar"
                         style={{ 
-                          width: `${awayRatio * 100}%`,
+                          width: `${awayAmountRatio * 100}%`,
                           backgroundColor: getTeamColor(match.awayTeam)
                         }}
                       >
-                        <span className="odds-percentage">{(awayRatio * 100).toFixed(1)}%</span>
+                        <span className="odds-percentage">{(awayAmountRatio * 100).toFixed(1)}%</span>
                       </div>
                     </div>
                     
@@ -134,7 +134,7 @@ const PredictPage = () => {
                         className="team-section home-team-section"
                         style={{ 
                           backgroundColor: getTeamColor(match.homeTeam),
-                          flex: homeRatio
+                          flex: homeAmountRatio
                         }}
                       >
                         <div className="team-label">HOME</div>
@@ -158,7 +158,7 @@ const PredictPage = () => {
                         className="team-section away-team-section"
                         style={{ 
                           backgroundColor: getTeamColor(match.awayTeam),
-                          flex: awayRatio
+                          flex: awayAmountRatio
                         }}
                       >
                         <div className="team-label">AWAY</div>
