@@ -39,7 +39,7 @@ export const mintNFT = async (ticketId, photo = null, walletAddress = null) => {
     const token = localStorage.getItem('accessToken');
 
     const response = await axios.post(
-      `${API_BASE_URL}/api/nft/mint`,
+      `${API_BASE_URL}/nft/mint`,
       formData,
       {
         headers: {
