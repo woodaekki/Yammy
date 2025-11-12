@@ -118,11 +118,6 @@ export const getUserBettings = async (params = {}) => {
 
     const queryParams = { page, size };
     if (status) queryParams.status = status;
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 2a4cb5b5c57ccb0577962266dea9902b6e2009b0
     // 🔥 배팅 내역은 인증 필요 - apiClient 사용
     const response = await apiClient.get('/predict/betting/my', {
       params: queryParams
@@ -143,11 +138,6 @@ export const getUserBettings = async (params = {}) => {
 export const getMemberInfo = async () => {
   try {
     console.log(`📝 회원정보 조회 요청`);
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 2a4cb5b5c57ccb0577962266dea9902b6e2009b0
     // 🔥 회원정보는 인증 필요 - apiClient 사용
     const response = await apiClient.get('/auth/myinfo');
 
@@ -167,11 +157,6 @@ export const getMemberInfo = async () => {
 export const cancelBetting = async (bettingId) => {
   try {
     console.log(`🚫 배팅 취소 요청: ${bettingId}`);
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 2a4cb5b5c57ccb0577962266dea9902b6e2009b0
     // 🔥 배팅 취소는 인증 필요 - apiClient 사용
     const response = await apiClient.delete(`/predict/betting/${bettingId}`);
 
