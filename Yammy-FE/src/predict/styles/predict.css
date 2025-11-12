@@ -17,9 +17,36 @@
   font-weight: 700;
 }
 
-.predict-header p {
+.predict-header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.predict-header-content p {
   font-size: 14px;
   margin: 0;
+}
+
+.settlement-button {
+  padding: 8px 16px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.settlement-button:hover {
+  background-color: #dd3333;
+}
+
+.settlement-button:active {
+  background-color: #cc2222;
 }
 
 .predict-schedule {
@@ -213,6 +240,21 @@
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 0;
+}
+
+/* 총 팬심 표시 스타일 */
+.total-fansim {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 8px;
+  opacity: 0.95;
+  min-width: fit-content;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* VS 섹션 */

@@ -18,7 +18,7 @@ const BettingPage = () => {
   const { isLoggedIn } = useAuthStore();
 
   // 경기 데이터 가져오기
-  const { matches, loading, error } = usePredict();
+  const { matches, loading, error, fetchTodayMatches } = usePredict();
 
   // 현재 경기 찾기
   const match = matches.find(m => m.id === parseInt(matchId));
@@ -169,6 +169,7 @@ const BettingPage = () => {
                   </div>
                 </div>
                 <div className="team-odds">{match.homeOdds.toFixed(2)}</div>
+                <div className="total-fansim-betting">총 팬심: {match.homeAmount.toLocaleString()}</div>
               </div>
 
               <div className="vs-divider">
@@ -193,6 +194,7 @@ const BettingPage = () => {
                   <TeamLogo teamName={match.awayTeam} size="medium" />
                 </div>
                 <div className="team-odds">{match.awayOdds.toFixed(2)}</div>
+                <div className="total-fansim-betting">총 팬심: {match.awayAmount.toLocaleString()}</div>
               </div>
             </div>
             <div className="match-stadium">{match.stadium}</div>
@@ -229,6 +231,7 @@ const BettingPage = () => {
           match={match}
           selectedTeam={selectedTeam}
           onClose={handleCloseModal}
+          onBettingSuccess={fetchTodayMatches}
         />
       )}
     </div>

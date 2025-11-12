@@ -51,4 +51,10 @@ public interface PredictedRepository extends JpaRepository<Predicted, Long> {
      * 특정 경기의 정산되지 않은 배팅들 조회
      */
     List<Predicted> findByPredictedMatchAndIsSettled(PredictedMatches predictedMatch, Integer isSettled);
+
+    /**
+     * 특정 경기 ID로 모든 배팅 조회
+     */
+    @Query("SELECT p FROM Predicted p WHERE p.predictedMatch.id = :predictedMatchId")
+    List<Predicted> findByPredictedMatchId(@Param("predictedMatchId") Long predictedMatchId);
 }

@@ -5,7 +5,7 @@ import { TeamLogo } from '../utils/teamLogo.jsx';
 import '../styles/BettingInputModal.css';
 import '../styles/TeamLogo.css';
 
-const BettingInputModal = ({ match, selectedTeam, onClose }) => {
+const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) => {
   const [betAmount, setBetAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
@@ -100,11 +100,15 @@ const BettingInputModal = ({ match, selectedTeam, onClose }) => {
       console.log('배팅 데이터:', bettingData);
       
       const result = await createBetting(bettingData);
-      
+
       // 성공 처리
       alert(`배팅이 완료되었습니다!\n배팅 ID: ${result.id || 'N/A'}`);
       onClose(); // 모달 닫기
-      // navigate 제거 - 모달 닫기만 하고 현재 페이지 유지
+
+      // 배팅 성공 후 경기 목록 새로고침
+      if (onBettingSuccess) {
+        await onBettingSuccess();
+      }
     } catch (error) {
       console.error('배팅 실패:', error);
       

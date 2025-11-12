@@ -221,24 +221,20 @@ public class PredictService {
     }
 
     /**
-     * 날짜별 경기 조회 (predicted_matches 직접 조회 방식)
+     * 전체 경기 조회 (predicted_matches 전체 조회 방식)
      */
     public List<MatchScheduleResponse> getMatchesByDate(String date) {
-        log.info("경기 조회 요청 - 날짜: {}", date);
+        log.info("전체 경기 조회 요청 - 입력 날짜: {} (무시하고 전체 조회)", date);
         
-        // 날짜 형식 변환 (YYYYMMDD → YYYY-MM-DD)
-        String formattedDate = formatDate(date);
-        log.info("날짜 형식 변환: {} → {}", date, formattedDate);
-        
-        // predicted_matches 테이블에서 직접 조회 (성능 개선)
-        List<PredictedMatches> matches = predictedMatchesRepository.findByMatchDate(formattedDate);
+        // predicted_matches 테이블에서 전체 조회
+        List<PredictedMatches> matches = predictedMatchesRepository.findAll();
         
         if (matches.isEmpty()) {
-            log.warn("⚠️ 지정된 날짜({})에 배팅 가능한 경기가 없습니다.", formattedDate);
+            log.warn("⚠️ predicted_matches 테이블에 배팅 가능한 경기가 없습니다.");
             return List.of(); // 빈 리스트 반환
         }
         
-        log.info("📊 {}개의 배팅 가능 경기 발견 - 날짜: {}", matches.size(), formattedDate);
+        log.info("📊 {}개의 전체 배팅 가능 경기 발견", matches.size());
         
         return matches.stream()
                 .map(match -> {
@@ -302,17 +298,27 @@ public class PredictService {
         try {
             log.info("🔧 수동 실행 - predicted_matches 재생성 시작 - 날짜: {}", targetDate);
             
-            // 1. 특정 날짜의 기존 데이터 삭제
-            List<PredictedMatches> existingMatches = predictedMatchesRepository.findByMatchDate(targetDate);
-            long deletedCount = existingMatches.size();
+            // 1. 기존 데이터 전체 삭제 (외래키 제약조건 고려)
+            log.info("🗑️ 기존 데이터 전체 삭제 시작");
             
-            if (deletedCount > 0) {
-                log.info("🗑️ 기존 {}(날짜) 데이터 {}\uac1c 삭제 시작", targetDate, deletedCount);
-                predictedMatchesRepository.deleteByMatchDate(targetDate);
-                log.info("✅ 기존 데이터 삭제 완료");
-            } else {
-                log.info("📝 기존 {}(날짜) 데이터가 없음", targetDate);
+            // 1-1. 먼저 predicted 테이블 (자식) 전체 삭제
+            long predictedCount = predictedRepository.count();
+            if (predictedCount > 0) {
+                log.info("🗑️ predicted 테이블 {}개 데이터 삭제 중...", predictedCount);
+                predictedRepository.deleteAllInBatch();
+                log.info("✅ predicted 테이블 삭제 완료");
             }
+            
+            // 1-2. 그다음 predicted_matches 테이블 (부모) 전체 삭제
+            long predictedMatchesCount = predictedMatchesRepository.count();
+            if (predictedMatchesCount > 0) {
+                log.info("🗑️ predicted_matches 테이블 {}개 데이터 삭제 중...", predictedMatchesCount);
+                predictedMatchesRepository.deleteAllInBatch();
+                log.info("✅ predicted_matches 테이블 삭제 완료");
+            }
+            
+            log.info("✅ 전체 데이터 삭제 완료 - predicted: {}개, predicted_matches: {}개", 
+                    predictedCount, predictedMatchesCount);
             
             // 2. 지정된 날짜의 경기 조회
             List<PredictMatchSchedule> schedules = predictMatchScheduleRepository.findByMatchDate(targetDate);
@@ -351,8 +357,8 @@ public class PredictService {
                 }
             }
             
-            String result = String.format("🎉 수동 실행 완료 - 삭제: %d개, 생성: %d/%d개", 
-                                         deletedCount, createdCount, schedules.size());
+            String result = String.format("🎉 수동 실행 완료 - 삭제: predicted %d개 + predicted_matches %d개, 생성: %d/%d개", 
+                                         predictedCount, predictedMatchesCount, createdCount, schedules.size());
             log.info(result);
             return result;
             
@@ -361,5 +367,91 @@ public class PredictService {
             log.error(error, e);
             throw new RuntimeException(error, e);
         }
+    }
+
+    /**
+     * 관리자: 경기 정산
+     */
+    @Transactional
+    public SettlementResponse settleMatches(List<SettlementRequest> requests) {
+        log.info("경기 정산 시작 - 총 {}경기", requests.size());
+
+        int totalWinners = 0;
+        long totalPayback = 0L;
+
+        for (SettlementRequest request : requests) {
+            log.info("경기 정산 처리 - 경기ID: {}, 결과: {}", request.getMatchId(), request.getResult());
+
+            // 1. 경기 조회
+            PredictedMatches match = predictedMatchesRepository.findById(request.getMatchId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 경기입니다: " + request.getMatchId()));
+
+            // 2. 이미 정산된 경기인지 확인
+            if (match.getIsSettled() == 1) {
+                log.warn("이미 정산된 경기입니다 - 경기ID: {}", request.getMatchId());
+                continue;
+            }
+
+            // 3. 경기 결과 저장
+            match.setResult(request.getResult());
+            match.setIsSettled(1);
+            predictedMatchesRepository.save(match);
+
+            // 4. 해당 경기의 모든 배팅 조회
+            List<Predicted> bettings = predictedRepository.findByPredictedMatchId(request.getMatchId());
+            log.info("경기ID {} - 총 배팅 수: {}", request.getMatchId(), bettings.size());
+
+            // 5. 각 배팅에 대해 정산 처리
+            for (Predicted betting : bettings) {
+                if (betting.getIsSettled() == 1) {
+                    continue; // 이미 정산된 배팅
+                }
+
+                // 예측이 맞았는지 확인
+                boolean isWin = betting.getPredict().equals(request.getResult());
+
+                if (isWin) {
+                    // 배당률 계산 (배팅 시점의 배당률 사용)
+                    double odds = (betting.getPredict() == 0) ? match.getHomeOdds() : match.getAwayOdds();
+
+                    // 수익 계산: 배팅액 * 배당률
+                    long payback = (long) (betting.getBatAmount() * odds);
+
+                    // 배팅 정보 업데이트
+                    betting.setPaybackAmount(payback);
+                    betting.setIsSettled(1);
+
+                    // 사용자에게 팬심 지급 (원금 + 수익)
+                    Member member = betting.getMember();
+                    member.increaseExp(payback);
+                    memberRepository.save(member);
+
+                    totalWinners++;
+                    totalPayback += payback;
+
+                    log.info("✅ 당첨 - 사용자: {}, 배팅액: {}, 배당률: {}, 수익: {}",
+                            member.getNickname(), betting.getBatAmount(), odds, payback);
+                } else {
+                    // 예측 실패 - 배팅액 손실
+                    betting.setPaybackAmount(0L);
+                    betting.setIsSettled(1);
+
+                    log.info("❌ 낙첨 - 사용자: {}, 손실액: {}",
+                            betting.getMember().getNickname(), betting.getBatAmount());
+                }
+
+                predictedRepository.save(betting);
+            }
+        }
+
+        log.info("경기 정산 완료 - 정산 경기: {}, 총 당첨자: {}, 총 지급액: {}",
+                requests.size(), totalWinners, totalPayback);
+
+        return SettlementResponse.builder()
+                .settledMatchesCount(requests.size())
+                .totalWinners(totalWinners)
+                .totalPayback(totalPayback)
+                .message("정산이 완료되었습니다.")
+                .build();
     }
 }

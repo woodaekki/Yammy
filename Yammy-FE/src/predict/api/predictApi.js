@@ -175,6 +175,36 @@ export const cancelBetting = async (bettingId) => {
   }
 };
 
+/**
+ * 관리자: 경기 정산 (경기 결과 입력 및 배팅 정산)
+ * @param {Array} settlementData - 정산 데이터
+ * @param {number} settlementData[].matchId - 경기 ID
+ * @param {number} settlementData[].result - 경기 결과 (0: 홈팀 승, 1: 원정팀 승)
+ * @returns {Promise} 정산 결과
+ */
+export const settleMatches = async (settlementData) => {
+  try {
+    console.log('🔧 경기 정산 요청:', settlementData);
+    // 🔥 관리자 전용 API - apiClient 사용
+    const response = await apiClient.post('/predict/admin/settle', settlementData);
+
+    console.log('✅ 경기 정산 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ 경기 정산 실패:', error);
+
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    } else if (error.response?.status === 403) {
+      throw new Error('관리자 권한이 필요합니다.');
+    } else if (error.response?.status === 400) {
+      throw new Error('잘못된 정산 데이터입니다.');
+    } else {
+      throw new Error('정산 처리 중 오류가 발생했습니다.');
+    }
+  }
+};
+
 export default {
   getMatchesByDate,
   getTodayMatches,
@@ -182,5 +212,6 @@ export default {
   createBetting,
   getUserBettings,
   getMemberInfo,
-  cancelBetting
+  cancelBetting,
+  settleMatches
 };

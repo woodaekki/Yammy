@@ -1,6 +1,7 @@
 package com.ssafy.yammy.predict.entity;
 
 import com.ssafy.yammy.auth.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,12 @@ public class Predicted {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    @JsonIgnore
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "predicted_match_id", referencedColumnName = "id")
+    @JsonIgnore
     private PredictedMatches predictedMatch; // predicted_matches 테이블 참조
 
     @Column(name = "predict")

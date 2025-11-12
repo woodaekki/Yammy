@@ -5,13 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 서버 시작시 predicted_matches 초기화 컴포넌트
+ * 서버 시작시 및 매일 오후 5시 predicted_matches 초기화 컴포넌트
  * 오늘 날짜의 경기 정보를 자동으로 생성하여 배팅 가능하도록 준비
  */
 @Component
@@ -44,6 +45,30 @@ public class PredictedMatchesInitializer {
         } catch (Exception e) {
             log.error("❌❌❌ [서버시작] predicted_matches 초기화 실패: {} ❌❌❌", e.getMessage(), e);
             // 서버 시작을 막지 않기 위해 예외를 다시 던지지 않음
+        }
+    }
+    
+    /**
+     * 매일 오후 5시에 자동으로 predicted_matches 초기화 실행
+     * 기존 모든 데이터 삭제 후 오늘 경기만 새로 생성
+     * cron = "0 0 17 * * *" : 초(0) 분(0) 시(17) 일(*) 월(*) 요일(*)
+     */
+    @Scheduled(cron = "0 0 17 * * *")
+    public void scheduleMatchesUpdate() {
+        try {
+            log.info("⏰⏰⏰ [스케줄러] 오후 5시 predicted_matches 자동 초기화 시작 ⏰⏰⏰");
+            
+            // 오늘 날짜를 yyyy-MM-dd 형식으로 계산
+            String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            log.info("📅📅📅 [스케줄러] 대상 날짜: {} 📅📅📅", today);
+            
+            // 기존 데이터 전체 삭제 후 오늘 경기만 새로 생성
+            String result = predictService.recreatePredictedMatchesForDate(today);
+            log.info("✅✅✅ [스케줄러] {} ✅✅✅", result);
+            
+        } catch (Exception e) {
+            log.error("❌❌❌ [스케줄러] 오후 5시 자동 초기화 실패: {} ❌❌❌", e.getMessage(), e);
+            // 스케줄러 오류는 로그만 남기고 계속 실행
         }
     }
     

@@ -57,7 +57,7 @@ export const usePredict = () => {
       awayTeam: backendMatch.away,
       gameTime: getGameTime(),
       stadium: homeStadiums[backendMatch.home] || `${backendMatch.home} 홈구장`,
-      date: backendMatch.matchDate,
+      date: backendMatch.matchDate, // 🔥 필드명 수정: matchDate → date
       matchStatus: backendMatch.matchStatus,
       gameid: backendMatch.gameid,
       year: backendMatch.year,
@@ -67,8 +67,8 @@ export const usePredict = () => {
       homeOdds: backendMatch.homeOdds || 2.0, // 홈팀 배당률 (기본값 2.0)
       awayOdds: backendMatch.awayOdds || 2.0, // 원정팀 배당률 (기본값 2.0)
       // 🆕 백엔드에서 받은 배팅 금액 사용
-      homeAmount: backendMatch.homeAmount || 1, // 홈팀 배팅 금액 (기본값 0)
-      awayAmount: backendMatch.awayAmount || 1, // 원정팀 배팅 금액 (기본값 0)
+      homeAmount: backendMatch.homeAmount || 1, // 홈팀 배팅 금액 (기본값 1)
+      awayAmount: backendMatch.awayAmount || 1, // 원정팀 배팅 금액 (기본값 1)
     };
   };
 
