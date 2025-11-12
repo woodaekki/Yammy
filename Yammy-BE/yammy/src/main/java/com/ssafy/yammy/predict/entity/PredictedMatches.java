@@ -1,5 +1,6 @@
 package com.ssafy.yammy.predict.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class PredictedMatches {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id", referencedColumnName = "id")
+    @JsonIgnore
     private PredictMatchSchedule matchSchedule; // match_schedule 테이블 참조
 
     @Column(name = "home", length = 10)
