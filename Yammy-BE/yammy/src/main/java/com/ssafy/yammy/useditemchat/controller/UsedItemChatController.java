@@ -134,6 +134,10 @@ public class UsedItemChatController {
         if (room.getStatus() != UsedChatRoomStatus.ACTIVE) {
             throw new IllegalStateException("채팅방이 활성화 상태가 아닙니다.");
         }
+        // 한쪽이라도 나간 경우 메시지 전송 불가
+        if (room.getSellerDeleted() || room.getBuyerDeleted()) {
+            throw new IllegalStateException("채팅방을 나간 사용자가 있어 메시지를 전송할 수 없습니다.");
+        }
 
         // 이미지 업로드
         String imageUrl = usedItemFirebaseChatService.uploadUsedItemChatImage(
@@ -167,6 +171,11 @@ public class UsedItemChatController {
         UsedItemChatRoom room = usedItemChatRoomService.getUsedItemChatRoom(roomKey);
         if (room.getStatus() != UsedChatRoomStatus.ACTIVE) {
             throw new IllegalStateException("채팅방이 활성화 상태가 아닙니다.");
+        }
+
+        // 한쪽이라도 나간 경우 메시지 전송 불가
+        if (room.getSellerDeleted() || room.getBuyerDeleted()) {
+            throw new IllegalStateException("채팅방을 나간 사용자가 있어 메시지를 전송할 수 없습니다.");
         }
 
         // Firestore 메시지 저장
