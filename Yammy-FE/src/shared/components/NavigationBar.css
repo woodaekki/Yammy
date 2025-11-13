@@ -146,7 +146,7 @@
   white-space: nowrap;
 }
 
-.nav-bar-top . i.fa-chevron-down {
+.nav-bar-top .i.fa-chevron-down {
   font-size: 0.75rem;
   color: #6b7280;
   transition: transform 0.2s;
@@ -356,7 +356,6 @@
   user-select: none;
 }
 
-<<<<<<< HEAD
 /* Predict 페이지 팬심 표시 */
 .predict-points-display {
   display: flex;
@@ -379,7 +378,6 @@
   font-weight: 700;
   color: #333;
 }
-=======
 /* 읽지 않은 메시지 알림 */
 .header-notification {
   position: relative;
@@ -412,4 +410,3 @@
   min-width: 18px;
   text-align: center;
 }
->>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
