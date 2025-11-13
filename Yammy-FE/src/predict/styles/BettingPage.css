@@ -98,13 +98,13 @@
 
 .teams-container {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 1rem;
   position: relative;
+  height: 240px;
 }
 
 .team-odds-card {
-  flex: 1;
   background: linear-gradient(135deg, var(--team-color), var(--team-color-dark));
   color: white;
   padding: 1.5rem 1rem;
@@ -114,6 +114,10 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .home-odds {
@@ -146,6 +150,7 @@
   font-weight: 600;
   opacity: 0.9;
   margin-bottom: 0.5rem;
+  flex-shrink: 0;
 }
 
 .team-info-container {
@@ -154,6 +159,7 @@
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .home-team-info {
@@ -175,11 +181,13 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+  flex-shrink: 0;
 }
 
 .team-stats {
   font-size: 0.9rem;
   opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .team-odds {
@@ -190,13 +198,15 @@
   border-radius: 20px;
   display: inline-block;
   min-width: 80px;
+  margin: 8px 0;
+  flex-shrink: 0;
 }
 
 /* 배팅 페이지 총 팬심 스타일 */
 .total-fansim-betting {
   font-size: 0.8rem;
   font-weight: 600;
-  margin-top: 0.5rem;
+  margin-top: auto;
   background: rgba(255, 255, 255, 0.15);
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -206,6 +216,7 @@
   display: inline-block;
   min-width: fit-content;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .vs-divider {
@@ -298,6 +309,23 @@
 
 .unavailable-message p {
   color: #666;
+}
+
+/* 정산 완료 메시지 스타일 */
+.settled-message {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.settled-message h2 {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.settled-message p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
 }
 
 /* 반응형 디자인 */

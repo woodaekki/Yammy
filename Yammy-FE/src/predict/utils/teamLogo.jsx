@@ -47,8 +47,6 @@ export const getTeamLogo = (teamName) => {
     }
   }
   
-  // 로고를 찾을 수 없는 경우 null 반환
-  console.warn(`로고를 찾을 수 없는 팀: ${teamName}`);
   return null;
 };
 
@@ -61,26 +59,22 @@ export const getTeamLogo = (teamName) => {
  */
 export const TeamLogo = ({ teamName, size = 'medium', className = '' }) => {
   const logoSrc = getTeamLogo(teamName);
-  
-  console.log(`TeamLogo 렌더링 - 팀명: ${teamName}, 로고 경로:`, logoSrc); // 디버깅용
-  
+
   if (!logoSrc) {
-    console.warn(`로고를 찾을 수 없는 팀: ${teamName}`);
     return (
       <div className={`team-logo-placeholder team-logo-${size} ${className}`}>
         {teamName?.charAt(0) || '?'}
       </div>
     );
   }
-  
+
   return (
-    <img 
-      src={logoSrc} 
+    <img
+      src={logoSrc}
       alt={`${teamName} 로고`}
       className={`team-logo team-logo-${size} ${className}`}
       onError={(e) => {
-        console.error(`로고 로드 실패: ${teamName}`, e);
-        // 에러 시 플레이스홀더로 교체
+        console.error('Team logo load error:', teamName);
         const placeholder = document.createElement('div');
         placeholder.className = `team-logo-placeholder team-logo-${size} ${className}`;
         placeholder.textContent = teamName?.charAt(0) || '?';
