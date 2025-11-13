@@ -165,23 +165,23 @@
   display: flex;
   align-items: stretch;
   position: relative;
-  min-height: 80px;
+  height: 200px;
   padding: 12px 0;
 }
 
 /* 팀 섹션 */
 .team-section {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 12px;
+  justify-content: space-between;
+  padding: 16px 12px;
   color: white;
   position: relative;
   z-index: 1;
   border-radius: 12px;
   margin: 0 8px;
+  height: 100%;
 }
 
 .home-team-section {
@@ -199,14 +199,16 @@
   margin-bottom: 8px;
   letter-spacing: 1px;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .team-info-container {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin: 12px 0;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .home-team-info {
@@ -229,32 +231,40 @@
   font-weight: 700;
   margin-bottom: 0.25rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .team-stats {
   font-size: 0.85rem;
   opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .prediction-score {
   font-size: 24px;
   font-weight: 800;
-  margin-bottom: 0;
+  margin: 8px 0;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 /* 총 팬심 표시 스타일 */
 .total-fansim {
   font-size: 11px;
   font-weight: 600;
-  margin-top: 6px;
+  margin-top: auto;
   background: rgba(255, 255, 255, 0.2);
-  padding: 3px 8px;
-  border-radius: 8px;
-  opacity: 0.95;
+  padding: 6px 10px;
+  border-radius: 10px;
+  opacity: 1;
   min-width: fit-content;
   white-space: nowrap;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* VS 섹션 */
@@ -263,19 +273,20 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 44px;
-  width: 44px;
+  height: 48px;
+  width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
   border-radius: 50%;
   z-index: 10;
-  border: 2px solid #e0e0e0;
+  border: 3px solid #e0e0e0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .vs-text {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: #333;
 }
@@ -324,5 +335,27 @@
   font-weight: 700;
   color: #666;
   text-align: center;
+}
+
+/* 정산 완료 스타일 */
+.match-card-container.settled {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.match-card-container.settled .match-prediction-card {
+  filter: blur(1px);
+}
+
+.settled-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.settled-overlay .progress-message {
+  background: #4CAF50;
+  color: white;
+  font-size: 14px;
+  padding: 14px 28px;
 }
 

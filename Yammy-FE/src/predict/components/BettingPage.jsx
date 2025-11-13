@@ -111,6 +111,7 @@ const BettingPage = () => {
   }
 
   const gameInProgress = isGameInProgress(match.gameTime);
+  const isSettled = match.isSettled === 1;  // 정산 완료 여부
 
   return (
     <div className="betting-page">
@@ -121,8 +122,18 @@ const BettingPage = () => {
         <h1>⚾ 승부 예측</h1>
       </div>
 
+      {/* 정산 완료된 경기인 경우 */}
+      {isSettled && (
+        <div className="unavailable-betting">
+          <div className="unavailable-message settled-message">
+            <h2>✅ 정산 완료</h2>
+            <p>이미 정산이 완료된 경기입니다.</p>
+          </div>
+        </div>
+      )}
+
       {/* 경기 진행중인 경우 */}
-      {gameInProgress && (
+      {!isSettled && gameInProgress && (
         <div className="unavailable-betting">
           <div className="unavailable-message">
             <h2>⏰ 예측할 수 없는 경기입니다</h2>
@@ -132,7 +143,7 @@ const BettingPage = () => {
       )}
 
       {/* 예측 가능한 경기인 경우 */}
-      {!gameInProgress && (
+      {!isSettled && !gameInProgress && (
         <div className="betting-content">
           {/* 배당정보 + 예측하기 통합 섹션 */}
           <div className="odds-section">
@@ -165,7 +176,7 @@ const BettingPage = () => {
                   <TeamLogo teamName={match.homeTeam} size="medium" />
                   <div className="team-details">
                     <div className="team-name">{match.homeTeam}</div>
-                    <div className="team-stats">({match.homeWinningRate}%)</div>
+                    <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
                   </div>
                 </div>
                 <div className="team-odds">{match.homeOdds.toFixed(2)}</div>
@@ -189,7 +200,7 @@ const BettingPage = () => {
                 <div className="team-info-container away-team-info">
                   <div className="team-details">
                     <div className="team-name">{match.awayTeam}</div>
-                    <div className="team-stats">({match.awayWinningRate}%)</div>
+                    <div className="team-stats">예상 승률: {match.awayWinningRate}%</div>
                   </div>
                   <TeamLogo teamName={match.awayTeam} size="medium" />
                 </div>

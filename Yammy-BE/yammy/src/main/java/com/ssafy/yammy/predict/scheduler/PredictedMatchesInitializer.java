@@ -29,22 +29,16 @@ public class PredictedMatchesInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void initializeTodayMatches() {
         try {
-            log.info("🚀🚀🚀 [서버시작] predicted_matches 초기화 시작 🚀🚀🚀");
-            
-            // 오늘 날짜를 yyyy-MM-dd 형식으로 계산 (DB 형식과 맞춤)
+            log.info("Server startup - predicted_matches initialization starting");
+
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            log.info("📅📅📅 [서버시작] 대상 날짜: {} 📅📅📅", today);
-            
-            // 잠시 대기 후 실행 (DB 연결 안정화)
             Thread.sleep(2000);
-            
-            // 오늘 날짜의 predicted_matches 생성
+
             String result = predictService.recreatePredictedMatchesForDate(today);
-            log.info("✅✅✅ [서버시작] {} ✅✅✅", result);
-            
+            log.info("Server startup - predicted_matches initialization completed: {}", result);
+
         } catch (Exception e) {
-            log.error("❌❌❌ [서버시작] predicted_matches 초기화 실패: {} ❌❌❌", e.getMessage(), e);
-            // 서버 시작을 막지 않기 위해 예외를 다시 던지지 않음
+            log.error("Server startup - predicted_matches initialization failed: {}", e.getMessage(), e);
         }
     }
     
@@ -56,33 +50,28 @@ public class PredictedMatchesInitializer {
     @Scheduled(cron = "0 0 17 * * *")
     public void scheduleMatchesUpdate() {
         try {
-            log.info("⏰⏰⏰ [스케줄러] 오후 5시 predicted_matches 자동 초기화 시작 ⏰⏰⏰");
-            
-            // 오늘 날짜를 yyyy-MM-dd 형식으로 계산
+            log.info("Scheduler - 5PM predicted_matches auto-initialization starting");
+
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            log.info("📅📅📅 [스케줄러] 대상 날짜: {} 📅📅📅", today);
-            
-            // 기존 데이터 전체 삭제 후 오늘 경기만 새로 생성
             String result = predictService.recreatePredictedMatchesForDate(today);
-            log.info("✅✅✅ [스케줄러] {} ✅✅✅", result);
-            
+            log.info("Scheduler - predicted_matches initialization completed: {}", result);
+
         } catch (Exception e) {
-            log.error("❌❌❌ [스케줄러] 오후 5시 자동 초기화 실패: {} ❌❌❌", e.getMessage(), e);
-            // 스케줄러 오류는 로그만 남기고 계속 실행
+            log.error("Scheduler - 5PM auto-initialization failed: {}", e.getMessage(), e);
         }
     }
-    
+
     /**
      * 특정 날짜의 경기 정보 초기화 (필요시 수동 호출용)
      * @param targetDate yyyy-MM-dd 형식의 날짜
      */
     public String initializeMatchesForDate(String targetDate) {
         try {
-            log.info("🔧 [수동실행] predicted_matches 초기화 - 날짜: {}", targetDate);
+            log.info("Manual execution - predicted_matches initialization for date: {}", targetDate);
             return predictService.recreatePredictedMatchesForDate(targetDate);
         } catch (Exception e) {
             String error = "predicted_matches 초기화 실패: " + e.getMessage();
-            log.error("❌ [수동실행] {}", error, e);
+            log.error("Manual execution failed: {}", error, e);
             return error;
         }
     }

@@ -29,8 +29,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
         const memberInfo = await getMemberInfo();
         setUserPoints(memberInfo.exp || 0); // exp가 팬심
       } catch (error) {
-        console.error('팬심 조회 실패:', error);
-        // 로그인이 필요한 경우 또는 에러인 경우 0으로 설정
+        console.error('Error loading user points:', error.message);
         setUserPoints(0);
       } finally {
         setPointsLoading(false);
@@ -69,7 +68,6 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
   const handleBet = async () => {
     if (!betAmount || parseFloat(betAmount) <= 0) {
       alert('배팅 팬심을 입력해주세요.');
-      console.log('배팅왜안되냐')
       return;
     }
 
@@ -97,8 +95,6 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
         expectedReturn: Math.floor(parseFloat(expectedReturn)) // Long으로 변환 (정수)
       };
       
-      console.log('배팅 데이터:', bettingData);
-      
       const result = await createBetting(bettingData);
 
       // 성공 처리
@@ -110,9 +106,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
         await onBettingSuccess();
       }
     } catch (error) {
-      console.error('배팅 실패:', error);
-      
-      // 에러 메시지 표시
+      console.error('Betting error:', error.message);
       const errorMessage = error.message || '배팅에 실패했습니다. 다시 시도해주세요.';
       alert(errorMessage);
     } finally {
