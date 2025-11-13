@@ -68,6 +68,7 @@ public class WithdrawalService {
         // 거래 내역 생성
         PointTransaction pointtransaction = new PointTransaction();
         pointtransaction.setMember(member);
+        pointtransaction.setPoint(point);
         pointtransaction.setAmount(-dto.getAmount()); // 출금
         pointtransaction.setBalanceAfter(newBalance);
         pointtransaction.setType(TransactionType.WITHDRAW);

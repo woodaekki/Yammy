@@ -27,6 +27,7 @@ public class TossPaymentController {
     @Operation(summary = "얌 포인트 전환 확인")
     @PostMapping("/confirm")
     public ResponseEntity<TossPaymentResponse> confirmPayment(HttpServletRequest request, @RequestBody TossPaymentRequest tossRequest) {
+
         Long memberId = extractMemberIdFromToken(request);
         // 토스 결제 승인 (테스트 키)
         TossPaymentResponse tossResponse = tosspaymentService.confirmPayment(tossRequest, memberId);

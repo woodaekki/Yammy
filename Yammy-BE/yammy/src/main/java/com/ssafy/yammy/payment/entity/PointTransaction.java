@@ -20,7 +20,7 @@ public class PointTransaction {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "toss_id")  // nullable=false 제거 (에스크로는 toss 없이 거래)
+    @JoinColumn(name = "toss_id")
     private TossPayment tossPayment;
 
     @ManyToOne(fetch = FetchType.LAZY)
