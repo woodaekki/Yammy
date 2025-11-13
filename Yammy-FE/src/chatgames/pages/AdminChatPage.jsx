@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { chatRoomApi } from '../api/chatApi';
 import RoomCreateForm from '../components/RoomCreateForm';
 import RoomListItem from '../components/RoomListItem';
@@ -8,6 +9,7 @@ import "../styles/AdminChatPage.css";
  * 관리자 채팅방 관리 페이지
  */
 export default function AdminChatPage() {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,6 +61,9 @@ export default function AdminChatPage() {
       {/* 헤더 */}
       <div className="admin-chat-header">
         <div className="admin-chat-header-inner">
+          <button onClick={() => navigate(-1)} className="chat-list-back-btn">
+            ←
+          </button>
           <div>
             <h1 className="admin-chat-title">채팅방 관리</h1>
             <p className="admin-chat-subtitle">채팅방을 생성하고 관리하세요</p>
