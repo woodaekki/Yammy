@@ -69,4 +69,32 @@ export const usedItemChatApi = {
     );
     return response.data;
   },
+
+  /**
+   * 채팅방 나가기
+   * @param {string} roomKey - 채팅방 키
+   * @returns {Promise}
+   */
+  leaveChatRoom: async (roomKey) => {
+    await apiClient.delete(`/useditem/chat/room/${roomKey}`);
+  },
+
+  
+  /**
+ * 메시지 읽음 처리
+ * @param {string} roomKey - 채팅방 키
+ * @returns {Promise}
+ */
+  markAsRead: async (roomKey) => {
+    await apiClient.post(`/useditem/chat/room/${roomKey}/read`);
+  },
+
+  /**
+   * 전체 읽지 않은 메시지 수 조회
+   * @returns {Promise<number>}
+   */
+  getTotalUnreadCount: async () => {
+    const response = await apiClient.get('/useditem/chat/unread-total');
+    return response.data.totalUnread;
+  },
 };

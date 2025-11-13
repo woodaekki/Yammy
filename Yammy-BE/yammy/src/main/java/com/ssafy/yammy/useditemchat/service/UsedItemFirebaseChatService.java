@@ -7,11 +7,14 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
+import com.ssafy.yammy.useditemchat.entity.UsedItemChatRoom;
+import com.ssafy.yammy.useditemchat.repository.UsedItemChatRoomRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +26,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class UsedItemFirebaseChatService {
+
+    private final UsedItemChatRoomRepository usedItemChatRoomRepository;
+
+    public UsedItemFirebaseChatService(UsedItemChatRoomRepository usedItemChatRoomRepository) {
+        this.usedItemChatRoomRepository = usedItemChatRoomRepository;
+    }
 
     /**
      * Firebase Storage에 이미지 업로드
@@ -61,6 +70,14 @@ public class UsedItemFirebaseChatService {
                 ))
                 .get();
 
+<<<<<<< HEAD
+=======
+        log.info("✅ Used item chat message saved: {} in room: {}", docRef.getId(), roomKey);
+
+        // 상대방의 unread count 증가
+        updateUnreadCount(roomKey, memberId);
+
+>>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
         return docRef.getId();
     }
 
@@ -71,6 +88,7 @@ public class UsedItemFirebaseChatService {
     public String saveUsedItemChatTextMessage(String roomKey, Long memberId, String nickname, String message) throws Exception {
         Firestore firestore = FirestoreClient.getFirestore();
 
+        // 메시지 저장
         var docRef = firestore.collection("useditem-chats")
                 .document(roomKey)
                 .collection("messages")
@@ -83,7 +101,58 @@ public class UsedItemFirebaseChatService {
                 ))
                 .get();
 
+<<<<<<< HEAD
+=======
+        log.info("✅ Used item chat text message saved: {} in room: {}", docRef.getId(), roomKey);
+
+        // 상대방의 unread count 증가
+        updateUnreadCount(roomKey, memberId);
+
+>>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
         return docRef.getId();
+    }
+
+    /**
+     * 읽지 않은 메시지 수 증가
+     * - 발신자가 판매자면 구매자의 unreadCount 증가
+     * - 발신자가 구매자면 판매자의 unreadCount 증가
+     */
+    private void updateUnreadCount(String roomKey, Long senderId) throws Exception {
+        Firestore firestore = FirestoreClient.getFirestore();
+
+        // 1. MySQL 업데이트
+        UsedItemChatRoom room = usedItemChatRoomRepository.findByRoomKey(roomKey)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
+
+        if (senderId.equals(room.getSellerId())) {
+            room.setBuyerUnreadCount(room.getBuyerUnreadCount() + 1);
+        } else if (senderId.equals(room.getBuyerId())) {
+            room.setSellerUnreadCount(room.getSellerUnreadCount() + 1);
+        }
+        room.setLastMessageAt(LocalDateTime.now());
+        usedItemChatRoomRepository.save(room);
+
+        // 2. Firestore 동기화
+        var roomRef = firestore.collection("useditem-chats").document(roomKey);
+        var roomSnapshot = roomRef.get().get();
+        if (roomSnapshot.exists()) {
+            Long sellerId = roomSnapshot.getLong("sellerId");
+            Long buyerId = roomSnapshot.getLong("buyerId");
+
+            if (senderId.equals(sellerId)) {
+                Long currentCount = roomSnapshot.getLong("buyerUnreadCount");
+                roomRef.update(
+                        "buyerUnreadCount", (currentCount != null ? currentCount : 0) + 1,
+                        "lastMessageAt", Timestamp.now()
+                ).get();
+            } else if (senderId.equals(buyerId)) {
+                Long currentCount = roomSnapshot.getLong("sellerUnreadCount");
+                roomRef.update(
+                        "sellerUnreadCount", (currentCount != null ? currentCount : 0) + 1,
+                        "lastMessageAt", Timestamp.now()
+                ).get();
+            }
+        }
     }
 
     /**

@@ -1,10 +1,15 @@
 import React from "react";
 import "../styles/GameHeader.css";
 
-export default function GameHeader({ room }) {
+export default function GameHeader({ room, navigate }) {
   if (!room) {
     return (
       <div className="game-header">
+        {navigate && (
+          <button onClick={() => navigate(-1)} className="chat-list-back-btn">
+            ←
+          </button>
+        )}
         <p className="loading">경기 정보를 불러오는 중...</p>
       </div>
     );
@@ -27,10 +32,17 @@ export default function GameHeader({ room }) {
         <div className="home-bar"></div>
         <div className="away-bar"></div>
       </div>
+      
 
       {/* 본문 정보 */}
       <div className="game-info">
         <div className="game-teams">
+          {/* 뒤로가기 버튼 */}
+          {navigate && (
+            <button onClick={() => navigate(-1)} className="chat-list-back-btn">
+              ←
+            </button>
+          )}
           <span className="team home">{homeTeam}</span>
           <span className="vs">VS</span>
           <span className="team away">{awayTeam}</span>

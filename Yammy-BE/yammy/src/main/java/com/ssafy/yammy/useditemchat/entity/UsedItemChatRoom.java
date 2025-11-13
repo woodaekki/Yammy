@@ -64,7 +64,23 @@ public class UsedItemChatRoom {
             this.status = UsedChatRoomStatus.ACTIVE;
         }
     }
+    @Column(name = "seller_deleted", nullable = false)
+    private Boolean sellerDeleted = false;
 
+    @Column(name = "buyer_deleted", nullable = false)
+    private Boolean buyerDeleted = false;
+
+    // 판매자가 읽지 않은 메시지 수
+    @Column(name = "seller_unread_count", nullable = false)
+    private Integer sellerUnreadCount = 0;
+
+    // 구매자가 읽지 않은 메시지 수
+    @Column(name = "buyer_unread_count", nullable = false)
+    private Integer buyerUnreadCount = 0;
+
+    // 마지막 메시지 시간
+    @Column(name = "last_message_at")
+    private LocalDateTime lastMessageAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "useditem_id")
@@ -76,4 +92,47 @@ public class UsedItemChatRoom {
     public static String generateRoomKey(Long usedItemId, Long buyerId) {
         return "useditem_" + java.util.UUID.randomUUID().toString();
     }
+
+    public Boolean getSellerDeleted() {
+        return sellerDeleted;
+    }
+
+    public void setSellerDeleted(Boolean sellerDeleted) {
+        this.sellerDeleted = sellerDeleted;
+    }
+
+    public Boolean getBuyerDeleted() {
+        return buyerDeleted;
+    }
+
+    public void setBuyerDeleted(Boolean buyerDeleted) {
+        this.buyerDeleted = buyerDeleted;
+    }
+
+    public Integer getSellerUnreadCount() {
+        return sellerUnreadCount != null ? sellerUnreadCount : 0;
+    }
+
+    public void setSellerUnreadCount(Integer sellerUnreadCount) {
+        this.sellerUnreadCount = sellerUnreadCount;
+    }
+
+    public Integer getBuyerUnreadCount() {
+        return buyerUnreadCount != null ? buyerUnreadCount : 0;
+    }
+
+    public void setBuyerUnreadCount(Integer buyerUnreadCount) {
+        this.buyerUnreadCount = buyerUnreadCount;
+    }
+
+    public LocalDateTime getLastMessageAt() {
+        return lastMessageAt;
+    }
+
+    public void setLastMessageAt(LocalDateTime lastMessageAt) {
+        this.lastMessageAt = lastMessageAt;
+    }
+
 }
+
+

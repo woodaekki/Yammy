@@ -31,4 +31,10 @@ public class UsedItemChatRoomResponse {
     private Integer itemPrice;
     private String sellerNickname;
     private String buyerNickname;
+
+    // 내가 읽지 않은 메시지 수
+    private Integer unreadCount;
+
+    // 마지막 메시지 시간
+    private LocalDateTime lastMessageAt;
 }

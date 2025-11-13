@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useChatMessages } from '../hooks/useChatMessages';
 import { chatRoomApi } from '../api/chatApi';
 import GameHeader from '../components/GameHeader';
@@ -14,6 +14,7 @@ import "../styles/ChatGamePage.css";
  */
 export default function ChatGamePage() {
   const { roomKey } = useParams();
+  const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -114,7 +115,7 @@ export default function ChatGamePage() {
     <div className="chat-page-container">
       {/* 고정된 헤더 */}
       <div className="chat-header-fixed">
-        <GameHeader room={loadingRoom ? null : room} />
+        <GameHeader room={loadingRoom ? null : room} navigate={navigate} />
       </div>
 
       {/* 스크롤 가능한 메시지 영역 */}

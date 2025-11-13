@@ -210,3 +210,22 @@
     font-size: 0.7rem;
   }
 }
+
+/* 읽지 않은 메시지 배지 */
+.chat-list-item-preview-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unread-badge {
+  background-color: #ff4444;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}

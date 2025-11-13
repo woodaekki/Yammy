@@ -23,7 +23,7 @@ export default function UsedItemChatPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [myBalance, setMyBalance] = useState(0);
-
+  const [isLeaving, setIsLeaving] = useState(false);
   const { messages, loading: loadingMessages, error: messageError } =
     useUsedItemChatMessages(roomKey);
 
@@ -64,6 +64,9 @@ export default function UsedItemChatPage() {
 
         const item = await getUsedItemById(chatRoom.usedItemId);
         setItemInfo(item);
+
+        // 읽음 처리
+        await usedItemChatApi.markAsRead(roomKey);
 
         const pointData = await getMyPoint();
         setMyBalance(pointData.balance);
@@ -123,6 +126,29 @@ export default function UsedItemChatPage() {
     }
   };
 
+  const handleLeaveChatRoom = async () => {
+    const confirmed = window.confirm(
+    "채팅방을 나가시겠습니까?\n(상대방도 나가면 채팅방이 삭제됩니다.)"
+    );
+    if (!confirmed) return;
+
+    try {
+      setIsLeaving(true);
+      await usedItemChatApi.leaveChatRoom(roomKey);
+      alert("채팅방을 나갔습니다.");
+      navigate("/chatlist");
+    } catch (error) {
+      console.error("채팅방 나가기 실패:", error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert("인증이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "채팅방 나가기에 실패했습니다.");
+      }
+    } finally {
+      setIsLeaving(false);
+    }
+  };
   if (error || messageError) {
     return (
       <div className="chat-error-container">
@@ -202,12 +228,21 @@ export default function UsedItemChatPage() {
             </div>
 
             {chatRoomInfo && (
-              <button
-                className="chat-transfer-btn"
-                onClick={handleOpenTransferModal}
-              >
-                송금
-              </button>
+              <div className="chat-header-buttons">
+                <button
+                  className="chat-transfer-btn"
+                  onClick={handleOpenTransferModal}
+                >
+                  송금
+                </button>
+                <button
+                  className="chat-leave-btn"
+                  onClick={handleLeaveChatRoom}
+                  disabled={isLeaving}
+                >
+                  {isLeaving ? "나가는 중..." : "나가기"}
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -223,7 +258,12 @@ export default function UsedItemChatPage() {
       </div>
 
       {/* === 입력창 === */}
-      {roomKey && <UsedItemChatInput roomKey={roomKey} />}
+      {roomKey && (
+        <UsedItemChatInput
+          roomKey={roomKey}
+          disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
+        />
+      )}
 
       {/* === 이미지 확대 === */}
       {selectedImage && (

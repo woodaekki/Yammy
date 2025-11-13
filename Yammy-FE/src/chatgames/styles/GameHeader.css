@@ -100,3 +100,35 @@
   padding: 1rem 0;
   color: #9ca3af;
 }
+
+
+/* 뒤로가기 버튼 */
+.game-header {
+  position: relative;
+}
+
+.game-info {
+  position: relative;
+}
+
+.chat-list-back-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #374151;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.chat-list-back-btn:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+  border-radius: 8px;
+}
