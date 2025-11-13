@@ -83,7 +83,6 @@ const SettlementModal = ({ matches, onClose, onSubmit }) => {
         </div>
 
         <div className="settlement-modal-footer">
-          <button className="cancel-button" onClick={onClose}>취소</button>
           <button
             className="submit-button"
             onClick={handleSubmit}
@@ -91,6 +90,7 @@ const SettlementModal = ({ matches, onClose, onSubmit }) => {
           >
             정산하기
           </button>
+          <button className="cancel-button" onClick={onClose}>취소</button>
         </div>
       </div>
     </div>

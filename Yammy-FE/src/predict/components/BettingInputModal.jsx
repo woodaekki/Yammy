@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTeamColor } from '../hooks/usePredict';
 import { createBetting, getMemberInfo } from '../api/predictApi';
 import { TeamLogo } from '../utils/teamLogo.jsx';
@@ -6,6 +7,7 @@ import '../styles/BettingInputModal.css';
 import '../styles/TeamLogo.css';
 
 const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) => {
+  const navigate = useNavigate();
   const [betAmount, setBetAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
@@ -17,9 +19,10 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
     ? { name: match?.homeTeam, odds: match?.homeOdds, label: 'HOME' }
     : { name: match?.awayTeam, odds: match?.awayOdds, label: 'AWAY' };
 
-  // 예상 수익 계산
-  const expectedReturn = betAmount ? (parseFloat(betAmount) * selectedTeamInfo.odds).toFixed(0) : '0';
-  const expectedProfit = betAmount ? (parseFloat(betAmount) * (selectedTeamInfo.odds - 1)).toFixed(0) : '0';
+  // 예상 수익 계산 (콤마 제거 후 계산)
+  const betAmountForCalc = betAmount ? parseFloat(betAmount.replace(/,/g, '')) : 0;
+  const expectedReturn = betAmountForCalc ? (betAmountForCalc * selectedTeamInfo.odds).toFixed(0) : '0';
+  const expectedProfit = betAmountForCalc ? (betAmountForCalc * (selectedTeamInfo.odds - 1)).toFixed(0) : '0';
 
   // 사용자 팬심 로드
   useEffect(() => {
@@ -39,19 +42,34 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
     loadUserPoints();
   }, []);
 
+  // 모바일에서 바디 스크롤 방지
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
   // 배팅 금액 입력 핸들러 + 실시간 검증
   const handleAmountChange = (e) => {
     const value = e.target.value;
+    // 콤마 제거
+    const valueWithoutComma = value.replace(/,/g, '');
+
     // 숫자만 입력 가능
-    if (value === '' || /^\d+$/.test(value)) {
-      setBetAmount(value);
-      
+    if (valueWithoutComma === '' || /^\d+$/.test(valueWithoutComma)) {
+      // 콤마 추가해서 표시
+      const formattedValue = valueWithoutComma === '' ? '' : parseInt(valueWithoutComma).toLocaleString();
+      setBetAmount(formattedValue);
+
       // 실시간 검증
-      if (value === '') {
+      if (valueWithoutComma === '') {
         setValidationMessage('');
       } else {
-        const betAmountNum = parseFloat(value);
-        
+        const betAmountNum = parseFloat(valueWithoutComma);
+
         // 최소 배팅 금액 검사 (100팬심)
         if (betAmountNum < 100) {
           setValidationMessage('최소 배팅 금액은 100팬심입니다');
@@ -66,13 +84,16 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
 
   // 배팅하기 버튼 클릭
   const handleBet = async () => {
-    if (!betAmount || parseFloat(betAmount) <= 0) {
+    // 콤마 제거
+    const betAmountWithoutComma = betAmount.replace(/,/g, '');
+
+    if (!betAmountWithoutComma || parseFloat(betAmountWithoutComma) <= 0) {
       alert('배팅 팬심을 입력해주세요.');
       return;
     }
 
-    const betAmountNum = parseFloat(betAmount);
-    
+    const betAmountNum = parseFloat(betAmountWithoutComma);
+
     // 최소 배팅 금액 검사 (100팬심)
     if (betAmountNum < 100) {
       alert('최소 배팅 금액은 100팬심입니다.');
@@ -95,11 +116,12 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
         expectedReturn: Math.floor(parseFloat(expectedReturn)) // Long으로 변환 (정수)
       };
       
-      const result = await createBetting(bettingData);
+      await createBetting(bettingData);
 
       // 성공 처리
-      alert(`배팅이 완료되었습니다!\n배팅 ID: ${result.id || 'N/A'}`);
+      alert('배팅 완료!');
       onClose(); // 모달 닫기
+      navigate('/prediction'); // PredictPage로 이동
 
       // 배팅 성공 후 경기 목록 새로고침
       if (onBettingSuccess) {
@@ -129,8 +151,8 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
     <div className="betting-modal-backdrop" onClick={handleBackdropClick}>
       <div className="betting-modal-container">
         <div className="betting-modal-header">
-          <h2>⚾ 배팅하기</h2>
-          <button className="close-button" onClick={onClose}>✕</button>
+          <h2>배팅하기</h2>
+          <button className="close-button" onClick={onClose}>X</button>
         </div>
 
         <div className="betting-modal-content">
@@ -138,11 +160,10 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
           <div className="odds-comparison-section">
             <h3>배팅 현황 비교</h3>
             <div className="odds-comparison-bar">
-              <div 
+              <div
                 className={`team-odds-portion ${selectedTeam === 0 ? 'selected' : ''}`}
-                style={{ 
-                  width: `${((match.homeAmount + match.awayAmount) > 0 ? 
-                            (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 : 50)}%`,
+                style={{
+                  width: '50%',
                   backgroundColor: getTeamColor(match.homeTeam)
                 }}
               >
@@ -151,11 +172,10 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
                   <span className="odds-value">{match.homeAmount.toLocaleString()}팬심</span>
                 </div>
               </div>
-              <div 
+              <div
                 className={`team-odds-portion ${selectedTeam === 1 ? 'selected' : ''}`}
-                style={{ 
-                  width: `${((match.homeAmount + match.awayAmount) > 0 ? 
-                            (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100 : 50)}%`,
+                style={{
+                  width: '50%',
                   backgroundColor: getTeamColor(match.awayTeam)
                 }}
               >
@@ -170,28 +190,28 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
           {/* 선택된 팀 */}
           <div className="selected-team-info">
             <h3>선택한 팀</h3>
-            <div 
+            <div
               className="selected-team-card"
-              style={{ 
+              style={{
                 backgroundColor: getTeamColor(selectedTeamInfo.name),
                 position: 'relative',
                 overflow: 'hidden'
               }}
             >
               {/* 배당률 비율 배경 */}
-              <div 
+              <div
                 className="odds-ratio-background"
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
-                  width: `${(selectedTeamInfo.odds / (match.homeOdds + match.awayOdds)) * 100}%`,
+                  width: `100%`,
                   height: '100%',
                   backgroundColor: 'rgba(255, 255, 255, 0.2)',
                   zIndex: 1
                 }}
               />
-              
+
               <div style={{ position: 'relative', zIndex: 2 }}>
                 <div className="team-label">{selectedTeamInfo.label}</div>
                 <div className="team-info-container">
@@ -200,9 +220,9 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
                     <div className="team-name">{selectedTeamInfo.name}</div>
                     <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
                     <div className="odds-ratio-text">
-                      {((match.homeAmount + match.awayAmount) > 0 ? 
-                        (selectedTeam === 0 ? 
-                         (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 : 
+                      {((match.homeAmount + match.awayAmount) > 0 ?
+                        (selectedTeam === 0 ?
+                         (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 :
                          (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100) : 50).toFixed(1)}% 비율
                     </div>
                   </div>
@@ -231,6 +251,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
                 placeholder="100팬심 이상 입력하세요"
                 className={`amount-input ${validationMessage ? 'error' : ''}`}
               />
+              <div>팬심</div>
               <span className="currency"></span>
             </div>
             {validationMessage && (
@@ -240,20 +261,10 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
             )}
           </div>
 
-          {/* 예상 수익 */}
-          {betAmount && (
-            <div className="expected-return">
-              <div className="return-item">
-                <span className="return-label">배팅 팬심:</span>
-                <span className="return-value">{parseInt(betAmount).toLocaleString()}팬심</span>
-              </div>
-            </div>
-          )}
-
           {/* 버튼들 */}
           <div className="action-buttons">
-            <button 
-              className="bet-button" 
+            <button
+              className="bet-button"
               onClick={handleBet}
               disabled={loading || !betAmount || validationMessage}
               style={{ backgroundColor: getTeamColor(selectedTeamInfo.name) }}

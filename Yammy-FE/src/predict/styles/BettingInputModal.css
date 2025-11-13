@@ -10,11 +10,11 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   z-index: 1000;
   padding: 1rem;
-  padding-top: 2rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* 모달 컨테이너 */
@@ -23,10 +23,12 @@
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   animation: modalSlideUp 0.3s ease-out;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes modalSlideUp {
@@ -104,7 +106,43 @@
   overflow: hidden;
   background: #f5f5f5;
   border: 2px solid #e0e0e0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.betting-ratio-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 600;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* 실제 배팅 비율 막대 그래프 */
+.actual-betting-ratio-bar {
+  display: flex;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ratio-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ratio-text {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .team-odds-portion {
@@ -116,11 +154,72 @@
   padding: 0 12px;
   min-width: 60px;
   height: 100%;
+  width: 50%;
+}
+
+/* 팀별 색상 - data-team 속성 사용 */
+.team-odds-portion[data-team="LG"],
+.selected-team-card[data-team="LG"],
+.bet-button[data-team="LG"] {
+  background-color: #C30452;
+}
+
+.team-odds-portion[data-team="KT"],
+.selected-team-card[data-team="KT"],
+.bet-button[data-team="KT"] {
+  background-color: #000000;
+}
+
+.team-odds-portion[data-team="SSG"],
+.selected-team-card[data-team="SSG"],
+.bet-button[data-team="SSG"] {
+  background-color: #CE0E2D;
+}
+
+.team-odds-portion[data-team="NC"],
+.selected-team-card[data-team="NC"],
+.bet-button[data-team="NC"] {
+  background-color: #315288;
+}
+
+.team-odds-portion[data-team="두산"],
+.selected-team-card[data-team="두산"],
+.bet-button[data-team="두산"] {
+  background-color: #131230;
+}
+
+.team-odds-portion[data-team="KIA"],
+.selected-team-card[data-team="KIA"],
+.bet-button[data-team="KIA"] {
+  background-color: #EA0029;
+}
+
+.team-odds-portion[data-team="롯데"],
+.selected-team-card[data-team="롯데"],
+.bet-button[data-team="롯데"] {
+  background-color: #041E42;
+}
+
+.team-odds-portion[data-team="삼성"],
+.selected-team-card[data-team="삼성"],
+.bet-button[data-team="삼성"] {
+  background-color: #074CA1;
+}
+
+.team-odds-portion[data-team="한화"],
+.selected-team-card[data-team="한화"],
+.bet-button[data-team="한화"] {
+  background-color: #FF6600;
+}
+
+.team-odds-portion[data-team="키움"],
+.selected-team-card[data-team="키움"],
+.bet-button[data-team="키움"] {
+  background-color: #570514;
 }
 
 .team-odds-portion.selected {
-  border: 3px solid #FFD700;
-  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+  /* 선택된 팀 외곽선 제거 */
 }
 
 .odds-info {
@@ -161,12 +260,18 @@
 }
 
 .selected-team-card {
-  background: linear-gradient(135deg, var(--team-color), var(--team-color-dark));
   color: white;
   padding: 1.5rem;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.selected-team-content {
+  position: relative;
+  z-index: 2;
 }
 
 .selected-team-card .team-label {
@@ -203,6 +308,13 @@
 }
 
 .odds-ratio-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 1;
   border-radius: inherit;
   animation: pulseGlow 2s ease-in-out infinite;
 }
@@ -252,6 +364,7 @@
   display: flex;
   align-items: center;
   position: relative;
+  gap: 0.5rem;
 }
 
 .amount-input {
@@ -263,10 +376,24 @@
   text-align: right;
   outline: none;
   transition: border-color 0.2s;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+}
+
+.amount-input-container > div {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .amount-input:focus {
   border-color: #4CAF50;
+  position: relative;
+  z-index: 1;
 }
 
 .amount-input.error {
@@ -394,6 +521,61 @@
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* 배팅 완료 모달 */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.success-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+.success-modal h2 {
+  font-size: 1.5rem;
+  color: #4CAF50;
+  margin-bottom: 1rem;
+}
+
+.success-modal p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.confirm-button {
+  padding: 0.75rem 2rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
 }
 
 /* 반응형 디자인 */

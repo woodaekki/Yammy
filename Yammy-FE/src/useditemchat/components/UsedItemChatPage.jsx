@@ -38,7 +38,6 @@ export default function UsedItemChatPage() {
     if (!roomKey) return;
 
     const initChat = async () => {
-      console.log('🔧 initChat start, roomKey=', roomKey, 'user=', user);
       try {
         setLoading(true);
 
@@ -55,12 +54,10 @@ export default function UsedItemChatPage() {
         }
 
         if (!memberId) {
-          console.log('🔒 initChat: no memberId after retries, redirecting');
           alert("로그인이 필요합니다.");
           navigate("/login");
           return;
         }
-        console.log('✅ initChat: memberId=', memberId);
 
         const chatRoom = await usedItemChatApi.getChatRoom(roomKey);
         setChatRoomInfo(chatRoom);

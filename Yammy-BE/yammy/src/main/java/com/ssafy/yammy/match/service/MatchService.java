@@ -50,7 +50,6 @@ public class MatchService {
             try {
                 return getMatchDetail(matchcode);
             } catch (Exception e) {
-                log.warn("경기 상세 정보 조회 실패 - matchcode: {}, 스케줄 정보로 대체", matchcode);
                 // 약자를 풀네임으로 변환
                 String homeFullName = TeamNameMapper.codeToFullName(schedule.getHome());
                 String awayFullName = TeamNameMapper.codeToFullName(schedule.getAway());
@@ -115,15 +114,11 @@ public class MatchService {
      * 특정 날짜의 경기 목록 조회 - match_schedule 기반
      */
     public List<MatchResponse> getMatchesByDate(LocalDate date) {
-        log.info("날짜별 경기 조회 시작 - date: {}", date);
         List<MatchSchedule> schedules = matchScheduleRepository.findByMatchDate(date);
-        log.info("조회된 스케줄 수: {}", schedules.size());
 
         return schedules.stream()
                 .map(schedule -> {
                     String matchcode = schedule.getMatchDate().toString().replace("-", "") + "_" + schedule.getGameid();
-                    log.info("처리 중인 경기 - matchcode: {}, home: {}, away: {}",
-                            matchcode, schedule.getHome(), schedule.getAway());
 
                     // 약자를 풀네임으로 변환 (기본값)
                     String homeFullName = TeamNameMapper.codeToFullName(schedule.getHome());

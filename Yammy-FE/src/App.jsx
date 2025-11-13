@@ -11,7 +11,6 @@ function App() {
   const hideTopBar = location.pathname === '/mypage' ||
                      location.pathname === '/ticket/create' ||
                      location.pathname.startsWith('/ticket/') ||
-                     location.pathname.startsWith('/prediction') ||
                      location.pathname.startsWith('/betting');
 
   // 스와이프 기능을 위한 메뉴 정의

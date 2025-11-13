@@ -14,25 +14,26 @@ export function useMatch() {
     try {
       setLoading(true);
       setError(null);
-      
-      console.log(`🔍 날짜별 경기 검색: ${date}`);
-      
+
       const response = await getMatchesByDate(date);
-      
-      console.log('✅ API 응답:', response);
-      
+
       if (response.status === 'success') {
         setMatches(response.data || []);
-        console.log(`📊 ${response.data?.length || 0}개 경기 데이터 설정됨`);
       } else {
         throw new Error(response.message || '알 수 없는 오류가 발생했습니다');
       }
-      
+
     } catch (err) {
-      console.error("❌ 날짜별 경기 검색 실패:", err);
-      
+      console.error('[useMatch] Match search error:', {
+        date,
+        error: err.message,
+        code: err.code,
+        status: err.response?.status,
+        data: err.response?.data
+      });
+
       let errorMessage = "해당 날짜의 경기 정보를 불러오는데 실패했습니다.";
-      
+
       if (err.code === 'ECONNREFUSED') {
         errorMessage = "서버에 연결할 수 없습니다.";
       } else if (err.response?.status === 404) {
@@ -42,7 +43,7 @@ export function useMatch() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
       setMatches([]);
     } finally {
@@ -57,23 +58,25 @@ export function useMatch() {
    */
   const getMatchDetailInfo = useCallback(async (matchcode) => {
     try {
-      console.log(`🔍 경기 상세 조회: ${matchcode}`);
-      
       const response = await getMatchDetail(matchcode);
-      
-      console.log('✅ 경기 상세 응답:', response);
-      
+
       if (response.status === 'success') {
         return response.data;
       } else {
         throw new Error(response.message || '경기 상세 정보를 찾을 수 없습니다');
       }
-      
+
     } catch (err) {
-      console.error("❌ 경기 상세 조회 실패:", err);
-      
+      console.error('[useMatch] Match detail error:', {
+        matchcode,
+        error: err.message,
+        code: err.code,
+        status: err.response?.status,
+        data: err.response?.data
+      });
+
       let errorMessage = '경기 상세 정보를 불러오는데 실패했습니다.';
-      
+
       if (err.code === 'ECONNREFUSED') {
         errorMessage = "서버에 연결할 수 없습니다.";
       } else if (err.response?.status === 404) {
@@ -81,7 +84,7 @@ export function useMatch() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       throw new Error(errorMessage);
     }
   }, []); // 빈 의존성 배열로 함수 메모이제이션
@@ -105,7 +108,7 @@ export function useMatch() {
   };
 
   const refreshMatches = async () => {
-    console.warn('refreshMatches: 특정 날짜 없이 새로고침은 지원되지 않습니다.');
+    // 특정 날짜 없이 새로고침은 지원되지 않음
   };
 
   return {

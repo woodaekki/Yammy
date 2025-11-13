@@ -146,7 +146,7 @@
   white-space: nowrap;
 }
 
-.nav-bar-top . i.fa-chevron-down {
+.nav-bar-top .i.fa-chevron-down {
   font-size: 0.75rem;
   color: #6b7280;
   transition: transform 0.2s;
@@ -356,6 +356,28 @@
   user-select: none;
 }
 
+/* Predict 페이지 팬심 표시 */
+.predict-points-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.predict-points-display .points-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.predict-points-display .points-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+}
 /* 읽지 않은 메시지 알림 */
 .header-notification {
   position: relative;

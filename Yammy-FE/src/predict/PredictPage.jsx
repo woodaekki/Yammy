@@ -12,6 +12,7 @@ const PredictPage = () => {
   const navigate = useNavigate();
   const [teamColors, setTeamColors] = useState(getTeamColors());
   const [showSettlementModal, setShowSettlementModal] = useState(false);
+  const [showOddsTooltip, setShowOddsTooltip] = useState(false);
 
   // 관리자 권한 확인
   const authority = localStorage.getItem('authority');
@@ -31,6 +32,9 @@ const PredictPage = () => {
 
   // 🔥 임시로 전체 경기 보여주기 (날짜 필터링 제거)
   const todayMatches = matches; // 전체 경기 보여주기
+
+  // 모든 경기가 정산되었는지 확인
+  const allSettled = todayMatches.length > 0 && todayMatches.every(match => match.isSettled === 1);
 
   // 팀 컬러 업데이트
   useEffect(() => {
@@ -85,28 +89,46 @@ const PredictPage = () => {
 
   return (
     <div className="predict-page">
-      <div className="predict-header" style={{ backgroundColor: teamColors.bgColor }}>
-        <h1 style={{ color: teamColors.textColor }}>⚾ 승부 예측</h1>
-        <div className="predict-header-content">
-          <p style={{ color: teamColors.textColor, opacity: 0.9 }}>오늘의 KBO 경기에 대한 승부를 예측해보세요!</p>
-          {isAdmin && (
-            <button
-              className="settlement-button"
-              onClick={() => setShowSettlementModal(true)}
-            >
-              정산하기
-            </button>
-          )}
-        </div>
-      </div>
-      
       <div className="predict-schedule">
-        <h2>{year}년 {month}월 {day}일</h2>
+        <h2>{year}년 {month}월 {day}일 승부예측</h2>
+        
       </div>
       
       <div className="predict-content">
         <div className="today-matches">
-          <h2>배팅 가능한 경기</h2>
+          <div className="matches-header">
+            <h2>오늘의 경기</h2>
+            
+            <div className="odds-info-wrapper">
+              <button
+                className="odds-info-button"
+                onClick={() => setShowOddsTooltip(!showOddsTooltip)}
+              >
+                ⓘ 배당률이란?
+              </button>
+              {showOddsTooltip && (
+                <div className="odds-tooltip">
+                  <div className="tooltip-header">
+                    <strong>배당률이란?</strong>
+                    <button
+                      className="tooltip-close"
+                      onClick={() => setShowOddsTooltip(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="tooltip-content">
+                    <p><strong>배당률 2.00이라면:</strong></p>
+                    <p>• 100팬심 배팅 시 승리하면 200팬심을 받는다</p>
+                    <p>• 즉, 원금 100 + 수익 100 = 총 200팬심</p>
+                    <br/>
+                    <p><strong>계산법:</strong></p>
+                    <p>• 배팅팬심 × 배당률 = 받을 팬심</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
           
           {loading && (
             <div className="loading">경기 데이터를 불러오는 중...</div>
@@ -135,14 +157,13 @@ const PredictPage = () => {
                     style={{ cursor: isSettled ? 'not-allowed' : 'pointer' }}
                   >
                     <div className="match-time-header">{match.gameTime}</div>
-                    
+
                     <div className="match-prediction-card" style={{ display: 'flex' }}>
                       {/* 홈팀 */}
                       <div
                         className="team-section home-team-section"
-                        style={{ 
+                        style={{
                           backgroundColor: getTeamColor(match.homeTeam),
-                          flex: homeAmountRatio
                         }}
                       >
                         <div className="team-label">HOME</div>
@@ -153,8 +174,10 @@ const PredictPage = () => {
                             <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
                           </div>
                         </div>
-                        <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
-                        <div className="total-fansim">총 팬심: {match.homeAmount.toLocaleString()}</div>
+                        <div className="odds-fansim-container">
+                          <div className="total-fansim">총 팬심: {match.homeAmount.toLocaleString()}</div>
+                          <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
+                        </div>
                       </div>
 
                       {/* 중앙 VS */}
@@ -165,9 +188,8 @@ const PredictPage = () => {
                       {/* 원정팀 */}
                       <div
                         className="team-section away-team-section"
-                        style={{ 
+                        style={{
                           backgroundColor: getTeamColor(match.awayTeam),
-                          flex: awayAmountRatio
                         }}
                       >
                         <div className="team-label">AWAY</div>
@@ -178,11 +200,12 @@ const PredictPage = () => {
                           </div>
                           <TeamLogo teamName={match.awayTeam} size="medium" />
                         </div>
-                        <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
-                        <div className="total-fansim">총 팬심: {match.awayAmount.toLocaleString()}</div>
+                        <div className="odds-fansim-container">
+                          <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
+                          <div className="total-fansim">총 팬심: {match.awayAmount.toLocaleString()}</div>
+                        </div>
                       </div>
                     </div>
-                    <div className="match-stadium">{match.stadium}</div>
 
                     {/* 경기 진행중 오버레이 */}
                     {gameInProgress && (

@@ -2,22 +2,27 @@ import { useState, useEffect } from 'react';
 import { getTodayMatches, getMatchesByDate } from '../api/predictApi';
 import { TEAM_COLORS } from '../../sns/utils/teamColors';
 
+// 팀 이름 매핑 (공통 사용)
+const teamNameMapping = {
+  'KIA': 'KIA 타이거즈',
+  '삼성': '삼성 라이온즈',
+  'LG': 'LG 트윈스',
+  '두산': '두산 베어스',
+  'KT': 'KT 위즈',
+  'SSG': 'SSG 랜더스',
+  '롯데': '롯데 자이언츠',
+  '한화': '한화 이글스',
+  'NC': 'NC 다이노스',
+  '키움': '키움 히어로즈'
+};
+
+// 팀 풀네임 가져오기 함수
+export const getFullTeamName = (teamName) => {
+  return teamNameMapping[teamName] || teamName;
+};
+
 // 팀 컬러 매핑 함수 (공통 사용)
 export const getTeamColor = (teamName) => {
-  // 짧은 팀 이름을 전체 팀 이름으로 매핑
-  const teamNameMapping = {
-    'KIA': 'KIA 타이거즈',
-    '삼성': '삼성 라이온즈',
-    'LG': 'LG 트윈스',
-    '두산': '두산 베어스',
-    'KT': 'KT 위즈',
-    'SSG': 'SSG 랜더스',
-    '롯데': '롯데 자이언츠',
-    '한화': '한화 이글스',
-    'NC': 'NC 다이노스',
-    '키움': '키움 히어로즈'
-  };
-
   const fullTeamName = teamNameMapping[teamName] || teamName;
   return TEAM_COLORS[fullTeamName]?.bgColor || '#4CAF50';
 };
@@ -162,7 +167,7 @@ export const usePredict = () => {
     const getGameTime = () => {
       const today = new Date();
       const dayOfWeek = today.getDay(); // 0=일요일, 6=토요일
-      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '18:30';
+      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '23:59';
     };
 
     // 상대 전적 기반 승률 계산

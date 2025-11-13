@@ -37,7 +37,12 @@ export default function ChatGamePage() {
         setLoadingRoom(false);
       })
       .catch(error => {
-        console.error('채팅방 정보 로드 실패:', error);
+        console.error('[ChatGamePage] 채팅방 정보 로드 실패:', {
+          roomKey,
+          error: error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        });
         setLoadingRoom(false);
       });
   }, [roomKey]);
@@ -65,11 +70,19 @@ export default function ChatGamePage() {
   };
 
   const handleUploadSuccess = (result) => {
-    console.log('업로드 성공:', result);
+    console.log('[ChatGamePage] 이미지 업로드 성공:', {
+      roomKey,
+      messageId: result?.messageId,
+      imageUrl: result?.imageUrl
+    });
   };
 
   const handleUploadError = (error) => {
-    console.error('업로드 실패:', error);
+    console.error('[ChatGamePage] 이미지 업로드 실패:', {
+      roomKey,
+      error: error.message,
+      status: error.response?.status
+    });
     alert('이미지 업로드 실패: ' + error.message);
   };
 

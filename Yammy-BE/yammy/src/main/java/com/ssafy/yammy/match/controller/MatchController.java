@@ -32,7 +32,6 @@ public class MatchController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
-        log.info("최근 경기 목록 조회 요청 - page: {}, size: {}", page, size);
         Page<MatchResponse> matches = matchService.getRecentMatches(page, size);
         return ResponseEntity.ok(matches);
     }
@@ -43,7 +42,6 @@ public class MatchController {
     @GetMapping("/{matchcode}")
     @Operation(summary = "경기 상세 조회", description = "matchcode로 특정 경기의 상세 정보를 조회합니다.")
     public ResponseEntity<MatchResponse> getMatchDetail(@PathVariable String matchcode) {
-        log.info("경기 상세 조회 요청 - matchcode: {}", matchcode);
         MatchResponse match = matchService.getMatchDetail(matchcode);
         return ResponseEntity.ok(match);
     }
@@ -56,7 +54,6 @@ public class MatchController {
     public ResponseEntity<List<MatchResponse>> getMatchesByDate(
             @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
-        log.info("날짜별 경기 조회 요청 - date: {}", date);
         List<MatchResponse> matches = matchService.getMatchesByDate(date);
         return ResponseEntity.ok(matches);
     }
@@ -71,7 +68,6 @@ public class MatchController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
-        log.info("팀별 경기 조회 요청 - team: {}, page: {}, size: {}", team, page, size);
         Page<MatchResponse> matches = matchService.getMatchesByTeam(team, page, size);
         return ResponseEntity.ok(matches);
     }
@@ -87,8 +83,6 @@ public class MatchController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
-        log.info("기간별 경기 조회 요청 - startDate: {}, endDate: {}, page: {}, size: {}",
-                 startDate, endDate, page, size);
         Page<MatchResponse> matches = matchService.getMatchesByDateRange(startDate, endDate, page, size);
         return ResponseEntity.ok(matches);
     }

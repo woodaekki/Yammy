@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
+import { getMemberInfo } from "../../predict/api/predictApi";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import logo from "../../assets/images/logo.png";
 import "./NavigationBar.css";
@@ -16,6 +17,8 @@ const NavigationBarTop = () => {
   const [balance, setBalance] = useState(null);
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [error, setError] = useState(null);
+  const [userPoints, setUserPoints] = useState(0);
+  const [pointsLoading, setPointsLoading] = useState(true);
   const dropdownRef = useRef(null); 
 
   const format = (num) => num.toLocaleString();
@@ -95,6 +98,29 @@ const NavigationBarTop = () => {
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
+<<<<<<< HEAD
+
+  // Predict 페이지용 팬심 로드
+  useEffect(() => {
+    const loadUserPoints = async () => {
+      if (!isLoggedIn || !location.pathname.startsWith("/prediction")) return;
+
+      try {
+        setPointsLoading(true);
+        const memberInfo = await getMemberInfo();
+        setUserPoints(memberInfo.exp || 0);
+      } catch (error) {
+        console.error('Error loading user points:', error.message);
+        setUserPoints(0);
+      } finally {
+        setPointsLoading(false);
+      }
+    };
+
+    loadUserPoints();
+  }, [isLoggedIn, location.pathname]);
+
+=======
     // 중고채팅 읽지 않은 메시지 수 조회
   useEffect(() => {
     const fetchUnreadCount = async () => {
@@ -114,6 +140,7 @@ const NavigationBarTop = () => {
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, [token, isLoggedIn]);
+>>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
   if (shouldHideNav) return null;
 
   const handleLogout = () => {
@@ -136,6 +163,8 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/success") ||
       location.pathname.startsWith("/fail"));
 
+  const isPredictPage = location.pathname.startsWith("/prediction");
+
   const currentLogo = logo;
 
   return (
@@ -144,8 +173,20 @@ const NavigationBarTop = () => {
         <img src={currentLogo} alt="Yammy" className="sns-logo-img" />
       </div>
 
-      <div className="header-right">
-        {shouldShowBalanceButton ? (
+      {isPredictPage ? (
+        <div className="header-right">
+          {isLoggedIn && (
+            <div className="predict-points-display">
+              <span className="points-label">보유 팬심:</span>
+              <span className="points-value">
+                {pointsLoading ? "로딩중..." : `${userPoints.toLocaleString()}팬심`}
+              </span>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="header-right">
+          {shouldShowBalanceButton ? (
           <div className="ypay-baseball-wrapper">
             <div className="ypay-info" onClick={goMyPoint}>
               <div className="ypay-logo-circle">⚾</div>
@@ -217,7 +258,8 @@ const NavigationBarTop = () => {
             )}
           </>
         )}
-      </div>
+        </div>
+        )}
     </nav>
   );
 };

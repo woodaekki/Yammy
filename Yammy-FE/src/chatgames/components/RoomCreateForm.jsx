@@ -59,8 +59,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
       setError(null);
 
       const result = await chatRoomApi.createRoom(formData);
-      console.log('✅ 채팅방 생성 성공:', result);
-      
+
       if (onSuccess) onSuccess(result);
 
       setFormData({
@@ -72,7 +71,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
         startAt: ''
       });
     } catch (err) {
-      console.error('❌ 채팅방 생성 실패:', err);
+      console.error('Chat room creation error:', err.message);
       setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);

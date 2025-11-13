@@ -28,8 +28,6 @@ export function useUsedItemChatMessages(roomKey, messageLimit = 200) {
     setError(null);
     setMessages([]); // 이전 메시지 초기화
 
-    console.log('🔥 [UsedItem] Subscribing to room:', roomKey);
-
     // 이전 구독이 있으면 해제
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
@@ -47,21 +45,18 @@ export function useUsedItemChatMessages(roomKey, messageLimit = 200) {
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          console.log(`📨 [UsedItem] Snapshot received - ${snapshot.docs.length} messages`);
-          
           const msgs = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
             createdAt: doc.data().createdAt?.toDate()
           }));
 
-          console.log(`✅ [UsedItem] Messages loaded:`, msgs.length);
           setMessages(msgs);
           setLoading(false);
           setError(null);
         },
         (err) => {
-          console.error('❌ [UsedItem] Firestore subscription error:', err);
+          console.error('Firestore subscription error:', err.message);
           setError(err.message);
           setLoading(false);
           setMessages([]);
@@ -70,7 +65,7 @@ export function useUsedItemChatMessages(roomKey, messageLimit = 200) {
 
       unsubscribeRef.current = unsubscribe;
     } catch (err) {
-      console.error('❌ [UsedItem] Query setup error:', err);
+      console.error('Query setup error:', err.message);
       setError(err.message);
       setLoading(false);
       setMessages([]);
@@ -78,7 +73,6 @@ export function useUsedItemChatMessages(roomKey, messageLimit = 200) {
 
     // 클린업 함수
     return () => {
-      console.log('🔥 [UsedItem] Unsubscribing from room:', roomKey);
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
         unsubscribeRef.current = null;

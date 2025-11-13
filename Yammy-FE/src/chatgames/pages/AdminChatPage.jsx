@@ -24,11 +24,10 @@ export default function AdminChatPage() {
     try {
       setLoading(true);
       const data = await chatRoomApi.getActiveRooms();
-      console.log('✅ 채팅방 목록:', data);
       setRooms(data);
       setError(null);
     } catch (err) {
-      console.error('❌ 채팅방 목록 조회 실패:', err);
+      console.error('Chat room list fetch error:', err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -36,7 +35,6 @@ export default function AdminChatPage() {
   };
 
   const handleCreateSuccess = (newRoom) => {
-    console.log('✅ 채팅방 생성 완료:', newRoom);
     setShowCreateForm(false);
     fetchRooms();
   };

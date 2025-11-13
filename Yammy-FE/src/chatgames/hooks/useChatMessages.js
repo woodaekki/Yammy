@@ -20,8 +20,6 @@ export function useChatMessages(roomKey, messageLimit = 200) {
       return;
     }
 
-    console.log('🔥 Subscribing to room:', roomKey);
-
     // Firestore 쿼리 생성
     const q = query(
       collection(db, `chatRooms/${roomKey}/messages`),
@@ -39,14 +37,18 @@ export function useChatMessages(roomKey, messageLimit = 200) {
           // Firestore Timestamp를 Date로 변환
           createdAt: doc.data().createdAt?.toDate()
         }));
-        
-        console.log(`📨 Received ${msgs.length} messages`);
+
         setMessages(msgs);
         setLoading(false);
         setError(null);
       },
       (err) => {
-        console.error('❌ Firestore subscription error:', err);
+        console.error('[useChatMessages] Firestore subscription error:', {
+          roomKey,
+          error: err.message,
+          code: err.code,
+          stack: err.stack
+        });
         setError(err.message);
         setLoading(false);
       }
@@ -54,7 +56,6 @@ export function useChatMessages(roomKey, messageLimit = 200) {
 
     // 컴포넌트 언마운트 시 구독 해제
     return () => {
-      console.log('🔥 Unsubscribing from room:', roomKey);
       unsubscribe();
     };
   }, [roomKey, messageLimit]);

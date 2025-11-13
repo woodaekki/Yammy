@@ -17,10 +17,8 @@ function MatchList({ selectedDate }) {
     navigate(`/match/${matchcode}`);
   }
 
-  // 날짜가 변경될 때마다 API 호출
   useEffect(() => {
     if (selectedDate) {
-      console.log(`📅 날짜 변경: ${selectedDate}`);
       searchMatchesByDate(selectedDate);
     }
   }, [selectedDate, searchMatchesByDate]);
