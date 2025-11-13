@@ -17,9 +17,6 @@ const PredictPage = () => {
   const authority = localStorage.getItem('authority');
   const isAdmin = authority === 'ADMIN';
 
-  console.log('🔍 현재 사용자 권한:', authority);
-  console.log('🔍 관리자 여부:', isAdmin);
-
   // 오늘 날짜 가져오기
   const today = new Date();
   const year = today.getFullYear();
@@ -74,18 +71,14 @@ const PredictPage = () => {
   // 정산 핸들러
   const handleSettlement = async (settlementData) => {
     try {
-      console.log('정산 데이터:', settlementData);
-
-      // API 호출
       const result = await settleMatches(settlementData);
 
       alert(`정산이 완료되었습니다.\n정산된 경기 수: ${result.settledMatchesCount || settlementData.length}개`);
       setShowSettlementModal(false);
 
-      // 경기 목록 새로고침 (window.location.reload() 대신 리페치)
       await fetchTodayMatches();
     } catch (error) {
-      console.error('정산 실패:', error);
+      console.error('Settlement error:', error.message);
       alert(error.message || '정산 처리 중 오류가 발생했습니다.');
     }
   };
@@ -127,18 +120,19 @@ const PredictPage = () => {
             <div className="matches-list">
               {todayMatches.map((match) => {
                 const gameInProgress = isGameInProgress(match.gameTime);
-                
+                const isSettled = match.isSettled === 1;  // 정산 완료 여부
+
                 // 배팅금액 비율 계산 (homeAmount + awayAmount 기반)
                 const totalAmount = match.homeAmount + match.awayAmount;
                 const homeAmountRatio = totalAmount > 0 ? match.homeAmount / totalAmount : 0.5; // 기본값 50%
                 const awayAmountRatio = totalAmount > 0 ? match.awayAmount / totalAmount : 0.5; // 기본값 50%
-                
+
                 return (
-                  <div 
-                    key={match.id} 
-                    className={`match-card-container ${gameInProgress ? 'game-in-progress' : ''}`}
-                    onClick={() => handleMatchClick(match.id)}
-                    style={{ cursor: 'pointer' }}
+                  <div
+                    key={match.id}
+                    className={`match-card-container ${gameInProgress ? 'game-in-progress' : ''} ${isSettled ? 'settled' : ''}`}
+                    onClick={() => !isSettled && handleMatchClick(match.id)}
+                    style={{ cursor: isSettled ? 'not-allowed' : 'pointer' }}
                   >
                     <div className="match-time-header">{match.gameTime}</div>
                     
@@ -156,7 +150,7 @@ const PredictPage = () => {
                           <TeamLogo teamName={match.homeTeam} size="medium" />
                           <div className="team-details">
                             <div className="team-name">{match.homeTeam}</div>
-                            <div className="team-stats">({match.homeWinningRate}%)</div>
+                            <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
                           </div>
                         </div>
                         <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
@@ -180,7 +174,7 @@ const PredictPage = () => {
                         <div className="team-info-container away-team-info">
                           <div className="team-details">
                             <div className="team-name">{match.awayTeam}</div>
-                            <div className="team-stats">({match.awayWinningRate}%)</div>
+                            <div className="team-stats">예상 승률: {match.awayWinningRate}%</div>
                           </div>
                           <TeamLogo teamName={match.awayTeam} size="medium" />
                         </div>
@@ -189,11 +183,18 @@ const PredictPage = () => {
                       </div>
                     </div>
                     <div className="match-stadium">{match.stadium}</div>
-                    
+
                     {/* 경기 진행중 오버레이 */}
                     {gameInProgress && (
                       <div className="game-progress-overlay">
                         <div className="progress-message">경기가 이미 진행중입니다</div>
+                      </div>
+                    )}
+
+                    {/* 정산 완료 오버레이 */}
+                    {isSettled && (
+                      <div className="game-progress-overlay settled-overlay">
+                        <div className="progress-message">정산 완료</div>
                       </div>
                     )}
                   </div>

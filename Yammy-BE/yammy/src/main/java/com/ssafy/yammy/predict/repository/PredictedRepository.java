@@ -57,4 +57,9 @@ public interface PredictedRepository extends JpaRepository<Predicted, Long> {
      */
     @Query("SELECT p FROM Predicted p WHERE p.predictedMatch.id = :predictedMatchId")
     List<Predicted> findByPredictedMatchId(@Param("predictedMatchId") Long predictedMatchId);
+
+    /**
+     * 특정 사용자가 특정 경기에 이미 배팅했는지 확인
+     */
+    boolean existsByMemberAndPredictedMatch(Member member, PredictedMatches predictedMatch);
 }
