@@ -75,8 +75,7 @@ function UsedItemDetail() {
   };
 
   // 로딩 / 데이터 없음 처리
-  if (loading) return <p className="loading-text">로딩 중...</p>
-  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>
+  if (!item) return <p className="loading-text"></p>
 
   // 팀 이름 매핑
   const teamNames = {

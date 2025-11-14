@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { createPortal } from "react-dom";
 import useAuthStore from "../../stores/authStore";
 import { getMyPoint } from "../../payment/api/pointAPI";
 import { getTeamColors } from "../../sns/utils/teamColors";
@@ -11,13 +12,29 @@ const NavigationBarTop = () => {
   const location = useLocation();
   const token = localStorage.getItem("accessToken");
   const { isLoggedIn, user, logOut, initialize, syncFromLocalStorage } = useAuthStore();
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [teamColors, setTeamColors] = useState(getTeamColors());
   const [balance, setBalance] = useState(null);
   const [error, setError] = useState(null);
-  const dropdownRef = useRef(null); 
 
-  const format = (num) => num.toLocaleString();
+  const dropdownRef = useRef(null);
+
+  const formatYamUnit = (value) => {
+    if (value < 10000) {
+      return value.toLocaleString(); 
+    }
+
+    if (value < 100000000) {
+      // 1만 - 1억 미만
+      const man = value / 10000; 
+      return man % 1 === 0 ? `${man}만` : `${man.toFixed(1)}만`;
+    }
+
+    // 1억 이상
+    const uk = value / 100000000;
+    return uk % 1 === 0 ? `${uk}억` : `${uk.toFixed(1)}억`;
+  };
 
   useEffect(() => {
     initialize();
@@ -41,11 +58,13 @@ const NavigationBarTop = () => {
         setShowUserMenu(false);
       }
     };
+
     if (showUserMenu) {
       window.addEventListener("click", handleClickOutside);
     } else {
       window.removeEventListener("click", handleClickOutside);
     }
+
     return () => window.removeEventListener("click", handleClickOutside);
   }, [showUserMenu]);
 
@@ -85,13 +104,16 @@ const NavigationBarTop = () => {
         location.pathname === "/bankstatement" ||
         location.pathname.startsWith("/withdraw") ||
         location.pathname.startsWith("/success") ||
-        location.pathname.startsWith("/fail"))
-    if (shouldFetch) fetchData()
-  }, [token, isLoggedIn, location.pathname])
+        location.pathname.startsWith("/fail"));
 
+    if (shouldFetch) fetchData();
+  }, [token, isLoggedIn, location.pathname]);
+
+  // 포인트 변경 이벤트 감지
   useEffect(() => {
     const handlePointUpdate = () => {
-      if (token && isLoggedIn) getMyPoint(token).then((res) => setBalance(res.balance));
+      if (token && isLoggedIn)
+        getMyPoint(token).then((res) => setBalance(res.balance));
     };
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
@@ -122,8 +144,8 @@ const NavigationBarTop = () => {
       location.pathname.startsWith("/fail"));
 
   const currentLogo = logo;
-
-  return (
+  
+  return createPortal(
     <nav className="nav-bar-top" style={{ backgroundColor: teamColors.bgColor }}>
       <div className="sns-logo" onClick={() => navigate("/")}>
         <img src={currentLogo} alt="Yammy" className="sns-logo-img" />
@@ -134,17 +156,16 @@ const NavigationBarTop = () => {
           <div className="ypay-baseball-wrapper">
             <div className="ypay-info" onClick={() => navigate("/bankstatement")}>
               <div className="ypay-logo-circle">⚾</div>
+
               <span className="ypay-balance">
                 {balance !== null
-                  ? (() => {
-                      const str = format(balance);
-                      return str.length > 5 ? `${str.slice(0, 3)}...` : `${str}`;
-                    })()
+                  ? `${formatYamUnit(balance)}`
                   : error
                   ? "오류"
                   : "로딩 중..."}
               </span>
             </div>
+
             <button className="chatlist-btn" onClick={goChatList}>
               채팅방
             </button>
@@ -159,7 +180,7 @@ const NavigationBarTop = () => {
                 <button
                   className="user-button"
                   onClick={(e) => {
-                    e.stopPropagation(); // 버튼 클릭 시 외부 클릭 이벤트 막기
+                    e.stopPropagation();
                     setShowUserMenu(!showUserMenu);
                   }}
                 >
@@ -187,14 +208,18 @@ const NavigationBarTop = () => {
                 )}
               </div>
             ) : (
-              <button className="login-button" onClick={() => navigate("/login")}>
+              <button
+                className="login-button"
+                onClick={() => navigate("/login")}
+              >
                 로그인
               </button>
             )}
           </>
         )}
       </div>
-    </nav>
+    </nav>,
+    document.body
   );
 };
 
