@@ -1,12 +1,12 @@
-/* 마이페이지 컨테이너 */
+/* 마이?�이지 컨테?�너 */
 .mypage-container {
   background-color: #FFF9E6;
   min-height: 100vh;
   padding-bottom: 80px;
-  padding-top: 70px;
+  padding-top: 0;
 }
 
-/* 헤더 */
+/* ?�더 */
 .mypage-header {
   display: flex;
   align-items: center;
@@ -37,12 +37,12 @@
   margin: 0;
 }
 
-/* 컨텐츠 */
+/* 컨텐�?*/
 .mypage-content {
   padding: 24px 0;
 }
 
-/* 프로필 섹션 */
+/* ?�로???�션 */
 .profile-section {
   background-color: white;
   border-radius: 16px;
@@ -106,7 +106,7 @@
   font-weight: 600;
 }
 
-/* 정보 그룹 */
+/* ?�보 그룹 */
 .mypage-profile-info {
   display: flex;
   flex-direction: column;
@@ -165,7 +165,7 @@
   min-height: 80px;
 }
 
-/* 저장 버튼 */
+/* ?�??버튼 */
 .save-btn {
   width: calc(100% - 32px);
   margin: 0 16px;
@@ -190,7 +190,7 @@
   cursor: not-allowed;
 }
 
-/* 팀 토글 버튼 */
+/* ?� ?��? 버튼 */
 .team-toggle-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -219,7 +219,7 @@
 }
 
 
-/* 비밀번호 변경 버튼 */
+/* 비�?번호 변�?버튼 */
 .password-change-btn-inline {
   padding: 12px 24px;
   background-color: var(--team-color);
@@ -241,7 +241,7 @@
   cursor: not-allowed;
 }
 
-/* 회원 탈퇴 버튼 */
+/* ?�원 ?�퇴 버튼 */
 .delete-account-btn {
   width: 100%;
   padding: 12px;

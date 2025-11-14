@@ -1,12 +1,12 @@
 .post-edit-container {
   max-width: 600px;
   margin: 0 auto;
-  background: #fff;
+  background: transparent;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
 }
 
-/* 헤더 */
+/* ?�더 */
 .post-edit-header {
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
   font-weight: 600;
 }
 
-/* 폼 전체 */
+/* ???�체 */
 .post-edit-form {
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
   box-sizing: border-box;
 }
 
-/* 이미지 영역 */
+/* ?��?지 ?�역 */
 .post-edit-images {
   width: 100%;
   margin-bottom: 0.8rem;
@@ -51,7 +51,7 @@
   color: #555;
 }
 
-/* 이미지 프리뷰 영역 */
+/* ?��?지 ?�리�??�역 */
 .post-edit-image-list {
   display: flex;
   flex-wrap: wrap;
@@ -97,7 +97,7 @@
   background: rgba(0, 0, 0, 0.8);
 }
 
-/* 업로드 라벨 */
+/* ?�로???�벨 */
 .post-edit-upload-label {
   display: block;
   cursor: pointer;
@@ -124,7 +124,7 @@
   color: #333;
 }
 
-/* 추가 버튼 */
+/* 추�? 버튼 */
 .post-edit-add-more {
   cursor: pointer;
 }
@@ -146,7 +146,7 @@
   color: #bbb;
 }
 
-/* 텍스트 영역 */
+/* ?�스???�역 */
 .post-edit-textarea-field {
   width: 100%;
   border: 1px solid #ddd;
@@ -212,7 +212,7 @@
   cursor: not-allowed;
 }
 
-/* 기존 이미지 텍스트 */
+/* 기존 ?��?지 ?�스??*/
 .post-edit-text {
   font-size: 0.9rem;
   color: #888;
