@@ -1,10 +1,8 @@
-.user-profile {
-    background-color: #FFF9E6;
-    min-height: 100vh;
-    padding-bottom: 20px;
-}
 
-/* 헤더 */
+    
+
+
+/* ?�더 */
 .profile-header {
     display: flex;
     align-items: center;
@@ -29,7 +27,7 @@
     margin: 0;
 }
 
-/* 프로필 정보 섹션 */
+/* ?�로???�보 ?�션 */
 .profile-info-section {
     padding: 20px 16px;
     background-color: #ffffff;
@@ -186,7 +184,7 @@
     box-shadow: none !important;
 }
 
-/* 소개 */
+/* ?�개 */
 .bio-section {
     margin-bottom: 16px;
 }
@@ -219,7 +217,7 @@
     text-decoration: underline;
 }
 
-/* 액션 버튼 */
+/* ?�션 버튼 */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -269,7 +267,7 @@
     font-size: 16px;
 }
 
-/* 탭 섹션 */
+/* ???�션 */
 .tabs-section {
     display: flex;
     border-bottom: 1px solid #e0e0e0;
@@ -295,7 +293,7 @@
     font-weight: 700;
 }
 
-/* 컨텐츠 섹션 */
+/* 컨텐�??�션 */
 .content-section {
     margin-top: 4px;
 }
@@ -325,7 +323,7 @@
     object-fit: cover;
 }
 
-/* NFT 그리드 */
+/* NFT 그리??*/
 .nfts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -333,7 +331,7 @@
     padding: 12px;
 }
 
-/* 티켓 그리드 */
+/* ?�켓 그리??*/
 .tickets-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -341,14 +339,14 @@
     padding: 12px;
 }
 
-/* 티켓 섹션 전용 그리드 설정 */
+/* ?�켓 ?�션 ?�용 그리???�정 */
 .tickets-section .tickets-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 16px !important;
     padding: 16px !important;
 }
 
-/* 티켓 섹션 - UserProfile 내에서 사용 */
+/* ?�켓 ?�션 - UserProfile ?�에???�용 */
 .tickets-section .ticket-card-container {
     max-width: 100% !important;
     width: 100%;
@@ -366,18 +364,18 @@
     width: 100%;
 }
 
-/* 티켓 앞면 크기 조정 */
+/* ?�켓 ?�면 ?�기 조정 */
 .tickets-section .ticket-front img {
     width: 100%;
     height: auto;
 }
 
-/* 플립 시 스케일 유지 */
+/* ?�립 ???��????��? */
 .tickets-section .ticket-card.flipped {
     transform: rotateY(180deg);
 }
 
-/* 뒷면 폰트 크기 조정 */
+/* ?�면 ?�트 ?�기 조정 */
 .tickets-section .ticket-back-header h3 {
     font-size: 18px;
 }
@@ -470,7 +468,7 @@
     opacity: 0.9;
 }
 
-/* 옵션 모달 */
+/* ?�션 모달 */
 .options-modal {
     position: fixed;
     top: 0;
@@ -524,3 +522,11 @@
 .option-item span {
     font-size: 20px;
 }
+
+/* Make SNS nav sticky on profile pages */
+.user-profile .nav-bar-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+

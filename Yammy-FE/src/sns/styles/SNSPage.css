@@ -1,10 +1,8 @@
 @import "./FollowButton.css";
 /* SNS ?�이지 ?�체 */
-.sns-page {
-    background-color: #FFF9E6;
-    min-height: 100vh;
-    position: relative;
-}
+
+    
+
 
 /* ?�로??게시글 ?�성 버튼 */
 .floating-create-btn {
@@ -483,3 +481,10 @@
 .carousel-slide img {
   cursor: pointer;
 }
+/* Make SNS nav sticky within page to avoid overlay */
+.sns-page .nav-bar-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
