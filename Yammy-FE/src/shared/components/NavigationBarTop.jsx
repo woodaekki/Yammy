@@ -8,6 +8,7 @@ import { getTeamColors } from "../../sns/utils/teamColors";
 import logo from "../../assets/images/logo.png";
 import "./NavigationBar.css";
 import { usedItemChatApi } from "../../useditemchat/api/usedItemChatApi";
+import Bell from "../../assets/images/bell.png"
 
 const NavigationBarTop = () => {
   const navigate = useNavigate();
@@ -224,7 +225,7 @@ const NavigationBarTop = () => {
           {shouldShowBalanceButton ? (
             <>
               <div className="header-notification" onClick={goChatList}>
-                <span className="bell-icon">🔔</span>
+                  <img src={Bell} alt="알림" className="bell-icon"/>
                 {totalUnreadCount > 0 && (
                   <span className="notification-badge">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
