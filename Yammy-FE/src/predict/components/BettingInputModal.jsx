@@ -231,7 +231,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
             </div>
           </div>
 
-          {/* 배팅 금액 입력 */}
+          {/* 배팅 팬심 입력 */}
           <div className="bet-amount-section">
             <div className="amount-header">
               <h3>배팅 팬심</h3>
