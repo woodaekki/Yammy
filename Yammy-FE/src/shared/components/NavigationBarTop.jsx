@@ -98,7 +98,6 @@ const NavigationBarTop = () => {
     window.addEventListener("pointUpdated", handlePointUpdate);
     return () => window.removeEventListener("pointUpdated", handlePointUpdate);
   }, [token, isLoggedIn]);
-<<<<<<< HEAD
 
   // Predict 페이지용 팬심 로드
   useEffect(() => {
@@ -120,7 +119,6 @@ const NavigationBarTop = () => {
     loadUserPoints();
   }, [isLoggedIn, location.pathname]);
 
-=======
     // 중고채팅 읽지 않은 메시지 수 조회
   useEffect(() => {
     const fetchUnreadCount = async () => {
@@ -151,7 +149,6 @@ const NavigationBarTop = () => {
       window.removeEventListener('chatListViewed', handleChatListViewed);
     };
   }, [token, isLoggedIn]);
->>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
   if (shouldHideNav) return null;
 
   const handleLogout = () => {

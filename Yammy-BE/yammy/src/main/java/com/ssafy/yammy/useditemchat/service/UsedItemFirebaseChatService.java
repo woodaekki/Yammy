@@ -70,14 +70,11 @@ public class UsedItemFirebaseChatService {
                 ))
                 .get();
 
-<<<<<<< HEAD
-=======
         log.info("✅ Used item chat message saved: {} in room: {}", docRef.getId(), roomKey);
 
         // 상대방의 unread count 증가
         updateUnreadCount(roomKey, memberId);
 
->>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
         return docRef.getId();
     }
 
@@ -101,14 +98,11 @@ public class UsedItemFirebaseChatService {
                 ))
                 .get();
 
-<<<<<<< HEAD
-=======
         log.info("✅ Used item chat text message saved: {} in room: {}", docRef.getId(), roomKey);
 
         // 상대방의 unread count 증가
         updateUnreadCount(roomKey, memberId);
 
->>>>>>> 0a7604034760b3b3d9c7f89b9ea4c22f6cade16c
         return docRef.getId();
     }
 
