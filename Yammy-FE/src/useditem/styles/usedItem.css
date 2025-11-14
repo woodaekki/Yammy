@@ -1,7 +1,6 @@
 /* === 페이지 전체 === */
 .useditem-page-container {
   width: 100%;
-  padding-top: 70px;
   padding-bottom: 140px; 
   min-height: 100vh;
   box-sizing: border-box;
