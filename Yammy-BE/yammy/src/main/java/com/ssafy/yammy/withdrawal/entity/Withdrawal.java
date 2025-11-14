@@ -29,7 +29,7 @@ public class Withdrawal {
     @Column(name = "amount")
     private Long amount;
 
-    @Column(name = "bank")
+    @Column(name = "bank_name")
     private String bankName;
 
     @Column(name = "account_number")

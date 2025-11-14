@@ -33,7 +33,7 @@ public class WithdrawalService {
     @Transactional
     public WithdrawalResponse requestWithdrawal(Long memberId, WithdrawalRequest dto) {
 
-        // 계좌번호 검증
+        // 계좌번호 검증 (숫자-only + prefix + 총 자리수 검사)
         validateBankAccount(dto.getBankName(), dto.getAccountNumber());
 
         Member member = memberRepository.findById(memberId)
@@ -88,52 +88,52 @@ public class WithdrawalService {
         return convertToResponse(withdrawal);
     }
 
-    // 계좌번호 패턴 검증
-    private void validateBankAccount(String bankName, String accountNumber) {
 
-        String pattern;
+    // 은행 규칙 기반 계좌번호 유효성 검사
+    private void validateBankAccount(String bank, String account) {
 
-        switch (bankName) {
-            case "카카오뱅크":
-                pattern = "^3333-\\d{2}-\\d{7}$"; // 4-2-7
-                break;
-
-            case "토스뱅크":
-                pattern = "^1000-\\d{4}-\\d{4}$"; // 4-4-4
-                break;
-
-            case "국민은행":
-                pattern = "^\\d{3}-\\d{2}-\\d{7}$"; // 3-2-7
-                break;
-
-            case "신한은행":
-                pattern = "^110-\\d{6}$"; // 3-6
-                break;
-
-            case "기업은행":
-                pattern = "^\\d{3}-\\d{6}-\\d{2}-\\d{3}$"; // 3-6-2-3
-                break;
-
-            case "농협은행":
-                pattern = "^\\d{3}-\\d{4}-\\d{4}-\\d{2}$"; // 3-4-4-2
-                break;
-
-            case "우리은행":
-                pattern = "^\\d{3}-\\d{6}-\\d{2}$"; // 3-6-2
-                break;
-
-            case "하나은행":
-                pattern = "^\\d{3}-\\d{6}-\\d{3}$"; // 3-6-3
-                break;
-
-            default:
-                throw new RuntimeException("지원하지 않는 은행입니다.");
-        }
-
-        if (!accountNumber.matches(pattern)) {
-            throw new RuntimeException("계좌번호 형식이 올바르지 않습니다. (" + bankName + ")");
+        if (!validateAccount(bank, account)) {
+            throw new RuntimeException("계좌번호 형식이 올바르지 않습니다. (" + bank + ")");
         }
     }
+
+
+    // 계좌번호 패턴 검증
+    private boolean validateAccount(String bank, String account) {
+
+        // 숫자만 추출
+        String digits = account.replaceAll("\\D", "");
+
+        switch (bank) {
+
+            case "카카오뱅크":
+                return digits.startsWith("3333") && digits.length() == 13;
+
+            case "토스뱅크":
+                return digits.startsWith("1000") && digits.length() == 12;
+
+            case "신한은행":
+                return digits.startsWith("110") && digits.length() == 9;
+
+            case "국민은행":
+                return digits.length() == 12;
+
+            case "기업은행":
+                return digits.length() == 14;
+
+            case "농협은행":
+                return digits.length() == 13;
+
+            case "우리은행":
+                return digits.length() == 11;
+
+            case "하나은행":
+                return digits.length() == 12;
+        }
+
+        return false;
+    }
+
 
     private WithdrawalResponse convertToResponse(Withdrawal withdrawal) {
         WithdrawalResponse dto = new WithdrawalResponse();
@@ -154,7 +154,7 @@ public class WithdrawalService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("회원 없음"));
 
-        List<Withdrawal> list = withdrawalRepository.findByMemberIdOrderByCreatedAtDesc(member);
+        List<Withdrawal> list = withdrawalRepository.findByMemberOrderByCreatedAtDesc(member);
 
         List<WithdrawalResponse> result = new ArrayList<>();
         for (Withdrawal w : list) {
