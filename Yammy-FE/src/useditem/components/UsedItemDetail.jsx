@@ -4,6 +4,7 @@ import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import { usedItemChatApi } from "../../useditemchat/api/usedItemChatApi";
 import "../styles/usedItemDetail.css";
+import empty from "../../assets/images/empty.png"
 
 function UsedItemDetail() {
   const params = useParams();
@@ -136,7 +137,9 @@ function UsedItemDetail() {
             </div>
           </>
         ) : (
-          <div className="no-image">이미지 없음</div>
+           <div className="no-image">
+                <img src={empty} alt="이미지 없음" />
+              </div>
         )}
       </div>
 

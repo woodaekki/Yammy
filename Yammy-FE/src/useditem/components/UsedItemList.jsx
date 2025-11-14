@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getTeamColors } from "../../sns/utils/teamColors"
 import "../styles/usedItemList.css"
+import empty from "../../assets/images/empty.png"
 
 function UsedItemList({ items }) {
   const navigate = useNavigate()
@@ -37,7 +38,9 @@ function UsedItemList({ items }) {
             {item.imageUrls && item.imageUrls.length > 0 ? (
               <img src={item.imageUrls[0]} alt={item.title} className="item-image" />
             ) : (
-              <div className="no-image-box">이미지 없음</div>
+              <div className="no-image-box">
+                <img src={empty} alt="이미지 없음" />
+              </div>
             )}
           </div>
           <div className="item-info">
