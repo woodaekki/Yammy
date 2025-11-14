@@ -1,7 +1,7 @@
 /* === 하단 입력창 전체 (고정) === */
 .useditem-chat-input-bar {
   position: fixed;
-  bottom: 60px; /* 네비바 높이만큼 위로 */
+  bottom: 58px; /* 하단 네비바 바로 위에 고정 */
   left: 0;
   width: 100%;
   background-color: #ffffff;
@@ -109,6 +109,6 @@
 /* 노치/다이나믹 아일랜드 대응 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .useditem-chat-input-bar {
-    bottom: calc(60px + env(safe-area-inset-bottom));
+    bottom: calc(58px + env(safe-area-inset-bottom));
   }
 }

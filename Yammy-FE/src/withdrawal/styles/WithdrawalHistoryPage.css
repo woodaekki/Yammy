@@ -1,8 +1,8 @@
 .history-wrapper {
   width: 100%;
-  min-height: 100vh;
+  min-height: calc(100vh - 128px); /* 상단(70px) + 하단(58px) 네비바 제외 */
   background: #f7f7f7;
-  padding: 7.5rem 1.5rem 5rem;
+  padding: 0.75rem 1.5rem;
   display: flex;
   justify-content: center;
 }

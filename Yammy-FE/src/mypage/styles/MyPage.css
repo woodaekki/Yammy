@@ -1,4 +1,4 @@
-/* 마이?�이지 컨테?�너 */
+/* 마이?�이지 컨테?�너 */
 .mypage-container {
   background-color: #FFF9E6;
   min-height: 100vh;
@@ -6,7 +6,7 @@
   padding-top: 0;
 }
 
-/* ?�더 */
+/* ?�더 */
 .mypage-header {
   display: flex;
   align-items: center;
@@ -37,12 +37,12 @@
   margin: 0;
 }
 
-/* 컨텐�?*/
+/* 컨텐�?*/
 .mypage-content {
   padding: 24px 0;
 }
 
-/* ?�로???�션 */
+/* ?�로???�션 */
 .profile-section {
   background-color: white;
   border-radius: 16px;
@@ -106,7 +106,7 @@
   font-weight: 600;
 }
 
-/* ?�보 그룹 */
+/* ?�보 그룹 */
 .mypage-profile-info {
   display: flex;
   flex-direction: column;
@@ -165,7 +165,7 @@
   min-height: 80px;
 }
 
-/* ?�??버튼 */
+/* ?�??버튼 */
 .save-btn {
   width: calc(100% - 32px);
   margin: 0 16px;
@@ -190,7 +190,7 @@
   cursor: not-allowed;
 }
 
-/* ?� ?��? 버튼 */
+/* ?� ?��? 버튼 */
 .team-toggle-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -206,6 +206,10 @@
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .team-toggle-btn:hover {
@@ -218,8 +222,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.team-logo-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
 
-/* 비�?번호 변�?버튼 */
+
+/* 비�?번호 변�?버튼 */
 .password-change-btn-inline {
   padding: 12px 24px;
   background-color: var(--team-color);
@@ -241,7 +251,7 @@
   cursor: not-allowed;
 }
 
-/* ?�원 ?�퇴 버튼 */
+/* ?�원 ?�퇴 버튼 */
 .delete-account-btn {
   width: 100%;
   padding: 12px;

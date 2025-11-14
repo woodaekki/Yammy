@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { usedItemChatApi } from "../api/usedItemChatApi";
 import { getUsedItemById } from "../../useditem/api/usedItemApi";
 import { useUsedItemChatMessages } from "../hooks/useUsedItemChatMessages";
@@ -14,7 +15,7 @@ import "../styles/UsedItemChatPage.css";
 export default function UsedItemChatPage() {
   const { roomKey } = useParams();
   const navigate = useNavigate();
-  const { user, initialize } = useAuthStore(); 
+  const { user, initialize } = useAuthStore();
 
   const [chatRoomInfo, setChatRoomInfo] = useState(null);
   const [itemInfo, setItemInfo] = useState(null);
@@ -24,6 +25,7 @@ export default function UsedItemChatPage() {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [myBalance, setMyBalance] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
+
   const { messages, loading: loadingMessages, error: messageError } =
     useUsedItemChatMessages(roomKey);
 
@@ -31,9 +33,6 @@ export default function UsedItemChatPage() {
     initialize();
   }, [initialize]);
 
-  // 데이터 로드
-  // NOTE: user를 의존성에 추가해서, 로그인 정보가 늦게 로드될 때도
-  // 채팅 초기화(initChat)가 재실행되도록 함.
   useEffect(() => {
     if (!roomKey) return;
 
@@ -41,13 +40,11 @@ export default function UsedItemChatPage() {
       try {
         setLoading(true);
 
-        // 로그인 확인 (user가 아직 null일 때 localStorage에서 fallback)
-        // memberId가 즉시 없을 경우, 짧게 재시도하여 auth가 늦게 채워지는 케이스를 허용합니다.
-  let memberId = user?.memberId || localStorage.getItem("memberId");
+        let memberId = user?.memberId || localStorage.getItem("memberId");
         const maxAttempts = 3;
         let attempt = 0;
+
         while (!memberId && attempt < maxAttempts) {
-          // 짧게 대기
           await new Promise((res) => setTimeout(res, 200));
           memberId = user?.memberId || localStorage.getItem("memberId");
           attempt += 1;
@@ -65,13 +62,11 @@ export default function UsedItemChatPage() {
         const item = await getUsedItemById(chatRoom.usedItemId);
         setItemInfo(item);
 
-        // 읽음 처리
         await usedItemChatApi.markAsRead(roomKey);
 
         const pointData = await getMyPoint();
         setMyBalance(pointData.balance);
       } catch (err) {
-        console.error("채팅방 초기화 실패:", err);
         if (err.response?.status === 401 || err.response?.status === 403) {
           alert("로그인이 필요합니다.");
           navigate("/login");
@@ -84,7 +79,7 @@ export default function UsedItemChatPage() {
     };
 
     initChat();
-  }, [roomKey, navigate, user]); 
+  }, [roomKey, navigate, user]);
 
   const handleOpenTransferModal = () => {
     const memberId = user?.memberId || localStorage.getItem("memberId");
@@ -114,7 +109,6 @@ export default function UsedItemChatPage() {
       setMyBalance(updated.balance);
       window.dispatchEvent(new Event("pointUpdated"));
     } catch (error) {
-      console.error("송금 실패:", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("인증이 만료되었습니다. 다시 로그인해주세요.");
         navigate("/login");
@@ -127,9 +121,7 @@ export default function UsedItemChatPage() {
   };
 
   const handleLeaveChatRoom = async () => {
-    const confirmed = window.confirm(
-    "채팅방을 나가시겠습니까?\n(상대방도 나가면 채팅방이 삭제됩니다.)"
-    );
+    const confirmed = window.confirm("채팅방을 나가시겠습니까?\n상대방도 나가면 채팅방이 삭제됩니다.");
     if (!confirmed) return;
 
     try {
@@ -138,7 +130,6 @@ export default function UsedItemChatPage() {
       alert("채팅방을 나갔습니다.");
       navigate("/chatlist");
     } catch (error) {
-      console.error("채팅방 나가기 실패:", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("인증이 만료되었습니다. 다시 로그인해주세요.");
         navigate("/login");
@@ -149,106 +140,58 @@ export default function UsedItemChatPage() {
       setIsLeaving(false);
     }
   };
+
   if (error || messageError) {
     return (
-      <div className="chat-error-container">
+      <div className="chat-error-page">
         <div className="chat-error-box">
-          <div className="chat-error-icon">⚠️</div>
-          <h2 className="chat-error-title">채팅방 오류</h2>
-          <p className="chat-error-message">{error || messageError}</p>
-          <button
-            onClick={() => navigate("/chatlist")}
-            className="chat-error-button"
-          >
-            채팅방 목록으로 돌아가기
-          </button>
+          <h2>오류 발생</h2>
+          <p>{error || messageError}</p>
         </div>
       </div>
     );
   }
 
-  if (loading) {
-    return (
-      <div className="chat-loading-container">
-        <div className="chat-loading-box">
-          <div className="chat-spinner"></div>
-          <p className="chat-loading-text">채팅방 입장 중...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return null;
 
   return (
     <div className="chat-page">
-      {/* === 헤더 === */}
-      <div className="chat-header">
-        <div className="chat-header-inner">
-          <div className="chat-header-content">
-            <div className="chat-header-left">
-              <button
-                onClick={() => navigate("/chatlist")}
-                className="chat-back-button"
+      {createPortal(
+        <div className="chat-header-fixed">
+          <div className="chat-header-inner">
+            <button className="chat-back-button" onClick={() => navigate("/chatlist")}>
+              ←
+            </button>
+
+            {itemInfo && (
+              <div
+                className="chat-item-info"
+                onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
               >
-                <svg
-                  className="chat-back-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
+                {itemInfo.imageUrls?.[0] && (
+                  <img src={itemInfo.imageUrls[0]} className="chat-item-image" />
+                )}
 
-              {itemInfo && (
-                <div 
-                  className="chat-item-info"
-                  onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
-                  style={{ cursor: 'pointer' }}  
-                >
-                  {itemInfo.imageUrls?.[0] && (
-                    <img
-                      src={itemInfo.imageUrls[0]}
-                      alt={itemInfo.title}
-                      className="chat-item-image"
-                    />
-                  )}
-                  <div className="chat-item-text">
-                    <h2 className="chat-item-title">{itemInfo.title}</h2>
-                    <p className="chat-item-price">
-                      {itemInfo.price?.toLocaleString()}얌
-                    </p>
-                  </div>
+                <div className="chat-item-text">
+                  <div className="chat-item-title">{itemInfo.title}</div>
+                  <div className="chat-item-price">{itemInfo.price?.toLocaleString()}얌</div>
                 </div>
-              )}
-            </div>
-
-            {chatRoomInfo && (
-              <div className="chat-header-buttons">
-                <button
-                  className="chat-transfer-btn"
-                  onClick={handleOpenTransferModal}
-                >
-                  송금
-                </button>
-                <button
-                  className="chat-leave-btn"
-                  onClick={handleLeaveChatRoom}
-                  disabled={isLeaving}
-                >
-                  {isLeaving ? "나가는 중..." : "나가기"}
-                </button>
               </div>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* === 메시지 영역 === */}
+            <div className="chat-header-buttons">
+              <button className="chat-transfer-btn" onClick={handleOpenTransferModal}>
+                송금
+              </button>
+              <button className="chat-leave-btn" onClick={handleLeaveChatRoom}>
+                나가기
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <div className="chat-message-area">
         <UsedItemMessageList
           messages={messages}
@@ -257,46 +200,16 @@ export default function UsedItemChatPage() {
         />
       </div>
 
-      {/* === 입력창 === */}
-      {roomKey && (
-        <UsedItemChatInput
-          roomKey={roomKey}
-          disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
-        />
+      {createPortal(
+        <div className="chat-input-fixed">
+          <UsedItemChatInput
+            roomKey={roomKey}
+            disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
+          />
+        </div>,
+        document.body
       )}
 
-      {/* === 이미지 확대 === */}
-      {selectedImage && (
-        <div className="chat-image-modal" onClick={() => setSelectedImage(null)}>
-          <div className="chat-image-modal-inner">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="chat-image-close"
-            >
-              <svg
-                className="chat-close-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <img
-              src={selectedImage}
-              alt="확대 보기"
-              className="chat-image-full"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* === 송금 모달 === */}
       <TransferModal
         isOpen={isTransferModalOpen}
         onClose={handleCloseTransferModal}

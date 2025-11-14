@@ -28,6 +28,14 @@ export default function ChatGamePage() {
   const myId = user?.id || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
 
+  // body 스크롤 방지
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   useEffect(() => {
     if (!roomKey) return;
 
@@ -159,11 +167,11 @@ export default function ChatGamePage() {
       </div>
 
       {/* 스크롤 버튼 */}
-      {showScrollButton && (
+      {/* {showScrollButton && (
         <button className="scroll-btn" onClick={scrollToBottom}>
           ↓
         </button>
-      )}
+      )} */}
 
       {/* 고정된 이미지 업로드 바 */}
       <div className="chat-upload-fixed">

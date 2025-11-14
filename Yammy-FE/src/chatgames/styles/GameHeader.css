@@ -3,6 +3,7 @@
   text-align: center;
   border-bottom: 1px solid #e5e7eb;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  padding: 1rem;
 }
 
 /* 상단 띠 */
@@ -33,23 +34,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   font-weight: 700;
   font-size: 1rem;
   color: #111827;
   margin-bottom: 0.2rem;
 }
 
-.team.home::before {
-  content: "⚫";
-  color: #d32f2f;
-  margin-right: 6px;
+.team-with-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.team.away::after {
-  content: "⚫";
-  color: #4a148c;
-  margin-left: 6px;
+.team-logo-header {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 /* VS */

@@ -1,4 +1,3 @@
-/* 반응???�이?�웃 */
 .app-container {
   width: 100%;
   height: 100vh; 
@@ -11,11 +10,11 @@
   flex-direction: column;
 }
 
-/* 콘텐�??�퍼 */
+/* 콘텐츠 래퍼 */
 .app-content-wrapper {
   width: 100%;
   flex: 1; 
-  padding-bottom: 60px;
+  padding-bottom: 58px; 
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
   overflow-x: hidden;
@@ -23,7 +22,6 @@
   position: relative;
 }
 
-/* ?�이지 ?�환 ?�니메이??*/
 @keyframes slideInFromRight {
   from {
     transform: translateX(100%);
@@ -76,7 +74,8 @@
   animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   box-sizing: border-box;
 }
-/* Reserve space for fixed top bar when present */
+
 .app-content-wrapper.with-topbar {
-  padding-top: 72px;
+  padding-top: 70px;
 }
+
