@@ -7,6 +7,7 @@
   right: 0;
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
+  padding-top: 10px !important;
   padding: 12px 14px;
   z-index: 9999;
   box-sizing: border-box;
@@ -95,7 +96,7 @@
 }
 
 .chat-message-area {
-  padding-top: 60px;
+  padding-top: 30px;
   padding-bottom: 150px;
   box-sizing: border-box;
 }

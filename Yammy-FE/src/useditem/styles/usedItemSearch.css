@@ -5,14 +5,14 @@
   justify-content: center;
   gap: 1.5%;
   width: calc(100% - 2rem);
-  margin: 0 1rem 0.7rem 1rem;
+  margin: -0.7rem 1rem 0.7rem 1rem;
   padding: 0.5rem 1rem;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   box-sizing: border-box;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* 커스텀 셀렉트 */
