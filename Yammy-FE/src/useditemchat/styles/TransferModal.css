@@ -1,26 +1,22 @@
-/* 모달 오버레이 */
 .transfer-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0,0,0,0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999999 !important;
 }
 
-/* 모달 컨텐츠 */
 .transfer-modal-content {
-  background: white;
-  border-radius: 16px;
+  background: #fff;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
   overflow: hidden;
+  position: relative;
 }
+
 
 /* 헤더 */
 .transfer-modal-header {

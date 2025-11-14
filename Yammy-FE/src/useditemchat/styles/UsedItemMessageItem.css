@@ -248,32 +248,6 @@
   margin-top: 6px;
 }
 
-/* === 이미지 확대 (카톡 스타일) === */
-.chat-image-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999 !important;
-  animation: fadeInOverlay 0.25s ease forwards;
-}
-
-/* 확대된 이미지 */
-.chat-image-zoomed {
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 16px;
-  object-fit: contain;
-  transform: scale(0.9);
-  opacity: 0;
-  animation: zoomInSmooth 0.25s ease forwards;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-  transform-origin: center center !important;
-  align-self: center !important;
-}
-
 /* 부드러운 확대 */
 @keyframes zoomInSmooth {
   from {
@@ -296,26 +270,56 @@
   }
 }
 
-/* 닫기 버튼 (✕) */
+/* === 확대 오버레이 === */
+.chat-image-overlay {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999 !important;
+}
+
+/* === 확대 이미지 wrapper === */
+.chat-image-wrapper-zoom {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === 확대 이미지 === */
+.chat-image-zoomed {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  object-fit: contain;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* === 닫기 버튼 === */
 .chat-image-close {
   position: absolute;
-  top: 20px;
-  right: 22px;
-  background: rgba(255, 255, 255, 0.15);
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.45);
   border: none;
-  color: white;
-  font-size: 1.8rem;
-  cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  transition: background 0.2s;
-  z-index: 1000000 !important;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000000;
 }
 
 .chat-image-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.6);
 }
