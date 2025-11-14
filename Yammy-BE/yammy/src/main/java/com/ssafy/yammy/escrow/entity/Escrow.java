@@ -35,9 +35,10 @@ public class Escrow {
     private Long amount;
 
     // Enum 매핑 - DB에는 문자열로 저장
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EscrowStatus status;
+    private EscrowStatus status = EscrowStatus.HOLD;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
