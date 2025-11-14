@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/nft")
+@RequestMapping("/api/nft")
 @RequiredArgsConstructor
 @Tag(name = "NFT", description = "NFT 발급 API")
 public class NftController {
