@@ -1,43 +1,37 @@
 /* === 전체 레이아웃 컨테이너 === */
 .chat-page-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  max-width: 600px;
   height: 100vh;
   height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
   background-color: #f5f6f7;
-  position: relative;
-  margin: 0 auto;
 }
 
 /* === 고정된 헤더 === */
 .chat-header-fixed {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  grid-row: 1;
   width: 100%;
-  max-width: 600px;
   z-index: 100;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
   box-sizing: border-box;
 }
 
 /* === 메시지 스크롤 영역 (핵심!) === */
 .chat-messages-container {
-  flex: 1;
+  grid-row: 2;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-top: 140px;
-  padding-bottom: 140px; /* 네비바 + 업로드바 높이 */
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -97,10 +91,10 @@
 }
 
 /* === 스크롤 버튼 === */
-.scroll-btn {
+/* .scroll-btn {
   position: fixed;
   right: 1rem;
-  bottom: 8rem; /* 네비바 + 업로드바 위 */
+  bottom: 10rem;
   background-color: #9ca3af;
   color: white;
   border: none;
@@ -120,21 +114,18 @@
 .scroll-btn:hover {
   background-color: #6b7280;
   transform: scale(1.05);
-}
+} */
 
 /* === 고정된 업로드 바 === */
 .chat-upload-fixed {
-  position: fixed;
-  bottom: 60px; /* 네비바 높이만큼 위로 */
-  left: 50%;
-  transform: translateX(-50%);
+  grid-row: 3;
   width: 100%;
-  max-width: 600px;
   z-index: 100;
   background-color: #f5f6f7;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  margin-bottom: 58px; /* 네비바 높이만큼 여백 */
 }
 
 /* === 에러 화면 === */
@@ -245,15 +236,10 @@
 /* 노치/다이나믹 아일랜드 대응 */
 @supports (padding-top: env(safe-area-inset-top)) {
   .chat-header-fixed {
-    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
   }
-  
+
   .chat-upload-fixed {
-    bottom: calc(60px + env(safe-area-inset-bottom));
-  }
-  
-  .chat-messages-container {
-    padding-top: calc(140px + env(safe-area-inset-top));
-    padding-bottom: calc(140px + env(safe-area-inset-bottom));
+    margin-bottom: calc(58px + env(safe-area-inset-bottom));
   }
 }

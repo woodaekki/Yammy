@@ -2,7 +2,7 @@
     
 
 
-/* ?�더 */
+/* ?�더 */
 .profile-header {
     display: flex;
     align-items: center;
@@ -27,7 +27,7 @@
     margin: 0;
 }
 
-/* ?�로???�보 ?�션 */
+/* ?�로???�보 ?�션 */
 .profile-info-section {
     padding: 20px 16px;
     background-color: transparent;
@@ -116,10 +116,28 @@
 .bio-container {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 8px;
     margin: 0;
     margin-bottom: 20px;
     padding: 0;
+}
+
+.profile-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-team-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.profile-team-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
 }
 
 .bio-text {
@@ -184,7 +202,7 @@
     box-shadow: none !important;
 }
 
-/* ?�개 */
+/* ?�개 */
 .bio-section {
     margin-bottom: 16px;
 }
@@ -217,7 +235,7 @@
     text-decoration: underline;
 }
 
-/* ?�션 버튼 */
+/* ?�션 버튼 */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -267,7 +285,7 @@
     font-size: 16px;
 }
 
-/* ???�션 */
+/* ???�션 */
 .tabs-section {
     display: flex;
     border-bottom: 1px solid #e0e0e0;
@@ -293,7 +311,7 @@
     font-weight: 700;
 }
 
-/* 컨텐�??�션 */
+/* 컨텐�??�션 */
 .content-section {
     margin-top: 4px;
 }
@@ -331,7 +349,7 @@
     padding: 12px;
 }
 
-/* ?�켓 그리??*/
+/* ?�켓 그리??*/
 .tickets-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -339,14 +357,14 @@
     padding: 12px;
 }
 
-/* ?�켓 ?�션 ?�용 그리???�정 */
+/* ?�켓 ?�션 ?�용 그리???�정 */
 .tickets-section .tickets-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 16px !important;
     padding: 16px !important;
 }
 
-/* ?�켓 ?�션 - UserProfile ?�에???�용 */
+/* ?�켓 ?�션 - UserProfile ?�에???�용 */
 .tickets-section .ticket-card-container {
     max-width: 100% !important;
     width: 100%;
@@ -364,18 +382,18 @@
     width: 100%;
 }
 
-/* ?�켓 ?�면 ?�기 조정 */
+/* ?�켓 ?�면 ?�기 조정 */
 .tickets-section .ticket-front img {
     width: 100%;
     height: auto;
 }
 
-/* ?�립 ???��????��? */
+/* ?�립 ???��????��? */
 .tickets-section .ticket-card.flipped {
     transform: rotateY(180deg);
 }
 
-/* ?�면 ?�트 ?�기 조정 */
+/* ?�면 ?�트 ?�기 조정 */
 .tickets-section .ticket-back-header h3 {
     font-size: 18px;
 }
@@ -468,7 +486,7 @@
     opacity: 0.9;
 }
 
-/* ?�션 모달 */
+/* ?�션 모달 */
 .options-modal {
     position: fixed;
     top: 0;

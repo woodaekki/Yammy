@@ -1,4 +1,5 @@
 import React from "react";
+import { getTeamLogo } from '../../predict/utils/teamLogo';
 import "../styles/GameHeader.css";
 
 export default function GameHeader({ room, navigate }) {
@@ -32,7 +33,7 @@ export default function GameHeader({ room, navigate }) {
         <div className="home-bar"></div>
         <div className="away-bar"></div>
       </div>
-      
+
 
       {/* 본문 정보 */}
       <div className="game-info">
@@ -43,9 +44,27 @@ export default function GameHeader({ room, navigate }) {
               ←
             </button>
           )}
-          <span className="team home">{homeTeam}</span>
+          <div className="team-with-logo home">
+            {getTeamLogo(homeTeam) && (
+              <img
+                src={getTeamLogo(homeTeam)}
+                alt={`${homeTeam} 로고`}
+                className="team-logo-header"
+              />
+            )}
+            <span className="team">{homeTeam}</span>
+          </div>
           <span className="vs">VS</span>
-          <span className="team away">{awayTeam}</span>
+          <div className="team-with-logo away">
+            {getTeamLogo(awayTeam) && (
+              <img
+                src={getTeamLogo(awayTeam)}
+                alt={`${awayTeam} 로고`}
+                className="team-logo-header"
+              />
+            )}
+            <span className="team">{awayTeam}</span>
+          </div>
         </div>
 
         <h2 className="game-title">{name}</h2>

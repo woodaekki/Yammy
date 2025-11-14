@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchUsers, followUser, unfollowUser, getAllUsers } from '../api/snsApi';
 import { getTeamColors } from '../utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import '../styles/UserSearchPage.css';
 
 const UserSearchPage = () => {
@@ -14,17 +15,20 @@ const UserSearchPage = () => {
   const teamColors = getTeamColors();
   const currentUserId = JSON.parse(localStorage.getItem('memberId') || 'null');
 
-  // 초기 로드 시 전체 유저 목록 가져오기
+  // 초기 로드 시 랜덤 유저 10명 가져오기
   useEffect(() => {
-    loadAllUsers();
+    loadRandomUsers();
   }, []);
 
-  const loadAllUsers = async () => {
+  const loadRandomUsers = async () => {
     setIsLoading(true);
     setError('');
     try {
+      // 50명 가져온 후 본인 제외하고 랜덤하게 섞어서 10명만 선택
       const results = await getAllUsers(0, 50);
-      setUsers(results);
+      const filtered = results.filter(user => user.memberId !== currentUserId);
+      const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+      setUsers(shuffled.slice(0, 10));
     } catch (err) {
       console.error('유저 목록 로드 실패:', err);
       setError('유저 목록을 불러오는 중 오류가 발생했습니다.');
@@ -38,8 +42,8 @@ const UserSearchPage = () => {
   // 검색 실행
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      // 검색어가 없으면 전체 유저 목록 보여주기
-      loadAllUsers();
+      // 검색어가 없으면 랜덤 유저 목록 보여주기
+      loadRandomUsers();
       return;
     }
 
@@ -128,7 +132,7 @@ const UserSearchPage = () => {
               onClick={() => {
                 setSearchQuery('');
                 setError('');
-                loadAllUsers();
+                loadRandomUsers();
               }}
             >
               ✕
@@ -157,43 +161,63 @@ const UserSearchPage = () => {
         )}
 
         {!isLoading && !error && users.length > 0 && (
-          <div className="users-list">
-            {users.map((user) => (
-              <div key={user.memberId} className="user-item">
-                <div
-                  className="user-info"
-                  onClick={() => navigate(`/user/${user.memberId}`)}
-                >
-                  <img
-                    src={user.profileImage || '/nomal.jpg'}
-                    alt={user.nickname}
-                    className="user-avatar"
-                    onError={(e) => (e.target.src = '/nomal.jpg')}
-                  />
-                  <div className="user-details">
-                    <h3 className="user-nickname">{user.nickname}</h3>
-                    <p className="user-stats">
-                      팔로워 {user.followerCount || 0} · 게시물 {user.postCount || 0}
-                    </p>
-                  </div>
-                </div>
-
-                {user.memberId !== currentUserId && (
-                  <button
-                    className={`follow-btn ${user.isFollowing ? 'following' : ''}`}
-                    onClick={() => handleToggleFollow(user.memberId, user.isFollowing)}
-                    disabled={followingInProgress.has(user.memberId)}
+          <>
+            <div className="section-header">
+              <h2 className="section-title">
+                {searchQuery ? '검색 결과' : '다른 유저 찾기'}
+              </h2>
+              {!searchQuery && (
+                <p className="section-description">새로운 유저를 만나보세요</p>
+              )}
+            </div>
+            <div className="users-list">
+              {users.map((user) => (
+                <div key={user.memberId} className="user-item">
+                  <div
+                    className="user-info"
+                    onClick={() => navigate(`/user/${user.memberId}`)}
                   >
-                    {followingInProgress.has(user.memberId)
-                      ? '처리중...'
-                      : user.isFollowing
-                      ? '언팔로우'
-                      : '팔로우'}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+                    <img
+                      src={user.profileImage || '/nomal.jpg'}
+                      alt={user.nickname}
+                      className="user-avatar"
+                      onError={(e) => (e.target.src = '/nomal.jpg')}
+                    />
+                    <div className="user-details">
+                      <h3 className="user-nickname">{user.nickname}</h3>
+                      {user.team && (
+                        <div className="user-team">
+                          <img
+                            src={TEAM_LOGOS[user.team]}
+                            alt={user.team}
+                            className="user-team-logo"
+                          />
+                          <span className="user-team-name">{user.team}</span>
+                        </div>
+                      )}
+                      <p className="user-stats">
+                        팔로워 {user.followerCount || 0} · 게시물 {user.postCount || 0}
+                      </p>
+                    </div>
+                  </div>
+
+                  {user.memberId !== currentUserId && (
+                    <button
+                      className={`follow-btn ${user.isFollowing ? 'following' : ''}`}
+                      onClick={() => handleToggleFollow(user.memberId, user.isFollowing)}
+                      disabled={followingInProgress.has(user.memberId)}
+                    >
+                      {followingInProgress.has(user.memberId)
+                        ? '처리중...'
+                        : user.isFollowing
+                        ? '언팔로우'
+                        : '팔로우'}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

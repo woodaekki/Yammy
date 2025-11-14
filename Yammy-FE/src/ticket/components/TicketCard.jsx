@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { getTeamColors } from '../../sns/utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import { mintNFT, canMintNFT, getNFTStatusMessage, getEtherscanNFTUrl } from '../api/nftApi';
 import html2canvas from 'html2canvas';
 import '../styles/TicketCard.css';
@@ -27,6 +28,110 @@ const TICKET_BACKGROUNDS = {
     '삼성 라이온즈': samsungTicket,
     '롯데 자이언츠': lotteTicket,
     'SSG 랜더스': ssgTicket
+};
+
+// 팀 약칭 매핑
+const TEAM_SHORT_NAMES = {
+    'LG': 'LG 트윈스',
+    '두산': '두산 베어스',
+    '키움': '키움 히어로즈',
+    '한화': '한화 이글스',
+    'KT': 'KT 위즈',
+    'NC': 'NC 다이노스',
+    'KIA': 'KIA 타이거즈',
+    '삼성': '삼성 라이온즈',
+    '롯데': '롯데 자이언츠',
+    'SSG': 'SSG 랜더스'
+};
+
+// 경기 이름에서 팀 로고 추출
+const parseGameTeams = (gameName) => {
+    if (!gameName) return null;
+
+    const parts = gameName.split(/\s*vs\s*/i);
+    if (parts.length !== 2) return null;
+
+    const teams = parts.map(part => {
+        const trimmed = part.trim();
+        // 정확한 팀 이름으로 찾기
+        if (TEAM_LOGOS[trimmed]) {
+            return { name: trimmed, logo: TEAM_LOGOS[trimmed] };
+        }
+        // 약칭으로 찾기
+        for (const [shortName, fullName] of Object.entries(TEAM_SHORT_NAMES)) {
+            if (trimmed.includes(shortName)) {
+                return { name: fullName, logo: TEAM_LOGOS[fullName] };
+            }
+        }
+        return null;
+    }).filter(Boolean);
+
+    return teams.length === 2 ? teams : null;
+};
+
+// 경기 이름 렌더링 컴포넌트
+const GameTitle = ({ gameName, size = 'medium' }) => {
+    const teams = parseGameTeams(gameName);
+
+    const styles = {
+        small: { fontSize: '24px', logoSize: '36px', gap: '10px', teamGap: '8px' },
+        medium: { fontSize: '28px', logoSize: '40px', gap: '12px', teamGap: '10px' },
+        large: { fontSize: '32px', logoSize: '44px', gap: '14px', teamGap: '12px' }
+    };
+
+    const style = styles[size] || styles.medium;
+
+    if (!teams) {
+        return <span style={{ fontSize: style.fontSize }}>{gameName}</span>;
+    }
+
+    return (
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: style.gap,
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+        }}>
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: style.teamGap
+            }}>
+                <img
+                    src={teams[0].logo}
+                    alt={teams[0].name}
+                    style={{
+                        width: style.logoSize,
+                        height: style.logoSize,
+                        objectFit: 'contain'
+                    }}
+                />
+                <span style={{ fontSize: style.fontSize, fontWeight: '600' }}>
+                    {teams[0].name.split(' ')[0]}
+                </span>
+            </div>
+            <span style={{ fontSize: style.fontSize, fontWeight: 'bold', margin: '0 4px' }}>vs</span>
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: style.teamGap
+            }}>
+                <img
+                    src={teams[1].logo}
+                    alt={teams[1].name}
+                    style={{
+                        width: style.logoSize,
+                        height: style.logoSize,
+                        objectFit: 'contain'
+                    }}
+                />
+                <span style={{ fontSize: style.fontSize, fontWeight: '600' }}>
+                    {teams[1].name.split(' ')[0]}
+                </span>
+            </div>
+        </div>
+    );
 };
 
 const TicketCard = ({ ticket, onNftMinted }) => {
@@ -198,7 +303,9 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         }}
                     >
                         <div style={{ padding: '20px', textAlign: 'center' }}>
-                            <h2>{ticket.game || 'GAME TICKET'}</h2>
+                            <h2 style={{ display: 'flex', justifyContent: 'center', margin: '0 0 12px 0' }}>
+                                <GameTitle gameName={ticket.game || 'GAME TICKET'} size="medium" />
+                            </h2>
                             <p>{ticket.comment}</p>
                             <p>{ticket.date}</p>
                             <p>{ticket.location}</p>
@@ -270,7 +377,9 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                     msOverflowStyle: 'none'
                                 }}>
                                     <div className="ticket-back-header">
-                        <h3>{ticket.game}</h3>
+                        <h3 style={{ display: 'flex', justifyContent: 'center', margin: '0' }}>
+                            <GameTitle gameName={ticket.game} size="small" />
+                        </h3>
                         <p className="ticket-subtitle">관람 티켓</p>
                     </div>
 
@@ -386,7 +495,9 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         }}
                     >
                         <div className="ticket-back-header">
-                            <h3>{ticket.game}</h3>
+                            <h3 style={{ display: 'flex', justifyContent: 'center', margin: '0' }}>
+                                <GameTitle gameName={ticket.game} size="small" />
+                            </h3>
                             <p className="ticket-subtitle">관람 티켓</p>
                         </div>
                         <div className="ticket-back-content">

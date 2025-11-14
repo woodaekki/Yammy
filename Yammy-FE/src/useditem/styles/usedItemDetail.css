@@ -6,6 +6,7 @@
   color: #333;
   min-height: 100vh;
   line-height: 1.5;
+  margin-top: 10px;
 }
 
 /* 헤더 (등록 페이지와 통일) */
@@ -13,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 1.2rem;
+  padding: 0.1rem 1.2rem;
   border-bottom: none;
   margin-bottom: 0;
   background-color: #fff;
@@ -233,17 +234,15 @@
 }
 
 .no-image {
-  width: 100%;
-  aspect-ratio: 3 / 4;     
-  background-color: #f9fafb;
+  aspect-ratio: 1 / 1;     
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .no-image img {
-  width: 55%;             
+  width: 60%;             
   height: auto;
   object-fit: contain;
   opacity: 0.7;           

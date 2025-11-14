@@ -6,6 +6,7 @@ import FollowListModal from './FollowListModal';
 import TicketCard from '../../ticket/components/TicketCard';
 import SNSNavigationBar from './SNSNavigationBar';
 import { getTeamColors } from '../utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import '../styles/UserProfile.css';
 
 // 기본 프로필 이미지
@@ -186,9 +187,16 @@ const UserProfile = () => {
                         </h2>
                         <div className="bio-container">
                             {(profileData.team || currentUser.team) && (
-                                <p className="bio-text">
-                                    ⚾ {profileData.team || currentUser.team}
-                                </p>
+                                <div className="profile-team">
+                                    <img
+                                        src={TEAM_LOGOS[profileData.team || currentUser.team]}
+                                        alt={profileData.team || currentUser.team}
+                                        className="profile-team-logo"
+                                    />
+                                    <span className="profile-team-name">
+                                        {profileData.team || currentUser.team}
+                                    </span>
+                                </div>
                             )}
                             {(profileData.bio || currentUser.bio) && (
                                 <p className="bio-text">

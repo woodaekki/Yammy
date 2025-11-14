@@ -20,7 +20,7 @@ const SNSNavigationBar = () => {
   // localStorage 변화 감지
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (["profileImage", "nickname", "team"].includes(e.key)) {
+      if (["profileImage", "nickname", "team", "bio"].includes(e.key)) {
         syncFromLocalStorage();
       }
     };
@@ -77,7 +77,7 @@ const SNSNavigationBar = () => {
               className="sns-nav-icon-btn"
               onClick={() => navigate("/users/search")}
               title="유저 찾기"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', fontSize: '1.3rem' }}
+              style={{ color: 'white', fontSize: '1.3rem' }}
             >
               🔍
             </button>
@@ -87,7 +87,7 @@ const SNSNavigationBar = () => {
               className="sns-nav-icon-btn"
               onClick={() => navigate(`/user/${currentUserId}`)}
               title="내 프로필"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', fontSize: '1.3rem' }}
+              style={{ color: 'white', fontSize: '1.3rem' }}
             >
               👤
             </button>
@@ -114,7 +114,7 @@ const SNSNavigationBar = () => {
               {showUserMenu && (
                 <div className="user-dropdown">
                   <button onClick={() => navigate("/mypage")}>
-                    <i className="fas fa-cog"></i> 설정
+                    <i className="fas fa-cog"></i> 내 정보 수정
                   </button>
                   <button onClick={handleLogout}>
                     <i className="fas fa-sign-out-alt"></i> 로그아웃
