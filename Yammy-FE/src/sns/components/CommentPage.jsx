@@ -15,10 +15,9 @@ import '../styles/CommentPage.css';
 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
-  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
-  const diffInMs = now - koreaTime;
- 
+  const diffInMs = now - date;
+
   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
   const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
@@ -27,7 +26,7 @@ const formatTimeAgo = (dateString) => {
   if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
   if (diffInHours < 24) return `${diffInHours}시간 전`;
   if (diffInDays < 7) return `${diffInDays}일 전`;
-  return koreaTime.toLocaleDateString('ko-KR');
+  return date.toLocaleDateString('ko-KR');
 };
 
 const ImageCarousel = ({ images = [], postId }) => {
@@ -119,6 +118,7 @@ const CommentPage = () => {
   const [commentInput, setCommentInput] = useState('');
   const [selectedCommentId, setSelectedCommentId] = useState(null);
   const [showCommentMenu, setShowCommentMenu] = useState(false);
+  const [sortOrder, setSortOrder] = useState('oldest'); // 'oldest' | 'newest'
   const [teamColors] = useState(getTeamColors());
   const currentUserId = Number(localStorage.getItem('memberId'));
   const userProfileImage = localStorage.getItem('profileImage') || '/nomal.jpg';
@@ -146,6 +146,13 @@ const CommentPage = () => {
       console.error("댓글 로드 실패:", err);
     }
   };
+
+  // 정렬된 댓글 목록
+  const sortedComments = [...comments].sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    return sortOrder === 'oldest' ? dateA - dateB : dateB - dateA;
+  });
 
   const handleTogglePostLike = async () => {
     try {
@@ -200,7 +207,11 @@ const CommentPage = () => {
       {postData && (
         <div className="post-card">
           <div className="post-header">
-            <div className="post-author">
+            <div
+              className="post-author"
+              onClick={() => navigate(`/user/${postData.memberId}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <img
                 src={postData.profileImage || '/nomal.jpg'}
                 alt={postData.nickname}
@@ -232,7 +243,7 @@ const CommentPage = () => {
               </button>
               <button className="action-btn">
                 <FiMessageCircle className="action-icon comment-icon" />
-                <span className="action-count">{postData.commentCount || 0}</span>
+                <span className="action-count">{comments.length}</span>
               </button>
             </div>
           </div>
@@ -240,18 +251,40 @@ const CommentPage = () => {
       )}
 
       <div className="comments-scroll">
+        {comments.length > 0 && (
+          <div className="comment-sort-controls">
+            <button
+              className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+              onClick={() => setSortOrder('oldest')}
+            >
+              오래된순
+            </button>
+            <button
+              className={`sort-btn ${sortOrder === 'newest' ? 'active' : ''}`}
+              onClick={() => setSortOrder('newest')}
+            >
+              최신순
+            </button>
+          </div>
+        )}
         {comments.length === 0 ? (
           <div className="empty-comments">아직 댓글이 없습니다. 첫 댓글을 남겨보세요!</div>
         ) : (
-          comments.map((comment) => (
+          sortedComments.map((comment) => (
             <div key={comment.id} className="comment-item">
               <div className="comment-meta">
                 <img
                   src={comment.profileImage || '/nomal.jpg'}
                   alt={comment.nickname}
                   className="comment-avatar"
+                  onClick={() => navigate(`/user/${comment.memberId}`)}
+                  style={{ cursor: 'pointer' }}
                 />
-                <div className="comment-meta-info">
+                <div
+                  className="comment-meta-info"
+                  onClick={() => navigate(`/user/${comment.memberId}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span className="comment-author">{comment.nickname}</span>
                   <span className="comment-time">{formatTimeAgo(comment.createdAt)}</span>
                 </div>

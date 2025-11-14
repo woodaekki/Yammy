@@ -9,7 +9,7 @@
     justify-content: space-between;
     padding: 12px 16px;
     border-bottom: none;
-    background-color: #ffffff;
+    background-color: transparent;
 }
 
 .back-btn, .options-btn {
@@ -30,7 +30,7 @@
 /* ?„ë¡œ???•ë³´ ?¹ì…˜ */
 .profile-info-section {
     padding: 20px 16px;
-    background-color: #ffffff;
+    background-color: transparent;
     border: none;
     border-radius: 12px;
     margin: 16px;

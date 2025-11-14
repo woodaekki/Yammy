@@ -1,12 +1,12 @@
 .post-create-container {
   max-width: 600px;
   margin: 0 auto;
-  background: #fff;
+  background: transparent;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
 }
 
-/* 헤더 */
+/* ?�더 */
 .post-create-header {
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
   font-weight: 600;
 }
 
-/* 폼 전체 */
+/* ???�체 */
 .post-create-form {
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
   box-sizing: border-box;
 }
 
-/* 이미지 영역 */
+/* ?��?지 ?�역 */
 .post-create-images {
   width: 100%;
   margin-bottom: 0.8rem;
@@ -51,7 +51,7 @@
   color: #555;
 }
 
-/* 업로드 라벨 */
+/* ?�로???�벨 */
 .post-create-upload-label {
   display: block;
   cursor: pointer;
@@ -83,7 +83,7 @@
   color: #999;
 }
 
-/* 이미지 프리뷰 영역 */
+/* ?��?지 ?�리�??�역 */
 .post-create-image-list {
   display: flex;
   flex-wrap: wrap;
@@ -129,7 +129,7 @@
   background: rgba(0, 0, 0, 0.8);
 }
 
-/* 추가 버튼 */
+/* 추�? 버튼 */
 .post-create-add-more {
   cursor: pointer;
 }
@@ -151,7 +151,7 @@
   color: #bbb;
 }
 
-/* 텍스트 영역 */
+/* ?�스???�역 */
 .post-create-textarea-field {
   width: 100%;
   border: 1px solid #ddd;
@@ -207,7 +207,7 @@
   cursor: not-allowed;
 }
 
-/* 반응형 */
+/* 반응??*/
 @media (max-width: 768px) {
   .post-create-container {
     max-width: 100%;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { FaHeart } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
 import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost } from './api/snsApi';
@@ -413,12 +414,6 @@ const SNSPage = () => {
           <p>게시물을 불러오는 중...</p>
         </div>
       )}
-      <button
-        className="floating-create-btn"
-        onClick={() => navigate('/post/create')}
-      >
-        +
-      </button>
 
       {/* 이미지 모달 */}
       {modalImage && (
@@ -427,6 +422,18 @@ const SNSPage = () => {
           initialIndex={modalImage.initialIndex}
           onClose={() => setModalImage(null)}
         />
+      )}
+
+      {/* 플로팅 버튼을 Portal로 body에 렌더링 */}
+      {createPortal(
+        <button
+          className="floating-create-btn"
+          onClick={() => navigate('/post/create')}
+          style={{ '--team-color': teamColors.bgColor }}
+        >
+          +
+        </button>,
+        document.body
       )}
     </div>
   );
