@@ -1,4 +1,5 @@
-/* 모달 오버레이 */
+@import "./FollowButton.css";
+/* 모달 ?�버?�이 */
 .follow-modal-overlay {
     position: fixed;
     top: 0;
@@ -12,7 +13,7 @@
     z-index: 9999;
 }
 
-/* 모달 컨텐츠 */
+/* 모달 컨텐�?*/
 .follow-modal-content {
     background-color: white;
     border: none;
@@ -25,7 +26,7 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* 헤더 */
+/* ?�더 */
 .follow-modal-header {
     display: flex;
     justify-content: space-between;
@@ -60,7 +61,7 @@
     background-color: #f3f4f6;
 }
 
-/* 탭 */
+/* ??*/
 .follow-modal-tabs {
     display: flex;
     border-bottom: 1px solid #e5e7eb;
@@ -100,7 +101,7 @@
     font-size: 14px;
 }
 
-/* 팔로우 아이템 */
+/* ?�로???�이??*/
 .follow-item {
     display: flex;
     align-items: center;
@@ -137,37 +138,4 @@
     font-size: 14px;
     font-weight: 600;
     color: #111827;
-    margin-bottom: 2px;
-}
-
-.user-team {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-/* 팔로우 버튼 */
-.follow-btn {
-    padding: 6px 16px;
-    background-color: var(--team-color, #4CAF50);
-    color: var(--team-text-color, white);
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.follow-btn:hover {
-    filter: brightness(0.9);
-}
-
-.follow-btn.following {
-    background-color: #e5e7eb;
-    color: #374151;
-}
-
-.follow-btn.following:hover {
-    background-color: #fee2e2;
-    color: #FF5722;
 }
