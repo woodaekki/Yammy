@@ -1,11 +1,14 @@
 /* === 상단 네비게이션 바 === */
 .nav-bar-top {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
-  padding: 0.75rem 1rem;
+  padding: clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.8rem, 2vw, 1rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,12 +24,53 @@
 }
 
 .nav-bar-top .sns-logo-img {
-  height: 48px;
+  height: clamp(40px, 10vw, 48px);
   width: auto;
   object-fit: contain;
 }
 
-/* 얌미페이 전체 박스 */
+/* 오른쪽 전체 컨테이너 */
+.nav-bar-top .header-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 2vw, 10px);
+  margin-right: 4px;
+}
+
+
+.bell-icon {
+  width: 22px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff4444;
+  color: white;
+  font-size: clamp(0.6rem, 1.5vw, 0.65rem);
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: clamp(16px, 4vw, 18px);
+  height: clamp(16px, 4vw, 18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(255, 68, 68, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* === 얌미페이 전체 박스 === */
 .ypay-baseball-wrapper {
   display: flex;
   align-items: center;
@@ -34,47 +78,55 @@
   background: #fafafa;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 6px 10px;
-  gap: 4px;
+  padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
+  gap: clamp(2px, 0.8vw, 4px);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  max-width: 240px;
+  max-width: clamp(180px, 45vw, 240px);
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .ypay-info {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: clamp(3px, 0.8vw, 4px);
   flex: 1;
   cursor: pointer;
   opacity: 0.9;
+  min-width: 0;
 }
 
 .ypay-logo-circle {
   background: #fff;
   border: 1.5px solid #bdbdbd;
-  width: 22px;
-  height: 22px;
+  width: clamp(18px, 4.5vw, 22px);
+  height: clamp(18px, 4.5vw, 22px);
   border-radius: 50%;
-  font-size: 12px;
+  font-size: clamp(10px, 2.5vw, 12px);
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .ypay-balance {
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
   font-weight: 700;
   color: #333;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: clamp(70px, 20vw, 100px);
 }
 
 .ypay-balance::after {
   content: '얌';
-  font-size: 0.85rem;  
-  font-weight: 700;    
-  color: #333;          
-  margin-left: 2px;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  font-weight: 700;
+  color: #333;
+  margin-left: clamp(1px, 0.3vw, 2px);
 }
-
 
 /* 버튼 공통 */
 .chatlist-btn,
@@ -83,12 +135,13 @@
   color: #333;
   border: 1px solid #d0d0d0;
   border-radius: 12px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
+  padding: clamp(3px, 0.8vw, 4px) clamp(6px, 2vw, 10px);
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .chatlist-btn:hover,
@@ -111,12 +164,12 @@
 
 /* 로그인 버튼 */
 .nav-bar-top .login-button {
-  padding: 0.5rem 1rem;
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
   background-color: #4f46e5;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: clamp(0.8rem, 2vw, 0.875rem);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -131,92 +184,6 @@
   position: relative;
 }
 
-.nav-bar-top .user-button i.fa-user-circle {
-  font-size: 1.25rem;
-  color: #4f46e5;
-}
-
-.nav-bar-top .user-nickname {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nav-bar-top .i.fa-chevron-down {
-  font-size: 0.75rem;
-  color: #6b7280;
-  transition: transform 0.2s;
-}
-
-.nav-bar-top .user-button i.fa-chevron-down.rotate {
-  transform: rotate(180deg);
-}
-
-.nav-bar-top .user-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-width: 150px;
-  overflow: hidden;
-  z-index: 50;
-}
-
-.nav-bar-top .user-dropdown button {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: #374151;
-  transition: background-color 0.2s;
-}
-
-.nav-bar-top .user-dropdown button:hover {
-  background-color: #f3f4f6;
-}
-
-.nav-bar-top .user-dropdown button i {
-  color: #6b7280;
-}
-
-/* 기존: 닉네임 스타일 */
-.nav-bar-top .user-nickname {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nav-bar-top .rotate {
-  transform: rotate(180deg);
-  transition: transform 0.2s ease;
-}
-
-/* 오른쪽 전체 컨테이너 */
-.nav-bar-top .header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px; 
-  margin-right: 4px; 
-}
-
-/* 프로필 버튼 */
 .nav-bar-top .user-button {
   display: flex;
   align-items: center;
@@ -235,12 +202,12 @@
 
 /* 프로필 이미지 */
 .nav-bar-top .user-profile-img {
-  width: 42px;
-  height: 42px;
+  width: clamp(38px, 9vw, 42px);
+  height: clamp(38px, 9vw, 42px);
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #fff; 
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1); 
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
@@ -277,6 +244,55 @@
   z-index: 100;
 }
 
+.nav-bar-top .user-dropdown button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+
+.nav-bar-top .user-dropdown button:hover {
+  background-color: #f3f4f6;
+}
+
+.nav-bar-top .user-dropdown button i {
+  color: #6b7280;
+}
+
+/* Predict 페이지 팬심 표시 */
+.predict-points-display {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 8px);
+  background: rgba(255, 255, 255, 0.9);
+  padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px);
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.predict-points-display .points-label {
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  font-weight: 500;
+  color: #666;
+  white-space: nowrap;
+}
+
+.predict-points-display .points-value {
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* === 하단 네비게이션 바 === */
 .nav-bar-bottom {
   position: fixed;
   bottom: 0;
@@ -284,15 +300,14 @@
   right: 0;
   width: 100%;
   height: 58px;
-
   display: flex;
   justify-content: space-around;
   align-items: center;
-
   border-top: 1.5px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
   z-index: 1000;
 }
+
 .nav-bar-bottom a {
   flex: 1;
   text-align: center;
@@ -302,7 +317,6 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
-
   font-size: 11px;
   font-weight: 500;
   padding: 6px 0;
@@ -339,7 +353,7 @@
 .nav-bar-bottom a.active .icon {
   transform: scale(1.15);
   color: #fff;
-  filter: drop-shadow(0 1px 3px rgba(255, 255, 255, 0.4)); 
+  filter: drop-shadow(0 1px 3px rgba(255, 255, 255, 0.4));
 }
 
 .nav-bar-bottom a:hover {
@@ -437,3 +451,4 @@
 .sns-nav-icon-btn:active {
   transform: scale(0.95);
 }
+

@@ -29,21 +29,21 @@ function UsedItemDetail() {
 
   // 시간 포맷 함수 (한국 시간 기준)
   const formatTimeAgo = (dateString) => {
-  const date = new Date(dateString);
-  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-  const now = new Date();
-  const diffInMs = now - koreaTime;
- 
-  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const date = new Date(dateString);
+    const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    const now = new Date();
+    const diffInMs = now - koreaTime;
+   
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  if (diffInMinutes < 1) return '방금 전';
-  if (diffInMinutes < 60) return `${diffInMinutes}분 전`
-  if (diffInHours < 24) return `${diffInHours}시간 전`
-  if (diffInDays < 7) return `${diffInDays}일 전`
-  return koreaTime.toLocaleDateString('ko-KR')
-}
+    if (diffInMinutes < 1) return '방금 전';
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`
+    if (diffInHours < 24) return `${diffInHours}시간 전`
+    if (diffInDays < 7) return `${diffInDays}일 전`
+    return koreaTime.toLocaleDateString('ko-KR')
+  }
 
   // 수정
   const handleEdit = () => navigate(`/useditem/edit/${params.id}`)
@@ -75,8 +75,7 @@ function UsedItemDetail() {
   };
 
   // 로딩 / 데이터 없음 처리
-  if (loading) return <p className="loading-text">로딩 중...</p>
-  if (!item) return <p className="loading-text">게시글을 찾을 수 없습니다.</p>
+  if (!item) return <p className="loading-text"></p>
 
   // 팀 이름 매핑
   const teamNames = {
@@ -99,7 +98,7 @@ function UsedItemDetail() {
         <button onClick={() => navigate("/useditem")} className="detail-back-btn">
           ←
         </button>
-        <h1 className="detail-title">상품 상세</h1>
+        <span className="detail-title">상품 상세</span>
       </div>
 
       {/* 이미지 슬라이더 */}

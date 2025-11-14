@@ -26,10 +26,10 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class TossPaymentService {
 
-    @Value("${TEST_SECRET_KEY}")
+    @Value("${TEST_SECRET_KEY:}")
     private String tossSecretKey;
 
-    @Value("${TOSS_URL}")
+    @Value("${TOSS_URL:}")
     private String tossUrl;
 
     private final TossPaymentRepository tossPaymentRepository;
@@ -106,6 +106,7 @@ public class TossPaymentService {
         pointTransaction.setTossPayment(tossPayment);
         pointTransaction.setType(TransactionType.CHARGE);
         pointTransaction.setAmount(amount);
+        pointTransaction.setBalanceAfter(point.getBalance());
         pointTransaction.setCreatedAt(LocalDateTime.now());
         pointTransactionRepository.save(pointTransaction);
 

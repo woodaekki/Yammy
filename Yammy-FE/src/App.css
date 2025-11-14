@@ -1,18 +1,78 @@
 /* 반응형 레이아웃 */
 .app-container {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh; 
   margin: 0;
   padding: 0;
   background-color: #ffffff;
   box-sizing: border-box;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 콘텐츠 래퍼 */
 .app-content-wrapper {
   width: 100%;
-  min-height: 100vh;
+  flex: 1; 
   padding-bottom: 60px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  overflow-x: hidden;
+  overflow-y: auto; 
+  position: relative;
+}
+
+/* 페이지 전환 애니메이션 */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+}
+
+.app-container.slide-left .app-content-wrapper {
+  animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.app-container.slide-right .app-content-wrapper {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   box-sizing: border-box;
 }
