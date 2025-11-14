@@ -104,7 +104,3 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
-
-.icon-rotate-right {
-  transform: rotate(180deg);
-}
