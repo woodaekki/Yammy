@@ -12,6 +12,7 @@
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 /* 커스텀 셀렉트 */

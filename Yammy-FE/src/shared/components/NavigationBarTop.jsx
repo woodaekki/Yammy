@@ -31,14 +31,14 @@ const NavigationBarTop = () => {
     }
 
     if (value < 100000000) {
-      // 1만 - 1억 미만
-      const man = value / 10000; 
-      return man % 1 === 0 ? `${man}만` : `${man.toFixed(1)}만`;
+      const man = value / 10000;
+      const formatted = Number.isInteger(man) ? man : man.toFixed(2);
+      return `${formatted}만`;
     }
 
-    // 1억 이상
     const uk = value / 100000000;
-    return uk % 1 === 0 ? `${uk}억` : `${uk.toFixed(1)}억`;
+    const formatted = Number.isInteger(uk) ? uk : uk.toFixed(2);
+    return `${formatted}억`;
   };
 
   useEffect(() => {
