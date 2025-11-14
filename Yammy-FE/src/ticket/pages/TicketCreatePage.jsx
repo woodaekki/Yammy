@@ -174,9 +174,22 @@ const TicketCreatePage = () => {
 
     const handleDateChange = (e) => {
         const newDate = e.target.value;
+        // 날짜 변경 시 이후 모든 입력값 리셋
         setFormData(prev => ({
             ...prev,
-            date: newDate
+            date: newDate,
+            matchcode: '',
+            game: '',
+            location: '',
+            seat: '',
+            comment: '',
+            awayScore: '',
+            homeScore: '',
+            review: '',
+            photo: null,
+            photoPreview: null,
+            myTeam: '',
+            result: ''
         }));
         // 날짜가 변경되면 경기 목록과 선택된 경기 초기화
         setMatches([]);
