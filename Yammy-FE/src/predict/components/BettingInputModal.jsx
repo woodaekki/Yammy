@@ -219,11 +219,11 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
                   <div className="team-details">
                     <div className="team-name">{selectedTeamInfo.name}</div>
                     <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
-                    <div className="odds-ratio-text">
+                    <div className="odds-ratio-text">예상 승률 : 
                       {((match.homeAmount + match.awayAmount) > 0 ?
                         (selectedTeam === 0 ?
                          (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 :
-                         (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100) : 50).toFixed(1)}% 비율
+                         (match.awayAmount / (match.homeAmount + match.awayAmount)) * 100) : 50).toFixed(1)}%
                     </div>
                   </div>
                 </div>
