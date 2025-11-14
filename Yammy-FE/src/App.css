@@ -6,70 +6,13 @@
   padding: 0;
   background-color: #ffffff;
   box-sizing: border-box;
-  overflow: hidden;
   position: relative;
 }
 
-/* 스와이프 애니메이션을 위한 래퍼 */
+/* 콘텐츠 래퍼 */
 .app-content-wrapper {
   width: 100%;
   min-height: 100vh;
   padding-bottom: 60px;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* 페이지 전환 애니메이션 */
-@keyframes slideInFromRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0.8;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0.8;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutToLeft {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-100%);
-    opacity: 0.8;
-  }
-}
-
-@keyframes slideOutToRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0.8;
-  }
-}
-
-.app-container.slide-left .app-content-wrapper {
-  animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.app-container.slide-right .app-content-wrapper {
-  animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  box-sizing: border-box;
 }
