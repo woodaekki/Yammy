@@ -1,4 +1,4 @@
-/* 반응???�이?�웃 */
+/* 반응???�이?�웃 */
 .app-container {
   width: 100%;
   height: 100vh; 
@@ -11,7 +11,7 @@
   flex-direction: column;
 }
 
-/* 콘텐�??�퍼 */
+/* 콘텐�??�퍼 */
 .app-content-wrapper {
   width: 100%;
   flex: 1; 
@@ -23,7 +23,7 @@
   position: relative;
 }
 
-/* ?�이지 ?�환 ?�니메이??*/
+/* ?�이지 ?�환 ?�니메이??*/
 @keyframes slideInFromRight {
   from {
     transform: translateX(100%);

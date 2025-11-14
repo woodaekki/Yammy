@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface WithdrawalRepository extends JpaRepository<Withdrawal, Integer> {
+public interface WithdrawalRepository extends JpaRepository<Withdrawal, Long> {
     // 환전 내역 최신순 정렬
-    List<Withdrawal> findByMemberIdOrderByCreatedAtDesc(Member member);
+    List<Withdrawal> findByMemberOrderByCreatedAtDesc(Member member);
 }
