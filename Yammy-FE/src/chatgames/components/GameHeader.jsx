@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../../assets/images/logo.png";
 import "../styles/GameHeader.css";
 
 export default function GameHeader({ room, navigate }) {
@@ -32,7 +33,7 @@ export default function GameHeader({ room, navigate }) {
         <div className="home-bar"></div>
         <div className="away-bar"></div>
       </div>
-      
+
 
       {/* 본문 정보 */}
       <div className="game-info">
@@ -47,6 +48,9 @@ export default function GameHeader({ room, navigate }) {
           <span className="vs">VS</span>
           <span className="team away">{awayTeam}</span>
         </div>
+
+        {/* 로고 */}
+        <img src={logo} alt="Yammy Logo" className="game-header-logo" />
 
         <h2 className="game-title">{name}</h2>
 
