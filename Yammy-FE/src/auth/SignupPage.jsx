@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup, sendVerificationCode, verifyEmail, login, updateMember } from './api/authApi';
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
+import { TEAM_LOGOS } from '../utils/teamLogos';
+import { TEAM_COLORS } from '../sns/utils/teamColors';
 import './styles/auth.css';
 
 export default function SignupPage() {
@@ -460,27 +462,28 @@ export default function SignupPage() {
             <label htmlFor="team" className="form-label required">
               좋아하는 야구팀
             </label>
-            <div className="input-wrapper">
-              <select
-                id="team"
-                name="team"
-                value={formData.team}
-                onChange={handleChange}
-                className="form-input"
-              >
-                <option value="">팀을 선택하세요</option>
-                <option value="LG 트윈스">LG 트윈스</option>
-                <option value="한화 이글스">한화 이글스</option>
-                <option value="SSG 랜더스">SSG 랜더스</option>
-                <option value="삼성 라이온즈">삼성 라이온즈</option>
-                <option value="NC 다이노스">NC 다이노스</option>
-                <option value="KT 위즈">KT 위즈</option>
-                <option value="롯데 자이언츠">롯데 자이언츠</option>
-                <option value="KIA 타이거즈">KIA 타이거즈</option>
-                <option value="두산 베어스">두산 베어스</option>
-                <option value="키움 히어로즈">키움 히어로즈</option>
-              </select>
-              <i className="fas fa-baseball-ball input-icon"></i>
+            <div className="team-select-grid">
+              {['LG 트윈스', '한화 이글스', 'SSG 랜더스', '삼성 라이온즈', 'NC 다이노스',
+                'KT 위즈', '롯데 자이언츠', 'KIA 타이거즈', '두산 베어스', '키움 히어로즈']
+                .map((teamName) => (
+                  <button
+                    key={teamName}
+                    type="button"
+                    className={`team-select-btn ${formData.team === teamName ? 'active' : ''}`}
+                    style={{
+                      backgroundColor: formData.team === teamName ? TEAM_COLORS[teamName]?.bgColor : '#f3f4f6',
+                      color: formData.team === teamName ? TEAM_COLORS[teamName]?.textColor : '#374151',
+                    }}
+                    onClick={() => setFormData({ ...formData, team: teamName })}
+                  >
+                    <img
+                      src={TEAM_LOGOS[teamName]}
+                      alt={teamName}
+                      className="team-select-logo"
+                    />
+                    {teamName}
+                  </button>
+                ))}
             </div>
             {errors.team && <span className="error-text">{errors.team}</span>}
           </div>

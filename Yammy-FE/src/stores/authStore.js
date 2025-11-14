@@ -26,6 +26,7 @@ const useAuthStore = create(
         if (userData.email) localStorage.setItem('email', userData.email);
         if (userData.team) localStorage.setItem('team', userData.team);
         if (userData.profileImage) localStorage.setItem('profileImage', userData.profileImage);
+        if (userData.bio) localStorage.setItem('bio', userData.bio);
 
         set({
           isLoggedIn: true,
@@ -38,6 +39,7 @@ const useAuthStore = create(
             team: userData.team,
             authority: userData.authority,
             profileImage: userData.profileImage,
+            bio: userData.bio,
           },
         });
       },
@@ -69,6 +71,7 @@ const useAuthStore = create(
         localStorage.removeItem('email');
         localStorage.removeItem('team');
         localStorage.removeItem('profileImage');
+        localStorage.removeItem('bio');
 
         set({
           isLoggedIn: false,
@@ -91,6 +94,7 @@ const useAuthStore = create(
               team: localStorage.getItem('team'),
               authority: localStorage.getItem('authority'),
               profileImage: localStorage.getItem('profileImage'),
+              bio: localStorage.getItem('bio'),
             },
           });
         } else {
@@ -99,6 +103,19 @@ const useAuthStore = create(
             user: null,
           });
         }
+      },
+
+      // localStorage 변화를 실시간으로 동기화
+      syncFromLocalStorage: () => {
+        set((state) => ({
+          user: {
+            ...state.user,
+            nickname: localStorage.getItem('nickname'),
+            profileImage: localStorage.getItem('profileImage'),
+            team: localStorage.getItem('team'),
+            bio: localStorage.getItem('bio'),
+          },
+        }));
       },
     }),
     {

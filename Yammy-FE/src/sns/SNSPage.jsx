@@ -41,19 +41,45 @@ const ImageModal = ({ images, initialIndex, onClose }) => {
   };
 
   useEffect(() => {
+    // 현재 스크롤 위치 저장
+    const scrollY = window.pageYOffset;
+
+    // 스크롤 방지
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    // 터치 이벤트 방지
+    const preventScroll = (e) => {
+      e.preventDefault();
+    };
+
+    // ESC 키 핸들러
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
     };
+
     document.addEventListener('keydown', handleEscape);
-    document.body.style.overflow = 'hidden';
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.addEventListener('wheel', preventScroll, { passive: false });
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      // 원래 상태 복원
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+
+      // 이벤트 리스너 제거
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('touchmove', preventScroll);
+      document.removeEventListener('wheel', preventScroll);
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="image-modal-overlay" onClick={onClose}>
       <button className="modal-close-btn" onClick={onClose}>×</button>
 
@@ -78,7 +104,8 @@ const ImageModal = ({ images, initialIndex, onClose }) => {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
