@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { chatRoomApi } from '../api/chatApi';
 import useAuthStore from "../../stores/authStore";
+import { getTeamLogo } from '../../predict/utils/teamLogo';
+import { getTeamColors } from '../../sns/utils/teamColors';
 import "../styles/ChatRoomListPage.css";
 
 /**
@@ -15,6 +17,10 @@ export default function ChatRoomListPage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isAdmin = user?.authority === 'ADMIN';
+
+  // 사용자가 선택한 팀의 컬러 가져오기
+  const teamColors = getTeamColors();
+  const userTeamColor = teamColors.bgColor;
 
   useEffect(() => {
     fetchRooms();
@@ -99,25 +105,49 @@ export default function ChatRoomListPage() {
           </div>
         ) : (
           <div className="chat-room-list-inner">
-            {rooms.map((room) => (
-              <Link
-                key={room.id}
-                to={`/cheerup/${room.roomKey}`}
-                className="chat-room-card"
-              >
-                <div className="chat-room-teams">
-                  <div className="text-right">
-                    <div className="chat-room-team">{room.homeTeam || '홈팀'}</div>
-                    <div className="chat-room-team-sub">HOME</div>
-                  </div>
+            {rooms.map((room) => {
+              return (
+                <Link
+                  key={room.id}
+                  to={`/cheerup/${room.roomKey}`}
+                  className="chat-room-card"
+                  style={{ '--team-color': userTeamColor }}
+                >
+                  <div className="chat-room-teams">
+                    <div className="chat-room-team-wrapper">
+                      <div className="chat-room-team">
+                        {getTeamLogo(room.homeTeam) && (
+                          <img
+                            src={getTeamLogo(room.homeTeam)}
+                            alt={`${room.homeTeam} 로고`}
+                            className="team-logo-small"
+                          />
+                        )}
+                        <div>
+                          <div>{room.homeTeam || '홈팀'}</div>
+                          <div className="chat-room-team-sub">HOME</div>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="chat-room-vs">VS</div>
+                    <div className="chat-room-vs">VS</div>
 
-                  <div className="text-left">
-                    <div className="chat-room-team">{room.awayTeam || '원정팀'}</div>
-                    <div className="chat-room-team-sub">AWAY</div>
+                    <div className="chat-room-team-wrapper">
+                      <div className="chat-room-team">
+                        {getTeamLogo(room.awayTeam) && (
+                          <img
+                            src={getTeamLogo(room.awayTeam)}
+                            alt={`${room.awayTeam} 로고`}
+                            className="team-logo-small"
+                          />
+                        )}
+                        <div>
+                          <div>{room.awayTeam || '원정팀'}</div>
+                          <div className="chat-room-team-sub">AWAY</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
                 <div className="chat-room-info">
                   {/* <h3 className="chat-room-name">{room.name}</h3> */}
@@ -141,7 +171,8 @@ export default function ChatRoomListPage() {
                   </span>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
