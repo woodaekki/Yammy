@@ -97,6 +97,17 @@ const MyPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // 글자 수 제한 체크
+    if (name === 'nickname' && value.length > 20) {
+      alert('닉네임은 최대 20자까지 입력 가능합니다.');
+      return;
+    }
+    if (name === 'bio' && value.length > 50) {
+      alert('자기소개는 최대 50자까지 입력 가능합니다.');
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -173,6 +184,16 @@ const MyPage = () => {
   };
 
   const handleSave = async () => {
+    // 유효성 검사
+    if (formData.nickname.length > 20) {
+      alert('닉네임은 최대 20자까지 입력 가능합니다.');
+      return;
+    }
+    if (formData.bio.length > 50) {
+      alert('자기소개는 최대 50자까지 입력 가능합니다.');
+      return;
+    }
+
     setLoading(true);
     try {
       let profileImageUrl = formData.profileImage;
@@ -364,7 +385,11 @@ const MyPage = () => {
                 onChange={handleChange}
                 className="info-input"
                 placeholder="닉네임을 입력하세요"
+                maxLength={20}
               />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: '0' }}>
+                {formData.nickname.length}/20자
+              </p>
             </div>
 
             <div className="info-group">
@@ -467,7 +492,11 @@ const MyPage = () => {
                 className="info-textarea"
                 placeholder="자기소개를 입력하세요"
                 rows={4}
+                maxLength={50}
               />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: '0' }}>
+                {formData.bio.length}/50자
+              </p>
             </div>
 
             {/* 회원 탈퇴 */}

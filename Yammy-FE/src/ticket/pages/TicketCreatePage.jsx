@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
 import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
 import { createTicket } from '../api/ticketApi';
 import { getRecentMatches, getMatchesByDate } from '../api/matchApi';
@@ -118,18 +119,69 @@ const TicketCreatePage = () => {
         }));
     };
 
-    const handlePhotoChange = (e) => {
+    const compressImage = async (file) => {
+        const options = {
+            maxSizeMB: 1, // 최대 1MB
+            maxWidthOrHeight: 1920, // 최대 1920px
+            useWebWorker: true, // 성능 향상
+        };
+
+        try {
+            const originalSize = (file.size / 1024 / 1024).toFixed(2);
+            console.log('[TicketCreate] 이미지 압축 시작:', {
+                fileName: file.name,
+                originalSize: `${originalSize}MB`,
+                type: file.type
+            });
+
+            const compressedFile = await imageCompression(file, options);
+            const compressedSize = (compressedFile.size / 1024 / 1024).toFixed(2);
+
+            console.log('[TicketCreate] 이미지 압축 완료:', {
+                fileName: file.name,
+                originalSize: `${originalSize}MB`,
+                compressedSize: `${compressedSize}MB`,
+                compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
+            });
+
+            return new File([compressedFile], file.name, { type: compressedFile.type });
+        } catch (error) {
+            console.error('[TicketCreate] 이미지 압축 실패:', error);
+            return file; // 압축 실패 시 원본 사용
+        }
+    };
+
+    const handlePhotoChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('이미지 파일만 업로드 가능합니다.');
+            return;
+        }
+
+        try {
+            // 이미지 압축
+            const compressedFile = await compressImage(file);
+
+            // 압축 후에도 10MB 초과 시 차단
+            if (compressedFile.size > 10 * 1024 * 1024) {
+                alert('파일 크기는 10MB 이하만 가능합니다.');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData(prev => ({
                     ...prev,
-                    photo: file,
+                    photo: compressedFile,
                     photoPreview: reader.result
                 }));
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(compressedFile);
+        } catch (error) {
+            console.error('[TicketCreate] 이미지 처리 실패:', error);
+            alert('이미지 처리 중 오류가 발생했습니다.');
         }
     };
 

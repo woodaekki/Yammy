@@ -349,7 +349,7 @@
   transform-origin: center;
 }
 
-/* ?��?지 모달 */
+/* 이미지 모달 */
 .image-modal-overlay {
   position: fixed;
   top: 0;
@@ -362,6 +362,8 @@
   justify-content: center;
   z-index: 10000;
   animation: fadeIn 0.2s ease-in-out;
+  overflow: hidden;
+  touch-action: none;
 }
 
 @keyframes fadeIn {
@@ -380,6 +382,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 .modal-image {
@@ -390,6 +393,8 @@
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .modal-close-btn {
