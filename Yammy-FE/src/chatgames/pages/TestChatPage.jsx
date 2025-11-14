@@ -17,10 +17,9 @@ export default function TestChatPage() {
     try {
       setUploading(true);
       const result = await chatMessageApi.uploadImage(TEST_ROOM_KEY, file);
-      console.log('✅ 업로드 성공:', result);
       alert('이미지 업로드 성공!');
     } catch (err) {
-      console.error('❌ 업로드 실패:', err);
+      console.error('Image upload error:', err.message);
       alert('이미지 업로드 실패: ' + err.message);
     } finally {
       setUploading(false);

@@ -109,6 +109,26 @@
   transform: translateY(-1px);
 }
 
+/* === 나가기 === */
+.chat-leave-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.chat-leave-btn:hover {
+  background-color: #e55a28;
+  transform: translateY(-1px);
+}
+
 /* === 메시지 영역 === */
 .chat-message-area {
   flex: 1;

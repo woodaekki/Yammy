@@ -27,10 +27,12 @@ public interface UsedItemChatRoomRepository extends JpaRepository<UsedItemChatRo
     Optional<UsedItemChatRoom> findByUsedItemIdAndBuyerId(Long usedItemId, Long buyerId);
 
     /**
-     * 내가 참여한 모든 채팅방 목록
-     * (판매자 또는 구매자로 참여 중인 방)
+     * 내가 참여 중인 채팅방 목록 (나가지 않은 방만)
      */
-    @Query("SELECT c FROM UsedItemChatRoom c WHERE c.sellerId = :memberId OR c.buyerId = :memberId ORDER BY c.createdAt DESC")
+    @Query("SELECT c FROM UsedItemChatRoom c WHERE " +
+            "(c.sellerId = :memberId AND c.sellerDeleted = false) OR " +
+            "(c.buyerId = :memberId AND c.buyerDeleted = false) " +
+            "ORDER BY c.createdAt DESC")
     List<UsedItemChatRoom> findByMemberId(@Param("memberId") Long memberId);
 
     /**
@@ -43,4 +45,14 @@ public interface UsedItemChatRoomRepository extends JpaRepository<UsedItemChatRo
      * 특정 물품의 모든 채팅방 개수
      */
     long countByUsedItemId(Long usedItemId);
+
+    /**
+     * 내가 참여한 채팅방의 전체 읽지 않은 메시지 수
+     */
+    @Query("SELECT COALESCE(SUM(CASE WHEN c.sellerId = :memberId THEN c.sellerUnreadCount " +
+            "WHEN c.buyerId = :memberId THEN c.buyerUnreadCount ELSE 0 END), 0) " +
+            "FROM UsedItemChatRoom c WHERE " +
+            "(c.sellerId = :memberId AND c.sellerDeleted = false) OR " +
+            "(c.buyerId = :memberId AND c.buyerDeleted = false)")
+    Integer getTotalUnreadCount(@Param("memberId") Long memberId);
 }

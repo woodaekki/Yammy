@@ -49,7 +49,8 @@
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  position: relative;
 }
 
 .back-button {
@@ -61,6 +62,8 @@
   padding: 0.5rem;
   border-radius: 4px;
   transition: background-color 0.2s;
+  position: absolute;
+  left: 1rem;
 }
 
 .back-button:hover {
@@ -98,14 +101,13 @@
 
 .teams-container {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 1rem;
   position: relative;
+  height: 240px;
 }
 
 .team-odds-card {
-  flex: 1;
-  background: linear-gradient(135deg, var(--team-color), var(--team-color-dark));
   color: white;
   padding: 1.5rem 1rem;
   text-align: center;
@@ -114,14 +116,62 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 0.5;
+}
+
+/* 팀별 색상 - data-team 속성 사용 */
+.team-odds-card[data-team="LG"] {
+  background-color: #C30452;
+}
+
+.team-odds-card[data-team="KT"] {
+  background-color: #000000;
+}
+
+.team-odds-card[data-team="SSG"] {
+  background-color: #CE0E2D;
+}
+
+.team-odds-card[data-team="NC"] {
+  background-color: #315288;
+}
+
+.team-odds-card[data-team="두산"] {
+  background-color: #131230;
+}
+
+.team-odds-card[data-team="KIA"] {
+  background-color: #EA0029;
+}
+
+.team-odds-card[data-team="롯데"] {
+  background-color: #041E42;
+}
+
+.team-odds-card[data-team="삼성"] {
+  background-color: #074CA1;
+}
+
+.team-odds-card[data-team="한화"] {
+  background-color: #FF6600;
+}
+
+.team-odds-card[data-team="키움"] {
+  background-color: #570514;
 }
 
 .home-odds {
   border-radius: 12px 0 0 12px;
+  flex: 0.5
 }
 
 .away-odds {
   border-radius: 0 12px 12px 0;
+  flex: 0.5
 }
 
 .team-odds-card:hover {
@@ -135,10 +185,47 @@
   border: 3px solid #fff;
 }
 
+.betting-ratio-display {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 600;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
 .match-stadium {
   font-size: 0.9rem;
   color: #666;
   font-weight: 500;
+  margin-top: 0.75rem;
+}
+
+/* 실제 배팅 비율 막대 그래프 */
+.actual-betting-ratio-bar {
+  display: flex;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ratio-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ratio-text {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .team-label {
@@ -146,6 +233,7 @@
   font-weight: 600;
   opacity: 0.9;
   margin-bottom: 0.5rem;
+  flex-shrink: 0;
 }
 
 .team-info-container {
@@ -154,6 +242,7 @@
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .home-team-info {
@@ -175,11 +264,13 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+  flex-shrink: 0;
 }
 
 .team-stats {
   font-size: 0.9rem;
   opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .team-odds {
@@ -190,22 +281,28 @@
   border-radius: 20px;
   display: inline-block;
   min-width: 80px;
+  margin: 8px 0;
+  flex-shrink: 0;
 }
 
 /* 배팅 페이지 총 팬심 스타일 */
 .total-fansim-betting {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  margin-top: 0.5rem;
+  margin-top: auto;
   background: rgba(255, 255, 255, 0.15);
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 12px;
   opacity: 0.95;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: inline-block;
   min-width: fit-content;
+  max-width: 95%;
   white-space: nowrap;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vs-divider {
@@ -243,32 +340,33 @@
 }
 
 .info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .info-item {
   display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
 }
 
 .info-label {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #666;
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
 .info-value {
   font-size: 0.95rem;
   color: #333;
   font-weight: 600;
-  text-align: center;
 }
 
 /* 로딩 및 에러 상태 */
@@ -298,6 +396,23 @@
 
 .unavailable-message p {
   color: #666;
+}
+
+/* 정산 완료 메시지 스타일 */
+.settled-message {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.settled-message h2 {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.settled-message p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
 }
 
 /* 반응형 디자인 */

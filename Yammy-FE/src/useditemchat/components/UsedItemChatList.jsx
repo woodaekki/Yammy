@@ -11,6 +11,8 @@ function UsedItemChatList() {
 
   useEffect(() => {
     loadChatRooms();
+    // 채팅방 목록 진입 시 상단 네비의 벨 아이콘 갱신 트리거
+    window.dispatchEvent(new Event('chatListViewed'));
   }, []);
 
   const loadChatRooms = async () => {
@@ -97,9 +99,18 @@ function UsedItemChatList() {
                           {room.status === "ACTIVE" ? "활성" : "비활성"}
                         </span>
                       </div>
-                      <p className="chat-list-item-preview">
-                        {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화
-                      </p>
+                      <div className="chat-list-item-preview-wrapper">
+                        <p className="chat-list-item-preview">
+                          {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화
+                        </p>
+                        
+                        {/* 읽지 않은 메시지 배지 */}
+                        {room.unreadCount > 0 && (
+                          <span className="unread-badge">
+                            {room.unreadCount > 9 ? '9+' : room.unreadCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="chat-list-item-right">

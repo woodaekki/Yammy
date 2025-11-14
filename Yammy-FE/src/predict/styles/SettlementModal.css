@@ -8,8 +8,11 @@
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
+  padding: 1rem;
+  padding-top: 2rem;
+  overflow-y: auto;
 }
 
 /* 모달 컨텐츠 */
@@ -149,7 +152,7 @@
 /* 모달 푸터 */
 .settlement-modal-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 12px;
   padding: 20px 24px;
   border-top: 1px solid #e0e0e0;
@@ -157,7 +160,8 @@
 
 .cancel-button,
 .submit-button {
-  padding: 10px 24px;
+  flex: 1;
+  padding: 12px 24px;
   border: none;
   border-radius: 6px;
   font-size: 14px;

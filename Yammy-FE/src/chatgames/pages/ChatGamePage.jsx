@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useChatMessages } from '../hooks/useChatMessages';
 import { chatRoomApi } from '../api/chatApi';
 import GameHeader from '../components/GameHeader';
@@ -14,6 +14,7 @@ import "../styles/ChatGamePage.css";
  */
 export default function ChatGamePage() {
   const { roomKey } = useParams();
+  const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -36,7 +37,12 @@ export default function ChatGamePage() {
         setLoadingRoom(false);
       })
       .catch(error => {
-        console.error('채팅방 정보 로드 실패:', error);
+        console.error('[ChatGamePage] 채팅방 정보 로드 실패:', {
+          roomKey,
+          error: error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        });
         setLoadingRoom(false);
       });
   }, [roomKey]);
@@ -64,11 +70,19 @@ export default function ChatGamePage() {
   };
 
   const handleUploadSuccess = (result) => {
-    console.log('업로드 성공:', result);
+    console.log('[ChatGamePage] 이미지 업로드 성공:', {
+      roomKey,
+      messageId: result?.messageId,
+      imageUrl: result?.imageUrl
+    });
   };
 
   const handleUploadError = (error) => {
-    console.error('업로드 실패:', error);
+    console.error('[ChatGamePage] 이미지 업로드 실패:', {
+      roomKey,
+      error: error.message,
+      status: error.response?.status
+    });
     alert('이미지 업로드 실패: ' + error.message);
   };
 
@@ -101,7 +115,7 @@ export default function ChatGamePage() {
     <div className="chat-page-container">
       {/* 고정된 헤더 */}
       <div className="chat-header-fixed">
-        <GameHeader room={loadingRoom ? null : room} />
+        <GameHeader room={loadingRoom ? null : room} navigate={navigate} />
       </div>
 
       {/* 스크롤 가능한 메시지 영역 */}

@@ -7,14 +7,14 @@ import '../styles/UsedItemChatInput.css';
  * 중고거래 채팅 입력창
  * - 응원 채팅 스타일 적용
  */
-export default function UsedItemChatInput({ roomKey }) {
+export default function UsedItemChatInput({ roomKey, disabled = false }) {
   const [message, setMessage] = useState(''); // 입력 중인 메시지
   const [sending, setSending] = useState(false); // 전송 중 여부
   const fileInputRef = useRef(null); // 숨겨진 파일 입력 참조
 
   // 텍스트 메시지 전송
   const handleSendMessage = async () => {
-    if (!message.trim() || !roomKey || sending) return;
+    if (!message.trim() || !roomKey || sending || disabled) return;
 
     try {
       setSending(true);
@@ -58,7 +58,7 @@ export default function UsedItemChatInput({ roomKey }) {
   // 이미지 업로드
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]; // 선택한 파일
-    if (!file || !roomKey || sending) return;
+    if (!file || !roomKey || sending || disabled) return;
 
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
@@ -122,7 +122,7 @@ export default function UsedItemChatInput({ roomKey }) {
         {/* 이미지 버튼 */}
         <button
           onClick={handleImageSelect}
-          disabled={sending}
+          disabled={sending || disabled}
           className="useditem-chat-btn"
           title="사진 선택"
         >
@@ -137,16 +137,16 @@ export default function UsedItemChatInput({ roomKey }) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="메시지를 입력하세요..."
-          disabled={sending}
+          placeholder={disabled ? "채팅방을 나간 사용자가 있습니다" : "메시지를 입력하세요..."}
+          disabled={sending || disabled}
           className="useditem-chat-text-input"
         />
 
         {/* 전송 버튼 */}
         <button
           onClick={handleSendMessage}
-          disabled={!message.trim() || sending}
-          className={`useditem-chat-btn ${message.trim() && !sending ? 'send-btn-active' : ''}`}
+          disabled={!message.trim() || sending || disabled}
+          className={`useditem-chat-btn ${message.trim() && !sending && !disabled ? 'send-btn-active' : ''}`}
           title="전송"
         >
           <svg

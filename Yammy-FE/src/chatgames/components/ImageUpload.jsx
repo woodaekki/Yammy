@@ -14,12 +14,30 @@ export default function ImageUpload({ roomKey, apiUploadFunction }) {
     };
 
     try {
-      console.log("원본 크기:", (file.size / 1024 / 1024).toFixed(2), "MB");
+      const originalSize = (file.size / 1024 / 1024).toFixed(2);
+      console.log("[ImageUpload] 이미지 압축 시작:", {
+        fileName: file.name,
+        originalSize: `${originalSize}MB`,
+        type: file.type
+      });
+
       const compressedFile = await imageCompression(file, options);
-      console.log("압축 후 크기:", (compressedFile.size / 1024 / 1024).toFixed(2), "MB");
+      const compressedSize = (compressedFile.size / 1024 / 1024).toFixed(2);
+
+      console.log("[ImageUpload] 이미지 압축 완료:", {
+        fileName: file.name,
+        originalSize: `${originalSize}MB`,
+        compressedSize: `${compressedSize}MB`,
+        compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
+      });
+
       return new File([compressedFile], file.name, { type: compressedFile.type }); // 이름 유지
     } catch (error) {
-      console.error("이미지 압축 실패:", error);
+      console.error("[ImageUpload] 이미지 압축 실패:", {
+        fileName: file.name,
+        error: error.message,
+        stack: error.stack
+      });
       return file; // 압축 실패 시 원본 사용
     }
   };
@@ -41,7 +59,10 @@ export default function ImageUpload({ roomKey, apiUploadFunction }) {
         
         // GIF가 10MB 넘으면 정적 이미지로 압축
         if (compressedFile.size > 10 * 1024 * 1024) {
-          console.log("GIF 파일이 10MB를 초과하여 압축합니다.");
+          console.log("[ImageUpload] GIF 파일이 10MB를 초과하여 압축합니다:", {
+            fileName: file.name,
+            originalSize: `${(file.size / 1024 / 1024).toFixed(2)}MB`
+          });
           compressedFile = await compressImage(file);  // 압축 (애니메이션 손실)
         }
       } else {
@@ -62,7 +83,13 @@ export default function ImageUpload({ roomKey, apiUploadFunction }) {
       }
     } catch (err) {
       alert("업로드 실패");
-      console.error(err);
+      console.error("[ImageUpload] 이미지 업로드 실패:", {
+        fileName: file.name,
+        roomKey,
+        error: err.message,
+        status: err.response?.status,
+        data: err.response?.data
+      });
     } finally {
       fileRef.current.value = "";
     }

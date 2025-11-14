@@ -98,6 +98,121 @@
   border: none;
 }
 
+/* 경기 헤더 */
+.matches-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* 헤더 버튼 컨테이너 */
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+/* 배당률 정보 버튼 */
+.odds-info-wrapper {
+  position: relative;
+}
+
+.odds-info-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.odds-info-button:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+/* 툴팁 스타일 */
+.odds-tooltip {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  width: 300px;
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.tooltip-header strong {
+  font-size: 1rem;
+  color: #333;
+}
+
+.tooltip-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.tooltip-close:hover {
+  color: #333;
+}
+
+.tooltip-content {
+  padding: 16px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.tooltip-content p {
+  margin: 4px 0;
+}
+
+.tooltip-content strong {
+  color: #4CAF50;
+}
+
 /* 경기 목록 스타일 */
 .matches-list {
   display: flex;
@@ -165,31 +280,75 @@
   display: flex;
   align-items: stretch;
   position: relative;
-  min-height: 80px;
+  height: 200px;
   padding: 12px 0;
 }
 
 /* 팀 섹션 */
 .team-section {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 12px;
+  justify-content: space-between;
+  padding: 16px 12px;
   color: white;
   position: relative;
   z-index: 1;
   border-radius: 12px;
   margin: 0 8px;
+  height: 100%;
+  flex: 0.5;
+}
+
+/* 팀별 색상 - data-team 속성 사용 */
+.team-section[data-team="LG"] {
+  background-color: #C30452;
+}
+
+.team-section[data-team="KT"] {
+  background-color: #000000;
+}
+
+.team-section[data-team="SSG"] {
+  background-color: #CE0E2D;
+}
+
+.team-section[data-team="NC"] {
+  background-color: #315288;
+}
+
+.team-section[data-team="두산"] {
+  background-color: #131230;
+}
+
+.team-section[data-team="KIA"] {
+  background-color: #EA0029;
+}
+
+.team-section[data-team="롯데"] {
+  background-color: #041E42;
+}
+
+.team-section[data-team="삼성"] {
+  background-color: #074CA1;
+}
+
+.team-section[data-team="한화"] {
+  background-color: #FF6600;
+}
+
+.team-section[data-team="키움"] {
+  background-color: #570514;
 }
 
 .home-team-section {
   margin-left: 16px;
+  flex: 0.5
 }
 
 .away-team-section {
   margin-right: 16px;
+  flex: 0.5
 }
 
 .team-label {
@@ -199,14 +358,16 @@
   margin-bottom: 8px;
   letter-spacing: 1px;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .team-info-container {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin: 12px 0;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .home-team-info {
@@ -229,32 +390,51 @@
   font-weight: 700;
   margin-bottom: 0.25rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .team-stats {
   font-size: 0.85rem;
   opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .prediction-score {
   font-size: 24px;
   font-weight: 800;
-  margin-bottom: 0;
+  margin: 8px 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* 배당율과 총 팬심 컨테이너 */
+.odds-fansim-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 /* 총 팬심 표시 스타일 */
 .total-fansim {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  margin-top: 6px;
   background: rgba(255, 255, 255, 0.2);
-  padding: 3px 8px;
-  border-radius: 8px;
-  opacity: 0.95;
+  padding: 5px 8px;
+  border-radius: 10px;
+  opacity: 1;
   min-width: fit-content;
+  max-width: 95%;
   white-space: nowrap;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* VS 섹션 */
@@ -263,21 +443,59 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 44px;
-  width: 44px;
+  height: 48px;
+  width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
   border-radius: 50%;
   z-index: 10;
-  border: 2px solid #e0e0e0;
+  border: 3px solid #e0e0e0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .vs-text {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: #333;
+}
+
+/* 배팅 비율 표시 */
+.betting-ratio-display {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 600;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  margin: 0.5rem 0;
+}
+
+/* 실제 배팅 비율 막대 그래프 */
+.actual-betting-ratio-bar {
+  display: flex;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0.75rem 16px 0.5rem 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ratio-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ratio-text {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* 경기장 정보 */
@@ -324,5 +542,28 @@
   font-weight: 700;
   color: #666;
   text-align: center;
+}
+
+/* 정산 완료 스타일 */
+.match-card-container.settled {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.match-card-container.settled .match-prediction-card {
+  filter: blur(1px);
+}
+
+.settled-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.settled-overlay .progress-message {
+  background: #4CAF50;
+  color: white;
+  font-size: 14px;
+  padding: 14px 28px;
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePredict, getTeamColor } from '../hooks/usePredict';
+import { usePredict, getTeamColor, getFullTeamName } from '../hooks/usePredict';
 import { TEAM_COLORS } from '../../sns/utils/teamColors';
 import { TeamLogo } from '../utils/teamLogo.jsx';
 import BettingInputModal from './BettingInputModal';
@@ -69,7 +69,7 @@ const BettingPage = () => {
           <button className="back-button" onClick={handleGoBack}>
             ← 뒤로가기
           </button>
-          <h1>⚾ 승부 예측</h1>
+          <h1>승부 예측</h1>
         </div>
         <div className="loading-state">
           <h2>경기 데이터를 불러오는 중...</h2>
@@ -86,7 +86,7 @@ const BettingPage = () => {
           <button className="back-button" onClick={handleGoBack}>
             ← 뒤로가기
           </button>
-          <h1>⚾ 승부 예측</h1>
+          <h1>승부 예측</h1>
         </div>
         <div className="error-state">
           <h2>오류가 발생했습니다</h2>
@@ -111,6 +111,7 @@ const BettingPage = () => {
   }
 
   const gameInProgress = isGameInProgress(match.gameTime);
+  const isSettled = match.isSettled === 1;  // 정산 완료 여부
 
   return (
     <div className="betting-page">
@@ -118,21 +119,31 @@ const BettingPage = () => {
         <button className="back-button" onClick={handleGoBack}>
           ← 뒤로가기
         </button>
-        <h1>⚾ 승부 예측</h1>
+        <h1>승부 예측</h1>
       </div>
 
+      {/* 정산 완료된 경기인 경우 */}
+      {isSettled && (
+        <div className="unavailable-betting">
+          <div className="unavailable-message settled-message">
+            <h2>정산 완료</h2>
+            <p>이미 정산이 완료된 경기입니다.</p>
+          </div>
+        </div>
+      )}
+
       {/* 경기 진행중인 경우 */}
-      {gameInProgress && (
+      {!isSettled && gameInProgress && (
         <div className="unavailable-betting">
           <div className="unavailable-message">
-            <h2>⏰ 예측할 수 없는 경기입니다</h2>
+            <h2>예측할 수 없는 경기입니다</h2>
             <p>이미 진행중인 경기는 예측할 수 없습니다.</p>
           </div>
         </div>
       )}
 
       {/* 예측 가능한 경기인 경우 */}
-      {!gameInProgress && (
+      {!isSettled && !gameInProgress && (
         <div className="betting-content">
           {/* 배당정보 + 예측하기 통합 섹션 */}
           <div className="odds-section">
@@ -141,7 +152,7 @@ const BettingPage = () => {
             {/* 비로그인 사용자에게 안내 메시지 */}
             {!isLoggedIn && (
               <div className="login-required-notice">
-                <p>🔒 배팅을 하기 위해서는 로그인이 필요합니다</p>
+                <p>배팅을 하기 위해서는 로그인이 필요합니다</p>
                 <button 
                   className="login-button"
                   onClick={() => navigate('/login')}
@@ -151,12 +162,10 @@ const BettingPage = () => {
               </div>
             )}
             <div className="teams-container">
-              <div 
+              <div
                 className={`team-odds-card home-odds ${selectedTeam === 0 ? 'selected' : ''}`}
-                style={{ 
+                style={{
                   backgroundColor: getTeamColor(match.homeTeam),
-                  flex: (match.homeAmount + match.awayAmount) > 0 ? 
-                        match.homeAmount / (match.homeAmount + match.awayAmount) : 0.5
                 }}
                 onClick={() => handleTeamSelect(0)}
               >
@@ -165,7 +174,7 @@ const BettingPage = () => {
                   <TeamLogo teamName={match.homeTeam} size="medium" />
                   <div className="team-details">
                     <div className="team-name">{match.homeTeam}</div>
-                    <div className="team-stats">({match.homeWinningRate}%)</div>
+                    <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
                   </div>
                 </div>
                 <div className="team-odds">{match.homeOdds.toFixed(2)}</div>
@@ -176,12 +185,10 @@ const BettingPage = () => {
                 <span className="vs-text">VS</span>
               </div>
 
-              <div 
+              <div
                 className={`team-odds-card away-odds ${selectedTeam === 1 ? 'selected' : ''}`}
-                style={{ 
+                style={{
                   backgroundColor: getTeamColor(match.awayTeam),
-                  flex: (match.homeAmount + match.awayAmount) > 0 ? 
-                        match.awayAmount / (match.homeAmount + match.awayAmount) : 0.5
                 }}
                 onClick={() => handleTeamSelect(1)}
               >
@@ -189,7 +196,7 @@ const BettingPage = () => {
                 <div className="team-info-container away-team-info">
                   <div className="team-details">
                     <div className="team-name">{match.awayTeam}</div>
-                    <div className="team-stats">({match.awayWinningRate}%)</div>
+                    <div className="team-stats">예상 승률: {match.awayWinningRate}%</div>
                   </div>
                   <TeamLogo teamName={match.awayTeam} size="medium" />
                 </div>
@@ -197,7 +204,6 @@ const BettingPage = () => {
                 <div className="total-fansim-betting">총 팬심: {match.awayAmount.toLocaleString()}</div>
               </div>
             </div>
-            <div className="match-stadium">{match.stadium}</div>
           </div>
           
           {/* 경기 정보 섹션 (2x2 그리드) */}
@@ -205,7 +211,7 @@ const BettingPage = () => {
             <h3>경기 정보</h3>
             <div className="info-grid">
               <div className="info-item">
-                <span className="info-label">경기 일시</span>
+                <span className="info-label">시작 시간</span>
                 <span className="info-value">{match.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1$2$3 ')} {match.gameTime}</span>
               </div>
               <div className="info-item">
@@ -214,11 +220,11 @@ const BettingPage = () => {
               </div>
               <div className="info-item">
                 <span className="info-label">홈팀</span>
-                <span className="info-value">{match.homeTeam}</span>
+                <span className="info-value">{getFullTeamName(match.homeTeam)}</span>
               </div>
               <div className="info-item">
                 <span className="info-label">원정팀</span>
-                <span className="info-value">{match.awayTeam}</span>
+                <span className="info-value">{getFullTeamName(match.awayTeam)}</span>
               </div>
             </div>
           </div>

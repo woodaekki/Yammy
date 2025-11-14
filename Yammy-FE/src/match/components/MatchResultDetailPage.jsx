@@ -16,23 +16,19 @@ function MatchResultDetailPage() {
       try {
         setLoading(true);
         setError(null);
-        
-        // 로딩 시뮬레이션
+
         await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // useMatch의 getMatchByMatchcode로 API 호출 (비동기)
+
         const foundMatch = await getMatchByMatchcode(matchcode);
-        
-        console.log('✅ API 응답:', foundMatch);
-        
+
         if (foundMatch) {
           setMatchData(foundMatch);
         } else {
           setError("해당 경기의 데이터를 찾을 수 없습니다.");
         }
-        
+
       } catch (err) {
-        console.error("경기 상세 정보 로딩 실패:", err);
+        console.error('Match detail loading error:', err.message);
         setError("경기 상세 정보를 불러오는데 실패했습니다.");
       } finally {
         setLoading(false);

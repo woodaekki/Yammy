@@ -6,13 +6,12 @@
   padding: 0;
   background-color: #ffffff;
   box-sizing: border-box;
-  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-/* 스와이프 애니메이션을 위한 래퍼 */
+/* 콘텐츠 래퍼 */
 .app-content-wrapper {
   width: 100%;
   flex: 1; 
@@ -75,4 +74,5 @@
 
 .app-container.slide-right .app-content-wrapper {
   animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  box-sizing: border-box;
 }

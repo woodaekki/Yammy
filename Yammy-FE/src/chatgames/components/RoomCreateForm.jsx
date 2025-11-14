@@ -19,12 +19,27 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
 
   // 입력 변경 핸들러
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+  const { name, value, type, checked } = e.target;
+  
+  setFormData(prev => {
+    const newData = {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+    };
+    
+    // 홈팀과 원정팀이 모두 선택되면 제목 자동 생성
+    if (name === 'homeTeam' || name === 'awayTeam') {
+      const homeTeam = name === 'homeTeam' ? value : prev.homeTeam;
+      const awayTeam = name === 'awayTeam' ? value : prev.awayTeam;
+      
+      if (homeTeam && awayTeam) {
+        newData.name = `${homeTeam} vs ${awayTeam}`;
+      }
+    }
+    
+    return newData;
+  });
+};
 
   // 폼 제출
   const handleSubmit = async (e) => {
@@ -44,8 +59,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
       setError(null);
 
       const result = await chatRoomApi.createRoom(formData);
-      console.log('✅ 채팅방 생성 성공:', result);
-      
+
       if (onSuccess) onSuccess(result);
 
       setFormData({
@@ -57,7 +71,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
         startAt: ''
       });
     } catch (err) {
-      console.error('❌ 채팅방 생성 실패:', err);
+      console.error('Chat room creation error:', err.message);
       setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
@@ -103,27 +117,47 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
         <div className="form-row">
           <div className="form-group">
             <label className="form-label required">홈팀</label>
-            <input
-              type="text"
+            <select
               name="homeTeam"
               value={formData.homeTeam}
               onChange={handleChange}
-              placeholder="KIA"
               required
               className="form-input"
-            />
+            >
+              <option value="">선택하세요</option>
+              <option value="LG">LG</option>
+              <option value="한화">한화</option>
+              <option value="SSG">SSG</option>
+              <option value="삼성">삼성</option>
+              <option value="NC">NC</option>
+              <option value="KT">KT</option>
+              <option value="롯데">롯데</option>
+              <option value="KIA">KIA</option>
+              <option value="두산">두산</option>
+              <option value="키움">키움</option>
+            </select>
           </div>
           <div className="form-group">
             <label className="form-label required">원정팀</label>
-            <input
-              type="text"
+            <select
               name="awayTeam"
               value={formData.awayTeam}
               onChange={handleChange}
-              placeholder="LG"
               required
               className="form-input"
-            />
+            >
+              <option value="">선택하세요</option>
+              <option value="LG">LG</option>
+              <option value="한화">한화</option>
+              <option value="SSG">SSG</option>
+              <option value="삼성">삼성</option>
+              <option value="NC">NC</option>
+              <option value="KT">KT</option>
+              <option value="롯데">롯데</option>
+              <option value="KIA">KIA</option>
+              <option value="두산">두산</option>
+              <option value="키움">키움</option>
+            </select>
           </div>
         </div>
 

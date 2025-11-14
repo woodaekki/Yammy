@@ -31,7 +31,7 @@ public class FirebaseChatService {
         Blob blob = bucket.create(path, file.getBytes(), file.getContentType());
 
         // 1일 만료 Signed URL 생성
-        String imageUrl = blob.signUrl(1, TimeUnit.DAYS).toString();
+        String imageUrl = blob.signUrl(7, TimeUnit.DAYS).toString();
 
         log.info("Image uploaded: {} (size: {} bytes)", path, file.getSize());
         return imageUrl;

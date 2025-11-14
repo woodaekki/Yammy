@@ -10,6 +10,7 @@ import com.ssafy.yammy.useditemchat.dto.SendTextMessageRequest;
 import com.ssafy.yammy.useditemchat.dto.UsedItemChatRoomResponse;
 import com.ssafy.yammy.useditemchat.entity.UsedChatRoomStatus;
 import com.ssafy.yammy.useditemchat.entity.UsedItemChatRoom;
+import com.ssafy.yammy.useditemchat.repository.UsedItemChatRoomRepository;
 import com.ssafy.yammy.useditemchat.service.UsedItemChatRoomService;
 import com.ssafy.yammy.useditemchat.service.UsedItemFirebaseChatService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +18,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +41,7 @@ public class UsedItemChatController {
     private final UsedItemFirebaseChatService usedItemFirebaseChatService;
     private final UsedItemRepository usedItemRepository;
     private final MemberRepository memberRepository;
+    private final UsedItemChatRoomRepository usedItemChatRoomRepository;
 
     /**
      * 채팅방 생성 또는 기존 방 입장
@@ -90,6 +95,31 @@ public class UsedItemChatController {
     }
 
     /**
+     * 채팅방 나가기
+     */
+    @Operation(summary = "채팅방 나가기", description = "중고거래 채팅방 나가기 (양쪽 모두 나가면 완전 삭제)")
+    @DeleteMapping("/room/{roomKey}")
+    public ResponseEntity<Void> leaveChatRoom(
+            @PathVariable String roomKey,
+            @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+
+        usedItemChatRoomService.deleteUsedItemChatRoom(roomKey, user.getMemberId());
+        return ResponseEntity.noContent().build();
+    }
+    /**
+     * 채팅방 메시지 읽음 처리
+     */
+    @Operation(summary = "메시지 읽음 처리", description = "채팅방 입장 시 읽지 않은 메시지 초기화")
+    @PostMapping("/room/{roomKey}/read")
+    public ResponseEntity<Void> markAsRead(
+            @PathVariable String roomKey,
+            @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+
+        usedItemChatRoomService.markAsRead(roomKey, user.getMemberId());
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 채팅방에 이미지 업로드
      */
     @Operation(summary = "이미지 업로드", description = "중고거래 채팅방에 이미지 전송")
@@ -103,6 +133,10 @@ public class UsedItemChatController {
         UsedItemChatRoom room = usedItemChatRoomService.getUsedItemChatRoom(roomKey);
         if (room.getStatus() != UsedChatRoomStatus.ACTIVE) {
             throw new IllegalStateException("채팅방이 활성화 상태가 아닙니다.");
+        }
+        // 한쪽이라도 나간 경우 메시지 전송 불가
+        if (room.getSellerDeleted() || room.getBuyerDeleted()) {
+            throw new IllegalStateException("채팅방을 나간 사용자가 있어 메시지를 전송할 수 없습니다.");
         }
 
         // 이미지 업로드
@@ -139,6 +173,11 @@ public class UsedItemChatController {
             throw new IllegalStateException("채팅방이 활성화 상태가 아닙니다.");
         }
 
+        // 한쪽이라도 나간 경우 메시지 전송 불가
+        if (room.getSellerDeleted() || room.getBuyerDeleted()) {
+            throw new IllegalStateException("채팅방을 나간 사용자가 있어 메시지를 전송할 수 없습니다.");
+        }
+
         // Firestore 메시지 저장
         String messageId = usedItemFirebaseChatService.saveUsedItemChatTextMessage(
                 roomKey,
@@ -148,6 +187,18 @@ public class UsedItemChatController {
         );
 
         return ResponseEntity.ok(new MessageResponse(messageId, null));
+    }
+
+    /**
+     * 전체 읽지 않은 메시지 수 조회
+     */
+    @Operation(summary = "전체 읽지 않은 메시지 수", description = "모든 채팅방의 읽지 않은 메시지 합계")
+    @GetMapping("/unread-total")
+    public ResponseEntity<Map<String, Integer>> getTotalUnreadCount(
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        Integer totalUnread = usedItemChatRoomRepository.getTotalUnreadCount(user.getMemberId());
+        return ResponseEntity.ok(Map.of("totalUnread", totalUnread));
     }
 
     /**
@@ -161,7 +212,20 @@ public class UsedItemChatController {
                 .sellerId(chatRoom.getSellerId())
                 .buyerId(chatRoom.getBuyerId())
                 .status(chatRoom.getStatus())
-                .createdAt(chatRoom.getCreatedAt());
+                .createdAt(chatRoom.getCreatedAt())
+                .lastMessageAt(chatRoom.getLastMessageAt());
+
+        // 현재 사용자의 읽지 않은 메시지 수 설정
+        // SecurityContext에서 현재 사용자 ID 가져와서 설정
+        // (여기서는 양쪽 정보를 모두 보내고, 프론트에서 판단하도록 함)
+        Long currentUserId = getCurrentUserId(); // SecurityContext에서 가져오기
+        if (currentUserId != null) {
+            if (chatRoom.getSellerId().equals(currentUserId)) {
+                builder.unreadCount(chatRoom.getSellerUnreadCount());
+            } else if (chatRoom.getBuyerId().equals(currentUserId)) {
+                builder.unreadCount(chatRoom.getBuyerUnreadCount());
+            }
+        }
 
         // 중고거래 물품 정보 조회 및 추가
         UsedItem usedItem = chatRoom.getUsedItem();
@@ -187,5 +251,14 @@ public class UsedItemChatController {
 
 
         return builder.build();
+    }
+
+    // SecurityContext에서 현재 사용자 ID 가져오는 헬퍼 메서드
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            return ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
+        }
+        return null;
     }
 }
