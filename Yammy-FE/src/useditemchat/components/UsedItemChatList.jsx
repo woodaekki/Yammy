@@ -27,7 +27,7 @@ function UsedItemChatList() {
     }
   };
 
-  // ✅ navigate 시 새로고침 필요 없도록 replace 옵션 제거
+  // navigate 시 새로고침 필요 없도록 replace 옵션 제거
   const handleChatRoomClick = (roomKey) => {
     // 상태 보존 + 렌더 강제 보장
     navigate(`/useditem/chat/${roomKey}`, { state: { fromChatList: true } });

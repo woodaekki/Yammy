@@ -31,7 +31,10 @@ import ChatRoomListPage from "../chatgames/pages/ChatRoomListPage";
 import AdminChatPage from "../chatgames/pages/AdminChatPage";
 import AdminRoute from "./AdminRoute";
 import PredictPage from "../predict/PredictPage"; 
-import PrecitDetailPage from "../predict/components/BettingPage";
+import PrecitDetailPage from "../predict/components/BettingPage"
+import BankStatement from "../withdrawal/components/BankStatement"
+import WithdrawalPage from "../withdrawal/WithdrawalPage"
+import WithdrawalHistoryPage from "../withdrawal/WithdrawalHistoryPage"
 
 export default function AppRouter() {
   const location = useLocation();
@@ -71,10 +74,15 @@ export default function AppRouter() {
       <Route path="/useditem/create" element={<ProtectedRoute><UsedItemCreate /></ProtectedRoute>} />
 
       {/* Point Routes */}
-      <Route path="/mypoint" element={<MyPoint />} />
-      <Route path="/checkout" element={<CheckoutPage />} />
-      <Route path="/success" element={<SuccessPage />} />
-      <Route path="/fail" element={<FailPage />} />
+      <Route path="/mypoint" element={<ProtectedRoute><MyPoint /></ProtectedRoute>}  />
+      <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>}  />
+      <Route path="/success" element={<ProtectedRoute><SuccessPage /></ProtectedRoute>}  />
+      <Route path="/fail" element={<ProtectedRoute><FailPage /></ProtectedRoute>}  />
+
+      {/* Withdrawal Routes */}
+      <Route path="/bankstatement" element={<ProtectedRoute><BankStatement /></ProtectedRoute>} />
+      <Route path="/withdraw" element={<ProtectedRoute><WithdrawalPage /></ProtectedRoute>} />
+      <Route path="/withdraw/history" element={<ProtectedRoute><WithdrawalHistoryPage /></ProtectedRoute>} />
 
       {/* Ticket Routes - 로그인 필요 */}
       <Route path="/ticket" element={<Navigate to="/ticket/list" replace />} />

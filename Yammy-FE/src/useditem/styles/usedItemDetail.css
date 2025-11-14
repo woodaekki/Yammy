@@ -1,54 +1,50 @@
 /* 전체 컨테이너 */
 .detail-container {
   width: 100%;
-  background-color: #fff;
+  background-color: #f5f5f5;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
   min-height: 100vh;
   line-height: 1.5;
+  padding-top: 70px;
 }
 
-/* 헤더 */
+/* 헤더 (등록 페이지와 통일) */
 .detail-header {
   display: flex;
-  position: relative;
   align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.8rem 1rem;
-  height: 56px;
-  border-bottom: 1px solid #f1f1f1;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-bottom: none;
+  margin-bottom: 0;
   background-color: #fff;
 }
 
 .detail-back-btn {
   background: none;
-  position: absolute;
   border: none;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   cursor: pointer;
   color: #333;
+  flex-shrink: 0;
   padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  transition: transform 0.2s ease;
-}
-.detail-back-btn:hover {
-  transform: translateX(-3px);
 }
 
 .detail-title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   color: #1f2937;
-  margin: 0 auto;
 }
 
 /* 이미지 슬라이더 */
 .detail-image-slider {
   position: relative;
   width: 100%;
-  background-color: #fafafa;
+  background-color: #fff;
+  padding-top: 1.5rem;
 }
 
 .detail-image {
@@ -104,14 +100,16 @@
 
 /* 본문 */
 .detail-body {
-  padding: 1.25rem 1.2rem 2rem;
+  padding: 1.5rem 1.2rem 2.5rem;
+  background-color: #fff;
+  margin-top: 2rem;
 }
 
 .detail-item-title {
   font-size: 1.3rem;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 /* 판매자 섹션 */
@@ -122,7 +120,7 @@
   padding: 0.5rem 0.8rem;
   background-color: #f9fafb;
   border-radius: 10px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .detail-seller-left {
