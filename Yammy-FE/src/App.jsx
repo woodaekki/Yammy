@@ -10,19 +10,22 @@ function App() {
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-  const hideTopBar = location.pathname === '/mypage' ||
-                     location.pathname === '/ticket/create' ||
-                     location.pathname.startsWith('/ticket/') ||
-                     location.pathname.startsWith('/betting') ||
-                     location.pathname === '/' ||
-                     location.pathname === '/sns' ||
-                     location.pathname.startsWith('/user/') ||
-                     location.pathname.startsWith('/users/');
+    const hideTopBar =
+    location.pathname === '/mypage' ||
+    location.pathname === '/ticket/create' ||
+    location.pathname.startsWith('/ticket/') ||
+    location.pathname.startsWith('/betting') ||
+    location.pathname === '/' ||
+    location.pathname === '/sns' ||
+    location.pathname.startsWith('/user/') ||
+    location.pathname.startsWith('/users/');
 
-  // 페이지 전환 시 스크롤 맨 위로 초기화
+  const hasTopBar = !hideTopBar;
+
+  // ?�이지 ?�환 ???�크�?�??�로 초기??
   useEffect(() => {
     const scrollToTop = () => {
-      // 모든 스크롤 가능한 요소들을 초기화
+      // 모든 ?�크�?가?�한 ?�소?�을 초기??
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
@@ -35,7 +38,7 @@ function App() {
         contentRef.current.scrollTop = 0;
       }
 
-      // 모든 스크롤 가능한 요소들 찾아서 초기화
+      // 모든 ?�크�?가?�한 ?�소??찾아??초기??
       const allElements = document.querySelectorAll('*');
       allElements.forEach(el => {
         if (el.scrollTop > 0) {
@@ -44,10 +47,10 @@ function App() {
       });
     };
 
-    // 즉시 실행
+    // 즉시 ?�행
     scrollToTop();
 
-    // 약간의 딜레이 후 다시 실행 (DOM 렌더링 후 확실하게)
+    // ?�간???�레?????�시 ?�행 (DOM ?�더�????�실?�게)
     const timer = setTimeout(scrollToTop, 10);
 
     return () => clearTimeout(timer);
@@ -55,7 +58,7 @@ function App() {
 
   return (
     <div className="app-container" ref={containerRef}>
-      <div className="app-content-wrapper" ref={contentRef}>
+      <div className={`app-content-wrapper${hasTopBar ? " with-topbar" : ""}`} ref={contentRef}>
         {!hideTopBar && <NavigationBarTop />}
         <AppRouter />
       </div>
