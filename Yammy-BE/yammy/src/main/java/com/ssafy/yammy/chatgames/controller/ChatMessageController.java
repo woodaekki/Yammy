@@ -6,6 +6,8 @@ import com.ssafy.yammy.chatgames.entity.RoomStatus;
 import com.ssafy.yammy.chatgames.service.ChatRoomService;
 import com.ssafy.yammy.chatgames.service.FirebaseChatService;
 import com.ssafy.yammy.config.CustomUserDetails;
+import com.ssafy.yammy.kafka.dto.ChatEvent;
+import com.ssafy.yammy.kafka.producer.ChatProducer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Chat Message", description = "채팅 메시지 API")
@@ -25,6 +28,7 @@ public class ChatMessageController {
 
     private final ChatRoomService chatRoomService;
     private final FirebaseChatService firebaseChatService;
+    private final ChatProducer chatProducer;
 
     @Operation(summary = "활성화된 채팅방 목록 조회", description = "ACTIVE 상태인 채팅방 목록 반환")
     @GetMapping("/rooms")
@@ -60,14 +64,20 @@ public class ChatMessageController {
                 file
         );
 
-        // Firestore 메시지 저장
-        String messageId = firebaseChatService.saveMessage(
-                roomKey,
-                user.getMemberId(),
-                user.getNickname(),
-                imageUrl
-        );
+        // Kafka 이벤트 발행 (비동기)
+        ChatEvent event = ChatEvent.builder()
+                .chatType("CHEERUP")  // ← 응원 채팅
+                .roomKey(roomKey)
+                .senderId(user.getMemberId())
+                .senderNickname(user.getNickname())
+                .messageType("IMAGE")
+                .content(imageUrl)
+                .timestamp(LocalDateTime.now())
+                .build();
 
-        return ResponseEntity.ok(new MessageResponse(messageId, imageUrl));
+        chatProducer.send(event);
+
+        // 즉시 응답
+        return ResponseEntity.ok(new MessageResponse("processing", imageUrl));
     }
 }
