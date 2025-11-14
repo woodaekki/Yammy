@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import "../styles/SuccessPage.css"
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 function SuccessPage() {
   const [searchParams] = useSearchParams()
   const [message, setMessage] = useState("결제 확인 중입니다...")
@@ -17,7 +19,7 @@ function SuccessPage() {
 
     axios
       .post(
-        "http://k13c205.p.ssafy.io:8080/api/payments/confirm",
+        `${API_BASE_URL}/payments/confirm`,
         { paymentKey, orderId, amount },
         {
           headers: {
