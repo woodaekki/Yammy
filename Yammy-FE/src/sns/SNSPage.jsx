@@ -191,6 +191,7 @@ const SNSPage = () => {
     setIsLoading(true);
     try {
       const response = await getAllPosts(nextCursor);
+       console.log("SNS 응답:", response);
       const newPosts = response.posts;
       setPosts((prev) => [...prev, ...newPosts]);
       setNextCursor(response.nextCursor);

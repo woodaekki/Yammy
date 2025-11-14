@@ -47,7 +47,7 @@ function UsedItemEdit() {
       .finally(() => setLoading(false));
   }, [params.id]);
 
-  // ✅ 실시간 유효성 검사
+  // 실시간 유효성 검사
   const validate = (field, value) => {
     let message = "";
 
@@ -79,19 +79,19 @@ function UsedItemEdit() {
     setErrors((prev) => ({ ...prev, [field]: message }));
   };
 
-  // ✅ 입력 변경 시
+  // 입력 변경 시
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     validate(name, value);
   };
 
-  // ✅ 이미지 업로드 완료 시
+  // 이미지 업로드 완료 시
   function handleUploaded(uploadResult) {
     setNewPhotoIds(uploadResult.photoIds);
   }
 
-  // ✅ 수정 버튼 클릭 시
+  // 수정 버튼 클릭 시
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -130,8 +130,6 @@ function UsedItemEdit() {
       alert("게시글 수정 중 오류가 발생했습니다.");
     }
   };
-
-  if (loading) return <p>로딩 중...</p>;
 
   return (
     <div className="edit-container">

@@ -1,6 +1,6 @@
 import apiClient from "../../api/apiClient"
 
-// presigned URL 요청 (기본: useditem 폴더)
+// presigned URL 요청 
 export const getPresignedUrls = async (files, prefix = 'useditem') => {
   const count = files.length
   const contentType = files[0].type
