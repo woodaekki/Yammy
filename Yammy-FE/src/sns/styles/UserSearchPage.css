@@ -1,10 +1,10 @@
 @import "./FollowButton.css";
-/* ?��? 검???�이지 */
+/* ?��? 검???�이지 */
 
   
 
 
-/* ?�더 */
+/* ?�더 */
 .search-header {
   display: flex;
   align-items: center;
@@ -49,7 +49,7 @@
   width: 40px;
 }
 
-/* 검??�?*/
+/* 검??�?*/
 .search-bar-container {
   padding: 16px;
   background-color: transparent;
@@ -145,9 +145,29 @@
   transform: scale(0.98);
 }
 
-/* 검??결과 */
+/* 검색 결과 */
 .search-results {
   padding: 16px;
+}
+
+/* 섹션 헤더 */
+.section-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.section-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
 }
 
 /* 로딩 */
@@ -181,7 +201,7 @@
   font-size: 14px;
 }
 
-/* �??�태 */
+/* �??�태 */
 .empty-message {
   text-align: center;
   padding: 80px 20px;
@@ -199,7 +219,7 @@
   margin: 0;
 }
 
-/* ?��? 리스??*/
+/* ?��? 리스??*/
 .users-list {
   display: flex;
   flex-direction: column;
@@ -247,6 +267,25 @@
   font-weight: 600;
   color: #111827;
   margin: 0 0 4px 0;
+}
+
+.user-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 6px 0;
+}
+
+.user-team-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.user-team-name {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
 }
 
 .user-stats {

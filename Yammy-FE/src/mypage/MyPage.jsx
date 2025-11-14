@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import { getTeamColors, TEAM_COLORS } from '../sns/utils/teamColors';
+import { TEAM_LOGOS } from '../utils/teamLogos';
 import { updateMember, changePassword, deleteMember } from '../auth/api/authApi';
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { getTickets } from '../ticket/api/ticketApi';
@@ -477,6 +478,11 @@ const MyPage = () => {
                       }}
                       onClick={() => handleTeamSelect(teamName)}
                     >
+                      <img
+                        src={TEAM_LOGOS[teamName]}
+                        alt={teamName}
+                        className="team-logo-icon"
+                      />
                       {teamName}
                     </button>
                   ))}

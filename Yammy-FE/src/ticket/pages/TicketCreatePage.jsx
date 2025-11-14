@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import { createTicket } from '../api/ticketApi';
 import { getRecentMatches, getMatchesByDate } from '../api/matchApi';
 import { normalizeStadiumName, KBO_STADIUMS } from '../utils/stadiumMapper';
@@ -342,11 +343,24 @@ const TicketCreatePage = () => {
                     className="team-select-btn"
                     style={{
                         color: teamColors.textColor,
-                        borderBottom: `3px solid ${teamColors.textColor}`
+                        borderBottom: `3px solid ${teamColors.textColor}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
                     }}
                     title="팀 변경"
                 >
-                    <span style={{ marginRight: '4px' }}>⚾</span>
+                    {selectedTeam && TEAM_LOGOS[selectedTeam] && (
+                        <img
+                            src={TEAM_LOGOS[selectedTeam]}
+                            alt={selectedTeam}
+                            style={{
+                                width: '20px',
+                                height: '20px',
+                                objectFit: 'contain'
+                            }}
+                        />
+                    )}
                     {selectedTeam ? selectedTeam.split(' ')[0] : '팀선택'}
                 </button>
             </div>
@@ -679,10 +693,21 @@ const TicketCreatePage = () => {
                                     }}
                                     style={{
                                         borderLeft: `4px solid ${TEAM_COLORS[team].bgColor}`,
-                                        backgroundColor: selectedTeam === team ? `${TEAM_COLORS[team].bgColor}15` : 'transparent'
+                                        backgroundColor: selectedTeam === team ? `${TEAM_COLORS[team].bgColor}15` : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
                                     }}
                                 >
-                                    <span style={{ fontSize: '20px', marginRight: '12px' }}>⚾</span>
+                                    <img
+                                        src={TEAM_LOGOS[team]}
+                                        alt={team}
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            objectFit: 'contain'
+                                        }}
+                                    />
                                     <span style={{ flex: 1, fontWeight: selectedTeam === team ? 700 : 400 }}>{team}</span>
                                     {selectedTeam === team && <span style={{ color: TEAM_COLORS[team].bgColor, fontWeight: 700 }}>✓</span>}
                                 </div>
