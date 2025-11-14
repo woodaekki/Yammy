@@ -1,0 +1,30 @@
+/* Shared Follow Button styles */
+.follow-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+  white-space: nowrap;
+}
+.follow-btn:not(.following) {
+  background-color: var(--team-color, #3b82f6);
+  color: white;
+}
+.follow-btn:not(.following):hover {
+  filter: brightness(1.1);
+}
+.follow-btn.following {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+.follow-btn.following:hover {
+  background-color: #d1d5db;
+  color: #374151;
+}
+.follow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

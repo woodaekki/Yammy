@@ -176,4 +176,20 @@ export const getFollowStatus = async (memberId) => {
   return response.data;
 };
 
+/**
+ * 유저 검색
+ */
+export const searchUsers = async (query) => {
+  const response = await apiClient.get(`/members/search?query=${encodeURIComponent(query)}`);
+  return response.data;
+};
+
+/**
+ * 전체 유저 목록 조회 (가입순)
+ */
+export const getAllUsers = async (page = 0, size = 50) => {
+  const response = await apiClient.get(`/members/all?page=${page}&size=${size}`);
+  return response.data;
+};
+
 export default apiClient;

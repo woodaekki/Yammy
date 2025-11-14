@@ -91,14 +91,22 @@ const PredictPage = () => {
     <div className="predict-page">
       <div className="predict-schedule">
         <h2>{year}년 {month}월 {day}일 승부예측</h2>
-        
       </div>
-      
+
       <div className="predict-content">
         <div className="today-matches">
           <div className="matches-header">
             <h2>오늘의 경기</h2>
-            
+
+            {isAdmin && (
+                <button
+                  className="settlement-button"
+                  onClick={() => setShowSettlementModal(true)}
+                >
+                  정산하기
+                </button>
+            )}
+
             <div className="odds-info-wrapper">
               <button
                 className="odds-info-button"

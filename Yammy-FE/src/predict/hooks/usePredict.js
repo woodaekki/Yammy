@@ -167,7 +167,7 @@ export const usePredict = () => {
     const getGameTime = () => {
       const today = new Date();
       const dayOfWeek = today.getDay(); // 0=일요일, 6=토요일
-      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '23:59';
+      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '18:30';
     };
 
     // 상대 전적 기반 승률 계산

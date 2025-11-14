@@ -69,11 +69,15 @@
   cursor: pointer;
   padding: 4px 0;
   color: #555;
-  transition: color 0.2s ease;
 }
 
 .action-btn.liked {
   color: #ff3b30;
+}
+
+.action-btn:active {
+  opacity: 1;
+  transform: none;
 }
 
 .action-icon {
@@ -205,8 +209,12 @@
 .comment-text {
   font-size: 14px;
   color: #333;
-  margin: 1px 0 4px 42px;  
+  margin: 1px 0 4px 42px;
   line-height: 1.45;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .comment-like {

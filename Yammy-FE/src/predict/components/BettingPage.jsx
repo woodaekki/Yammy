@@ -206,7 +206,7 @@ const BettingPage = () => {
             </div>
           </div>
           
-          {/* 경기 정보 섹션 (2x2 그리드) */}
+          {/* 경기 정보 섹션 */}
           <div className="match-info-section">
             <h3>경기 정보</h3>
             <div className="info-grid">

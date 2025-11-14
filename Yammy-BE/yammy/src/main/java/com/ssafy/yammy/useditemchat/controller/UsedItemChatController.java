@@ -3,6 +3,8 @@ package com.ssafy.yammy.useditemchat.controller;
 import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.chatgames.dto.MessageResponse;
 import com.ssafy.yammy.config.CustomUserDetails;
+import com.ssafy.yammy.kafka.dto.ChatEvent;
+import com.ssafy.yammy.kafka.producer.ChatProducer;
 import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.entity.UsedItem;
 import com.ssafy.yammy.payment.repository.UsedItemRepository;
@@ -24,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +46,7 @@ public class UsedItemChatController {
     private final MemberRepository memberRepository;
     private final UsedItemChatRoomRepository usedItemChatRoomRepository;
 
+    private final ChatProducer chatProducer;
     /**
      * 채팅방 생성 또는 기존 방 입장
      * - 같은 물품 + 같은 구매자면 기존 채팅방 반환
@@ -146,15 +150,20 @@ public class UsedItemChatController {
                 file
         );
 
-        // Firestore 메시지 저장
-        String messageId = usedItemFirebaseChatService.saveUsedItemChatMessage(
-                roomKey,
-                user.getMemberId(),
-                user.getNickname(),
-                imageUrl
-        );
+        // Kafka 이벤트 발행
+        ChatEvent event = ChatEvent.builder()
+                .chatType("USED_ITEM")
+                .roomKey(roomKey)
+                .senderId(user.getMemberId())
+                .senderNickname(user.getNickname())
+                .messageType("IMAGE")
+                .content(imageUrl)
+                .timestamp(LocalDateTime.now())
+                .build();
 
-        return ResponseEntity.ok(new MessageResponse(messageId, imageUrl));
+        chatProducer.send(event);
+
+        return ResponseEntity.ok(new MessageResponse("processing", imageUrl));
     }
 
     /**
@@ -178,15 +187,21 @@ public class UsedItemChatController {
             throw new IllegalStateException("채팅방을 나간 사용자가 있어 메시지를 전송할 수 없습니다.");
         }
 
-        // Firestore 메시지 저장
-        String messageId = usedItemFirebaseChatService.saveUsedItemChatTextMessage(
-                roomKey,
-                user.getMemberId(),
-                user.getNickname(),
-                request.getMessage()
-        );
+        // Kafka 이벤트 발행 (빠름)
+        ChatEvent event = ChatEvent.builder()
+                .chatType("USED_ITEM")
+                .roomKey(roomKey)
+                .senderId(user.getMemberId())
+                .senderNickname(user.getNickname())
+                .messageType("TEXT")
+                .content(request.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
 
-        return ResponseEntity.ok(new MessageResponse(messageId, null));
+        chatProducer.send(event);
+
+        // 즉시 응답
+        return ResponseEntity.ok(new MessageResponse("processing", null));
     }
 
     /**

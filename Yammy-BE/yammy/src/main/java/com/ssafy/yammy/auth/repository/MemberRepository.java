@@ -2,11 +2,14 @@ package com.ssafy.yammy.auth.repository;
 
 import com.ssafy.yammy.auth.entity.Member;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -41,4 +44,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 카카오 ID로 삭제
     void deleteByKakaoId(String kakaoId);
+
+    // 닉네임으로 검색 (탈퇴하지 않은 회원만)
+    List<Member> findByNicknameContainingAndDeletedAtIsNull(String nickname);
+
+    // 전체 회원 목록 조회 (탈퇴하지 않은 회원만, 페이징)
+    Page<Member> findAllByDeletedAtIsNull(Pageable pageable);
 }
