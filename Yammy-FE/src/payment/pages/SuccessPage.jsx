@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { confirmTossPayment } from "../api/tossApi"
 import "../styles/SuccessPage.css"
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 function SuccessPage() {
   const [searchParams] = useSearchParams()
   const [message, setMessage] = useState("결제 확인 중입니다...")
