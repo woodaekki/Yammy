@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { getMyPoint } from "../../payment/api/pointAPI"
+import "../styles/BankStatement.css"
 
 function BankStatement() {
   const navigate = useNavigate()
@@ -25,28 +26,38 @@ function BankStatement() {
     }
   }
 
-  if (loading) return <div>불러오는 중...</div>
-
   return (
-    <div>
-      <h2>얌페이 메뉴</h2>
+    <div className="bs-wrapper">
+      <div className="bs-card">
+        <h2 className="bs-title">야미 페이 메뉴</h2>
 
-      <div>
-        <span>현재 잔액</span>
-        <span>{format(balance)} 얌</span>
+        {/* 잔액 박스 */}
+        <div className="bs-balance-box">
+          <span className="bs-balance-label">현재 잔액</span>
+          <span className="bs-balance-value">{format(balance)} 얌</span>
+        </div>
+
+        <button
+          className="bs-btn"
+          onClick={() => navigate("/mypoint")}
+        >
+          충전하기
+        </button>
+
+        <button
+          className="bs-btn"
+          onClick={() => navigate("/withdraw")}
+        >
+          환전하기
+        </button>
+
+        <button
+          className="bs-btn"
+          onClick={() => navigate("/withdraw/history")}
+        >
+          환전 내역
+        </button>
       </div>
-
-      <button onClick={() => navigate("/mypoint")}>
-        충전하기
-      </button>
-
-      <button onClick={() => navigate("/withdraw")}>
-        환전하기
-      </button>
-
-      <button onClick={() => navigate("/withdraw/history")}>
-        환전 내역
-      </button>
     </div>
   )
 }

@@ -234,7 +234,7 @@ const NavigationBarTop = () => {
               </div>
 
               <div className="ypay-baseball-wrapper">
-                <div className="ypay-info" onClick={() => navigate("/withdraw")}>
+                <div className="ypay-info" onClick={() => navigate("/bankstatement")}>
                   <div className="ypay-logo-circle">⚾</div>
 
                   <span className="ypay-balance">

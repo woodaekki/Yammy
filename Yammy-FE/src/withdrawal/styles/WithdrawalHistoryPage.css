@@ -1,0 +1,104 @@
+.history-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background: #f7f7f7;
+  padding: 7.5rem 1.5rem 4rem;
+  display: flex;
+  justify-content: center;
+}
+
+.history-card {
+  background: #fff;
+  width: 100%;
+  max-width: 450px;
+  padding: 1.2rem 1.4rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.history-title {
+  font-size: 1.3rem;
+  margin-bottom: 0.2rem;
+}
+
+/* 잔액 표시 */
+.balance-box {
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.9rem;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+}
+
+.balance-label {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.balance-value {
+  font-size: 1rem;
+  font-weight: 600;
+  float: right;
+}
+
+/* 리스트 */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-item {
+  padding: 0.9rem 1rem;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.value {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 상태 */
+.status {
+  font-weight: 600;
+}
+
+.status.completed {
+  color: #2a7f2a;
+}
+
+.status.denied {
+  color: #d63f3f;
+}
+
+.status.requested {
+  color: #555;
+}
+
+/* 빈 상태 */
+.empty-history {
+  text-align: center;
+  padding: 2rem 0;
+  color: #666;
+}
+
+.loading {
+  text-align: center;
+  padding-top: 7rem;
+  font-size: 1rem;
+  color: #666;
+}
