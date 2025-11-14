@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart } from "react-icons/fa";
-import { FiMessageCircle, FiSend } from "react-icons/fi";
+import { FiMessageCircle } from "react-icons/fi";
 import { getAllPosts, togglePostLike, followUser, unfollowUser, deletePost } from './api/snsApi';
 import { getTeamColors } from './utils/teamColors';
+import SNSNavigationBar from './components/SNSNavigationBar';
 import './styles/SNSPage.css';
 
 // 시간 포맷 함수
@@ -308,6 +309,7 @@ const SNSPage = () => {
 
   return (
     <div className="sns-page" style={{ '--team-color': teamColors.bgColor }}>
+      <SNSNavigationBar />
       <div className="feed-container">
         {posts.map((post) => (
           <div key={post.id} className="post-card">
@@ -356,9 +358,9 @@ const SNSPage = () => {
                     onClick={() => handleToggleFollow(post.memberId, post.isFollowing)}
                     disabled={followingInProgress.has(post.memberId)}
                   >
-                    {followingInProgress.has(post.memberId) 
-                      ? '처리중...' 
-                      : post.isFollowing ? '팔로잉' : '팔로우'}
+                    {followingInProgress.has(post.memberId)
+                      ? '처리중...'
+                      : post.isFollowing ? '언팔로우' : '팔로우'}
                   </button>
                 )}
               </div>
@@ -396,9 +398,6 @@ const SNSPage = () => {
                 >
                   <FiMessageCircle className="action-icon comment-icon" />
                   <span className="action-count">{post.commentCount}</span>
-                </button>
-                <button className="action-btn">
-                  <FiSend className="action-icon send-icon" />
                 </button>
               </div>
             </div>

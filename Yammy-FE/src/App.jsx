@@ -13,7 +13,11 @@ function App() {
   const hideTopBar = location.pathname === '/mypage' ||
                      location.pathname === '/ticket/create' ||
                      location.pathname.startsWith('/ticket/') ||
-                     location.pathname.startsWith('/betting');
+                     location.pathname.startsWith('/betting') ||
+                     location.pathname === '/' ||
+                     location.pathname === '/sns' ||
+                     location.pathname.startsWith('/user/') ||
+                     location.pathname.startsWith('/users/');
 
   // 페이지 전환 시 스크롤 맨 위로 초기화
   useEffect(() => {

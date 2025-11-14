@@ -4,6 +4,7 @@ import { getUserPosts, getFollowStatus, followUser, unfollowUser } from '../api/
 import { getTickets, getTicketsByUserId } from '../../ticket/api/ticketApi';
 import FollowListModal from './FollowListModal';
 import TicketCard from '../../ticket/components/TicketCard';
+import SNSNavigationBar from './SNSNavigationBar';
 import { getTeamColors } from '../utils/teamColors';
 import '../styles/UserProfile.css';
 
@@ -26,7 +27,6 @@ const UserProfile = () => {
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
     const [activeTab, setActiveTab] = useState('posts');
-    const [showOptions, setShowOptions] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [ticketsLoading, setTicketsLoading] = useState(false);
     const [showFollowModal, setShowFollowModal] = useState(false);
@@ -123,10 +123,6 @@ const UserProfile = () => {
         }
     };
 
-    const goBack = () => {
-        navigate(-1);
-    };
-
     const toggleFollow = async () => {
         try {
             if (isFollowing) {
@@ -152,10 +148,7 @@ const UserProfile = () => {
     if (isLoading || !profileData) {
         return (
             <div className="user-profile">
-                <div className="profile-header">
-                    <button onClick={goBack} className="back-btn">←</button>
-                    <h1 className="header-title">프로필</h1>
-                </div>
+                <SNSNavigationBar />
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af' }}>
                     로딩 중...
                 </div>
@@ -171,12 +164,8 @@ const UserProfile = () => {
                 '--team-text-color': teamColors.textColor
             }}
         >
-            {/* 헤더 */}
-            <div className="profile-header" style={{ backgroundColor: teamColors.bgColor }}>
-                <button onClick={goBack} className="back-btn" style={{ color: teamColors.textColor }}>←</button>
-                <h1 className="header-title" style={{ color: teamColors.textColor }}>프로필</h1>
-                <button onClick={() => setShowOptions(true)} className="options-btn" style={{ color: teamColors.textColor }}>⋮</button>
-            </div>
+            {/* SNS 네비게이션 바 */}
+            <SNSNavigationBar />
 
             {/* 프로필 정보 */}
             <div className="profile-info-section">
@@ -316,27 +305,6 @@ const UserProfile = () => {
                     </div>
                 )}
             </div>
-
-            {/* 옵션 모달 */}
-            {showOptions && (
-                <div className="options-modal" onClick={() => setShowOptions(false)}>
-                    <div className="options-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-handle"></div>
-                        <button className="option-item">
-                            <span>📤</span> 프로필 공유
-                        </button>
-                        <button className="option-item">
-                            <span>🔗</span> 링크 복사
-                        </button>
-                        <button className="option-item danger">
-                            <span>🚩</span> 신고
-                        </button>
-                        <button className="option-item" onClick={() => setShowOptions(false)}>
-                            <span>✖️</span> 취소
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* 팔로우 리스트 모달 */}
             <FollowListModal
