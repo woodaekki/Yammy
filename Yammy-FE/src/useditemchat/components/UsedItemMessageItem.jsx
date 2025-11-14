@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useAuthStore from '../../stores/authStore';
 import EscrowMessageItem from './EscrowMessageItem';
 import '../styles/UsedItemMessageItem.css';
@@ -13,6 +13,14 @@ export default function UsedItemMessageItem({ message }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [zoomImage, setZoomImage] = useState(null); 
   const isMine = user && message.uid === String(user.memberId);
+
+  useEffect(() => {
+  if (zoomImage) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+}, [zoomImage]);
 
   // 에스크로 메시지 처리
   if (message.type === 'escrow') {

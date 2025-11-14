@@ -1,7 +1,7 @@
 .item-list-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.2rem 1rem;
+  gap: 1rem 0.7rem  !important;
   width: 100%;
   padding: 0 0.4rem; 
   background: #fff;
