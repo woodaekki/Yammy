@@ -5,7 +5,8 @@
   justify-content: center;
   gap: 1.5%;
   width: calc(100% - 2rem);
-  margin: 12px 1rem 12px 1rem;
+  margin: 0 1rem 0.7rem 1rem;
+  margin-top: calc(var(--nav-height, 1px) + 0.1rem);
   padding: 0.5rem 1rem;
   background-color: #fff;
   border: 1px solid #ddd;
