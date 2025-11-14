@@ -4,6 +4,7 @@
   padding-bottom: 140px; 
   min-height: 100vh;
   box-sizing: border-box;
+  margin-top: 10px;
 }
 
 /* === 아이템 리스트 === */

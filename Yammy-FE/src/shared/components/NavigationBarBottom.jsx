@@ -21,6 +21,11 @@ const NavigationBarBottom = () => {
     return () => window.removeEventListener("teamChanged", handleTeamChange);
   }, []);
 
+  // cheerup에서만 네비바 숨기기 (채팅방은 보여줌)
+  const shouldHideNav = location.pathname.startsWith("/cheerup/");
+
+  if (shouldHideNav) return null;
+
   const links = [
     { to: "/", label: "SNS", icon: <GiBaseballBat /> },
     { to: "/useditem", label: "거래", icon: <GiBaseballGlove /> },
