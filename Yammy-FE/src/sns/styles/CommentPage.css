@@ -54,6 +54,20 @@
 }
 
 /* === 상단 액션 버튼 === */
+.post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 15px;
+}
+
 .post-actions-mini {
   display: flex;
   align-items: center;

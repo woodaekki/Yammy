@@ -210,61 +210,64 @@
 .post-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 0 16px;
 }
 
-.action-buttons {
-    display: flex;
+.post-actions .action-buttons {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     margin-bottom: 15px;
+    justify-content: flex-start;
+    width: auto;
 }
 
 /* 좋아??버튼 (채워�??�트 ?��??? */
-.action-btn {
+.post-actions .action-btn {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0 2px;
+  padding: 8px;
   color: #6b7280;
   transition: color 0.25s ease, transform 0.15s ease;
+  flex: none;
 }
 
-.action-btn:hover {
+.post-actions .action-btn:hover {
   color: #FF5722;
   transform: scale(1.08);
 }
 
-.action-btn.liked {
-  color: #FF5722; 
+.post-actions .action-btn.liked {
+  color: #FF5722;
   transform: scale(1.1);
 }
 
-.action-btn.liked .action-icon {
+.post-actions .action-btn.liked .action-icon {
   color: #FF5722;
 }
 
-.action-icon {
+.post-actions .action-icon {
   font-size: 20px;
   transition: transform 0.25s ease, color 0.25s ease;
 }
 
-.action-icon.send-icon {
+.post-actions .action-icon.send-icon {
   font-size: 20px;
   transform: rotate(22deg);
   transform-origin: center;
 }
 
-.action-btn.liked:hover .action-icon {
+.post-actions .action-btn.liked:hover .action-icon {
   transform: scale(1.15);
 }
 
 
-.action-count {
+.post-actions .action-count {
     font-size: 13px;
     font-weight: 500;
 }
@@ -342,14 +345,13 @@
     filter: brightness(1.1);
 }
 
-.comment-icon {
+.post-actions .comment-icon {
   font-size: 22px;
-  transform: translateY(1px);
-  transform: rotate(12deg);
+  transform: translateY(1px) rotate(12deg);
   transform-origin: center;
 }
 
-/* ?��?지 모달 */
+/* 이미지 모달 */
 .image-modal-overlay {
   position: fixed;
   top: 0;
@@ -362,6 +364,8 @@
   justify-content: center;
   z-index: 10000;
   animation: fadeIn 0.2s ease-in-out;
+  overflow: hidden;
+  touch-action: none;
 }
 
 @keyframes fadeIn {
@@ -380,6 +384,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 .modal-image {
@@ -390,6 +395,8 @@
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .modal-close-btn {

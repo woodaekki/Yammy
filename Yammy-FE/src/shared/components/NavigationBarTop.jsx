@@ -48,7 +48,7 @@ const NavigationBarTop = () => {
   // localStorage 변화 감지
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (["profileImage", "nickname", "team"].includes(e.key)) {
+      if (["profileImage", "nickname", "team", "bio"].includes(e.key)) {
         syncFromLocalStorage();
       }
     };
