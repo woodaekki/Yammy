@@ -426,24 +426,26 @@ const TicketCreatePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Seat*</label>
+                            <label>Seat* ({formData.seat.length}/50)</label>
                             <input
                                 type="text"
                                 name="seat"
                                 value={formData.seat}
                                 onChange={handleChange}
                                 placeholder="예시: A구역 4행 1열"
+                                maxLength={50}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Comment*</label>
+                            <label>Comment* ({formData.comment.length}/200)</label>
                             <input
                                 type="text"
                                 name="comment"
                                 value={formData.comment}
                                 onChange={handleChange}
                                 placeholder="직관한 경기 한줄평을 남겨주세요."
+                                maxLength={200}
                             />
                         </div>
 
@@ -518,13 +520,14 @@ const TicketCreatePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Review</label>
+                            <label>Review ({formData.review.length}/1000)</label>
                             <textarea
                                 name="review"
                                 value={formData.review}
                                 onChange={handleChange}
                                 rows={6}
                                 placeholder="상세 리뷰를 작성해주세요..."
+                                maxLength={1000}
                             />
                         </div>
 

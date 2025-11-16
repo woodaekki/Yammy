@@ -290,8 +290,8 @@
 
 /* NFT 섹션 */
 .nft-section {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 14px;
+    padding: 10px 15px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -304,7 +304,7 @@
 .nft-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: linear-gradient(135deg, #4CAF50, #45a049);
+    background: #999;
     color: white;
     border-radius: 20px;
     font-size: 14px;
@@ -337,12 +337,12 @@
 
 .nft-mint-section {
     text-align: center;
+    margin-top: -5px;
 }
 
 .nft-mint-button {
     width: 100%;
     padding: 12px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -350,18 +350,15 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .nft-mint-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    filter: brightness(1.1);
 }
 
 .nft-mint-button:disabled {
-    background: #ccc;
     cursor: not-allowed;
-    box-shadow: none;
 }
 
 .mint-status {
