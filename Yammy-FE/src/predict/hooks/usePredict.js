@@ -167,7 +167,7 @@ export const usePredict = () => {
     const getGameTime = () => {
       const today = new Date();
       const dayOfWeek = today.getDay(); // 0=일요일, 6=토요일
-      return (dayOfWeek === 0 || dayOfWeek === 6) ? '17:00' : '18:30';
+      return (dayOfWeek === 0 || dayOfWeek === 6) ? '23:59' : '23:59';
     };
 
     // 상대 전적 기반 승률 계산
@@ -197,6 +197,7 @@ export const usePredict = () => {
       awayAmount: backendMatch.awayAmount || 1, // 원정팀 배팅 금액 (기본값 1)
       // 🆕 정산 여부 추가
       isSettled: backendMatch.isSettled || 0, // 정산 여부 (0: 미정산, 1: 정산 완료)
+      aiPick: backendMatch.aiPick
     };
   };
 

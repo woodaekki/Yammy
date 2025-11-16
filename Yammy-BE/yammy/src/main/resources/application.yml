@@ -110,6 +110,11 @@ toss:
   secret-key: ${TEST_SECRET_KEY}
   url: ${TOSS_URL}
 
+openai:
+  key: ${GMS_KEY}
+  model: gpt-4o
+
+
 #firebase:
 #  type: ${FIREBASE_TYPE}
 #  project-id: ${FIREBASE_PROJECT_ID}
