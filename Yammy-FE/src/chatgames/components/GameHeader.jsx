@@ -67,8 +67,6 @@ export default function GameHeader({ room, navigate }) {
           </div>
         </div>
 
-        <h2 className="game-title">{name}</h2>
-
         <div className="game-meta">
           <span className="game-time">{formattedTime}</span>
           <span

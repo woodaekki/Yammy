@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getUsedItemById, updateUsedItem } from "../api/usedItemApi";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import PhotoUploader from "../components/PhotoUploader";
+import { usePhotoUpload } from "../hooks/usePhotoUpload";
 import "../styles/usedItemEdit.css";
 
 function UsedItemEdit() {
   const params = useParams();
   const navigate = useNavigate();
+  const { uploadPhotos } = usePhotoUpload();
 
   const [form, setForm] = useState({
     title: "",
@@ -15,6 +17,7 @@ function UsedItemEdit() {
     description: "",
     team: "",
   });
+
   const [errors, setErrors] = useState({
     title: "",
     price: "",
@@ -24,11 +27,11 @@ function UsedItemEdit() {
   });
 
   const [existingPhotos, setExistingPhotos] = useState([]);
-  const [newPhotoIds, setNewPhotoIds] = useState(undefined);
-  const [loading, setLoading] = useState(true);
+  const [removedExistingIds, setRemovedExistingIds] = useState([]);
+  const [newPhotoIds, setNewPhotoIds] = useState([]);
   const [teamColors, setTeamColors] = useState(getTeamColors());
+  const [loading, setLoading] = useState(true);
 
-  // ✅ 게시글 불러오기
   useEffect(() => {
     getUsedItemById(params.id)
       .then((data) => {
@@ -38,16 +41,21 @@ function UsedItemEdit() {
           description: data.description,
           team: data.team,
         });
-        setExistingPhotos(data.imageUrls || []);
+
+        if (data.photoIds && data.imageUrls) {
+          const merged = data.photoIds.map((id, idx) => ({
+            photoId: id,
+            url: data.imageUrls[idx],
+          }));
+          setExistingPhotos(merged);
+        }
       })
-      .catch((error) => {
-        console.error("게시글 조회 실패:", error);
+      .catch(() => {
         alert("게시글 정보를 불러오지 못했습니다.");
       })
       .finally(() => setLoading(false));
   }, [params.id]);
 
-  // 실시간 유효성 검사
   const validate = (field, value) => {
     let message = "";
 
@@ -71,31 +79,42 @@ function UsedItemEdit() {
       case "team":
         if (!value) message = "팀을 선택해주세요.";
         break;
-
-      default:
-        break;
     }
 
     setErrors((prev) => ({ ...prev, [field]: message }));
   };
 
-  // 입력 변경 시
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     validate(name, value);
   };
 
-  // 이미지 업로드 완료 시
-  function handleUploaded(uploadResult) {
-    setNewPhotoIds(uploadResult.photoIds);
+  async function handleFilesSelected(files) {
+    if (!files || files.length === 0) return;
+
+    const totalCount = existingPhotos.length + newPhotoIds.length + files.length;
+    if (totalCount > 3) {
+      alert("이미지는 최대 3장까지만 업로드할 수 있습니다.");
+      return;
+    }
+
+    try {
+      const uploadResult = await uploadPhotos(files);
+      setNewPhotoIds((prev) => [...prev, ...uploadResult.photoIds]);
+    } catch {
+      alert("사진 업로드 중 오류가 발생했습니다.");
+    }
   }
 
-  // 수정 버튼 클릭 시
+  const removeExisting = (photoId) => {
+    setExistingPhotos((prev) => prev.filter((p) => p.photoId !== photoId));
+    setRemovedExistingIds((prev) => [...prev, photoId]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 모든 필드 검증
     validate("title", form.title);
     validate("price", form.price);
     validate("description", form.description);
@@ -112,37 +131,41 @@ function UsedItemEdit() {
       return;
     }
 
+    const finalPhotoIds = [
+      ...existingPhotos.map((p) => p.photoId),
+      ...newPhotoIds,
+    ];
+
     const updateData = {
       title: form.title,
       description: form.description,
       price: parseInt(form.price),
       team: form.team,
+      photoIds: finalPhotoIds,
     };
-
-    if (newPhotoIds !== undefined) updateData.photoIds = newPhotoIds;
 
     try {
       await updateUsedItem(params.id, updateData);
       alert("게시글이 수정되었습니다!");
       navigate("/useditem/" + params.id);
-    } catch (error) {
-      console.error("수정 실패:", error);
+    } catch {
       alert("게시글 수정 중 오류가 발생했습니다.");
     }
   };
 
   return (
     <div className="edit-container">
-      {/* 헤더 */}
       <div className="edit-header">
-        <button onClick={() => navigate("/useditem/" + params.id)} className="edit-back-btn">
+        <button
+          onClick={() => navigate("/useditem/" + params.id)}
+          className="edit-back-btn"
+        >
           ←
         </button>
         <h1 className="edit-header-title">상품 정보 수정</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="edit-form">
-        {/* 제목 */}
         <input
           name="title"
           value={form.title}
@@ -152,7 +175,6 @@ function UsedItemEdit() {
         />
         {errors.title && <p className="edit-error-text">{errors.title}</p>}
 
-        {/* 가격 */}
         <input
           type="number"
           name="price"
@@ -163,17 +185,17 @@ function UsedItemEdit() {
         />
         {errors.price && <p className="edit-error-text">{errors.price}</p>}
 
-        {/* 설명 */}
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
           placeholder="상품 설명을 입력하세요"
           className="edit-textarea-field"
-        ></textarea>
-        {errors.description && <p className="edit-error-text">{errors.description}</p>}
+        />
+        {errors.description && (
+          <p className="edit-error-text">{errors.description}</p>
+        )}
 
-        {/* 팀 선택 */}
         <select
           name="team"
           value={form.team}
@@ -194,14 +216,20 @@ function UsedItemEdit() {
         </select>
         {errors.team && <p className="edit-error-text">{errors.team}</p>}
 
-        {/* 기존 이미지 */}
         <div className="edit-images">
           <h4>기존 이미지</h4>
           {existingPhotos.length > 0 ? (
             <div className="edit-image-list">
-              {existingPhotos.map((url, index) => (
-                <div key={index} className="edit-image-item">
-                  <img src={url} alt={`기존 이미지-${index}`} className="edit-image-preview" />
+              {existingPhotos.map((p, index) => (
+                <div key={index} className="image-card">
+                  <img src={p.url} alt={"img-" + index} />
+                  <button
+                    type="button"
+                    className="image-remove-btn"
+                    onClick={() => removeExisting(p.photoId)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -210,12 +238,11 @@ function UsedItemEdit() {
           )}
         </div>
 
-        {/* 새 이미지 업로더 */}
-        <div style={{ marginTop: "0.5rem" }}>
-          <PhotoUploader onUploaded={handleUploaded} />
-        </div>
+        <PhotoUploader
+          onFilesSelected={handleFilesSelected}
+          existingCount={existingPhotos.length}
+        />
 
-        {/* 버튼 */}
         <div className="edit-button-group">
           <button
             type="submit"
@@ -227,6 +254,7 @@ function UsedItemEdit() {
           >
             수정 완료
           </button>
+
           <button
             type="button"
             className="edit-cancel-btn"
