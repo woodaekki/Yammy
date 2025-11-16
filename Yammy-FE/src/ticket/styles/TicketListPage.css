@@ -52,18 +52,103 @@
     font-weight: 600;
 }
 
-/* 팀 필터 */
-.team-filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0 16px 20px 16px;
-    padding: 16px;
-    background-color: white;
-    border-radius: 12px;
+/* 팀 필터 래퍼 */
+.team-filter-wrapper {
     position: sticky;
     top: 80px;
     z-index: 9;
+    margin: 0 16px 20px 16px;
+    min-height: 36px;
+}
+
+/* 팀 필터 */
+.team-filter-container {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    background-color: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.team-filter-container.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none;
+}
+
+.filter-toggle-btn {
+    width: 100%;
+    padding: 8px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.filter-toggle-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.filter-collapse-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1;
+}
+
+.filter-collapse-icon:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+.filter-expand-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1;
+}
+
+.filter-expand-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
 }
 
 .team-filter-btn {
