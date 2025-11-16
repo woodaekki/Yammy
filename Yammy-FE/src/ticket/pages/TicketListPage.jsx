@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTeamColors } from '../../sns/utils/teamColors';
+import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import { getTickets } from '../api/ticketApi';
-import TicketCard from '../components/TicketCard';
+import TicketCard, { parseGameTeams } from '../components/TicketCard';
 import '../styles/TicketListPage.css';
 
 const TicketListPage = () => {
@@ -10,6 +11,7 @@ const TicketListPage = () => {
     const teamColors = getTeamColors();
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedTeamFilter, setSelectedTeamFilter] = useState('전체');
 
     useEffect(() => {
         loadTickets();
@@ -44,6 +46,16 @@ const TicketListPage = () => {
         );
     };
 
+    // 팀별 필터링된 티켓 목록
+    const filteredTickets = selectedTeamFilter === '전체'
+        ? tickets
+        : tickets.filter(ticket => {
+            if (!ticket.game) return false;
+            const teams = parseGameTeams(ticket.game);
+            if (!teams) return false;
+            return teams.some(team => team.name === selectedTeamFilter);
+        });
+
     return (
         <div
             className="ticket-list-page"
@@ -72,25 +84,62 @@ const TicketListPage = () => {
                 <p>💡 티켓을 클릭하면 뒷면을 확인할 수 있어요</p>
             </div>
 
+            {/* 팀 필터 */}
+            <div className="team-filter-container">
+                <button
+                    className={`team-filter-btn ${selectedTeamFilter === '전체' ? 'active' : ''}`}
+                    onClick={() => setSelectedTeamFilter('전체')}
+                >
+                    전체
+                </button>
+                {['LG 트윈스', '한화 이글스', 'SSG 랜더스', '삼성 라이온즈', 'NC 다이노스',
+                    'KT 위즈', '롯데 자이언츠', 'KIA 타이거즈', '두산 베어스', '키움 히어로즈']
+                    .map((teamName) => (
+                        <button
+                            key={teamName}
+                            className={`team-filter-btn ${selectedTeamFilter === teamName ? 'active' : ''}`}
+                            style={{
+                                backgroundColor: selectedTeamFilter === teamName ? TEAM_COLORS[teamName].bgColor : 'white',
+                                color: selectedTeamFilter === teamName ? TEAM_COLORS[teamName].textColor : '#374151',
+                                borderColor: TEAM_COLORS[teamName].bgColor,
+                            }}
+                            onClick={() => setSelectedTeamFilter(teamName)}
+                        >
+                            <img
+                                src={TEAM_LOGOS[teamName]}
+                                alt={teamName}
+                                className="team-filter-logo"
+                            />
+                            {teamName.split(' ')[0]}
+                        </button>
+                    ))}
+            </div>
+
             {/* 티켓 그리드 */}
             <div className="tickets-container">
                 {loading ? (
                     <div className="loading-message">티켓을 불러오는 중...</div>
-                ) : tickets.length === 0 ? (
+                ) : filteredTickets.length === 0 ? (
                     <div className="empty-message">
                         <div className="empty-icon">🎫</div>
-                        <p>아직 발급된 티켓이 없어요</p>
-                        <button
-                            className="create-first-ticket-btn"
-                            onClick={() => navigate('/ticket/create')}
-                            style={{ backgroundColor: teamColors.bgColor }}
-                        >
-                            첫 티켓 발급하기
-                        </button>
+                        <p>
+                            {selectedTeamFilter === '전체'
+                                ? '아직 발급된 티켓이 없어요'
+                                : `${selectedTeamFilter} 티켓이 없어요`}
+                        </p>
+                        {selectedTeamFilter === '전체' && (
+                            <button
+                                className="create-first-ticket-btn"
+                                onClick={() => navigate('/ticket/create')}
+                                style={{ backgroundColor: teamColors.bgColor }}
+                            >
+                                첫 티켓 발급하기
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="tickets-grid">
-                        {tickets.map(ticket => (
+                        {filteredTickets.map(ticket => (
                             <div key={ticket.id} className="ticket-item">
                                 <TicketCard ticket={ticket} onNftMinted={handleNftMinted} />
                             </div>

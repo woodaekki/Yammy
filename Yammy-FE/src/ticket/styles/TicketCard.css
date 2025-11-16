@@ -304,25 +304,26 @@
 .nft-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: #999;
-    color: white;
+    background: #fef3c7;
+    color: #92400e;
     border-radius: 20px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 10px;
+    border: 2px solid #fbbf24;
 }
 
 .nft-links {
     display: flex;
     gap: 10px;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: -2px;
 }
 
 .nft-link {
     padding: 6px 12px;
     background: rgba(255, 255, 255, 0.2);
-    color: var(--team-text-color);
+    color: #333;
     text-decoration: none;
     border-radius: 6px;
     font-size: 12px;
@@ -365,14 +366,14 @@
     margin-top: 10px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--team-text-color);
+    color: #333;
 }
 
 .nft-info-text {
     margin-top: 8px;
     font-size: 12px;
-    opacity: 0.7;
-    color: var(--team-text-color);
+    color: #333;
+    opacity: 0.8;
 }
 
 /* 반응형 */
