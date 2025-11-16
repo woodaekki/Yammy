@@ -6,48 +6,48 @@ function PhotoUploader({
   onFilesSelected,        // 새 파일 업로드
   onRemoveExisting        // 기존 파일 삭제
 }) {
-  const [files, setFiles] = useState([]);            // 새 파일 목록
-  const [previewUrls, setPreviewUrls] = useState([]); // 새 파일 미리보기
+    const [files, setFiles] = useState([]);            // 새 파일 목록
+    const [previewUrls, setPreviewUrls] = useState([]); // 새 파일 미리보기
 
-  const totalCount = existingCount + files.length;
-  const canUploadMore = totalCount < 3;
+    const totalCount = existingCount + files.length;
+    const canUploadMore = totalCount < 3;
 
-  function handleFileChange(event) {
-    const selectedFiles = Array.from(event.target.files);
+    function handleFileChange(event) {
+      const selectedFiles = Array.from(event.target.files);
 
-    if (!canUploadMore) {
-      alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
-      return;
+      if (!canUploadMore) {
+        alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
+        return;
+      }
+
+      // 추가 선택 후 총합 계산
+      if (totalCount + selectedFiles.length > 3) {
+        alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
+        return;
+      }
+
+      const newFiles = [...files, ...selectedFiles];
+      setFiles(newFiles);
+
+      const newPreviews = selectedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setPreviewUrls((prev) => [...prev, ...newPreviews]);
+
+      onFilesSelected(newFiles);
     }
 
-    // 추가 선택 후 총합 계산
-    if (totalCount + selectedFiles.length > 3) {
-      alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
-      return;
+    function handleRemoveNew(index) {
+      URL.revokeObjectURL(previewUrls[index]);
+
+      const updatedFiles = files.filter((_, i) => i !== index);
+      const updatedPreviews = previewUrls.filter((_, i) => i !== index);
+
+      setFiles(updatedFiles);
+      setPreviewUrls(updatedPreviews);
+
+      onFilesSelected(updatedFiles);
     }
-
-    const newFiles = [...files, ...selectedFiles];
-    setFiles(newFiles);
-
-    const newPreviews = selectedFiles.map((file) =>
-      URL.createObjectURL(file)
-    );
-    setPreviewUrls((prev) => [...prev, ...newPreviews]);
-
-    onFilesSelected(newFiles);
-  }
-
-  function handleRemoveNew(index) {
-    URL.revokeObjectURL(previewUrls[index]);
-
-    const updatedFiles = files.filter((_, i) => i !== index);
-    const updatedPreviews = previewUrls.filter((_, i) => i !== index);
-
-    setFiles(updatedFiles);
-    setPreviewUrls(updatedPreviews);
-
-    onFilesSelected(updatedFiles);
-  }
 
   return (
     <div className="photo-uploader">
