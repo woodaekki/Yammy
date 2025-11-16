@@ -1,86 +1,74 @@
 .bs-wrapper {
   width: 100%;
-  min-height: calc(100vh - 128px); /* 상단(70px) + 하단(58px) 네비바 제외 */
-  background: #f7f7f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem 1.5rem;      
+  min-height: calc(100vh - 128px);
+  background: #f5f6f8;
+  padding: 1.8rem 1.4rem;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
-/* 카드 스타일 */
-.bs-card {
-  width: 100%;
-  max-width: 450px;
+/* 잔액 카드 */
+.bs-balance-card {
   background: #fff;
-  padding: 1.4rem 1.6rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-}
-
-/* 제목 */
-.bs-title {
-  font-size: 1.3rem;
-  font-weight: 600;
+  padding: 1.6rem 1.4rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 1.1rem;
 }
 
-/* 잔액 박스 */
-.bs-balance-box {
-  background: #fafafa;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1.3rem;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 잔액 라벨 */
 .bs-balance-label {
-  font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+  color: #888;
+  margin-bottom: 0.4rem;
+  display: block;
 }
 
-/* 잔액 숫자 */
 .bs-balance-value {
-  font-size: 1.25rem;
+  font-size: 1.85rem;
   font-weight: 700;
-  color: #333;
+  color: #222;
 }
 
-/* 버튼 스타일 */
-.bs-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background-color: #e5e5e5;
-  color: #333;
-  margin-bottom: 9px;
-  font-size: 1rem;
-  font-weight: 500;
+/* 메뉴 리스트 */
+.bs-menu-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  padding: 0.4rem 0;
+}
+
+/* 메뉴 아이템 */
+.bs-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
-.bs-btn:hover {
-  background-color: #d8d8d8;
+.bs-menu-item:hover {
+  background: #f8f8f8;
 }
 
-/* 로딩 화면 중앙 */
-.center-loading {
-  width: 100%;
-  height: 100vh;
-
+.bs-menu-left {
   display: flex;
-  justify-content: center;
   align-items: center;
+  gap: 0.75rem;
+}
 
-  font-size: 1rem;
-  color: #555;
+.bs-menu-icon {
+  font-size: 1.25rem;
+  color: #444;
+}
+
+.bs-menu-text {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.bs-menu-arrow {
+  font-size: 1.2rem;
+  color: #999;
 }

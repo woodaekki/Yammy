@@ -6,20 +6,17 @@ import "./styles/WithdrawalHistoryPage.css"
 
 const WithdrawalHistoryPage = () => {
   const token = localStorage.getItem("accessToken")
+  const navigate = useNavigate()
 
   const [history, setHistory] = useState([])
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  // 잔액 포맷
   const formatNum = (n) => n.toLocaleString()
 
-  // KST(한국 시간) 변환
-  const formatKST = (dateString) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleString("ko-KR", {
-      timeZone: "Asia/Seoul",
-    })
+  const formatKST = (d) => {
+    if (!d) return "-"
+    return new Date(d).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })
   }
 
   useEffect(() => {
@@ -46,39 +43,47 @@ const WithdrawalHistoryPage = () => {
       console.error("잔액 불러오기 실패:", err)
     }
   }
-  
+
   return (
     <div className="history-wrapper">
-      <div className="history-card">
 
-        {/* 헤더 */}
-        <div className="history-header">
+      {/* 상단 잔액 카드 */}
+      <div className="history-balance-card">
+        <div className="balance-title-row">
           <h2 className="history-title">환전 내역</h2>
-          <div className="balance-box">
-            <span className="balance-label">현재 잔액</span>
-            <span className="balance-value">{formatNum(balance)} 얌</span>
-          </div>
+          <button
+            className="back-statement-btn"
+            onClick={() => navigate("/bankstatement")}
+          >
+            페이 홈 →
+          </button>
         </div>
 
-        {/* 리스트 */}
-        {history.length === 0 ? (
+        <div className="balance-card-box">
+          <span className="balance-label">현재 잔액</span>
+          <span className="balance-value">{formatNum(balance)} 얌</span>
+        </div>
+      </div>
+
+      {/* 리스트 */}
+      <div className="history-list-card">
+
+        {loading ? (
+          <div className="loading">불러오는 중...</div>
+        ) : history.length === 0 ? (
           <div className="empty-history">
-            <p>환전 내역이 없습니다.</p>
+            환전 내역이 없습니다.
           </div>
         ) : (
           <div className="history-list">
             {history.map((w) => (
               <div key={w.id} className="history-item">
-                
-                <div className="history-row">
-                  <span className="label">금액</span>
-                  <span className="value">-{formatNum(w.amount)} 얌</span>
-                </div>
 
-                <div className="history-row">
-                  <span className="label">상태</span>
+                <div className="history-item-top">
+                  <span className="history-amount">-{formatNum(w.amount)} 얌</span>
+
                   <span
-                    className={`status ${
+                    className={`status-pill ${
                       w.status === "COMPLETED"
                         ? "completed"
                         : w.status === "DENIED"
@@ -91,22 +96,17 @@ const WithdrawalHistoryPage = () => {
                 </div>
 
                 {w.denyReason && (
-                  <div className="history-row">
-                    <span className="label">사유</span>
-                    <span className="deny-reason">{w.denyReason}</span>
-                  </div>
+                  <div className="history-reason">사유: {w.denyReason}</div>
                 )}
 
-                <div className="history-row">
-                  <span className="label">요청 일시</span>
-                  <span className="value">{formatKST(w.createdAt)}</span>
+                <div className="history-item-bottom">
+                  <span className="history-date">
+                    요청: {formatKST(w.createdAt)}
+                  </span>
+                  <span className="history-date">
+                    처리: {formatKST(w.updatedAt)}
+                  </span>
                 </div>
-
-                <div className="history-row">
-                  <span className="label">처리 일시</span>
-                  <span className="value">{formatKST(w.updatedAt)}</span>
-                </div>
-
               </div>
             ))}
           </div>

@@ -39,7 +39,7 @@
 
 
 .bell-icon {
-  width: 22px;
+  width: clamp(28px, 4vw, 33px);
 }
 
 .notification-badge {
@@ -91,7 +91,6 @@
   align-items: center;
   gap: clamp(3px, 0.8vw, 4px);
   flex: 1;
-  cursor: pointer;
   opacity: 0.9;
   min-width: 0;
 }
