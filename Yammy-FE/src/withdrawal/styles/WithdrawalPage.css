@@ -1,68 +1,59 @@
 .withdraw-wrapper {
   width: 100%;
-  min-height: calc(100vh - 128px); /* 상단(70px) + 하단(58px) 네비바 제외 */       
-  background: #f7f7f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem 1.5rem;    
-  overflow: hidden;
+  min-height: calc(100vh - 128px);
+  background: #f5f6f8;
+  padding: 1.8rem 1.4rem;
+  box-sizing: border-box;
 }
 
-.withdraw-card {
-  background: #fff;
-  width: 100%;
-  max-width: 450px;
-  padding: 1.2rem 1.4rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  margin: 0;
+/* 상단 제목 + 버튼 */
+.withdraw-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .withdraw-title {
   font-size: 1.3rem;
-  text-align: center;
-  margin-bottom: 0.6rem;
+  font-weight: 700;
+  color: #222;
 }
 
-.statement-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.4rem;
-}
-
-.statement-btn {
-  padding: 0.4rem 0.8rem;
-  background-color: #eeeeee;
-  color: #333333;
+.withdraw-history-btn {
+  background: transparent;
   border: none;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 500;
+  color: #777;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: 0.15s;
 }
 
-.statement-btn:hover {
-  background: #d8d8d8;
+/* 카드 */
+.withdraw-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
 }
 
+/* 필드 */
 .withdraw-field {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.2rem;
 }
 
 .withdraw-field label {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  color: #555;
+  margin-bottom: 0.35rem;
 }
 
 .withdraw-input,
 .custom-select {
   width: 100%;
-  padding: 0.7rem 0.9rem;
+  padding: 0.8rem 1rem;
   font-size: 0.95rem;
   background: #fafafa;
   border: 1px solid #ddd;
@@ -71,36 +62,43 @@
 
 .custom-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
   background-size: 12px;
+  background-position: right 14px center;
+  padding-right: 38px;
 }
 
+
+
+/* 상태 */
 .input-error {
   border: 1.4px solid #ff4d4d;
   background: #fff5f5;
 }
 
-.input-valid {
-  border: 1.4px solid #8aa3ff;
-  background: #f8faff;
-}
-
 .error-text {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #ff4d4d;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
+/* 버튼 */
 .withdraw-submit-btn {
   width: 100%;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
-  font-size: 16px;
+  font-size: 1rem;
   margin-top: 10px;
-  transition: background-color 0.2s, color 0.2s;
+  transition: 0.2s ease;
 }
 
 .withdraw-submit-btn.disabled {
@@ -109,16 +107,11 @@
 }
 
 .withdraw-submit-btn.active {
-  background-color: #4B4B4B;
+  background-color: #2f2f2f;
   color: white;
   cursor: pointer;
 }
 
 .withdraw-submit-btn.active:hover {
-  background-color: #5A5A5A;
-}
-
-.withdraw-result {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  background-color: #3a3a3a;
 }

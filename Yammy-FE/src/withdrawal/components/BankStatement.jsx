@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { getMyPoint } from "../../payment/api/pointAPI"
+import { FiChevronRight, FiCreditCard, FiUpload, FiFileText } from "react-icons/fi"
 import "../styles/BankStatement.css"
 
 function BankStatement() {
@@ -28,35 +29,45 @@ function BankStatement() {
 
   return (
     <div className="bs-wrapper">
-      <div className="bs-card">
-        <h2 className="bs-title">야미 페이 메뉴</h2>
 
-        {/* 잔액 박스 */}
-        <div className="bs-balance-box">
-          <span className="bs-balance-label">현재 잔액</span>
-          <span className="bs-balance-value">{format(balance)} 얌</span>
+      {/* 잔액 카드 */}
+      <div className="bs-balance-card">
+        <span className="bs-balance-label">현재 잔액</span>
+        <span className="bs-balance-value">
+          {format(balance)} 얌
+        </span>
+      </div>
+
+      {/* 메뉴 카드 */}
+      <div className="bs-menu-card">
+
+        {/* 충전하기 */}
+        <div className="bs-menu-item" onClick={() => navigate("/mypoint")}>
+          <div className="bs-menu-left">
+            <FiCreditCard className="bs-menu-icon" />
+            <span className="bs-menu-text">충전하기</span>
+          </div>
+          <FiChevronRight className="bs-menu-arrow" />
         </div>
 
-        <button
-          className="bs-btn"
-          onClick={() => navigate("/mypoint")}
-        >
-          충전하기
-        </button>
+        {/* 환전하기 */}
+        <div className="bs-menu-item" onClick={() => navigate("/withdraw")}>
+          <div className="bs-menu-left">
+            <FiUpload className="bs-menu-icon" />
+            <span className="bs-menu-text">환전하기</span>
+          </div>
+          <FiChevronRight className="bs-menu-arrow" />
+        </div>
 
-        <button
-          className="bs-btn"
-          onClick={() => navigate("/withdraw")}
-        >
-          환전하기
-        </button>
+        {/* 거래 내역 */}
+        <div className="bs-menu-item" onClick={() => navigate("/withdraw/history")}>
+          <div className="bs-menu-left">
+            <FiFileText className="bs-menu-icon" />
+            <span className="bs-menu-text">환전 내역</span>
+          </div>
+          <FiChevronRight className="bs-menu-arrow" />
+        </div>
 
-        <button
-          className="bs-btn"
-          onClick={() => navigate("/withdraw/history")}
-        >
-          환전 내역
-        </button>
       </div>
     </div>
   )

@@ -60,7 +60,7 @@ public class PhotoService {
                             .build();
 
                     PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(
-                            r -> r.signatureDuration(Duration.ofMinutes(10))
+                            r -> r.signatureDuration(Duration.ofDays(7)) // 7일로 설정
                                     .putObjectRequest(putObjectRequest)
                     );
 
@@ -89,7 +89,6 @@ public class PhotoService {
         photo.setS3Key(dto.getS3Key());
         photo.setFileUrl(dto.getFileUrl());
         photo.setContentType(dto.getContentType());
-        photo.setTemporary(true);
 
         return photoRepository.save(photo);
     }
