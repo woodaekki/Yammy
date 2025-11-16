@@ -6,7 +6,6 @@
   min-height: 100vh;
 }
 
-/* 헤더 */
 .edit-header {
   display: flex;
   align-items: center;
@@ -29,7 +28,6 @@
   font-weight: 600;
 }
 
-/* 폼 전체 */
 .edit-form {
   display: flex;
   flex-direction: column;
@@ -38,7 +36,6 @@
   box-sizing: border-box;
 }
 
-/* 입력 필드 */
 .edit-input-field,
 .edit-textarea-field,
 .edit-select {
@@ -53,7 +50,6 @@
   box-sizing: border-box;
 }
 
-/* 포커스 회색톤 */
 .edit-input-field:focus,
 .edit-textarea-field:focus,
 .edit-select:focus {
@@ -66,49 +62,56 @@
   resize: vertical;
 }
 
-.edit-select {
-  background-color: #fff;
-  color: #333;
-}
-
-/* 이미지 영역 */
 .edit-images {
   width: 100%;
   margin-bottom: 0.8rem;
-  box-sizing: border-box;
 }
 
-.edit-images h4 {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-  color: #555;
-}
-
-/* 이미지 프리뷰 영역 */
 .edit-image-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  width: 100%;
 }
 
-.edit-image-item {
+.image-card {
+  position: relative;
   width: 95px;
   height: 95px;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background-color: #f4f4f4;
   border: 1px solid #eee;
   flex-shrink: 0;
 }
 
-.edit-image-preview {
+.image-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 버튼 그룹 */
+.image-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.image-remove-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
 .edit-button-group {
   display: flex;
   justify-content: flex-end;
@@ -116,10 +119,8 @@
   width: 100%;
   margin-top: 0.8rem;
   margin-bottom: 1rem;
-  box-sizing: border-box;
 }
 
-/* 수정 / 취소 버튼 */
 .edit-submit-btn,
 .edit-cancel-btn {
   border: none;
@@ -127,12 +128,6 @@
   padding: 0.5rem 1.1rem;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.edit-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .edit-cancel-btn {
@@ -144,11 +139,4 @@
   font-size: 0.9rem;
   color: #d33;
   margin: -0.4rem 0 0.6rem 0.2rem;
-}
-
-/* 로딩 */
-.edit-loading-text {
-  text-align: center;
-  color: #888;
-  padding: 2rem 0;
 }
