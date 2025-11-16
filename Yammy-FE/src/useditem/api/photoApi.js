@@ -1,9 +1,10 @@
 import apiClient from "../../api/apiClient"
 
 // presigned URL 요청 
-export const getPresignedUrls = async (files, prefix = 'useditem') => {
+export const getPresignedUrls = async (files, prefix = "useditem") => {
   const count = files.length
-  const contentType = files[0].type
+  const contentType = files[0].type 
+
   const res = await apiClient.post(
     `/photos/presignedUrls?count=${count}&contentType=${encodeURIComponent(contentType)}&prefix=${prefix}`
   )

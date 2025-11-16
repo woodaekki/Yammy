@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { createUsedItem } from "../api/usedItemApi"
-import { getTeamColors } from "../../sns/utils/teamColors" 
+import { getTeamColors } from "../../sns/utils/teamColors"
 import PhotoUploader from "../components/PhotoUploader"
+import { usePhotoUpload } from "../hooks/usePhotoUpload"
 import "../styles/usedItemCreate.css"
 
 function UsedItemCreate() {
@@ -13,16 +14,19 @@ function UsedItemCreate() {
   const [price, setPrice] = useState("")
   const [description, setDescription] = useState("")
   const [team, setTeam] = useState("")
-  
-  // 이미지 파일 상태 (File 객체 배열)
+
+  // 이미지 파일 상태
   const [imageFiles, setImageFiles] = useState([])
-  // 미리보기 URL 상태 (로컬 URL)
   const [previewUrls, setPreviewUrls] = useState([])
-  
+
+  // 팀 컬러
   const [teamColors, setTeamColors] = useState(getTeamColors())
-  
-  // 로딩 상태 (등록 중 버튼 비활성화용)
+
+  // 로딩 (등록 중)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // 사진 업로드 훅
+  const { uploadPhotos, uploading } = usePhotoUpload()
 
   useEffect(() => {
     setTeamColors(getTeamColors())
@@ -73,7 +77,7 @@ function UsedItemCreate() {
     setErrors((prev) => ({ ...prev, [field]: message }))
   }
 
-  // 이미지 파일 선택 시 호출되는 콜백
+  // 이미지 파일 선택 시 호출
   function handleFilesSelected(files, previews) {
     setImageFiles(files)
     setPreviewUrls(previews)
@@ -84,14 +88,13 @@ function UsedItemCreate() {
   async function handleSubmit(event) {
     event.preventDefault()
 
-    // 모든 필드 유효성 검사
+    // 검증
     validate("title", title)
     validate("price", price)
     validate("description", description)
     validate("photo", imageFiles)
     validate("team", team)
 
-    // 에러가 있거나 필수 필드가 비어있으면 제출 중단
     if (
       Object.values(errors).some((msg) => msg) ||
       !title ||
@@ -103,20 +106,27 @@ function UsedItemCreate() {
       return
     }
 
-    // 서버로 보낼 JSON 데이터 (이미지는 별도로 전송)
-    const itemData = {
-      title,
-      price: parseInt(price),
-      description,
-      team
-    }
-
     try {
       setIsSubmitting(true)
-      // FormData로 JSON 데이터와 이미지 파일을 함께 전송
-      await createUsedItem(itemData, imageFiles)
+
+      // 사진 업로드(S3)
+      const { photoIds } = await uploadPhotos(imageFiles)
+
+      // 게시글 데이터 구성
+      const itemData = {
+        title,
+        price: parseInt(price),
+        description,
+        team,
+        photoIds 
+      }
+
+      // 게시글 등록
+      await createUsedItem(itemData)
+
       alert("게시글이 등록되었습니다.")
       navigate("/useditem")
+
     } catch (err) {
       console.error(err)
       alert("등록 중 오류가 발생했습니다.")
@@ -197,7 +207,7 @@ function UsedItemCreate() {
         </select>
         {errors.team && <p className="create-text">{errors.team}</p>}
 
-        {/* 이미지 선택 (업로드는 등록 시점에 수행) */}
+        {/* 이미지 */}
         <div className="create-images">
           <h4>이미지 등록</h4>
           <PhotoUploader onFilesSelected={handleFilesSelected} />
@@ -209,13 +219,13 @@ function UsedItemCreate() {
           <button
             type="submit"
             className="create-submit-btn"
-            disabled={Object.values(errors).some((msg) => msg) || isSubmitting}
+            disabled={Object.values(errors).some((msg) => msg) || isSubmitting || uploading}
             style={{
               backgroundColor: teamColors.bgColor,
               color: teamColors.textColor
             }}
           >
-            {isSubmitting ? "등록 중..." : "등록"}
+            {isSubmitting || uploading ? "등록 중..." : "등록"}
           </button>
         </div>
       </form>
