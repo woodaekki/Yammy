@@ -94,10 +94,10 @@ const PredictPage = () => {
                   <div className="tooltip-content">
                     <p><strong>배당률 2.00이라면:</strong></p>
                     <p>• 100팬심 배팅 시 승리하면 200팬심을 받는다</p>
-                    <p>• 즉, 원금 100 + 수익 100 = 총 200팬심</p>
+                    <p>• 즉, 팬심 100 + 수익 100 = 총 200팬심</p>
                     <br/>
                     <p><strong>계산법:</strong></p>
-                    <p>• 배팅팬심 × 배당률 = 받을 팬심</p>
+                    <p>• 투입팬심 × 배당률 = 받을 팬심</p>
                   </div>
                 </div>
               )}
