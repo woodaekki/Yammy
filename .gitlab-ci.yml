@@ -24,6 +24,15 @@ Test_Build_BE:
       alias: mysql-db
     - name: redis:latest
       alias: redis
+    - name: confluentinc/cp-zookeeper:6.2.1
+      alias: zookeeper
+    - name: confluentinc/cp-kafka:6.2.1
+      alias: kafka
+      variables:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # alias 사용
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 # alias 사용
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   variables:
     #   mysql, redis 임시 이미지를 사용하기 때문에 값도 일회용
     MYSQL_DATABASE: testdb
@@ -34,6 +43,7 @@ Test_Build_BE:
     SPRING_DATA_REDIS_HOST: redis
     SPRING_DATA_REDIS_PORT: 6379
     SPRING_DATA_REDIS_PASSWORD:
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092 # Kafka alias 사용
 
   before_script:
     - cd ${BACKEND_DIR}
@@ -41,6 +51,7 @@ Test_Build_BE:
     - apt-get update -qq && apt-get install -y --no-install-recommends wait-for-it
     - wait-for-it mysql-db:3306 -t 30 -- echo "MySQL is up and running!"
     - wait-for-it redis:6379 -t 30 -- echo "Redis is up and running!"
+    - wait-for-it kafka:9092 -t 30 -- echo "Kafka is up and running!"
     - |
       MYSQL_HOST_IP=$(getent hosts mysql-db | awk '{ print $1 }');
       if [ -z "$MYSQL_HOST_IP" ]; then 
