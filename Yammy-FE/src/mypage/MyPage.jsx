@@ -631,7 +631,7 @@ const MyPage = () => {
                     <div style={{ flex: 1 }}>
                       <GameTitle gameName={ticket.game} size="small" />
                     </div>
-                    <span className="nft-badge">NFT</span>
+                    <span className="nft-badge" style={{ color: 'white' }}>NFT</span>
                   </div>
                   <div className="nft-card-body">
                     <div className="nft-info-row">

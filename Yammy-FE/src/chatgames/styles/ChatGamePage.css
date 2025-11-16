@@ -9,7 +9,7 @@
   height: 100vh;
   height: 100dvh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   overflow: hidden;
   background-color: #f5f6f7;
 }
@@ -23,6 +23,8 @@
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
 }
 
 /* === 메시지 스크롤 영역 (핵심!) === */
@@ -125,7 +127,13 @@
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  margin-bottom: 58px; /* 네비바 높이만큼 여백 */
+}
+
+/* === 하단 네비게이션 바 === */
+.chat-page-container .nav-bar-bottom {
+  grid-row: 4;
+  width: 100%;
+  z-index: 100;
 }
 
 /* === 에러 화면 === */
