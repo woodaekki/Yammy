@@ -74,7 +74,7 @@ export const GameTitle = ({ gameName, size = 'medium' }) => {
     const teams = parseGameTeams(gameName);
 
     const styles = {
-        small: { fontSize: '24px', logoSize: '36px', gap: '10px', teamGap: '8px' },
+        small: { fontSize: '19px', logoSize: '28px', gap: '8px', teamGap: '6px' },
         medium: { fontSize: '28px', logoSize: '40px', gap: '12px', teamGap: '10px' },
         large: { fontSize: '32px', logoSize: '44px', gap: '14px', teamGap: '12px' }
     };
@@ -453,7 +453,7 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         <div className="nft-section" onClick={(e) => e.stopPropagation()}>
                             {ticket.nftMinted ? (
                                 <div className="nft-status">
-                                    <span className="nft-badge">NFT 발급 완료</span>
+                                    <span className="nft-badge" style={{ borderColor: teamColors.bgColor }}>NFT 발급 완료</span>
                                     {ticket.nftTokenId && (
                                         <div className="nft-links">
                                             <a

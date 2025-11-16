@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class PhotoUploadCompleteResponse {
-    private List<Long> photoIds;
+//    private List<Long> photoIds;
     private List<String> fileUrls;
 }
