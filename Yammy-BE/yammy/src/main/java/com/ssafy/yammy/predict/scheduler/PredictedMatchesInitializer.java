@@ -15,9 +15,9 @@ import java.time.format.DateTimeFormatter;
  * 서버 시작시 및 매일 오후 5시 predicted_matches 초기화 컴포넌트
  * 오늘 날짜의 경기 정보를 자동으로 생성하여 배팅 가능하도록 준비
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class PredictedMatchesInitializer {
     
     private final PredictService predictService;

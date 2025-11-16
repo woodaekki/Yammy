@@ -4,6 +4,7 @@ import com.ssafy.yammy.auth.entity.Member;
 import com.ssafy.yammy.config.CustomUserDetails;
 import com.ssafy.yammy.predict.dto.*;
 import com.ssafy.yammy.predict.service.PredictService;
+import com.ssafy.yammy.predict.service.OpenAIService; 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
 public class PredictController {
 
     private final PredictService predictService;
+    private final OpenAIService openAIService; 
 
     /**
      * 배팅 생성
@@ -120,5 +122,14 @@ public class PredictController {
 
         SettlementResponse response = predictService.settleMatches(requests);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * OpenAI 호출 (경기 예측 추천)
+     */
+    @Operation(summary = "Open AI 호출", description = "경기 예측 픽 추천")
+    @GetMapping("/gpt")
+    public String testGpt(@RequestParam String q) throws Exception {
+        return openAIService.ask(q);
     }
 }
