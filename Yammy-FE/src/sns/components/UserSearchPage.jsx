@@ -139,7 +139,11 @@ const UserSearchPage = () => {
             </button>
           )}
         </div>
-        <button className="search-btn" onClick={handleSearch}>
+        <button
+          className="search-btn"
+          onClick={handleSearch}
+          style={{ backgroundColor: teamColors.bgColor, padding: '0 16px', minWidth: '60px', fontSize: '0.85rem' }}
+        >
           검색
         </button>
       </div>

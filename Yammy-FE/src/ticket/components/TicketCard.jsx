@@ -45,7 +45,7 @@ const TEAM_SHORT_NAMES = {
 };
 
 // 경기 이름에서 팀 로고 추출
-const parseGameTeams = (gameName) => {
+export const parseGameTeams = (gameName) => {
     if (!gameName) return null;
 
     const parts = gameName.split(/\s*vs\s*/i);
@@ -70,11 +70,11 @@ const parseGameTeams = (gameName) => {
 };
 
 // 경기 이름 렌더링 컴포넌트
-const GameTitle = ({ gameName, size = 'medium' }) => {
+export const GameTitle = ({ gameName, size = 'medium' }) => {
     const teams = parseGameTeams(gameName);
 
     const styles = {
-        small: { fontSize: '24px', logoSize: '36px', gap: '10px', teamGap: '8px' },
+        small: { fontSize: '16px', logoSize: '24px', gap: '6px', teamGap: '5px' },
         medium: { fontSize: '28px', logoSize: '40px', gap: '12px', teamGap: '10px' },
         large: { fontSize: '32px', logoSize: '44px', gap: '14px', teamGap: '12px' }
     };
@@ -134,7 +134,7 @@ const GameTitle = ({ gameName, size = 'medium' }) => {
     );
 };
 
-const TicketCard = ({ ticket, onNftMinted }) => {
+const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [isMinting, setIsMinting] = useState(false);
     const [mintStatus, setMintStatus] = useState('');
@@ -450,41 +450,47 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                         </div>
 
                         {/* NFT 발급 버튼 */}
-                        <div className="nft-section" onClick={(e) => e.stopPropagation()}>
-                            {ticket.nftMinted ? (
-                                <div className="nft-status">
-                                    <span className="nft-badge">NFT 발급 완료</span>
-                                    {ticket.nftTokenId && (
-                                        <div className="nft-links">
-                                            <a
-                                                href={getEtherscanNFTUrl(ticket.nftTokenId)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="nft-link"
-                                            >
-                                                Etherscan에서 보기
-                                            </a>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="nft-mint-section">
-                                    <button
-                                        className="nft-mint-button"
-                                        onClick={handleMintNFT}
-                                        disabled={isMinting || !canMintNFT(ticket)}
-                                    >
-                                        {isMinting ? '🔄 발급 중...' : '🎫 NFT로 발급하기'}
-                                    </button>
-                                    {mintStatus && (
-                                        <p className="mint-status">{mintStatus}</p>
-                                    )}
-                                    <p className="nft-info-text">
-                                        메타마스크 없이도 발급 가능합니다
-                                    </p>
-                                </div>
-                            )}
-                        </div>
+                        {showNFTSection && (
+                            <div className="nft-section" onClick={(e) => e.stopPropagation()}>
+                                {ticket.nftMinted ? (
+                                    <div className="nft-status">
+                                        <span className="nft-badge" style={{ borderColor: teamColors.bgColor }}>NFT 발급 완료</span>
+                                        {ticket.nftTokenId && (
+                                            <div className="nft-links">
+                                                <a
+                                                    href={getEtherscanNFTUrl(ticket.nftTokenId)}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="nft-link"
+                                                >
+                                                    Etherscan에서 보기
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="nft-mint-section">
+                                        <button
+                                            className="nft-mint-button"
+                                            onClick={handleMintNFT}
+                                            disabled={isMinting || !canMintNFT(ticket)}
+                                            style={{
+                                                backgroundColor: (isMinting || !canMintNFT(ticket)) ? '#ccc' : teamColors.bgColor,
+                                                boxShadow: (isMinting || !canMintNFT(ticket)) ? 'none' : `0 4px 15px ${teamColors.bgColor}66`
+                                            }}
+                                        >
+                                            {isMinting ? '발급 중...' : 'NFT로 발급하기'}
+                                        </button>
+                                        {mintStatus && (
+                                            <p className="mint-status">{mintStatus}</p>
+                                        )}
+                                        <p className="nft-info-text">
+                                            메타마스크 없이도 발급 가능합니다
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div

@@ -67,17 +67,14 @@ const WithdrawalPage = () => {
       }
 
       await requestWithdraw(dto)
-
-      // 즉시 네비 포인트 갱신
       window.dispatchEvent(new Event("pointUpdated"))
 
-      // 입력 필드 초기화
       setAmount("")
       setBankName("선택")
       setAccountNumber("")
       setError("")
 
-      alert("환전 요청 완료!")
+      alert("환전이 완료되었습니다.")
     } catch (err) {
       alert(err?.response?.data?.message || "환전 요청 실패")
     }
@@ -85,26 +82,34 @@ const WithdrawalPage = () => {
 
   return (
     <div className="withdraw-wrapper">
-      <div className="withdraw-card">
 
+      <div className="withdraw-header-row">
         <h2 className="withdraw-title">환전하기</h2>
+        <button
+          className="withdraw-history-btn"
+          onClick={() => navigate("/withdraw/history")}
+        >
+          내역 보기
+        </button>
+      </div>
 
-        <div className="statement-container">
-          <button
-            className="statement-btn"
-            onClick={() => navigate("/bankstatement")}
-          >
-            얌 포인트 내역
-          </button>
-        </div>
+      <div className="withdraw-card">
 
         <div className="withdraw-field">
           <label>환전 금액</label>
+
+          {/* 숫자 키패드 + 숫자만 입력 */}
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="예: 10000"
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^\d]/g, "")
+              if (raw.length > 9) return
+              setAmount(raw)
+            }}
+            placeholder="예: 10,000"
             className="withdraw-input"
           />
         </div>
@@ -134,13 +139,18 @@ const WithdrawalPage = () => {
 
         <div className="withdraw-field">
           <label>계좌번호</label>
+
+          {/* 숫자 키패드 + 숫자만 입력 */}
           <input
             type="text"
+            inputMode="numeric"
+            pattern="\d*"
             value={accountNumber}
-            onChange={handleAccountChange}
-            className={`withdraw-input ${
-              accountNumber && error ? "input-error" : ""
-            }`}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^\d]/g, "")
+              handleAccountChange({ target: { value: raw } })
+            }}
+            className={`withdraw-input ${accountNumber && error ? "input-error" : ""}`}
           />
 
           {accountNumber && error && (
@@ -153,8 +163,9 @@ const WithdrawalPage = () => {
           disabled={!isValid}
           onClick={handleSubmit}
         >
-          환전 요청
+          환전하기
         </button>
+
       </div>
     </div>
   )

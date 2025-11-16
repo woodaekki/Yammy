@@ -1,8 +1,10 @@
 package com.ssafy.yammy.useditemchat.service;
 
 import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.FirestoreClient;
@@ -197,5 +199,40 @@ public class UsedItemFirebaseChatService {
         } else {
             log.warn("Escrow message not found: escrowId={}", escrowId);
         }
+    }
+
+
+    /**
+     * 마지막 메시지 내용 조회
+     * @param roomKey 채팅방 키
+     * @return 마지막 메시지 내용 (없으면 null)
+     */
+    public String getLastMessage(String roomKey) throws Exception {
+        Firestore firestore = FirestoreClient.getFirestore();
+
+        QuerySnapshot snapshot = firestore.collection("useditem-chats")
+                .document(roomKey)
+                .collection("messages")
+                .orderBy("createdAt", Query.Direction.DESCENDING)  // timestamp → createdAt
+                .limit(1)
+                .get()
+                .get();
+
+        if (snapshot.isEmpty()) {
+            return null;
+        }
+
+        DocumentSnapshot lastMsg = snapshot.getDocuments().get(0);
+        String messageType = lastMsg.getString("type");
+
+        if ("text".equals(messageType)) {  // TEXT → text, content → message
+            return lastMsg.getString("message");
+        } else if ("image".equals(messageType)) {  // IMAGE → image
+            return "사진";
+        } else if ("escrow".equals(messageType)) {  // 에스크로 메시지 처리 추가
+            return "에스크로 거래 요청";
+        }
+
+        return null;
     }
 }

@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class UsedItemController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(usedItemService.createTrade(request, dto));
     }
+
 
     // 게시물 수정
     @Operation(summary = "중고 거래 게시물 수정")
