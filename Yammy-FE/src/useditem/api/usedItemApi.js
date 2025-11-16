@@ -3,7 +3,7 @@ import apiClient from "../../api/apiClient"
 // 전체 조회
 export const getAllUsedItems = async (page = 0, size = 10, sort = 'createdAt,desc') => {
   const res = await apiClient.get(`/trades?page=${page}&size=${size}&sort=${sort}`)
-  return res.data.content // Page 객체에서 content만 가져오기
+  return res.data.content
 }
 
 // 단건 조회
@@ -12,9 +12,28 @@ export const getUsedItemById = async (id) => {
   return res.data
 }
 
-// 작성
-export const createUsedItem = async (itemData) => {
-  const res = await apiClient.post(`/trades`, itemData)
+// 작성 (FormData 방식 - 이미지와 데이터를 함께 전송)
+export const createUsedItem = async (itemData, imageFiles) => {
+  const formData = new FormData()
+  
+  // JSON 데이터를 Blob으로 감싸서 'data' 파트로 추가
+  formData.append('data', new Blob([JSON.stringify(itemData)], { 
+    type: 'application/json' 
+  }))
+  
+  // 이미지 파일들을 'imageFiles' 파트로 추가
+  if (imageFiles && imageFiles.length > 0) {
+    imageFiles.forEach(file => {
+      formData.append('imageFiles', file)
+    })
+  }
+  
+  // multipart/form-data로 전송 (Content-Type은 자동 설정됨)
+  const res = await apiClient.post(`/trades`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
   return res.data
 }
 

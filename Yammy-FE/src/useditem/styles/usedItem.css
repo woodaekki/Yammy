@@ -1,28 +1,30 @@
-/* === 페이지 전체 === */
+/* 페이지 전체 컨테이너 */
 .useditem-page-container {
   width: 100%;
-  padding-bottom: 140px; 
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(0.5rem, 2vw, 1rem);
+  padding-bottom: clamp(100px, 15vh, 160px);
   min-height: 100vh;
   box-sizing: border-box;
-  margin-top: 10px;
 }
 
-/* === 아이템 리스트 === */
+/* 아이템 리스트 그리드 - 화면 크기에 따라 자동 조절 */
 .item-list-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.4rem 1rem;
-  padding: 0 1rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: clamp(0.8rem, 2vw, 1.5rem);
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
 }
 
-/* 이미지 */
+/* 이미지 컨테이너 - 정사각형 비율 유지 */
 .item-image-container {
   width: 100%;
-  padding-bottom: 100%;
+  aspect-ratio: 1 / 1;
   position: relative;
   background-color: #f3f4f6;
-  border-radius: 12px 12px 0 0;
+  border-radius: clamp(8px, 1.5vw, 12px) clamp(8px, 1.5vw, 12px) 0 0;
   overflow: hidden;
 }
 
@@ -46,70 +48,79 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
 }
 
-/* === 카드 === */
+.no-image-box img {
+  width: 55%;
+  opacity: 0.9;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* 카드 스타일 */
 .item-card {
-  border: 1px solid rgba(230, 230, 230, 0.8); 
-  border-radius: 12px;
+  border: 1px solid rgba(230, 230, 230, 0.8);
+  border-radius: clamp(8px, 1.5vw, 12px);
   overflow: hidden;
   background-color: #fff;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .item-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);  
-  border-color: rgba(220, 220, 220, 0.9);   
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  border-color: rgba(220, 220, 220, 0.9);
 }
 
 .item-info {
-  padding: 0.6rem 0.75rem;
+  padding: clamp(0.4rem, 1.5vw, 0.75rem);
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: clamp(0.05rem, 0.5vw, 0.15rem);
 }
 
 /* 제목 */
 .item-title {
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 1rem);
   font-weight: 500;
   color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: 0.2rem 0 0 0;
+  margin: clamp(0.1rem, 0.5vw, 0.2rem) 0 0 0;
 }
 
 /* 가격 */
 .item-price {
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
   font-weight: 700;
-  margin-top: 0.3rem;
+  margin-top: clamp(0.2rem, 0.8vw, 0.35rem);
 }
 
 .item-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.3rem;
+  margin-top: clamp(0.2rem, 0.8vw, 0.35rem);
+  flex-wrap: wrap;
+  gap: clamp(0.2rem, 0.5vw, 0.3rem);
 }
 
 .item-team {
   color: white;
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  padding: clamp(0.05rem, 0.3vw, 0.15rem) clamp(0.3rem, 0.8vw, 0.5rem);
+  border-radius: clamp(3px, 0.5vw, 4px);
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
   font-weight: 600;
 }
 
 .item-time {
-  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
   color: #aaa;
 }
 
@@ -117,7 +128,7 @@
 .item-card--disabled {
   position: relative;
   filter: grayscale(50%) brightness(0.9);
-  opacity: 0.6; 
+  opacity: 0.6;
   pointer-events: none;
   transition: all 0.3s ease;
 }
@@ -125,14 +136,14 @@
 .item-card--disabled::before {
   content: "거래 완료";
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: clamp(6px, 1vw, 10px);
+  left: clamp(6px, 1vw, 10px);
   background-color: rgba(0, 0, 0, 0.55);
   color: #fff;
   font-weight: 500;
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 4px;
+  font-size: clamp(9px, 1.2vw, 12px);
+  padding: clamp(2px, 0.4vw, 4px) clamp(4px, 0.8vw, 8px);
+  border-radius: clamp(3px, 0.5vw, 5px);
   letter-spacing: -0.3px;
   z-index: 2;
 }
@@ -148,16 +159,16 @@
   opacity: 0.85;
 }
 
-/* === 등록 버튼 - 모든 화면에서 동일하게 작동 === */
+/* 등록 버튼 - 반응형 위치 및 크기 */
 .floating-add-btn {
   position: fixed !important;
-  bottom: calc(58px + 20px); 
-  right: clamp(12px, 3vw, 20px); 
-  width: clamp(52px, 10vw, 60px); 
-  height: clamp(52px, 10vw, 60px); 
+  bottom: clamp(70px, 12vh, 100px);
+  right: clamp(12px, 3vw, 24px);
+  width: clamp(48px, 8vw, 64px);
+  height: clamp(48px, 8vw, 64px);
   border-radius: 50%;
   border: none;
-  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -179,45 +190,45 @@
   transform: scale(0.95);
 }
 
-/* === 로딩 & 끝 메시지 === */
+/* 로딩 및 끝 메시지 */
 .loading-text,
 .end-message {
   text-align: center;
   color: #666;
-  font-size: 0.9rem;
-  padding: 1rem 0;
-  margin-bottom: 2rem;
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  padding: clamp(0.8rem, 2vw, 1.2rem) 0;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
 }
 
-/* === 빈 상태 === */
+/* 빈 상태 */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5rem 1rem;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 3vw, 2rem);
   text-align: center;
   animation: fadeIn 0.4s ease-in-out;
 }
 
 .empty-image {
-  width: clamp(180px, 40vw, 260px);
+  width: clamp(140px, 35vw, 280px);
   height: auto;
   opacity: 0.9;
-  margin-bottom: 0.1rem;
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
   user-select: none;
   pointer-events: none;
 }
 
 .empty-text {
   color: #9ca3af;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
   font-weight: 500;
-  margin-top: 0.5rem;
+  margin-top: clamp(0.3rem, 1vw, 0.6rem);
   line-height: 1.6;
 }
 
-/* === 애니메이션 === */
+/* 애니메이션 */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -233,12 +244,12 @@
   animation: fadeIn 0.4s ease-in-out forwards;
 }
 
-/* === 기타 스타일 === */
+/* 이미지 프리뷰 */
 .image-preview-list {
   display: flex;
-  gap: 10px;
+  gap: clamp(8px, 1.5vw, 12px);
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.8rem, 2vw, 1.2rem);
 }
 
 .image-preview-item {
@@ -246,34 +257,38 @@
 }
 
 .preview-img {
-  width: 100px;
-  height: 100px;
+  width: clamp(80px, 15vw, 120px);
+  height: clamp(80px, 15vw, 120px);
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: clamp(6px, 1vw, 10px);
   border: 1px solid #ccc;
 }
 
+/* 사진 업로더 */
 .photo-uploader {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: clamp(8px, 1.5vw, 12px);
+  width: 100%;
 }
 
 .photo-input {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(8px, 1.5vw, 12px);
+  width: 100%;
 }
 
 .upload-btn {
   background-color: #ff7f50;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
+  border-radius: clamp(4px, 0.8vw, 8px);
+  padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 16px);
   cursor: pointer;
   font-weight: 600;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
   transition: background-color 0.3s;
 }
 
@@ -283,7 +298,7 @@
 
 .photo-preview-list {
   display: flex;
-  gap: 10px;
+  gap: clamp(8px, 1.5vw, 12px);
   flex-wrap: wrap;
 }
 
@@ -292,29 +307,37 @@
 }
 
 .photo-preview-img {
-  width: 100px;
-  height: 100px;
+  width: clamp(80px, 15vw, 120px);
+  height: clamp(80px, 15vw, 120px);
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: clamp(6px, 1vw, 10px);
   border: 1px solid #ccc;
 }
 
 .photo-remove-btn {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: clamp(2px, 0.4vw, 4px);
+  right: clamp(2px, 0.4vw, 4px);
   background-color: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: clamp(18px, 3vw, 24px);
+  height: clamp(18px, 3vw, 24px);
   cursor: pointer;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: clamp(12px, 2vw, 16px);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .photo-counter {
   color: gray;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 1.8vw, 1rem);
+}
+
+.uploading-text {
+  color: #666;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
 }

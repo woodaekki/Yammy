@@ -1,50 +1,50 @@
 import { useState } from "react"
-import { usePhotoUpload } from "../hooks/usePhotoUpload"
 import "../styles/usedItem.css"
 
-function PhotoUploader({ onUploaded }) {
-  const { uploadPhotos, uploading } = usePhotoUpload()
-  const [uploadedUrls, setUploadedUrls] = useState([])
+// 이미지 선택 및 미리보기 컴포넌트 (업로드는 게시글 등록 시점에 수행)
+function PhotoUploader({ onFilesSelected }) {
+  // 선택된 파일 목록
+  const [files, setFiles] = useState([])
+  // 로컬 미리보기 URL 목록
+  const [previewUrls, setPreviewUrls] = useState([])
 
   // 파일 선택 시 실행
   function handleFileChange(event) {
-    const files = Array.from(event.target.files)
+    const selectedFiles = Array.from(event.target.files)
 
-    // 업로드 제한 (최대 3장)
-    if (uploadedUrls.length + files.length > 3) {
+    // 최대 3장 제한 검사
+    if (files.length + selectedFiles.length > 3) {
       alert("이미지는 최대 3장까지만 업로드할 수 있습니다")
-      return;
+      return
     }
 
-    // 업로드 시작
-    uploadPhotos(files)
-      .then((result) => {
-        // 새로 업로드된 이미지 + 기존 이미지 합치기
-        const newUrls = uploadedUrls.concat(result.fileUrls)
-        setUploadedUrls(newUrls)
+    // 기존 파일에 새 파일 추가
+    const newFiles = [...files, ...selectedFiles]
+    setFiles(newFiles)
 
-        // 부모 컴포넌트로 결과 전달
-        onUploaded({
-          photoIds: result.photoIds,
-          fileUrls: newUrls,
-        });
-      })
-      .catch((error) => {
-        console.error("업로드 실패:", error)
-        alert("사진 업로드 중 오류가 발생했습니다.")
-      });
+    // 로컬 미리보기 URL 생성 (서버 업로드 없이 브라우저에서 미리보기)
+    const newPreviews = selectedFiles.map(file => URL.createObjectURL(file))
+    const allPreviews = [...previewUrls, ...newPreviews]
+    setPreviewUrls(allPreviews)
+
+    // 부모 컴포넌트에 파일 목록과 미리보기 URL 전달
+    onFilesSelected(newFiles, allPreviews)
   }
 
   // 이미지 삭제
   function handleRemove(index) {
-    const newList = uploadedUrls.filter((_, i) => i !== index)
-    setUploadedUrls(newList)
+    // 해당 인덱스의 파일과 미리보기 URL 제거
+    const newFiles = files.filter((_, i) => i !== index)
+    const newPreviews = previewUrls.filter((_, i) => i !== index)
+    
+    // 메모리 누수 방지를 위해 URL 해제
+    URL.revokeObjectURL(previewUrls[index])
+    
+    setFiles(newFiles)
+    setPreviewUrls(newPreviews)
 
-    // 부모 컴포넌트로 업데이트된 이미지 목록 전달
-    onUploaded({
-      photoIds: [],
-      fileUrls: newList,
-    });
+    // 부모 컴포넌트에 업데이트된 목록 전달
+    onFilesSelected(newFiles, newPreviews)
   }
 
   return (
@@ -56,18 +56,17 @@ function PhotoUploader({ onUploaded }) {
           multiple
           accept="image/*"
           onChange={handleFileChange}
-          disabled={uploadedUrls.length >= 3 || uploading}
+          disabled={files.length >= 3}
         />
-        {uploading && <p className="uploading-text">업로드 중...</p>}
       </div>
 
-      {/* 업로드된 이미지 미리보기 */}
+      {/* 선택된 이미지 미리보기 */}
       <div className="photo-preview-list">
-        {uploadedUrls.map((url, index) => (
+        {previewUrls.map((url, index) => (
           <div key={index} className="photo-preview-item">
             <img
               src={url}
-              alt={"uploaded-" + index}
+              alt={"preview-" + index}
               className="photo-preview-img"
             />
             <button
