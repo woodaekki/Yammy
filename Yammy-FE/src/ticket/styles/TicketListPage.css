@@ -52,6 +52,54 @@
     font-weight: 600;
 }
 
+/* 팀 필터 */
+.team-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 16px 20px 16px;
+    padding: 16px;
+    background-color: white;
+    border-radius: 12px;
+    position: sticky;
+    top: 80px;
+    z-index: 9;
+}
+
+.team-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: white;
+    color: #374151;
+}
+
+.team-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-filter-btn.active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.team-filter-btn.active:first-child {
+    box-shadow: none;
+}
+
+.team-filter-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
 /* 티켓 컨테이너 */
 .tickets-container {
     padding: 0 16px;
