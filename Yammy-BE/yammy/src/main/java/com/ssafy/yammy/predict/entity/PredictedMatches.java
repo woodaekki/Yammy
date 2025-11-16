@@ -55,6 +55,9 @@ public class PredictedMatches {
     @Builder.Default
     private Integer isSettled = 0; // 정산 여부 (0: 정산 전, 1: 정산 완료)
 
+    @Column(name = "ai_pick")
+    private Integer aiPick;
+
     /**
      * 홈팀 배팅 금액 추가
      */

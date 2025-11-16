@@ -98,6 +98,18 @@
   border: none;
 }
 
+.team-name-with-pick {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.yammy-pick-inline {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+
 /* 경기 헤더 */
 .matches-header {
   display: flex;
