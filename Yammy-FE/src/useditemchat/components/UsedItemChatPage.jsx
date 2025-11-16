@@ -81,6 +81,13 @@ export default function UsedItemChatPage() {
     initChat();
   }, [roomKey, navigate, user]);
 
+  useEffect(() => {
+    return () => {
+      usedItemChatApi.markAsRead(roomKey);
+      window.dispatchEvent(new Event('chatListViewed'));
+    };
+  }, [roomKey]);
+
   const handleOpenTransferModal = () => {
     const memberId = user?.memberId || localStorage.getItem("memberId");
     if (!memberId) {

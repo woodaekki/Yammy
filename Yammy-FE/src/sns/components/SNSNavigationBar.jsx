@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaSearch, FaUser, FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
 import useAuthStore from "../../stores/authStore";
 import { getTeamColors } from "../utils/teamColors";
 import logo from "../../assets/images/logo.png";
@@ -79,7 +80,7 @@ const SNSNavigationBar = () => {
               title="유저 찾기"
               style={{ color: 'white', fontSize: '1.3rem' }}
             >
-              🔍
+              <FaSearch />
             </button>
 
             {/* 내 프로필 버튼 */}
@@ -89,7 +90,7 @@ const SNSNavigationBar = () => {
               title="내 프로필"
               style={{ color: 'white', fontSize: '1.3rem' }}
             >
-              👤
+              <FaUser />
             </button>
 
             {/* 프로필 메뉴 */}
@@ -106,18 +107,18 @@ const SNSNavigationBar = () => {
                   alt="프로필"
                   className="user-profile-img"
                 />
-                <i
-                  className={`fas fa-chevron-down ${showUserMenu ? "rotate" : ""}`}
-                ></i>
+                <FaChevronDown
+                  className={showUserMenu ? "rotate" : ""}
+                />
               </button>
 
               {showUserMenu && (
                 <div className="user-dropdown">
                   <button onClick={() => navigate("/mypage")}>
-                    <i className="fas fa-cog"></i> 내 정보 수정
+                    <FaCog /> 내 정보 수정
                   </button>
                   <button onClick={handleLogout}>
-                    <i className="fas fa-sign-out-alt"></i> 로그아웃
+                    <FaSignOutAlt /> 로그아웃
                   </button>
                 </div>
               )}

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTeamColors } from '../../sns/utils/teamColors';
+import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
+import { TEAM_LOGOS } from '../../utils/teamLogos';
 import { getTickets } from '../api/ticketApi';
-import TicketCard from '../components/TicketCard';
+import TicketCard, { parseGameTeams } from '../components/TicketCard';
 import '../styles/TicketListPage.css';
 
 const TicketListPage = () => {
@@ -10,10 +11,70 @@ const TicketListPage = () => {
     const teamColors = getTeamColors();
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedTeamFilter, setSelectedTeamFilter] = useState('전체');
+    const [isFilterCollapsed, setIsFilterCollapsed] = useState(false);
+    const [showToggleButton, setShowToggleButton] = useState(false);
+    const filterRef = useRef(null);
+    const sentinelRef = useRef(null);
 
     useEffect(() => {
         loadTickets();
     }, []);
+
+    // 필터가 2줄 이상인지 체크 (ResizeObserver 사용)
+    useEffect(() => {
+        if (!filterRef.current) return;
+
+        const checkFilterHeight = () => {
+            if (filterRef.current) {
+                const filterHeight = filterRef.current.scrollHeight;
+                console.log('Filter height:', filterHeight); // 디버깅용
+                // 2줄 이상이면 약 80px 이상 (1줄은 약 50-60px)
+                setShowToggleButton(filterHeight > 80);
+            }
+        };
+
+        // 초기 체크 (렌더링 후 실행)
+        setTimeout(checkFilterHeight, 100);
+
+        // ResizeObserver로 실시간 감지
+        const resizeObserver = new ResizeObserver(() => {
+            checkFilterHeight();
+        });
+
+        resizeObserver.observe(filterRef.current);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [tickets]);
+
+    // Sentinel 요소를 감지하여 스크롤 위치 파악
+    useEffect(() => {
+        if (!showToggleButton || !sentinelRef.current) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                // sentinel이 화면에서 사라지면 (위로 스크롤됨) 필터 접기
+                // sentinel이 화면에 나타나면 (위로 다시 스크롤됨) 필터 펼치기
+                if (!entry.isIntersecting) {
+                    setIsFilterCollapsed(true);
+                } else {
+                    setIsFilterCollapsed(false);
+                }
+            },
+            {
+                threshold: 0,
+                rootMargin: '0px' // sentinel이 화면 밖으로 나가면 즉시 감지
+            }
+        );
+
+        observer.observe(sentinelRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [showToggleButton]);
 
     const loadTickets = async () => {
         setLoading(true);
@@ -44,6 +105,16 @@ const TicketListPage = () => {
         );
     };
 
+    // 팀별 필터링된 티켓 목록
+    const filteredTickets = selectedTeamFilter === '전체'
+        ? tickets
+        : tickets.filter(ticket => {
+            if (!ticket.game) return false;
+            const teams = parseGameTeams(ticket.game);
+            if (!teams) return false;
+            return teams.some(team => team.name === selectedTeamFilter);
+        });
+
     return (
         <div
             className="ticket-list-page"
@@ -67,30 +138,88 @@ const TicketListPage = () => {
                 </button>
             </div>
 
+            {/* 팀 필터 */}
+            <div className="team-filter-wrapper">
+                <div ref={filterRef} className={`team-filter-container ${isFilterCollapsed ? 'collapsed' : ''}`}>
+                    {showToggleButton && !isFilterCollapsed && (
+                        <button
+                            className="filter-collapse-icon"
+                            onClick={() => setIsFilterCollapsed(true)}
+                        >
+                            ▲
+                        </button>
+                    )}
+                    <button
+                        className={`team-filter-btn ${selectedTeamFilter === '전체' ? 'active' : ''}`}
+                        onClick={() => setSelectedTeamFilter('전체')}
+                    >
+                        전체
+                    </button>
+                    {['LG 트윈스', '한화 이글스', 'SSG 랜더스', '삼성 라이온즈', 'NC 다이노스',
+                        'KT 위즈', '롯데 자이언츠', 'KIA 타이거즈', '두산 베어스', '키움 히어로즈']
+                        .map((teamName) => (
+                            <button
+                                key={teamName}
+                                className={`team-filter-btn ${selectedTeamFilter === teamName ? 'active' : ''}`}
+                                style={{
+                                    backgroundColor: selectedTeamFilter === teamName ? TEAM_COLORS[teamName].bgColor : 'white',
+                                    color: selectedTeamFilter === teamName ? TEAM_COLORS[teamName].textColor : '#374151',
+                                    borderColor: TEAM_COLORS[teamName].bgColor,
+                                }}
+                                onClick={() => setSelectedTeamFilter(teamName)}
+                            >
+                                <img
+                                    src={TEAM_LOGOS[teamName]}
+                                    alt={teamName}
+                                    className="team-filter-logo"
+                                />
+                                {teamName.split(' ')[0]}
+                            </button>
+                        ))}
+                </div>
+                {showToggleButton && isFilterCollapsed && (
+                    <button
+                        className="filter-expand-btn"
+                        onClick={() => setIsFilterCollapsed(false)}
+                    >
+                        ▼
+                    </button>
+                )}
+            </div>
+
             {/* 안내 문구 */}
             <div className="ticket-info">
                 <p>💡 티켓을 클릭하면 뒷면을 확인할 수 있어요</p>
             </div>
 
+            {/* 스크롤 감지용 Sentinel */}
+            {showToggleButton && <div ref={sentinelRef} style={{ height: '1px' }} />}
+
             {/* 티켓 그리드 */}
             <div className="tickets-container">
                 {loading ? (
                     <div className="loading-message">티켓을 불러오는 중...</div>
-                ) : tickets.length === 0 ? (
+                ) : filteredTickets.length === 0 ? (
                     <div className="empty-message">
                         <div className="empty-icon">🎫</div>
-                        <p>아직 발급된 티켓이 없어요</p>
-                        <button
-                            className="create-first-ticket-btn"
-                            onClick={() => navigate('/ticket/create')}
-                            style={{ backgroundColor: teamColors.bgColor }}
-                        >
-                            첫 티켓 발급하기
-                        </button>
+                        <p>
+                            {selectedTeamFilter === '전체'
+                                ? '아직 발급된 티켓이 없어요'
+                                : `${selectedTeamFilter} 티켓이 없어요`}
+                        </p>
+                        {selectedTeamFilter === '전체' && (
+                            <button
+                                className="create-first-ticket-btn"
+                                onClick={() => navigate('/ticket/create')}
+                                style={{ backgroundColor: teamColors.bgColor }}
+                            >
+                                첫 티켓 발급하기
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="tickets-grid">
-                        {tickets.map(ticket => (
+                        {filteredTickets.map(ticket => (
                             <div key={ticket.id} className="ticket-item">
                                 <TicketCard ticket={ticket} onNftMinted={handleNftMinted} />
                             </div>

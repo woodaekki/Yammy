@@ -12,6 +12,7 @@ public class ChatEvent {
     private String roomKey;
     private Long senderId;
     private String senderNickname;
+    private String senderTeam;
     private String messageType;  // "TEXT" or "IMAGE"
     private String content;
     private LocalDateTime timestamp;

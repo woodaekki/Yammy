@@ -254,13 +254,13 @@ const UserProfile = () => {
                     className={`tab-button ${activeTab === 'posts' ? 'active' : ''}`}
                     onClick={() => handleTabChange('posts')}
                 >
-                    📱 게시물
+                    게시물
                 </button>
                 <button
                     className={`tab-button ${activeTab === 'tickets' ? 'active' : ''}`}
                     onClick={() => handleTabChange('tickets')}
                 >
-                    🎫 발급받은 티켓
+                    발급받은 티켓
                 </button>
             </div>
 
@@ -306,6 +306,7 @@ const UserProfile = () => {
                                         key={ticket.id || ticket.ticketId}
                                         ticket={ticket}
                                         onNftMinted={loadTickets}
+                                        showNFTSection={false}
                                     />
                                 ))}
                             </div>

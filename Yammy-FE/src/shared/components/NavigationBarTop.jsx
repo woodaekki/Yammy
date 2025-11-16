@@ -185,7 +185,7 @@ const NavigationBarTop = () => {
     }
   };
 
-  const goMyPoint = () => navigate("/mypoint");
+  const goMyPay = () => navigate("/bankstatement");
   const goChatList = () => navigate("/chatlist");
 
   const shouldShowBalanceButton =
@@ -234,7 +234,7 @@ const NavigationBarTop = () => {
               </div>
 
               <div className="ypay-baseball-wrapper">
-                <div className="ypay-info" onClick={() => navigate("/bankstatement")}>
+                <div className="ypay-info">
                   <div className="ypay-logo-circle">⚾</div>
 
                   <span className="ypay-balance">
@@ -245,13 +245,9 @@ const NavigationBarTop = () => {
                       : "로딩 중..."}
                   </span>
                 </div>
-
-                <button className="chatlist-btn" onClick={goChatList}>
-                  채팅방
-                </button>
                 
-                <button className="ypay-charge-btn" onClick={goMyPoint}>
-                  충전
+                <button className="ypay-charge-btn" onClick={goMyPay}>
+                  페이
                 </button>
               </div>
             </>

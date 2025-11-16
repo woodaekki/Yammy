@@ -11,8 +11,7 @@ function UsedItemChatList() {
 
   useEffect(() => {
     loadChatRooms();
-    // 채팅방 목록 진입 시 상단 네비의 벨 아이콘 갱신 트리거
-    window.dispatchEvent(new Event('chatListViewed'));
+    window.dispatchEvent(new Event("chatListViewed"));
   }, []);
 
   const loadChatRooms = async () => {
@@ -27,9 +26,7 @@ function UsedItemChatList() {
     }
   };
 
-  // navigate 시 새로고침 필요 없도록 replace 옵션 제거
   const handleChatRoomClick = (roomKey) => {
-    // 상태 보존 + 렌더 강제 보장
     navigate(`/useditem/chat/${roomKey}`, { state: { fromChatList: true } });
   };
 
@@ -44,15 +41,16 @@ function UsedItemChatList() {
     return date.toLocaleDateString();
   };
 
-  if (loading) {
-    return <div className="chat-list-loading">로딩 중...</div>;
-  }
+  if (loading) return <div className="chat-list-loading">로딩 중...</div>;
 
   return (
     <div className="chat-list-container">
       {/* === 헤더 === */}
       <div className="chat-list-header">
-        <button onClick={() => navigate("/useditem")} className="chat-list-back-btn">
+        <button
+          onClick={() => navigate("/useditem")}
+          className="chat-list-back-btn"
+        >
           ←
         </button>
         <h1 className="chat-list-title">채팅방 목록</h1>
@@ -73,10 +71,15 @@ function UsedItemChatList() {
         ) : (
           <div className="chat-list-items">
             {chatRooms.map((room) => {
-              const isMyRoomAsSeller = room.sellerId == myId;
-              const otherPersonId = isMyRoomAsSeller
-                ? room.buyerId
-                : room.sellerId;
+              const isSeller = room.sellerId == myId;
+
+              const nickname = isSeller
+                ? room.buyerNickname
+                : room.sellerNickname;
+
+              const profile = isSeller
+                ? room.buyerProfileImage
+                : room.sellerProfileImage;
 
               return (
                 <div
@@ -85,34 +88,48 @@ function UsedItemChatList() {
                   onClick={() => handleChatRoomClick(room.roomKey)}
                 >
                   <div className="chat-list-item-left">
+
+                    {/* 아바타 */}
                     <div className="chat-list-item-avatar">
-                      <div className="chat-list-item-avatar-placeholder">
-                        {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}
-                      </div>
+                      {profile ? (
+                        <img src={profile} alt={nickname} />
+                      ) : (
+                        <div className="chat-list-item-avatar-placeholder">
+                          {nickname?.charAt(0) || "?"}
+                        </div>
+                      )}
                     </div>
+
+                    {/* 텍스트 섹션 */}
                     <div className="chat-list-item-info">
-                      <div className="chat-list-item-title">
-                        <span className="chat-list-item-name">
-                          {room.itemTitle || '제목 없음'}
-                        </span>
+
+                      {/* 닉네임 + 상태배지 (연두색 그대로) */}
+                      <div className="nickname-status-row">
+                        <span className="chat-list-nickname">{nickname}</span>
                         <span className="chat-list-item-badge">
                           {room.status === "ACTIVE" ? "활성" : "비활성"}
                         </span>
                       </div>
-                      <div className="chat-list-item-preview-wrapper">
+
+                      {/* 마지막 메시지 + unread */}
+                      <div className="chat-list-preview-row">
                         <p className="chat-list-item-preview">
-                          {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화
+                          {room.lastMessageContent ||
+                            `${nickname}와의 대화`}
                         </p>
-                        
-                        {/* 읽지 않은 메시지 배지 */}
+
                         {room.unreadCount > 0 && (
                           <span className="unread-badge">
-                            {room.unreadCount > 9 ? '9+' : room.unreadCount}
+                            {room.unreadCount > 9
+                              ? "9+"
+                              : room.unreadCount}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
+
+                  {/* 오른쪽 시간 */}
                   <div className="chat-list-item-right">
                     <span className="chat-list-item-time">
                       {formatTimeAgo(room.createdAt)}

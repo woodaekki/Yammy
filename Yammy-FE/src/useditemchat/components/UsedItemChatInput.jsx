@@ -4,6 +4,7 @@ import { usedItemChatApi } from "../api/usedItemChatApi";
 import "../styles/UsedItemChatInput.css";
 
 export default function UsedItemChatInput({ roomKey, disabled = false }) {
+  const MAX_LENGTH = 500;
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const textareaRef = useRef(null);
@@ -150,6 +151,7 @@ export default function UsedItemChatInput({ roomKey, disabled = false }) {
           onKeyDown={handleKeyDown}
           onChange={(e) => setMessage(e.target.value)}
           rows={1}
+          maxLength={MAX_LENGTH}
         />
 
         {/* 전송 버튼 */}

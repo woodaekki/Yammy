@@ -4,7 +4,7 @@
   padding: 0.75rem 1.5rem 1rem;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
-  min-height: calc(100vh - 128px); /* 상단(70px) + 하단(58px) 네비바 제외 */
+  min-height: calc(100vh - 128px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -77,6 +77,12 @@
   padding: 0.6rem 0;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
+}
+
+/* 버튼 눌림 UX 개선 */
+.mypoint-buttons button:active {
+  background: #e2e2e2;
+  transform: scale(0.97);
 }
 
 .mypoint-buttons button:hover {

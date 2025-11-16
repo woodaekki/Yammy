@@ -5,6 +5,7 @@ import { chatRoomApi } from '../api/chatApi';
 import GameHeader from '../components/GameHeader';
 import MessageItem from '../components/MessageItem';
 import ImageUpload from '../components/ImageUpload';
+import NavigationBarBottom from '../../shared/components/NavigationBarBottom';
 import useAuthStore from '../../stores/authStore';
 import "../styles/ImageUpload.css";
 import "../styles/ChatGamePage.css";
@@ -147,9 +148,7 @@ export default function ChatGamePage() {
               const isMine =
                 (msg.senderId?.toString() === myId?.toString() ||
                   msg.memberId?.toString() === myId?.toString() ||
-                  msg.nickname === myNickname ||
-                  msg.senderNickname === myNickname ||
-                  msg.writerNickname === myNickname) &&
+                  msg.uid?.toString() === myId?.toString()) &&  // ← uid 비교만 추가
                 isLoggedIn;
 
               return (
@@ -200,6 +199,9 @@ export default function ChatGamePage() {
           </div>
         </div>
       )}
+
+      {/* 하단 네비게이션 바 */}
+      <NavigationBarBottom />
     </div>
   );
 }

@@ -23,5 +23,5 @@ public class UsedItemResponseDto {
     private LocalDateTime updatedAt;
     private String profileUrl;
     private List<String> imageUrls;
-
+    private List<Long> photoIds;
 }
