@@ -2,6 +2,7 @@ package com.ssafy.yammy.kafka.consumer;
 
 import com.ssafy.yammy.chatgames.service.FirebaseChatService;
 import com.ssafy.yammy.kafka.dto.ChatEvent;
+import com.ssafy.yammy.useditemchat.service.UsedItemChatRoomService;
 import com.ssafy.yammy.useditemchat.service.UsedItemFirebaseChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ public class ChatConsumer {
 
     private final UsedItemFirebaseChatService usedItemChatService;
     private final FirebaseChatService cheerupChatService;
+    private final UsedItemChatRoomService usedItemChatRoomService;
 
     @KafkaListener(topics = "chat-messages", groupId = "chat-group")
     public void consume(ChatEvent event) {
@@ -38,6 +40,8 @@ public class ChatConsumer {
     }
 
     private void handleUsedItemChat(ChatEvent event) throws Exception {
+        String lastMessageContent = null;
+
         if ("TEXT".equals(event.getMessageType())) {
             usedItemChatService.saveUsedItemChatTextMessage(
                     event.getRoomKey(),
@@ -45,12 +49,22 @@ public class ChatConsumer {
                     event.getSenderNickname(),
                     event.getContent()
             );
+            lastMessageContent = event.getContent();
         } else if ("IMAGE".equals(event.getMessageType())) {
             usedItemChatService.saveUsedItemChatMessage(
                     event.getRoomKey(),
                     event.getSenderId(),
                     event.getSenderNickname(),
                     event.getContent()
+            );
+            lastMessageContent = "사진";
+        }
+
+        // MySQL의 lastMessageContent 업데이트
+        if (lastMessageContent != null) {
+            usedItemChatRoomService.updateLastMessageContent(
+                    event.getRoomKey(),
+                    lastMessageContent
             );
         }
     }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +105,7 @@ public class UsedItemChatRoomService {
                 .buyerDeleted(false)
                 .sellerUnreadCount(0)
                 .buyerUnreadCount(0)
+                .lastMessageContent(null)
                 .build();
 
         UsedItemChatRoom saved = usedItemChatRoomRepository.save(chatRoom);
@@ -255,6 +257,16 @@ public class UsedItemChatRoomService {
         log.info("Marked as read: {} by user {}", roomKey, memberId);
     }
 
+    /**
+     * 마지막 메시지 내용 업데이트
+     */
+    @Transactional
+    public void updateLastMessageContent(String roomKey, String content) {
+        UsedItemChatRoom room = getUsedItemChatRoom(roomKey);
+        room.setLastMessageContent(content);
+        room.setLastMessageAt(LocalDateTime.now());
+        usedItemChatRoomRepository.save(room);
+    }
 
 
 }

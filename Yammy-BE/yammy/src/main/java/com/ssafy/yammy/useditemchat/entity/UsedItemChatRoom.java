@@ -82,6 +82,9 @@ public class UsedItemChatRoom {
     @Column(name = "last_message_at")
     private LocalDateTime lastMessageAt;
 
+    @Column(name = "last_message_content", length = 500)
+    private String lastMessageContent;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "useditem_id")
     private UsedItem usedItem;

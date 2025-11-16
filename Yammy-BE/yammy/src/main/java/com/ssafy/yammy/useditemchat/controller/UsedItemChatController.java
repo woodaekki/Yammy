@@ -231,12 +231,14 @@ public class UsedItemChatController {
                 .lastMessageAt(chatRoom.getLastMessageAt());
 
         // Firebase에서 마지막 메시지 조회
-        try {
-            String lastMessage = usedItemFirebaseChatService.getLastMessage(chatRoom.getRoomKey());
-            builder.lastMessageContent(lastMessage);
-        } catch (Exception e) {
-            builder.lastMessageContent(null); // 에러 시 null
-        }
+//        try {
+//            String lastMessage = usedItemFirebaseChatService.getLastMessage(chatRoom.getRoomKey());
+//            builder.lastMessageContent(lastMessage);
+//        } catch (Exception e) {
+//            builder.lastMessageContent(null); // 에러 시 null
+//        }
+        // MySQL에서 바로 가져오기 (빠름)
+        builder.lastMessageContent(chatRoom.getLastMessageContent());
 
         // 현재 사용자의 읽지 않은 메시지 수 설정
         // SecurityContext에서 현재 사용자 ID 가져와서 설정
