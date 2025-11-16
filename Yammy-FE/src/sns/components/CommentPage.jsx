@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaHeart } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
@@ -127,6 +128,19 @@ const CommentPage = () => {
     loadPost();
     loadComments();
   }, [postId]);
+
+  // 모달 열릴 때 배경 스크롤 방지
+  useEffect(() => {
+    if (showCommentMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showCommentMenu]);
 
   const loadPost = async () => {
     try {
@@ -337,7 +351,7 @@ const CommentPage = () => {
         </button>
       </div>
 
-      {showCommentMenu && (
+      {showCommentMenu && createPortal(
         <div className="comment-menu-modal" onClick={() => setShowCommentMenu(false)}>
             <div className="comment-menu-content" onClick={(e) => e.stopPropagation()}>
             <button className="menu-option delete" onClick={handleDeleteComment}>
@@ -348,7 +362,8 @@ const CommentPage = () => {
                 취소
             </button>
             </div>
-        </div>
+        </div>,
+        document.body
         )}
     </div>
   );
