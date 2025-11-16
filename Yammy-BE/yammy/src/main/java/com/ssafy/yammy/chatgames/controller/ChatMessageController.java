@@ -70,6 +70,7 @@ public class ChatMessageController {
                 .roomKey(roomKey)
                 .senderId(user.getMemberId())
                 .senderNickname(user.getNickname())
+                .senderTeam(user.getTeam())
                 .messageType("IMAGE")
                 .content(imageUrl)
                 .timestamp(LocalDateTime.now())

@@ -56,20 +56,45 @@ public class ChatConsumer {
     }
 
     private void handleCheerupChat(ChatEvent event) throws Exception {
+        // 익명 닉네임 생성
+        String anonymousNickname = generateAnonymousNickname(
+                event.getSenderTeam(),   // ← 사용자의 응원팀
+                event.getSenderId()
+        );
         if ("TEXT".equals(event.getMessageType())) {
             cheerupChatService.saveTextMessage(
                     event.getRoomKey(),
                     event.getSenderId(),
-                    event.getSenderNickname(),
+                    anonymousNickname,
                     event.getContent()
             );
         } else if ("IMAGE".equals(event.getMessageType())) {
             cheerupChatService.saveImageMessage(
                     event.getRoomKey(),
                     event.getSenderId(),
-                    event.getSenderNickname(),
+                    anonymousNickname,
                     event.getContent()
             );
         }
     }
+
+    /**
+     * 익명 닉네임 생성
+     * @param team 사용자의 응원팀
+     * @param senderId 사용자 ID
+     * @return "팀명팬번호" 형식의 익명 닉네임
+     */
+    private String generateAnonymousNickname(String team, Long senderId) {
+        // team null이거나 빈 문자열인 경우 기본값 사용 (카카오 처음에 팀 없을 때 방어)
+        if (team == null || team.trim().isEmpty()) {
+            team = "야구";
+        }
+
+        // senderId 기반으로 1~1000 사이 번호 생성
+        int number = (int)(senderId % 1000) + 1;
+
+        // "팀명팬번호" 형식으로 반환
+        return team + "팬" + number;
+    }
+
 }
