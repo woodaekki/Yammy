@@ -147,9 +147,7 @@ export default function ChatGamePage() {
               const isMine =
                 (msg.senderId?.toString() === myId?.toString() ||
                   msg.memberId?.toString() === myId?.toString() ||
-                  msg.nickname === myNickname ||
-                  msg.senderNickname === myNickname ||
-                  msg.writerNickname === myNickname) &&
+                  msg.uid?.toString() === myId?.toString()) &&  // ← uid 비교만 추가
                 isLoggedIn;
 
               return (

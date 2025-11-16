@@ -32,6 +32,10 @@ public class CustomUserDetails implements UserDetails {
         return member.getNickname();
     }
 
+    public String getTeam() {
+        return member.getTeam();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Member.Authority 을 ROLE 로 매핑

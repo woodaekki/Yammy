@@ -101,7 +101,7 @@ function UsedItemChatList() {
                       </div>
                       <div className="chat-list-item-preview-wrapper">
                         <p className="chat-list-item-preview">
-                          {isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화
+                          {room.lastMessageContent || `${isMyRoomAsSeller ? room.buyerNickname : room.sellerNickname}와의 대화`}
                         </p>
                         
                         {/* 읽지 않은 메시지 배지 */}
