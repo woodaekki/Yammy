@@ -45,7 +45,7 @@ const TEAM_SHORT_NAMES = {
 };
 
 // 경기 이름에서 팀 로고 추출
-const parseGameTeams = (gameName) => {
+export const parseGameTeams = (gameName) => {
     if (!gameName) return null;
 
     const parts = gameName.split(/\s*vs\s*/i);
@@ -70,7 +70,7 @@ const parseGameTeams = (gameName) => {
 };
 
 // 경기 이름 렌더링 컴포넌트
-const GameTitle = ({ gameName, size = 'medium' }) => {
+export const GameTitle = ({ gameName, size = 'medium' }) => {
     const teams = parseGameTeams(gameName);
 
     const styles = {
@@ -473,8 +473,12 @@ const TicketCard = ({ ticket, onNftMinted }) => {
                                         className="nft-mint-button"
                                         onClick={handleMintNFT}
                                         disabled={isMinting || !canMintNFT(ticket)}
+                                        style={{
+                                            backgroundColor: (isMinting || !canMintNFT(ticket)) ? '#ccc' : teamColors.bgColor,
+                                            boxShadow: (isMinting || !canMintNFT(ticket)) ? 'none' : `0 4px 15px ${teamColors.bgColor}66`
+                                        }}
                                     >
-                                        {isMinting ? '🔄 발급 중...' : '🎫 NFT로 발급하기'}
+                                        {isMinting ? '발급 중...' : 'NFT로 발급하기'}
                                     </button>
                                     {mintStatus && (
                                         <p className="mint-status">{mintStatus}</p>

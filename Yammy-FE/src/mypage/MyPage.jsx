@@ -7,6 +7,7 @@ import { updateMember, changePassword, deleteMember } from '../auth/api/authApi'
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { getTickets } from '../ticket/api/ticketApi';
 import { getEtherscanNFTUrl } from '../ticket/api/nftApi';
+import { GameTitle } from '../ticket/components/TicketCard';
 import './styles/MyPage.css';
 
 // 기본 프로필 이미지 (SVG data URI)
@@ -36,6 +37,7 @@ const MyPage = () => {
   const [nftTickets, setNftTickets] = useState([]);
   const [loadingNFTs, setLoadingNFTs] = useState(false);
   const fileInputRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile' 또는 'nft'
 
   // 카카오 로그인 여부 확인
   const isKakaoLogin = localStorage.getItem('loginType') === 'kakao';
@@ -119,7 +121,6 @@ const MyPage = () => {
     setFormData((prev) => ({
       ...prev,
       team: teamName,
-      bio: `⚾ ${teamName}`, // 팀 변경 시 bio 자동 업데이트
     }));
   };
 
@@ -345,8 +346,35 @@ const MyPage = () => {
         <div style={{ width: '60px' }}></div> {/* 레이아웃 균형을 위한 빈 공간 */}
       </div>
 
-      {/* 프로필 정보 */}
+      {/* 탭 메뉴 */}
+      <div className="mypage-tabs">
+        <button
+          className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => setActiveTab('profile')}
+          style={{
+            borderBottomColor: activeTab === 'profile' ? teamColors.bgColor : 'transparent',
+            color: activeTab === 'profile' ? teamColors.bgColor : '#6b7280'
+          }}
+        >
+          내 정보 수정
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'nft' ? 'active' : ''}`}
+          onClick={() => setActiveTab('nft')}
+          style={{
+            borderBottomColor: activeTab === 'nft' ? teamColors.bgColor : 'transparent',
+            color: activeTab === 'nft' ? teamColors.bgColor : '#6b7280'
+          }}
+        >
+          내 NFT 티켓
+        </button>
+      </div>
+
+      {/* 컨텐츠 */}
       <div className="mypage-content">
+        {/* 내 정보 수정 탭 */}
+        {activeTab === 'profile' && (
+        <>
         <div className="profile-section">
           <div className="profile-avatar-wrapper">
             <div
@@ -511,6 +539,7 @@ const MyPage = () => {
                 onClick={handleDeleteAccount}
                 disabled={loading}
                 className="delete-account-btn"
+                style={{ alignSelf: 'flex-end' }}
               >
                 회원 탈퇴
               </button>
@@ -525,8 +554,11 @@ const MyPage = () => {
         >
           {loading ? '저장 중...' : '저장하기'}
         </button>
+        </>
+        )}
 
-        {/* 내 NFT 목록 */}
+        {/* 내 NFT 티켓 탭 */}
+        {activeTab === 'nft' && (
         <div className="nft-list-section">
           <h2 className="nft-list-title">내 NFT 티켓</h2>
           {loadingNFTs ? (
@@ -535,10 +567,23 @@ const MyPage = () => {
             <p className="nft-empty">발급된 NFT 티켓이 없습니다.</p>
           ) : (
             <div className="nft-grid">
-              {nftTickets.map((ticket) => (
+              {nftTickets.map((ticket) => {
+                const ticketTeamColors = ticket.team && TEAM_COLORS[ticket.team]
+                  ? TEAM_COLORS[ticket.team]
+                  : { bgColor: '#667eea', textColor: '#ffffff' };
+
+                return (
                 <div key={ticket.id} className="nft-card">
-                  <div className="nft-card-header">
-                    <h3>{ticket.game}</h3>
+                  <div
+                    className="nft-card-header"
+                    style={{
+                      backgroundColor: ticketTeamColors.bgColor,
+                      color: ticketTeamColors.textColor
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <GameTitle gameName={ticket.game} size="small" />
+                    </div>
                     <span className="nft-badge">NFT</span>
                   </div>
                   <div className="nft-card-body">
@@ -568,6 +613,7 @@ const MyPage = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="nft-etherscan-link"
+                        style={{ color: ticketTeamColors.bgColor }}
                       >
                         Etherscan에서 보기 →
                       </a>
@@ -580,10 +626,12 @@ const MyPage = () => {
                     </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
