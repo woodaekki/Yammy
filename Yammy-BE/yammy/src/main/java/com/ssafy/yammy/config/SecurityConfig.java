@@ -125,7 +125,8 @@ public class SecurityConfig {
         // 개발 + 운영 도메인 함께 허용
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://k13c205.p.ssafy.io"
+                "http://k13c205.p.ssafy.io",
+                "https://k13c205.p.ssafy.io"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
