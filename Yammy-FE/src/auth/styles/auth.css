@@ -154,6 +154,10 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  border-bottom: none !important;
+  text-decoration: none !important;
+  border: none;
+  outline: none;
 }
 
 .form-label {
@@ -164,11 +168,23 @@
   padding: 0;
   display: block;
   width: 100%;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  border: none;
+  outline: none;
+}
+
+.form-label,
+.form-label * {
+  text-decoration: none !important;
+  border-bottom: none !important;
 }
 
 .form-label.required::after {
   content: ' *';
   color: #ef4444;
+  text-decoration: none !important;
+  border-bottom: none !important;
 }
 
 .input-wrapper {
@@ -235,6 +251,8 @@
 .inline-button {
   position: absolute;
   right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
   padding: 0.5rem 0.75rem;
   background-color: #6366f1;
   color: white;
@@ -610,7 +628,8 @@
   opacity: 0;
   transition: opacity 0.2s;
   color: white;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  padding: 1rem;
 }
 
 .image-preview-container:hover .image-change-overlay {
@@ -622,7 +641,13 @@
 }
 
 .image-change-overlay span {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  padding: 0;
+  text-align: center;
+  word-break: keep-all;
+  max-width: 80%;
+  display: block;
+  line-height: 1.2;
 }
 
 .image-upload-label {
@@ -637,7 +662,8 @@
   cursor: pointer;
   background: #f9fafb;
   transition: all 0.2s;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  padding: 1rem;
 }
 
 .image-upload-label:hover {
@@ -655,9 +681,14 @@
 }
 
 .image-upload-label span {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #6b7280;
   text-align: center;
+  padding: 0;
+  word-break: keep-all;
+  max-width: 80%;
+  display: block;
+  line-height: 1.2;
 }
 
 .help-text {
@@ -668,15 +699,14 @@
   text-align: center;
 }
 
-/* 팀 선택 그리드 */
-.team-select-grid {
+/* 팀 선택 - 마이페이지와 동일 */
+.team-toggle-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-top: 8px;
 }
 
-.team-select-btn {
+.team-toggle-btn {
   padding: 12px 8px;
   border: 2px solid transparent;
   border-radius: 8px;
@@ -689,19 +719,20 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-decoration: none;
 }
 
-.team-select-btn:hover {
+.team-toggle-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.team-select-btn.active {
+.team-toggle-btn.active {
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.team-select-logo {
+.team-logo-icon {
   width: 24px;
   height: 24px;
   object-fit: contain;
