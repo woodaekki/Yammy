@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTodayMatches, getMatchesByDate } from '../api/predictApi';
-import { TEAM_COLORS } from '../../sns/utils/teamColors';
+import { TEAM_COLORS, TEAM_COLORS_V2 } from '../../sns/utils/teamColors';
 
 // 팀 이름 매핑 (공통 사용)
 const teamNameMapping = {
@@ -24,7 +24,7 @@ export const getFullTeamName = (teamName) => {
 // 팀 컬러 매핑 함수 (공통 사용)
 export const getTeamColor = (teamName) => {
   const fullTeamName = teamNameMapping[teamName] || teamName;
-  return TEAM_COLORS[fullTeamName]?.bgColor || '#4CAF50';
+  return TEAM_COLORS_V2[fullTeamName]?.bgColor || '#4CAF50';
 };
 
 // 팀별 상대 전적 승률 데이터 (이 팀이 상대 팀을 이긴 승률)
