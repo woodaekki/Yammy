@@ -1,89 +1,75 @@
-import { useState } from "react";
-import "../styles/usedItem.css";
+import { useState } from "react"
+import "../styles/usedItem.css"
 
-function PhotoUploader({ 
-  existingCount = 0,      // 기존 이미지 개수
-  onFilesSelected,        // 새 파일 업로드
-  onRemoveExisting        // 기존 파일 삭제
-}) {
-    const [files, setFiles] = useState([]);            // 새 파일 목록
-    const [previewUrls, setPreviewUrls] = useState([]); // 새 파일 미리보기
+function PhotoUploader({ onFilesSelected, existingCount = 0 }) {
+  const [files, setFiles] = useState([])
+  const [previewUrls, setPreviewUrls] = useState([])
 
-    const totalCount = existingCount + files.length;
-    const canUploadMore = totalCount < 3;
+  function handleFileChange(event) {
+    const selectedFiles = Array.from(event.target.files)
 
-    function handleFileChange(event) {
-      const selectedFiles = Array.from(event.target.files);
-
-      if (!canUploadMore) {
-        alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
-        return;
-      }
-
-      // 추가 선택 후 총합 계산
-      if (totalCount + selectedFiles.length > 3) {
-        alert("이미지는 최대 3장까지만 등록할 수 있습니다.");
-        return;
-      }
-
-      const newFiles = [...files, ...selectedFiles];
-      setFiles(newFiles);
-
-      const newPreviews = selectedFiles.map((file) =>
-        URL.createObjectURL(file)
-      );
-      setPreviewUrls((prev) => [...prev, ...newPreviews]);
-
-      onFilesSelected(newFiles);
+    const totalCount = existingCount + files.length + selectedFiles.length
+    if (totalCount > 3) {
+      alert("이미지는 최대 3장까지만 업로드할 수 있습니다.")
+      return
     }
 
-    function handleRemoveNew(index) {
-      URL.revokeObjectURL(previewUrls[index]);
+    const newFiles = [...files, ...selectedFiles]
+    setFiles(newFiles)
 
-      const updatedFiles = files.filter((_, i) => i !== index);
-      const updatedPreviews = previewUrls.filter((_, i) => i !== index);
+    const newPreviews = selectedFiles.map((f) => URL.createObjectURL(f))
+    setPreviewUrls((prev) => [...prev, ...newPreviews])
 
-      setFiles(updatedFiles);
-      setPreviewUrls(updatedPreviews);
+    onFilesSelected(newFiles)
+  }
 
-      onFilesSelected(updatedFiles);
-    }
+  function handleRemove(index) {
+    URL.revokeObjectURL(previewUrls[index])
+
+    const updatedFiles = files.filter((_, i) => i !== index)
+    const updatedPreviews = previewUrls.filter((_, i) => i !== index)
+
+    setFiles(updatedFiles)
+    setPreviewUrls(updatedPreviews)
+
+    onFilesSelected(updatedFiles)
+  }
 
   return (
     <div className="photo-uploader">
-      {/* 업로드 개수 안내 */}
-      <p style={{ fontSize: "0.85rem", color: "#555", marginBottom: "0.3rem" }}>
-        {totalCount} / 3 장 등록됨
-      </p>
+      {/* 사진 수 표시 */}
+      <div className="photo-count-text">
+        업로드 수: {existingCount + files.length} / 3
+      </div>
 
-      {/* 파일 선택 */}
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={handleFileChange}
-        disabled={!canUploadMore}
-      />
-
-      {/* 신규 이미지 미리보기 */}
+      {/* 새로 추가된 사진 리스트 */}
       <div className="photo-preview-list">
         {previewUrls.map((url, index) => (
-          <div key={index} className="photo-preview-item">
-            <img src={url} alt={"preview-" + index} className="photo-preview-img" />
-
-            {/* 신규 이미지 삭제 */}
+          <div key={index} className="image-card">
+            <img src={url} alt={"preview-" + index} />
             <button
               type="button"
-              className="photo-remove-btn"
-              onClick={() => handleRemoveNew(index)}
+              className="image-remove-btn"
+              onClick={() => handleRemove(index)}
             >
               ×
             </button>
           </div>
         ))}
       </div>
+
+      {/* 업로드 input */}
+      <div className="photo-input">
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleFileChange}
+          disabled={existingCount + files.length >= 3}
+        />
+      </div>
     </div>
-  );
+  )
 }
 
-export default PhotoUploader;
+export default PhotoUploader
