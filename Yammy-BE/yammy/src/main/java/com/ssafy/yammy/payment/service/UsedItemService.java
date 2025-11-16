@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -51,6 +50,8 @@ public class UsedItemService {
                         .createdAt(item.getCreatedAt())
                         .updatedAt(item.getUpdatedAt())
                         .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
+                        // photoIds 추가
+                        .photoIds(item.getPhotos().stream().map(Photo::getId).toList())
                         .build());
     }
 
@@ -72,6 +73,8 @@ public class UsedItemService {
                 .createdAt(item.getCreatedAt())
                 .updatedAt(item.getUpdatedAt())
                 .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
+                // photoIds 추가
+                .photoIds(item.getPhotos().stream().map(Photo::getId).toList())
                 .build();
     }
 
@@ -124,6 +127,8 @@ public class UsedItemService {
                 .createdAt(savedItem.getCreatedAt())
                 .updatedAt(savedItem.getUpdatedAt())
                 .imageUrls(savedItem.getPhotos().stream().map(Photo::getFileUrl).toList())
+                // photoIds 추가
+                .photoIds(savedItem.getPhotos().stream().map(Photo::getId).toList())
                 .build();
     }
 
@@ -131,6 +136,13 @@ public class UsedItemService {
     public UsedItemResponseDto updateTrade(HttpServletRequest request, Long id, UsedItemRequestDto dto) {
         String token = extractToken(request);
         Long memberId = jwtTokenProvider.getMemberId(token);
+
+        System.out.println("=== UPDATE REQUEST DTO ===");
+        System.out.println("title=" + dto.getTitle());
+        System.out.println("price=" + dto.getPrice());
+        System.out.println("team=" + dto.getTeam());
+        System.out.println("photoIds=" + dto.getPhotoIds());
+
 
         UsedItem usedItem = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
@@ -175,6 +187,8 @@ public class UsedItemService {
                 .createdAt(savedItem.getCreatedAt())
                 .updatedAt(savedItem.getUpdatedAt())
                 .imageUrls(savedItem.getPhotos().stream().map(Photo::getFileUrl).toList())
+                // photoIds 추가
+                .photoIds(savedItem.getPhotos().stream().map(Photo::getId).toList())
                 .build();
     }
 
@@ -210,6 +224,8 @@ public class UsedItemService {
                         .createdAt(item.getCreatedAt())
                         .updatedAt(item.getUpdatedAt())
                         .imageUrls(item.getPhotos().stream().map(Photo::getFileUrl).toList())
+                        // photoIds 추가
+                        .photoIds(item.getPhotos().stream().map(Photo::getId).toList())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -225,8 +241,6 @@ public class UsedItemService {
 
     // S3 URL에서 S3 Key 추출
     private String extractS3KeyFromUrl(String fileUrl) {
-        // URL: https://bucket.s3.amazonaws.com/useditem/uuid.jpg
-        // S3Key: useditem/uuid.jpg
         String[] parts = fileUrl.split(".s3.amazonaws.com/");
         if (parts.length > 1) {
             return parts[1];
