@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class UsedItemService {
 
     private final UsedItemRepository usedItemRepository;
     private final PhotoRepository photoRepository;
+    private final PhotoService photoService;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final BadWordsFilterUtil badWordsFilterUtil;
@@ -74,7 +76,7 @@ public class UsedItemService {
     }
 
     // 게시물 작성
-    public UsedItemResponseDto createTrade(HttpServletRequest request, UsedItemRequestDto dto) {
+    public UsedItemResponseDto createTrade(HttpServletRequest request, UsedItemRequestDto dto, List<MultipartFile> imageFiles) {
         String token = extractToken(request);
         Long memberId = jwtTokenProvider.getMemberId(token);
 
@@ -98,13 +100,16 @@ public class UsedItemService {
         usedItem.setTeam(dto.getTeam());
 
         // 사진 연결
-        if (dto.getPhotoIds() != null && !dto.getPhotoIds().isEmpty()) {
-            List<Photo> photos = photoRepository.findAllById(dto.getPhotoIds());
-            photos.forEach(photo -> {
-                photo.setTemporary(false); // 임시 업로드에서 업로드 확정 처리
-                photo.setUsedItem(usedItem);
-            });
-            usedItem.setPhotos(photos);
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            for (MultipartFile imageFile : imageFiles) {
+                String fileUrl = photoService.uploadPhoto(imageFile, "useditem");
+                Photo photo = new Photo();
+                photo.setMember(member);
+                photo.setFileUrl(fileUrl);
+                photo.setS3Key(extractS3KeyFromUrl(fileUrl));
+                photo.setContentType(imageFile.getContentType());
+                usedItem.addPhoto(photo);
+            }
         }
 
         UsedItem savedItem = usedItemRepository.save(usedItem);
@@ -222,5 +227,16 @@ public class UsedItemService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증 토큰이 없습니다.");
         }
         return authHeader.substring(7);
+    }
+
+    // S3 URL에서 S3 Key 추출
+    private String extractS3KeyFromUrl(String fileUrl) {
+        // URL: https://bucket.s3.amazonaws.com/useditem/uuid.jpg
+        // S3Key: useditem/uuid.jpg
+        String[] parts = fileUrl.split(".s3.amazonaws.com/");
+        if (parts.length > 1) {
+            return parts[1];
+        }
+        return fileUrl;
     }
 }

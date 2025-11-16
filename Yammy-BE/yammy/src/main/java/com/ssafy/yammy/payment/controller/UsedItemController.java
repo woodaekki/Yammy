@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,12 +47,13 @@ public class UsedItemController {
 
     // 게시물 작성
     @Operation(summary = "중고 거래 게시물 작성")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UsedItemResponseDto> createTrade(
             HttpServletRequest request,
-            @Valid @RequestBody UsedItemRequestDto dto) {
+            @Valid @RequestPart("data") UsedItemRequestDto dto,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(usedItemService.createTrade(request, dto));
+                .body(usedItemService.createTrade(request, dto, imageFiles));
     }
 
     // 게시물 수정

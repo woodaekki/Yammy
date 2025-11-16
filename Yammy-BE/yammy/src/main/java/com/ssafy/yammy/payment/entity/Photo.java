@@ -30,9 +30,6 @@ public class Photo {
     @Column(name = "content_type", nullable = false)
     private String contentType;
 
-    @Column(nullable = false)
-    private Boolean temporary = true; // 임시 업로드 상태
-
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
