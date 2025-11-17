@@ -17,34 +17,48 @@ public class PointTransactionService {
 
     private final PointTransactionRepository pointTransactionRepository;
 
-    // 포인트 증감
+    /**
+     * 모든 포인트 거래 기록을 담당하는 공통 메서드
+     * CHARGE, ESCROW_DEPOSIT, ESCROW_CONFIRMED, ESCROW_CANCEL 모두 이 메서드로 통일
+     */
     @Transactional
     public void recordTransaction(Member member, long amount, TransactionType type) {
+
         Point point = member.getPoint();
+        long beforeBalance = point.getBalance();
 
-        // 거래 타입에 따라 포인트 변경
-        if (type == TransactionType.CHARGE) {
-            point.increase(amount); // 충전
+        // 포인트 증감 로직
+        switch (type) {
 
-        } else if (type == TransactionType.ESCROW_DEPOSIT) {
-            if (point.getBalance() < amount) {
-                throw new IllegalStateException("포인트가 부족합니다.");
+            case CHARGE -> {
+                point.increase(amount);
             }
-            point.decrease(amount); // 예치(차감)
 
-        } else if (type == TransactionType.ESCROW_CONFIRMED) {
-            point.increase(amount); // 판매자 수익 지급
+            case ESCROW_DEPOSIT -> {
+                if (point.getBalance() < amount) {
+                    throw new IllegalStateException("포인트가 부족합니다.");
+                }
+                point.decrease(amount);  // 예치 → 차감
+            }
 
-        } else if (type == TransactionType.ESCROW_CANCEL) {
-            point.increase(amount); // 환불
+            case ESCROW_CONFIRMED -> {
+                point.increase(amount); // 판매자 수익 지급
+            }
+
+            case ESCROW_CANCEL -> {
+                point.increase(amount); // 구매자 환불
+            }
         }
 
-        // 로그 저장
+        long afterBalance = point.getBalance();
+
+       // 거래 로그 저장
         PointTransaction transaction = PointTransaction.builder()
                 .member(member)
                 .point(point)
                 .amount(amount)
                 .type(type)
+                .balanceAfter(afterBalance)
                 .createdAt(LocalDateTime.now())
                 .build();
 
