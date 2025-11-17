@@ -30,16 +30,23 @@ function UsedItemChatList() {
     navigate(`/useditem/chat/${roomKey}`, { state: { fromChatList: true } });
   };
 
+  // 시간 포맷 함수 (한국 시간 기준)
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
+    const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return `${diff}초 전`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
-    if (diff < 2592000) return `${Math.floor(diff / 86400)}일 전`;
-    return date.toLocaleDateString();
-  };
+    const diffInMs = now - koreaTime;
+   
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return '방금 전';
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`
+    if (diffInHours < 24) return `${diffInHours}시간 전`
+    if (diffInDays < 7) return `${diffInDays}일 전`
+    return koreaTime.toLocaleDateString('ko-KR')
+  }
 
   if (loading) return <div className="chat-list-loading">로딩 중...</div>;
 

@@ -11,6 +11,7 @@ import com.ssafy.yammy.payment.entity.TransactionType;
 import com.ssafy.yammy.payment.entity.UsedItem;
 import com.ssafy.yammy.payment.entity.UsedItemStatus;
 import com.ssafy.yammy.payment.repository.PointTransactionRepository;
+import com.ssafy.yammy.payment.service.PointTransactionService;
 import com.ssafy.yammy.useditemchat.entity.UsedItemChatRoom;
 import com.ssafy.yammy.useditemchat.repository.UsedItemChatRoomRepository;
 import com.ssafy.yammy.useditemchat.service.UsedItemFirebaseChatService;
@@ -27,7 +28,7 @@ public class EscrowService {
     private final EscrowRepository escrowRepository;
     private final UsedItemChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final PointTransactionRepository pointTransactionRepository;
+    private final PointTransactionService pointTransactionService;
     private final UsedItemFirebaseChatService firebaseChatService; // Firebase 연동 추가
 
     // 송금 요청 (에스크로 생성 + Firebase 메시지 전송)
@@ -109,19 +110,17 @@ public class EscrowService {
          }
 
          // 거래 로그 저장
-        pointTransactionRepository.save(PointTransaction.builder()
-                .member(buyer)
-                .point(buyer.getPoint())
-                .amount(amount)
-                .type(TransactionType.ESCROW_DEPOSIT)
-                .build());
+         pointTransactionService.recordTransaction(
+                 buyer,
+                 amount,
+                 TransactionType.ESCROW_DEPOSIT  // 구매자 → 예치
+         );
 
-        pointTransactionRepository.save(PointTransaction.builder()
-                .member(seller)
-                .point(seller.getPoint())
-                .amount(amount)
-                .type(TransactionType.ESCROW_CONFIRMED)
-                .build());
+         pointTransactionService.recordTransaction(
+                 seller,
+                 amount,
+                 TransactionType.ESCROW_CONFIRMED  // 판매자 → 수익 지급
+         );
 
         // Firebase 메시지 상태 업데이트
         try {

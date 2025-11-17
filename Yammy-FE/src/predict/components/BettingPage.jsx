@@ -161,58 +161,85 @@ const BettingPage = () => {
                 </button>
               </div>
             )}
-            <div className="teams-container">
-              <div
-                className={`team-odds-card home-odds ${selectedTeam === 0 ? 'selected' : ''}`}
-                style={{
-                  backgroundColor: getTeamColor(match.homeTeam),
-                }}
-                onClick={() => handleTeamSelect(0)}
-              >
-                <div className="team-label">HOME</div>
-                <div className="team-info-container home-team-info">
-                  <TeamLogo teamName={match.homeTeam} size="medium" />
-                  <div className="team-details">
-                    <div className="team-name">{match.homeTeam}</div>
-                    <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
+            <div className="betting-match-card">
+              <div className="betting-match-info-section">
+                {/* HOME */}
+                <div
+                  className={`betting-team-column ${selectedTeam === 0 ? 'selected' : ''}`}
+                  style={{
+                    background: `linear-gradient(135deg, ${getTeamColor(match.homeTeam)}25 0%, ${getTeamColor(match.homeTeam)}12 100%)`
+                  }}
+                  onClick={() => handleTeamSelect(0)}
+                >
+                  <div className="betting-team-label">HOME</div>
+                  <div className="betting-team-logo-name">
+                    <TeamLogo teamName={match.homeTeam} size="medium" />
+                    <div className="betting-team-name">{match.homeTeam}</div>
                   </div>
+                  <div className="betting-team-stat-row">예상 승률: {match.homeWinningRate}%</div>
+                  <div className="betting-team-stat-row">배당률: {match.homeOdds.toFixed(2)}</div>
+                  <div className="betting-team-stat-row">총 팬심: {match.homeAmount.toLocaleString()}</div>
                 </div>
-                <div className="team-odds">{match.homeOdds.toFixed(2)}</div>
-                <div className="total-fansim-betting">총 팬심: {match.homeAmount.toLocaleString()}</div>
+
+                {/* VS */}
+                <div className="betting-vs-section">
+                  <span className="vs-text">VS</span>
+                </div>
+
+                {/* AWAY */}
+                <div
+                  className={`betting-team-column ${selectedTeam === 1 ? 'selected' : ''}`}
+                  style={{
+                    background: `linear-gradient(135deg, ${getTeamColor(match.awayTeam)}25 0%, ${getTeamColor(match.awayTeam)}12 100%)`
+                  }}
+                  onClick={() => handleTeamSelect(1)}
+                >
+                  <div className="betting-team-label">AWAY</div>
+                  <div className="betting-team-logo-name">
+                    <TeamLogo teamName={match.awayTeam} size="medium" />
+                    <div className="betting-team-name">{match.awayTeam}</div>
+                  </div>
+                  <div className="betting-team-stat-row">예상 승률: {match.awayWinningRate}%</div>
+                  <div className="betting-team-stat-row">배당률: {match.awayOdds.toFixed(2)}</div>
+                  <div className="betting-team-stat-row">총 팬심: {match.awayAmount.toLocaleString()}</div>
+                </div>
               </div>
 
-              <div className="vs-divider">
-                <span className="vs-text">VS</span>
-              </div>
-
-              <div
-                className={`team-odds-card away-odds ${selectedTeam === 1 ? 'selected' : ''}`}
-                style={{
-                  backgroundColor: getTeamColor(match.awayTeam),
-                }}
-                onClick={() => handleTeamSelect(1)}
-              >
-                <div className="team-label">AWAY</div>
-                <div className="team-info-container away-team-info">
-                  <div className="team-details">
-                    <div className="team-name">{match.awayTeam}</div>
-                    <div className="team-stats">예상 승률: {match.awayWinningRate}%</div>
+              {/* 그래프 섹션 */}
+              <div className="betting-graph-section">
+                <div className="betting-ratio-bar-graph">
+                  <div
+                    className="home-ratio-bar"
+                    style={{
+                      width: `${Math.max(20, Math.min(80, (match.homeAmount / (match.homeAmount + match.awayAmount) * 100))).toFixed(1)}%`,
+                      backgroundColor: getTeamColor(match.homeTeam)
+                    }}
+                  >
+                    <span className="ratio-text">{match.homeAmount.toLocaleString()}</span>
                   </div>
-                  <TeamLogo teamName={match.awayTeam} size="medium" />
+                  <div
+                    className="away-ratio-bar"
+                    style={{
+                      width: `${Math.max(20, Math.min(80, (match.awayAmount / (match.homeAmount + match.awayAmount) * 100))).toFixed(1)}%`,
+                      backgroundColor: getTeamColor(match.awayTeam)
+                    }}
+                  >
+                    <span className="ratio-text">{match.awayAmount.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="team-odds">{match.awayOdds.toFixed(2)}</div>
-                <div className="total-fansim-betting">총 팬심: {match.awayAmount.toLocaleString()}</div>
               </div>
             </div>
           </div>
           
           {/* 경기 정보 섹션 */}
           <div className="match-info-section">
-            <h3>경기 정보</h3>
+            <div style={{ marginTop: '15px' }}>
+              <h3>경기 정보</h3>
+            </div>
             <div className="info-grid">
               <div className="info-item">
                 <span className="info-label">시작 시간</span>
-                <span className="info-value">{match.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1$2$3 ')} {match.gameTime}</span>
+                <span className="info-value">{match.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1년 $2월 $3일 ')} {match.gameTime}</span>
               </div>
               <div className="info-item">
                 <span className="info-label">경기장</span>

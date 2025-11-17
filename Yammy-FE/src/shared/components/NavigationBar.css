@@ -223,6 +223,7 @@
   position: relative;
   top: 1px;
   transition: transform 0.2s ease;
+  opacity: 0;
 }
 
 .nav-bar-top .user-button i.fa-chevron-down.rotate {
