@@ -125,6 +125,7 @@ const UserSearchPage = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
+            maxLength={50}
           />
           {searchQuery && (
             <button

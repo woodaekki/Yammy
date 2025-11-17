@@ -156,6 +156,7 @@ function UsedItemCreate() {
           }}
           placeholder="제목을 입력하세요"
           className="create-input-field"
+          maxLength={50}
         />
         {errors.title && <p className="create-text">{errors.title}</p>}
 
@@ -181,6 +182,7 @@ function UsedItemCreate() {
           }}
           placeholder="상품 설명을 입력하세요"
           className="create-textarea-field"
+          maxLength={1000}
         />
         {errors.description && <p className="create-text">{errors.description}</p>}
 

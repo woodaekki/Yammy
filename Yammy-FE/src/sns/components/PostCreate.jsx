@@ -187,6 +187,7 @@ const PostCreate = () => {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     disabled={isUploading}
+                    maxLength={2000}
                 />
                 <div className="post-create-counter">{caption.length} / 2000</div>
 

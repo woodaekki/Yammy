@@ -211,6 +211,7 @@ const PostEdit = () => {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     disabled={isUploading}
+                    maxLength={2000}
                 />
                 <div className="post-edit-counter">{caption.length} / 2000</div>
 

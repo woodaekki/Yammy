@@ -335,6 +335,7 @@ const CommentPage = () => {
           onChange={(e) => setCommentInput(e.target.value)}
           placeholder="댓글 달기..."
           rows={1}
+          maxLength={500}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();

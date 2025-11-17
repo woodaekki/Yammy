@@ -67,6 +67,7 @@ const TicketCreatePage = () => {
     const [matches, setMatches] = useState([]);
     const [loadingMatches, setLoadingMatches] = useState(false);
     const [selectedMatch, setSelectedMatch] = useState(null); // 선택된 경기 정보
+    const [isSubmitting, setIsSubmitting] = useState(false); // 티켓 발급 중 상태
 
     // KBO 구장 목록 (stadiumMapper에서 가져옴)
     const stadiums = KBO_STADIUMS;
@@ -295,6 +296,11 @@ const TicketCreatePage = () => {
     };
 
     const handleSubmit = async () => {
+        // 이미 발급 중이면 무시
+        if (isSubmitting) {
+            return;
+        }
+
         // 필수 항목 검증
         if (!formData.game || !formData.date || !formData.location || !formData.seat || !formData.comment) {
             alert('모든 필수 항목을 입력해주세요.');
@@ -304,6 +310,8 @@ const TicketCreatePage = () => {
             alert('사진을 선택해주세요.');
             return;
         }
+
+        setIsSubmitting(true);
         try {
             // team 필드 추가
             const ticketDataWithTeam = {
@@ -316,6 +324,8 @@ const TicketCreatePage = () => {
         } catch (error) {
             console.error('티켓 발급 실패:', error);
             alert('티켓 발급에 실패했습니다.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -426,26 +436,26 @@ const TicketCreatePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Seat* ({formData.seat.length}/50)</label>
+                            <label>Seat* ({formData.seat.length}/10)</label>
                             <input
                                 type="text"
                                 name="seat"
                                 value={formData.seat}
                                 onChange={handleChange}
-                                placeholder="예시: A구역 4행 1열"
-                                maxLength={50}
+                                placeholder="예시: A구역 4행"
+                                maxLength={10}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Comment* ({formData.comment.length}/200)</label>
+                            <label>Comment* ({formData.comment.length}/15)</label>
                             <input
                                 type="text"
                                 name="comment"
                                 value={formData.comment}
                                 onChange={handleChange}
-                                placeholder="직관한 경기 한줄평을 남겨주세요."
-                                maxLength={200}
+                                placeholder="한줄평 (15자)"
+                                maxLength={15}
                             />
                         </div>
 
@@ -520,14 +530,14 @@ const TicketCreatePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Review ({formData.review.length}/1000)</label>
+                            <label>Review ({formData.review.length}/50)</label>
                             <textarea
                                 name="review"
                                 value={formData.review}
                                 onChange={handleChange}
-                                rows={6}
-                                placeholder="상세 리뷰를 작성해주세요..."
-                                maxLength={1000}
+                                rows={3}
+                                placeholder="간단한 리뷰 (50자)"
+                                maxLength={50}
                             />
                         </div>
 
@@ -606,8 +616,17 @@ const TicketCreatePage = () => {
                             </div>
                         )}
 
-                        <button className="submit-btn" onClick={handleSubmit} style={{ backgroundColor: teamColors.bgColor }}>
-                            티켓 발급하기
+                        <button
+                            className="submit-btn"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            style={{
+                                backgroundColor: isSubmitting ? '#ccc' : teamColors.bgColor,
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                opacity: isSubmitting ? 0.6 : 1
+                            }}
+                        >
+                            {isSubmitting ? '발급 중...' : '티켓 발급하기'}
                         </button>
                     </div>
             </div>
