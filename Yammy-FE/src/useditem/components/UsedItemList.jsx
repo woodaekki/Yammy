@@ -29,7 +29,7 @@ function UsedItemList({ items }) {
     return map[team] || "팀 미지정"
   }
 
-  // kst로 변환
+  // 한국 시간 기준 포맷
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString)
     const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000)
@@ -47,25 +47,26 @@ function UsedItemList({ items }) {
     return koreaTime.toLocaleDateString("ko-KR")
   }
 
-  const activeItems = items.filter(
-    (item) => !["CONFIRMED", "HOLD", "CANCELLED"].includes(item.status)
-  )
-  const completedItems = items.filter(
-    (item) => ["CONFIRMED", "HOLD", "CANCELLED"].includes(item.status)
-  )
-
-  const merged = [...activeItems, ...completedItems]
+  // Enum 또는 문자열 둘 다 대응
+  const getStatusName = (status) => {
+    if (!status) return null
+    if (typeof status === "string") return status
+    return status.name
+  }
 
   return (
     <div className="camel-grid-container">
-      {merged.map((item) => {
-        const isCompleted = completedItems.includes(item)
+      {items.map((item) => {
+        const isCompleted = getStatusName(item.status) === "CONFIRMED"
 
         return (
           <div
             key={item.id}
-            className="camel-card"
+            className={`camel-card ${isCompleted ? "camel-disabled" : ""}`}
             onClick={() => !isCompleted && navigate("/useditem/" + item.id)}
+            style={{
+              cursor: isCompleted ? "not-allowed" : "pointer",
+            }}
           >
             {/* 이미지 */}
             <div className={`camel-img-box ${isCompleted ? "camel-blur" : ""}`}>
@@ -77,7 +78,7 @@ function UsedItemList({ items }) {
                 </div>
               )}
 
-              {/* 중앙 동그라미 배지 (거래완료 텍스트) */}
+              {/* 거래완료 배지 */}
               {isCompleted && (
                 <div className="camel-circle-done">
                   거래완료
