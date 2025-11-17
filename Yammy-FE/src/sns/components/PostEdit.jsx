@@ -89,8 +89,10 @@ const PostEdit = () => {
         const files = Array.from(e.target.files);
         const imageFiles = files.filter(file => file.type.startsWith('image/'));
 
-        if (imageFiles.length > 3) {
-            alert('이미지는 최대 3개까지 업로드할 수 있습니다.');
+        // 기존 파일과 합쳐서 최대 3개까지만 허용
+        const totalCount = selectedFiles.length + imageFiles.length;
+        if (totalCount > 3) {
+            alert(`이미지는 최대 3개까지 업로드할 수 있습니다. (현재 ${selectedFiles.length}개 선택됨)`);
             return;
         }
 
@@ -110,9 +112,10 @@ const PostEdit = () => {
             imageFiles.map(file => compressImage(file))
         );
 
-        setSelectedFiles(compressedFiles);
+        // 기존 파일에 추가
+        setSelectedFiles([...selectedFiles, ...compressedFiles]);
         const previews = compressedFiles.map(file => URL.createObjectURL(file));
-        setPreviewUrls(previews);
+        setPreviewUrls([...previewUrls, ...previews]);
     };
 
     // 새 이미지 제거
