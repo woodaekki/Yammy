@@ -31,10 +31,10 @@ export const getUserTeam = () => {
   return localStorage.getItem('team') || null;
 };
 
-// 팀 컬러 가져오기 (기본값: 초록색)
+// 팀 컬러 가져오기 (기본값: 어두운 잔디색)
 export const getTeamColors = () => {
   const team = getUserTeam();
-  return TEAM_COLORS[team] || { bgColor: '#4CAF50', textColor: '#ffffff' };
+  return TEAM_COLORS[team] || { bgColor: '#14452f', textColor: '#ffffff' };
 };
 
 // TEAM_COLORS export
