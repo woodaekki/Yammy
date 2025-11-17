@@ -254,11 +254,9 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
               <div>팬심</div>
               <span className="currency"></span>
             </div>
-            {validationMessage && (
-              <div className="validation-message error">
-                {validationMessage}
-              </div>
-            )}
+            <div className={`validation-message ${validationMessage ? 'error' : ''}`}>
+              {validationMessage || '\u00A0'}
+            </div>
           </div>
 
           {/* 버튼들 */}
