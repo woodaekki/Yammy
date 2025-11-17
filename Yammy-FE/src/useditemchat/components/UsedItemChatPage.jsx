@@ -187,9 +187,16 @@ export default function UsedItemChatPage() {
             )}
 
             <div className="useditem-chat-header-buttons">
-              <button className="useditem-chat-transfer-btn" onClick={handleOpenTransferModal}>
-                송금
-              </button>
+              {/* 구매자만 송금 버튼 표시 */}
+              {chatRoomInfo?.buyerId == (user?.memberId || localStorage.getItem("memberId")) && (
+                <button 
+                  className="useditem-chat-transfer-btn" 
+                  onClick={handleOpenTransferModal}
+                  disabled={itemInfo?.status === 'CONFIRMED'}
+                >
+                  송금
+                </button>
+              )}
               <button className="useditem-chat-leave-btn" onClick={handleLeaveChatRoom}>
                 나가기
               </button>
@@ -210,9 +217,13 @@ export default function UsedItemChatPage() {
       {createPortal(
         <div className="useditem-chat-input-fixed">
           <UsedItemChatInput
-            roomKey={roomKey}
-            disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
-          />
+              roomKey={roomKey}
+              disabled={
+                chatRoomInfo?.sellerDeleted || 
+                chatRoomInfo?.buyerDeleted ||
+                itemInfo?.status === 'CONFIRMED'
+              }
+            />
         </div>,
         document.body
       )}
