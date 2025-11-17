@@ -4,7 +4,7 @@ import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi";
 import { getTeamColors } from "../../sns/utils/teamColors";
 import { usedItemChatApi } from "../../useditemchat/api/usedItemChatApi";
 import "../styles/usedItemDetail.css";
-import empty from "../../assets/images/empty.png"
+import empty from "../../assets/images/empty.png";
 
 function UsedItemDetail() {
   const params = useParams();
@@ -15,6 +15,7 @@ function UsedItemDetail() {
   const myId = localStorage.getItem("memberId");
   const [teamColors, setTeamColors] = useState(getTeamColors());
   const [isChatLoading, setIsChatLoading] = useState(false);
+
   // 팀 컬러 초기 설정
   useEffect(() => {
     setTeamColors(getTeamColors());
@@ -28,62 +29,81 @@ function UsedItemDetail() {
       .finally(() => setLoading(false));
   }, [params.id]);
 
-  // 시간 포맷 함수 (한국 시간 기준)
+  // 한국 시간 포맷
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
     const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
     const now = new Date();
     const diffInMs = now - koreaTime;
-   
+
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    if (diffInMinutes < 1) return '방금 전';
-    if (diffInMinutes < 60) return `${diffInMinutes}분 전`
-    if (diffInHours < 24) return `${diffInHours}시간 전`
-    if (diffInDays < 7) return `${diffInDays}일 전`
-    return koreaTime.toLocaleDateString('ko-KR')
-  }
+    if (diffInMinutes < 1) return "방금 전";
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+    if (diffInHours < 24) return `${diffInHours}시간 전`;
+    if (diffInDays < 7) return `${diffInDays}일 전`;
+    return koreaTime.toLocaleDateString("ko-KR");
+  };
 
   // 수정
-  const handleEdit = () => navigate(`/useditem/edit/${params.id}`)
+  const handleEdit = () => navigate(`/useditem/edit/${params.id}`);
 
   // 채팅방 입장
   const handleChat = async () => {
-    if (isChatLoading) return; // 이미 처리 중이면 무시
-    
+    if (isChatLoading) return; 
     try {
-      setIsChatLoading(true); // 로딩 시작
-      const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id)
-      navigate(`/useditem/chat/${chatRoom.roomKey}`)
+      setIsChatLoading(true);
+      const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id);
+      navigate(`/useditem/chat/${chatRoom.roomKey}`);
     } catch (error) {
-      console.error("채팅방 생성 실패:", error)
+      console.error("채팅방 생성 실패:", error);
       alert("채팅방 입장에 실패했습니다.");
     } finally {
-      setIsChatLoading(false); // 로딩 종료
+      setIsChatLoading(false);
     }
   };
 
   // 삭제
   const handleDelete = () => {
-    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?")
+    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?");
     if (!confirmed) return;
+
     deleteUsedItem(params.id)
       .then(() => {
-        alert("게시글이 삭제되었습니다.")
-        navigate("/useditem")
+        alert("게시글이 삭제되었습니다.");
+        navigate("/useditem");
       })
       .catch((error) => {
         console.error("삭제 실패:", error);
-        alert("삭제 중 오류가 발생했습니다.")
+        alert("삭제 중 오류가 발생했습니다.");
       });
   };
 
-  // 로딩 / 데이터 없음 처리
-  if (!item) return <p className="loading-text"></p>
+  // 로딩 중
+  if (loading) return <p className="loading-text"></p>;
 
-  // 팀 이름 매핑
+  // 데이터 없음
+  if (!item) return <p className="loading-text">데이터가 없습니다.</p>;
+
+  // 거래 완료 상태 차단
+  const completedStatuses = ["CONFIRMED", "HOLD", "CANCELLED"];
+  const isCompletedStatus = completedStatuses.includes(item.status);
+
+  if (isCompletedStatus) {
+    return (
+      <div className="detail-notfound">
+        <p className="nf-title">이미 거래가 완료된 상품입니다</p>
+        <p className="nf-sub">더 이상 이 상품의 상세 페이지를 확인할 수 없어요.</p>
+        <button className="nf-btn" onClick={() => navigate("/useditem")}>
+          목록으로 돌아가기
+        </button>
+      </div>
+    );
+  }
+
+  // 팀 이름
   const teamNames = {
     DOOSAN: "두산 베어스",
     LOTTE: "롯데 자이언츠",
@@ -119,6 +139,7 @@ function UsedItemDetail() {
                 className={`detail-image ${index === currentIndex ? "active" : ""}`}
               />
             ))}
+
             <div className="detail-slider-dots">
               {item.imageUrls.map((_, index) => (
                 <div
@@ -128,7 +149,7 @@ function UsedItemDetail() {
                 ></div>
               ))}
             </div>
-            {/* 썸네일 미리보기 */}
+
             <div className="detail-thumbnail-container">
               {item.imageUrls.map((url, index) => (
                 <div
@@ -142,9 +163,9 @@ function UsedItemDetail() {
             </div>
           </>
         ) : (
-           <div className="no-image">
-                <img src={empty} alt="이미지 없음" />
-              </div>
+          <div className="no-image">
+            <img src={empty} alt="이미지 없음" />
+          </div>
         )}
       </div>
 
@@ -152,7 +173,7 @@ function UsedItemDetail() {
       <div className="detail-body">
         <h2 className="detail-item-title">{item.title}</h2>
 
-        {/* 판매자 정보 */}
+        {/* 판매자 */}
         <div className="detail-seller">
           <div className="detail-seller-left">
             <div className="detail-seller-avatar">
@@ -182,8 +203,8 @@ function UsedItemDetail() {
                 </button>
               </>
             ) : (
-              <button 
-                className="detail-chat-btn" 
+              <button
+                className="detail-chat-btn"
                 onClick={handleChat}
                 disabled={isChatLoading}
               >
@@ -193,7 +214,7 @@ function UsedItemDetail() {
           </div>
         </div>
 
-        {/* 가격 + 팀 태그 */}
+        {/* 가격 + 팀 */}
         <div className="detail-price-team">
           <p className="detail-price">{item.price?.toLocaleString()} 얌</p>
           {item.team && (
@@ -209,7 +230,6 @@ function UsedItemDetail() {
           )}
         </div>
 
-        {/* 상품 설명 */}
         <p className="detail-description">{item.description}</p>
       </div>
     </div>

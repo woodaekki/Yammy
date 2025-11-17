@@ -129,3 +129,57 @@
   font-size: 0.75rem;
   color: #9ca3af;
 }
+
+.chat-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  padding-top: 120px; 
+  text-align: center;
+  font-family: "Pretendard", sans-serif;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* 큰 문구 */
+.chat-empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+/* 작은 문구 */
+.chat-empty-sub {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* CTA 버튼 */
+.chat-list-go-market {
+  padding: 12px 18px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.chat-list-go-market:hover {
+  background-color: #f1f5f9;
+}
+
+.chat-list-go-market:active {
+  opacity: 0.7;
+}
+
+/* Fade-in 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

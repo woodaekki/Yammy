@@ -1,16 +1,24 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { getMyPoint } from "../payment/api/pointAPI"
 import { requestWithdraw } from "../withdrawal/api/withdrawalApi"
 import "./styles/WithdrawalPage.css"
 
 const WithdrawalPage = () => {
   const navigate = useNavigate()
 
+  const [balance, setBalance] = useState(0)
+  const [loading, setLoading] = useState(true)
+
   const [amount, setAmount] = useState("")
   const [bankName, setBankName] = useState("선택")
   const [accountNumber, setAccountNumber] = useState("")
   const [error, setError] = useState("")
 
+  const token = localStorage.getItem("accessToken")
+  const format = (n) => n.toLocaleString()
+
+  // 계좌 번호 규칙 검증 
   const rules = {
     "카카오뱅크": { prefix: "3333", length: 13 },
     "토스뱅크": { prefix: "1000", length: 12 },
@@ -22,6 +30,31 @@ const WithdrawalPage = () => {
     "하나은행": { prefix: "", length: 12 }
   }
 
+  // 현재 잔액 불러오기 
+  useEffect(() => {
+    loadBalance()
+
+    // 잔액 갱신 이벤트
+    const handler = () => loadBalance()
+    window.addEventListener("pointUpdated", handler)
+
+    return () => {
+      window.removeEventListener("pointUpdated", handler)
+    }
+  }, [])
+
+  const loadBalance = async () => {
+    try {
+      const res = await getMyPoint(token)
+      setBalance(res.balance)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 계좌 검증
   const handleAccountChange = (e) => {
     const raw = e.target.value.replace(/\D/g, "")
     setAccountNumber(raw)
@@ -50,12 +83,14 @@ const WithdrawalPage = () => {
     }
   }
 
+  // 유효성 검사
   const isValid =
     amount &&
     bankName !== "선택" &&
     error === "" &&
     accountNumber.length === (rules[bankName]?.length || 0)
 
+  // 환전 요청
   const handleSubmit = async () => {
     if (!isValid) return
 
@@ -67,6 +102,8 @@ const WithdrawalPage = () => {
       }
 
       await requestWithdraw(dto)
+
+      // 잔액 자동 갱신
       window.dispatchEvent(new Event("pointUpdated"))
 
       setAmount("")
@@ -82,9 +119,9 @@ const WithdrawalPage = () => {
 
   return (
     <div className="withdraw-wrapper">
-
       <div className="withdraw-header-row">
         <h2 className="withdraw-title">환전하기</h2>
+        
         <button
           className="withdraw-history-btn"
           onClick={() => navigate("/withdraw/history")}
@@ -92,13 +129,18 @@ const WithdrawalPage = () => {
           내역 보기
         </button>
       </div>
+      
+      {/* 현재 잔액 카드 */}
+      <div className="withdraw-balance-card">
+        <span className="withdraw-balance-label">현재 잔액</span>
+        <span className="withdraw-balance-value">{format(balance)} 얌</span>
+      </div>
 
       <div className="withdraw-card">
 
         <div className="withdraw-field">
           <label>환전 금액</label>
 
-          {/* 숫자 키패드 + 숫자만 입력 */}
           <input
             type="text"
             inputMode="numeric"
@@ -139,8 +181,6 @@ const WithdrawalPage = () => {
 
         <div className="withdraw-field">
           <label>계좌번호</label>
-
-          {/* 숫자 키패드 + 숫자만 입력 */}
           <input
             type="text"
             inputMode="numeric"

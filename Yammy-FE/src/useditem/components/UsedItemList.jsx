@@ -29,7 +29,7 @@ function UsedItemList({ items }) {
     return map[team] || "팀 미지정"
   }
 
-  // “방금전/몇시간전” 포맷
+  // kst로 변환
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString)
     const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000)
@@ -48,10 +48,10 @@ function UsedItemList({ items }) {
   }
 
   const activeItems = items.filter(
-    (item) => !["CONFIRMED", "COMPLETED", "CLOSED", "RELEASED"].includes(item.status)
+    (item) => !["CONFIRMED", "HOLD", "CANCELLED"].includes(item.status)
   )
   const completedItems = items.filter(
-    (item) => ["CONFIRMED", "COMPLETED", "CLOSED", "RELEASED"].includes(item.status)
+    (item) => ["CONFIRMED", "HOLD", "CANCELLED"].includes(item.status)
   )
 
   const merged = [...activeItems, ...completedItems]
@@ -77,7 +77,7 @@ function UsedItemList({ items }) {
                 </div>
               )}
 
-              {/* 🔥 중앙 동그라미 배지 (거래완료 텍스트) */}
+              {/* 중앙 동그라미 배지 (거래완료 텍스트) */}
               {isCompleted && (
                 <div className="camel-circle-done">
                   거래완료
