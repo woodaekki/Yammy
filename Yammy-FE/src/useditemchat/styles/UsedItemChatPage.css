@@ -1,33 +1,40 @@
-.chat-header-fixed {
+.useditem-chat-header-fixed {
   position: fixed;
   top: 0;
-  max-width: none !important;   
   left: 0;
-  width: 100%; 
   right: 0;
-  background: #ffffff;
+  width: 100vw;
+  height: 80px;
+  background: #fefefe;
   border-bottom: 1px solid #e5e7eb;
-  padding-top: 10px !important;
-  padding: 12px 14px;
-  z-index: 9999;
+  padding: 12px 16px;
+  z-index: 999999;
   box-sizing: border-box;
+  margin: 0;
+  display: block ;
+  visibility: visible;
+  opacity: 1;
 }
 
-.chat-header-inner {
+.useditem-chat-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  max-width: 100%;
 }
 
-.chat-back-button {
+.useditem-chat-back-button {
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
+  font-size: 20px;
+  line-height: 1;
+  color: #333;
 }
 
-.chat-item-info {
+.useditem-chat-item-info {
   display: flex;
   align-items: center;
   flex: 1;
@@ -36,19 +43,20 @@
   cursor: pointer;
 }
 
-.chat-item-image {
+.useditem-chat-item-image {
   width: 48px;
   height: 48px;
   border-radius: 6px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-.chat-item-text {
+.useditem-chat-item-text {
   flex: 1;
   min-width: 0;
 }
 
-.chat-item-title {
+.useditem-chat-item-title {
   font-size: 1rem;
   font-weight: 600;
   color: #222;
@@ -57,18 +65,19 @@
   text-overflow: ellipsis;
 }
 
-.chat-item-price {
+.useditem-chat-item-price {
   font-size: 0.85rem;
   color: #666;
 }
 
-.chat-header-buttons {
+.useditem-chat-header-buttons {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
-.chat-transfer-btn,
-.chat-leave-btn {
+.useditem-chat-transfer-btn,
+.useditem-chat-leave-btn {
   padding: 8px 14px;
   background: #ff6b35;
   color: white;
@@ -76,9 +85,11 @@
   border: none;
   border-radius: 6px;
   font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.chat-input-fixed {
+.useditem-chat-input-fixed {
   position: fixed;
   bottom: 58px;
   left: 0;
@@ -87,16 +98,17 @@
   z-index: 9999;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
 }
 
-.chat-page {
+.useditem-chat-page {
   width: 100%;
   min-height: 100vh;
   background: #f5f7fa;
 }
 
-.chat-message-area {
-  padding-top: 30px;
+.useditem-chat-message-area {
+  padding-top: 90px; /* 헤더 높이만큼 공간 확보 */
   padding-bottom: 150px;
   box-sizing: border-box;
 }

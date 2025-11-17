@@ -462,14 +462,14 @@ export default function SignupPage() {
             <label htmlFor="team" className="form-label required">
               좋아하는 야구팀
             </label>
-            <div className="team-select-grid">
+            <div className="team-toggle-container">
               {['LG 트윈스', '한화 이글스', 'SSG 랜더스', '삼성 라이온즈', 'NC 다이노스',
                 'KT 위즈', '롯데 자이언츠', 'KIA 타이거즈', '두산 베어스', '키움 히어로즈']
                 .map((teamName) => (
                   <button
                     key={teamName}
                     type="button"
-                    className={`team-select-btn ${formData.team === teamName ? 'active' : ''}`}
+                    className={`team-toggle-btn ${formData.team === teamName ? 'active' : ''}`}
                     style={{
                       backgroundColor: formData.team === teamName ? TEAM_COLORS[teamName]?.bgColor : '#f3f4f6',
                       color: formData.team === teamName ? TEAM_COLORS[teamName]?.textColor : '#374151',
@@ -479,7 +479,7 @@ export default function SignupPage() {
                     <img
                       src={TEAM_LOGOS[teamName]}
                       alt={teamName}
-                      className="team-select-logo"
+                      className="team-logo-icon"
                     />
                     {teamName}
                   </button>
