@@ -9,6 +9,7 @@ import com.ssafy.yammy.payment.dto.UsedItemResponseDto;
 import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.entity.Team;
 import com.ssafy.yammy.payment.entity.UsedItem;
+import com.ssafy.yammy.payment.entity.UsedItemStatus;
 import com.ssafy.yammy.payment.repository.PhotoRepository;
 import com.ssafy.yammy.payment.repository.UsedItemRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,8 +62,7 @@ public class UsedItemService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
 
         // 거래 완료 되었을 경우
-        List<String> completedStatuses = List.of("CONFIRMED", "CANCELLED", "HOLD");
-        if (completedStatuses.contains(item.getStatus().name())) {
+        if (item.getStatus() != null && item.getStatus() == UsedItemStatus.CONFIRMED) {
             throw new ResponseStatusException(HttpStatus.GONE, "이미 거래가 완료된 상품입니다.");
         }
 

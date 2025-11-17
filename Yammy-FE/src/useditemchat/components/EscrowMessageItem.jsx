@@ -80,7 +80,7 @@ function EscrowMessageItem({ message, isMine }) {
               onClick={handleConfirm}
               disabled={isProcessing}
             >
-              {isProcessing ? "처리중..." : "받기"}
+              {isProcessing ? "처리중..." : "거래 확정하기"}
             </button>
           )}
 
