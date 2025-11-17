@@ -88,6 +88,25 @@ export default function UsedItemChatPage() {
     };
   }, [roomKey]);
 
+  // 10초마다 물품 상태 확인 (CONFIRMED 감지)
+  useEffect(() => {
+    if (!chatRoomInfo?.usedItemId || itemInfo?.status === 'CONFIRMED') return;
+
+    const interval = setInterval(async () => {
+      try {
+        const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId);
+
+        if (updatedItem.status !== itemInfo?.status) {
+          setItemInfo(updatedItem);
+        }
+      } catch (error) {
+        console.error('물품 상태 확인 실패:', error);
+      }
+    }, 10000); // 10초마다
+
+    return () => clearInterval(interval);
+  }, [chatRoomInfo?.usedItemId, itemInfo?.status]);
+
   const handleOpenTransferModal = () => {
     const memberId = user?.memberId || localStorage.getItem("memberId");
     if (!memberId) {
@@ -115,6 +134,13 @@ export default function UsedItemChatPage() {
       const updated = await getMyPoint();
       setMyBalance(updated.balance);
       window.dispatchEvent(new Event("pointUpdated"));
+
+      // 물품 정보 즉시 갱신
+      const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId);
+      setItemInfo(updatedItem);
+
+      // 모달 닫기
+      handleCloseTransferModal();
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("인증이 만료되었습니다. 다시 로그인해주세요.");

@@ -146,7 +146,7 @@ export default function UsedItemChatInput({ roomKey, disabled = false }) {
           value={message}
           disabled={sending || disabled}
           placeholder={
-            disabled ? "채팅방을 나간 사용자가 있습니다" : "메시지를 입력하세요..."
+            disabled ? "채팅을 더 이상 진행할 수 없습니다." : "메시지를 입력하세요..."
           }
           onKeyDown={handleKeyDown}
           onChange={(e) => setMessage(e.target.value)}
