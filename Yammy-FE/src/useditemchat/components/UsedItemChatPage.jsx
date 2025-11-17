@@ -150,8 +150,8 @@ export default function UsedItemChatPage() {
 
   if (error || messageError) {
     return (
-      <div className="chat-error-page">
-        <div className="chat-error-box">
+      <div className="useditem-chat-error-page">
+        <div className="useditem-chat-error-box">
           <h2>오류 발생</h2>
           <p>{error || messageError}</p>
         </div>
@@ -162,35 +162,35 @@ export default function UsedItemChatPage() {
   if (loading) return null;
 
   return (
-    <div className="chat-page">
+    <div className="useditem-chat-page">
       {createPortal(
-        <div className="chat-header-fixed">
-          <div className="chat-header-inner">
-            <button className="chat-back-button" onClick={() => navigate("/chatlist")}>
+        <div className="useditem-chat-header-fixed">
+          <div className="useditem-chat-header-inner">
+            <button className="useditem-chat-back-button" onClick={() => navigate("/chatlist")}>
               ←
             </button>
 
             {itemInfo && (
               <div
-                className="chat-item-info"
+                className="useditem-chat-item-info"
                 onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
               >
                 {itemInfo.imageUrls?.[0] && (
-                  <img src={itemInfo.imageUrls[0]} className="chat-item-image" />
+                  <img src={itemInfo.imageUrls[0]} className="useditem-chat-item-image" />
                 )}
 
-                <div className="chat-item-text">
-                  <div className="chat-item-title">{itemInfo.title}</div>
-                  <div className="chat-item-price">{itemInfo.price?.toLocaleString()}얌</div>
+                <div className="useditem-chat-item-text">
+                  <div className="useditem-chat-item-title">{itemInfo.title}</div>
+                  <div className="useditem-chat-item-price">{itemInfo.price?.toLocaleString()}얌</div>
                 </div>
               </div>
             )}
 
-            <div className="chat-header-buttons">
-              <button className="chat-transfer-btn" onClick={handleOpenTransferModal}>
+            <div className="useditem-chat-header-buttons">
+              <button className="useditem-chat-transfer-btn" onClick={handleOpenTransferModal}>
                 송금
               </button>
-              <button className="chat-leave-btn" onClick={handleLeaveChatRoom}>
+              <button className="useditem-chat-leave-btn" onClick={handleLeaveChatRoom}>
                 나가기
               </button>
             </div>
@@ -199,7 +199,7 @@ export default function UsedItemChatPage() {
         document.body
       )}
 
-      <div className="chat-message-area">
+      <div className="useditem-chat-message-area">
         <UsedItemMessageList
           messages={messages}
           loading={loadingMessages}
@@ -208,7 +208,7 @@ export default function UsedItemChatPage() {
       </div>
 
       {createPortal(
-        <div className="chat-input-fixed">
+        <div className="useditem-chat-input-fixed">
           <UsedItemChatInput
             roomKey={roomKey}
             disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
