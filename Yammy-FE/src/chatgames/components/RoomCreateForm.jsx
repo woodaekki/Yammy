@@ -89,7 +89,9 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
       <form onSubmit={handleSubmit} className="room-create-form-inner">
         {/* 채팅방 키 (선택) */}
         <div className="form-group">
-          <label className="form-label">채팅방 키 (선택사항)</label>
+          <label className="form-label">채팅방 키 (선택사항)
+            <span className="char-count">{formData.roomKey.length}/50</span>
+          </label>
           <input
             type="text"
             name="roomKey"
@@ -106,6 +108,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
         <div className="form-group">
           <label className="form-label required">
             채팅방 이름
+            <span className="char-count">{formData.name.length}/30</span>
           </label>
           <input
             type="text"
