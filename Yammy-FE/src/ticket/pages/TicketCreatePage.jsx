@@ -67,6 +67,7 @@ const TicketCreatePage = () => {
     const [matches, setMatches] = useState([]);
     const [loadingMatches, setLoadingMatches] = useState(false);
     const [selectedMatch, setSelectedMatch] = useState(null); // 선택된 경기 정보
+    const [isSubmitting, setIsSubmitting] = useState(false); // 티켓 발급 중 상태
 
     // KBO 구장 목록 (stadiumMapper에서 가져옴)
     const stadiums = KBO_STADIUMS;
@@ -295,6 +296,11 @@ const TicketCreatePage = () => {
     };
 
     const handleSubmit = async () => {
+        // 이미 발급 중이면 무시
+        if (isSubmitting) {
+            return;
+        }
+
         // 필수 항목 검증
         if (!formData.game || !formData.date || !formData.location || !formData.seat || !formData.comment) {
             alert('모든 필수 항목을 입력해주세요.');
@@ -304,6 +310,8 @@ const TicketCreatePage = () => {
             alert('사진을 선택해주세요.');
             return;
         }
+
+        setIsSubmitting(true);
         try {
             // team 필드 추가
             const ticketDataWithTeam = {
@@ -316,6 +324,8 @@ const TicketCreatePage = () => {
         } catch (error) {
             console.error('티켓 발급 실패:', error);
             alert('티켓 발급에 실패했습니다.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -606,8 +616,17 @@ const TicketCreatePage = () => {
                             </div>
                         )}
 
-                        <button className="submit-btn" onClick={handleSubmit} style={{ backgroundColor: teamColors.bgColor }}>
-                            티켓 발급하기
+                        <button
+                            className="submit-btn"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            style={{
+                                backgroundColor: isSubmitting ? '#ccc' : teamColors.bgColor,
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                opacity: isSubmitting ? 0.6 : 1
+                            }}
+                        >
+                            {isSubmitting ? '발급 중...' : '티켓 발급하기'}
                         </button>
                     </div>
             </div>
