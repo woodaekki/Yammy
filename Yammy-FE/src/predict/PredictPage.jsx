@@ -119,54 +119,71 @@ const PredictPage = () => {
                     key={match.id}
                     className={`match-card-container ${gameInProgress ? 'game-in-progress' : ''} ${isSettled ? 'settled' : ''}`}
                     onClick={() => !isSettled && handleMatchClick(match.id)}
-                    style={{ cursor: isSettled ? 'not-allowed' : 'pointer' }}
                   >
                     <div className="match-time-header">{match.gameTime}</div>
-                    <div className="match-prediction-card" style={{ display: 'flex' }}>
-                      {/* HOME */}
-                      <div className="team-section home-team-section" style={{ backgroundColor: getTeamColor(match.homeTeam) }}>
-                        <div className="team-label">HOME</div>
-                        <div className="team-info-container home-team-info">
-                          <TeamLogo teamName={match.homeTeam} size="medium" />
-                          <div className="team-details">
-                            <div className="team-name-with-pick">
-                              <div className="team-name">{match.homeTeam}</div>
-                              {match.aiPick === 0 && (
-                                <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-inline" />
-                              )}
-                            </div>
-                            <div className="team-stats">예상 승률: {match.homeWinningRate}%</div>
+                    <div className="match-prediction-card">
+                      <div className="match-info-section">
+                        {/* HOME */}
+                        <div className="team-column home-column">
+                          <div className="team-label-new">
+                            {match.aiPick === 0 && (
+                              <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-label" />
+                            )}
+                            HOME
                           </div>
+                          <div className="team-logo-name">
+                            <TeamLogo teamName={match.homeTeam} size="medium" />
+                            <div className="team-name-new">{match.homeTeam}</div>
+                          </div>
+                          <div className="team-stat-row">예상 승률: {match.homeWinningRate}%</div>
+                          <div className="team-stat-row">배당률: {match.homeOdds.toFixed(2)}</div>
+                          <div className="team-stat-row">총 팬심: {match.homeAmount.toLocaleString()}</div>
                         </div>
-                        <div className="odds-fansim-container">
-                          <div className="total-fansim">총 팬심: {match.homeAmount.toLocaleString()}</div>
-                          <div className="prediction-score">{match.homeOdds.toFixed(2)}</div>
+
+                        {/* VS */}
+                        <div className="vs-section-new">
+                          <span className="vs-text">VS</span>
+                        </div>
+
+                        {/* AWAY */}
+                        <div className="team-column away-column">
+                          <div className="team-label-new">
+                            {match.aiPick === 1 && (
+                              <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-label" />
+                            )}
+                            AWAY
+                          </div>
+                          <div className="team-logo-name">
+                            <TeamLogo teamName={match.awayTeam} size="medium" />
+                            <div className="team-name-new">{match.awayTeam}</div>
+                          </div>
+                          <div className="team-stat-row">예상 승률: {match.awayWinningRate}%</div>
+                          <div className="team-stat-row">배당률: {match.awayOdds.toFixed(2)}</div>
+                          <div className="team-stat-row">총 팬심: {match.awayAmount.toLocaleString()}</div>
                         </div>
                       </div>
 
-                      {/* VS */}
-                      <div className="vs-section">
-                        <span className="vs-text">VS</span>
-                      </div>
-
-                      {/* AWAY */}
-                      <div className="team-section away-team-section" style={{ backgroundColor: getTeamColor(match.awayTeam) }}>
-                        <div className="team-label">AWAY</div>
-                        <div className="team-info-container away-team-info">
-                          <div className="team-details">
-                            <div className="team-name-with-pick">
-                              <div className="team-name">{match.awayTeam}</div>
-                              {match.aiPick === 1 && (
-                                <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-inline" />
-                              )}
-                            </div>
-                            <div className="team-stats">예상 승률: {match.awayWinningRate}%</div>
+                      {/* 그래프 섹션 */}
+                      <div className="match-graph-section">
+                        <div className="betting-ratio-bar">
+                          <div
+                            className="home-ratio-bar"
+                            style={{
+                              width: `${Math.max(20, Math.min(80, (match.homeAmount / totalAmount * 100))).toFixed(1)}%`,
+                              backgroundColor: getTeamColor(match.homeTeam)
+                            }}
+                          >
+                            <span className="ratio-text">{match.homeAmount.toLocaleString()}</span>
                           </div>
-                          <TeamLogo teamName={match.awayTeam} size="medium" />
-                        </div>
-                        <div className="odds-fansim-container">
-                          <div className="prediction-score">{match.awayOdds.toFixed(2)}</div>
-                          <div className="total-fansim">총 팬심: {match.awayAmount.toLocaleString()}</div>
+                          <div
+                            className="away-ratio-bar"
+                            style={{
+                              width: `${Math.max(20, Math.min(80, (match.awayAmount / totalAmount * 100))).toFixed(1)}%`,
+                              backgroundColor: getTeamColor(match.awayTeam)
+                            }}
+                          >
+                            <span className="ratio-text">{match.awayAmount.toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -97,16 +97,6 @@
   border: none;
 }
 
-.team-name-with-pick {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.yammy-pick-inline {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-}
 
 
 /* 경기 헤더 */
@@ -131,23 +121,26 @@
 }
 
 .odds-info-button {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  background: white;
+  color: #333;
+  border: 1px solid #999;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .odds-info-button:hover {
-  background: #45a049;
-  transform: scale(1.05);
+  background: #f8f9fa;
+  border-color: #666;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* 툴팁 스타일 */
@@ -237,10 +230,15 @@
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .match-card-container:hover {
   transform: translateY(-2px);
+}
+
+.match-card-container.settled {
+  cursor: not-allowed;
 }
 
 /* 경기 시간 헤더 */
@@ -289,10 +287,97 @@
 /* 예측 카드 메인 */
 .match-prediction-card {
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
   position: relative;
-  height: 200px;
-  padding: 12px 0;
+  background: white;
+}
+
+/* 매치 정보 섹션 */
+.match-info-section {
+  display: flex;
+  align-items: stretch;
+  padding: 20px 16px;
+  background: white;
+}
+
+/* 팀 컬럼 */
+.team-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-label-new {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  position: relative;
+  min-height: 28px;
+}
+
+.team-logo-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-name-new {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.team-stat-row {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* VS 섹션 새버전 */
+.vs-section-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+/* 그래프 섹션 */
+.match-graph-section {
+  padding: 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.betting-ratio-bar {
+  display: flex;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-ratio-bar,
+.away-ratio-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ratio-text {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* 팀 섹션 */
@@ -354,12 +439,12 @@
 
 .home-team-section {
   margin-left: 16px;
-  flex: 0.5
+  flex: 0.5;
 }
 
 .away-team-section {
   margin-right: 16px;
-  flex: 0.5
+  flex: 0.5;
 }
 
 .team-label {
@@ -370,15 +455,35 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  min-height: 28px;
 }
+
+.yammy-pick-label {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  z-index: 10;
+  position: absolute;
+  left: -65px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 
 .team-info-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   margin: 12px 0;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
 }
 
 .home-team-info {
@@ -394,6 +499,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  min-height: 50px;
 }
 
 .team-name {
@@ -421,9 +529,10 @@
 /* 배당율과 총 팬심 컨테이너 */
 .odds-fansim-container {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
   margin-top: auto;
+  margin-bottom: 32px;
   flex-shrink: 0;
 }
 
@@ -462,8 +571,8 @@
   background: white;
   border-radius: 50%;
   z-index: 10;
-  border: 3px solid #e0e0e0;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border: 3px solid white;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .vs-text {
