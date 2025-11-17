@@ -1,7 +1,6 @@
 /* === 페이지 전체 === */
 .useditem-page-container {
   width: 100%;
-  padding-bottom: 140px; 
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -147,7 +146,7 @@
   opacity: 0.85;
 }
 
-/* === 등록 버튼 - 모든 화면에서 동일하게 작동 === */
+/* === 등록 버튼 === */
 .floating-add-btn {
   position: fixed !important;
   bottom: calc(58px + 20px); 

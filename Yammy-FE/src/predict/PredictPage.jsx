@@ -76,7 +76,11 @@ const PredictPage = () => {
           <div className="matches-header">
             <h2>오늘의 경기</h2>
             {isAdmin && (
-              <button className="settlement-button" onClick={() => setShowSettlementModal(true)}>
+              <button
+                className="settlement-button"
+                onClick={() => setShowSettlementModal(true)}
+                disabled={allSettled || todayMatches.length === 0}
+              >
                 정산하기
               </button>
             )}
@@ -213,7 +217,7 @@ const PredictPage = () => {
 
       {showSettlementModal && (
         <SettlementModal
-          matches={todayMatches}
+          matches={todayMatches.filter(match => match.isSettled === 0)}
           onClose={() => setShowSettlementModal(false)}
           onSubmit={handleSettlement}
         />
