@@ -68,9 +68,10 @@ const PostCreate = () => {
         // 이미지 파일만 허용
         const imageFiles = files.filter(file => file.type.startsWith('image/'));
 
-        // 최대 3개까지만 허용
-        if (imageFiles.length > 3) {
-            alert('이미지는 최대 3개까지 업로드할 수 있습니다.');
+        // 기존 파일과 합쳐서 최대 3개까지만 허용
+        const totalCount = selectedFiles.length + imageFiles.length;
+        if (totalCount > 3) {
+            alert(`이미지는 최대 3개까지 업로드할 수 있습니다. (현재 ${selectedFiles.length}개 선택됨)`);
             return;
         }
 
@@ -90,11 +91,12 @@ const PostCreate = () => {
             imageFiles.map(file => compressImage(file))
         );
 
-        setSelectedFiles(compressedFiles);
+        // 기존 파일에 추가
+        setSelectedFiles([...selectedFiles, ...compressedFiles]);
 
-        // 미리보기 URL 생성
+        // 미리보기 URL 생성 (기존 미리보기에 추가)
         const previews = compressedFiles.map(file => URL.createObjectURL(file));
-        setPreviewUrls(previews);
+        setPreviewUrls([...previewUrls, ...previews]);
     };
 
     // 이미지 제거
