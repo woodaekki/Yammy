@@ -48,6 +48,16 @@
   background-color: #cc2222;
 }
 
+.settlement-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.settlement-button:disabled:hover {
+  background-color: #cccccc;
+}
+
 .predict-schedule {
   text-align: center;
   margin: 16px;
