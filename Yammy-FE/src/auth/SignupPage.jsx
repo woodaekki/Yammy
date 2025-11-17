@@ -4,6 +4,7 @@ import { signup, sendVerificationCode, verifyEmail, login, updateMember } from '
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { TEAM_LOGOS } from '../utils/teamLogos';
 import { TEAM_COLORS } from '../sns/utils/teamColors';
+import imageCompression from 'browser-image-compression';
 import './styles/auth.css';
 
 export default function SignupPage() {
@@ -43,15 +44,31 @@ export default function SignupPage() {
     }
   };
 
-  const handleImageChange = (e) => {
+  // 이미지 압축 함수 (GIF 예외 처리 포함)
+  const compressImage = async (file) => {
+    try {
+      // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+      if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+        return file;
+      }
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressed = await imageCompression(file, options);
+      return new File([compressed], file.name, { type: compressed.type });
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // 파일 크기 체크 (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
-      return;
-    }
 
     // 파일 타입 체크
     if (!file.type.startsWith('image/')) {
@@ -59,7 +76,16 @@ export default function SignupPage() {
       return;
     }
 
-    setProfileImageFile(file);
+    // 이미지 압축
+    const compressedFile = await compressImage(file);
+
+    // 압축 후 파일 크기 체크 (5MB)
+    if (compressedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
+      return;
+    }
+
+    setProfileImageFile(compressedFile);
     setErrors((prev) => ({ ...prev, profileImage: '' }));
 
     // 미리보기 생성
@@ -67,7 +93,7 @@ export default function SignupPage() {
     reader.onloadend = () => {
       setProfileImagePreview(reader.result);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressedFile);
   };
 
   const handleSendCode = async () => {

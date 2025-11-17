@@ -8,6 +8,7 @@ import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { getTickets } from '../ticket/api/ticketApi';
 import { getEtherscanNFTUrl } from '../ticket/api/nftApi';
 import { GameTitle, parseGameTeams } from '../ticket/components/TicketCard';
+import imageCompression from 'browser-image-compression';
 import './styles/MyPage.css';
 
 // 기본 프로필 이미지 (SVG data URI)
@@ -141,16 +142,41 @@ const MyPage = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  // 이미지 압축 함수 (GIF 예외 처리 포함)
+  const compressImage = async (file) => {
+    try {
+      // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+      if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+        return file;
+      }
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressed = await imageCompression(file, options);
+      return new File([compressed], file.name, { type: compressed.type });
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // 이미지 압축
+      const compressedFile = await compressImage(file);
+
       // 이미지 미리보기
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
       };
-      reader.readAsDataURL(file);
-      setSelectedFile(file);
+      reader.readAsDataURL(compressedFile);
+      setSelectedFile(compressedFile);
     }
   };
 

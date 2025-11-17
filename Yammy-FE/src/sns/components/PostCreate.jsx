@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPostPresignedUrls, createPost } from '../api/snsApi';
 import axios from 'axios';
+import imageCompression from 'browser-image-compression';
 import '../styles/PostCreate.css';
 
 const PostCreate = () => {
@@ -11,8 +12,30 @@ const PostCreate = () => {
     const [previewUrls, setPreviewUrls] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
+    // 이미지 압축 함수 (GIF 예외 처리 포함)
+    const compressImage = async (file) => {
+        try {
+            // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+            if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+                return file;
+            }
+
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            };
+
+            const compressed = await imageCompression(file, options);
+            return new File([compressed], file.name, { type: compressed.type });
+        } catch (error) {
+            console.error('이미지 압축 실패:', error);
+            return file;
+        }
+    };
+
     // 파일 선택 핸들러
-    const handleFileSelect = (e) => {
+    const handleFileSelect = async (e) => {
         const files = Array.from(e.target.files);
 
         // 이미지 파일만 허용
@@ -24,10 +47,15 @@ const PostCreate = () => {
             return;
         }
 
-        setSelectedFiles(imageFiles);
+        // 이미지 압축
+        const compressedFiles = await Promise.all(
+            imageFiles.map(file => compressImage(file))
+        );
+
+        setSelectedFiles(compressedFiles);
 
         // 미리보기 URL 생성
-        const previews = imageFiles.map(file => URL.createObjectURL(file));
+        const previews = compressedFiles.map(file => URL.createObjectURL(file));
         setPreviewUrls(previews);
     };
 
