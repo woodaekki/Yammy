@@ -12,6 +12,33 @@ const PostCreate = () => {
     const [previewUrls, setPreviewUrls] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
+    // 실제 이미지 파일인지 검증하는 함수
+    const validateImageFile = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const arr = new Uint8Array(reader.result).subarray(0, 4);
+                let header = '';
+                for (let i = 0; i < arr.length; i++) {
+                    header += arr[i].toString(16);
+                }
+
+                // 이미지 파일 시그니처 확인
+                const isValidImage =
+                    header.startsWith('89504e47') || // PNG
+                    header.startsWith('ffd8ff') ||   // JPEG
+                    header.startsWith('47494638') || // GIF
+                    header.startsWith('424d') ||     // BMP
+                    header.startsWith('49492a00') || // TIFF
+                    header.startsWith('4d4d002a');   // TIFF
+
+                resolve(isValidImage);
+            };
+            reader.onerror = () => resolve(false);
+            reader.readAsArrayBuffer(file.slice(0, 4));
+        });
+    };
+
     // 이미지 압축 함수 (GIF 예외 처리 포함)
     const compressImage = async (file) => {
         try {
@@ -44,6 +71,17 @@ const PostCreate = () => {
         // 최대 3개까지만 허용
         if (imageFiles.length > 3) {
             alert('이미지는 최대 3개까지 업로드할 수 있습니다.');
+            return;
+        }
+
+        // 실제 이미지 파일인지 검증
+        const validationResults = await Promise.all(
+            imageFiles.map(file => validateImageFile(file))
+        );
+
+        const invalidFiles = imageFiles.filter((_, index) => !validationResults[index]);
+        if (invalidFiles.length > 0) {
+            alert('유효하지 않은 이미지 파일이 포함되어 있습니다.');
             return;
         }
 
