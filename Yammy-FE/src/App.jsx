@@ -22,10 +22,10 @@ function App() {
 
   const hasTopBar = !hideTopBar;
 
-  // ?�이지 ?�환 ???�크�?�??�로 초기??
+  // ?�이지 ?�환 ???�크�?�??�로 초기??
   useEffect(() => {
     const scrollToTop = () => {
-      // 모든 ?�크�?가?�한 ?�소?�을 초기??
+      // 모든 ?�크�?가?�한 ?�소?�을 초기??
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
@@ -38,7 +38,7 @@ function App() {
         contentRef.current.scrollTop = 0;
       }
 
-      // 모든 ?�크�?가?�한 ?�소??찾아??초기??
+      // 모든 ?�크�?가?�한 ?�소??찾아??초기??
       const allElements = document.querySelectorAll('*');
       allElements.forEach(el => {
         if (el.scrollTop > 0) {
@@ -47,10 +47,10 @@ function App() {
       });
     };
 
-    // 즉시 ?�행
+    // 즉시 ?�행
     scrollToTop();
 
-    // ?�간???�레?????�시 ?�행 (DOM ?�더�????�실?�게)
+    // ?�간???�레?????�시 ?�행 (DOM ?�더�????�실?�게)
     const timer = setTimeout(scrollToTop, 10);
 
     return () => clearTimeout(timer);
