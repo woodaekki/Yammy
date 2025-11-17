@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaSearch, FaUser, FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaSearch, FaUser, FaCog, FaSignOutAlt } from "react-icons/fa";
 import useAuthStore from "../../stores/authStore";
 import { getTeamColors } from "../utils/teamColors";
 import logo from "../../assets/images/logo.png";
@@ -106,9 +106,6 @@ const SNSNavigationBar = () => {
                   src={user?.profileImage}
                   alt="프로필"
                   className="user-profile-img"
-                />
-                <FaChevronDown
-                  className={showUserMenu ? "rotate" : ""}
                 />
               </button>
 

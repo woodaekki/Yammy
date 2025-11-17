@@ -280,7 +280,7 @@ const CommentPage = () => {
               최신순
             </button>
           </div>
-        )}
+        )}  
         {comments.length === 0 ? (
           <div className="empty-comments">아직 댓글이 없습니다. 첫 댓글을 남겨보세요!</div>
         ) : (
