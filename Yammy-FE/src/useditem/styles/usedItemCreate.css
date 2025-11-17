@@ -1,6 +1,5 @@
 .create-container {
   width: 100%;
-  background: #fff;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: #333;
   min-height: 100vh;
@@ -10,6 +9,7 @@
 .create-header {
   display: flex;
   align-items: center;
+  background: #fff;
   gap: 0.4rem;
   padding: 0.8rem 1rem;
   border-bottom: 1px solid #f1f1f1;

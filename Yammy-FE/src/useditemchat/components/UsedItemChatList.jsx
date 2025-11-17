@@ -118,6 +118,13 @@ function UsedItemChatList() {
                         </span>
                       </div>
 
+                      {/* 2. 중고거래 제목 (추가!) */}
+                      <div className="chat-list-item-title-row">
+                        <p className="chat-list-item-title">
+                          {room.itemTitle || "중고거래"}
+                        </p>
+                      </div>
+
                       {/* 마지막 메시지 + unread */}
                       <div className="chat-list-preview-row">
                         <p className="chat-list-item-preview">
