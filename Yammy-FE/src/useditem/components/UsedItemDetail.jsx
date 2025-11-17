@@ -14,7 +14,7 @@ function UsedItemDetail() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const myId = localStorage.getItem("memberId");
   const [teamColors, setTeamColors] = useState(getTeamColors());
-
+  const [isChatLoading, setIsChatLoading] = useState(false);
   // 팀 컬러 초기 설정
   useEffect(() => {
     setTeamColors(getTeamColors());
@@ -51,12 +51,17 @@ function UsedItemDetail() {
 
   // 채팅방 입장
   const handleChat = async () => {
+    if (isChatLoading) return; // 이미 처리 중이면 무시
+    
     try {
+      setIsChatLoading(true); // 로딩 시작
       const chatRoom = await usedItemChatApi.createOrEnterChatRoom(params.id)
       navigate(`/useditem/chat/${chatRoom.roomKey}`)
     } catch (error) {
       console.error("채팅방 생성 실패:", error)
-      alert("채팅방에 입장하였습니다.");
+      alert("채팅방 입장에 실패했습니다.");
+    } finally {
+      setIsChatLoading(false); // 로딩 종료
     }
   };
 
@@ -177,8 +182,12 @@ function UsedItemDetail() {
                 </button>
               </>
             ) : (
-              <button className="detail-chat-btn" onClick={handleChat}>
-                채팅
+              <button 
+                className="detail-chat-btn" 
+                onClick={handleChat}
+                disabled={isChatLoading}
+              >
+                {isChatLoading ? "입장 중..." : "채팅"}
               </button>
             )}
           </div>
