@@ -6,6 +6,7 @@ import com.ssafy.yammy.chatgames.entity.RoomStatus;
 import com.ssafy.yammy.chatgames.service.ChatRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class ChatRoomAdminController {
     @Operation(summary = "채팅방 생성", description = "관리자가 새 채팅방 생성")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ChatRoom> createRoom(@RequestBody CreateRoomRequest request) throws Exception {
+    public ResponseEntity<ChatRoom> createRoom(@Valid @RequestBody CreateRoomRequest request) throws Exception {
         ChatRoom room = chatRoomService.createRoom(request);
         return ResponseEntity.ok(room);
     }
