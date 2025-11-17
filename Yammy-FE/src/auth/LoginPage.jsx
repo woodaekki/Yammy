@@ -103,6 +103,7 @@ export default function LoginPage() {
                 placeholder="아이디를 입력하세요"
                 className="form-input"
                 autoComplete="username"
+                maxLength={20}
               />
               <i className="fas fa-user input-icon"></i>
             </div>
@@ -123,6 +124,7 @@ export default function LoginPage() {
                 placeholder="비밀번호를 입력하세요"
                 className="form-input"
                 autoComplete="current-password"
+                maxLength={30}
               />
               <button
                 type="button"

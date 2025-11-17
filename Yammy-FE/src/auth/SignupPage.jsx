@@ -256,6 +256,7 @@ export default function SignupPage() {
                 placeholder="로그인 아이디를 입력하세요"
                 className="form-input"
                 autoComplete="username"
+                maxLength={20}
               />
               <i className="fas fa-id-card input-icon"></i>
             </div>
@@ -276,6 +277,7 @@ export default function SignupPage() {
                 placeholder="실명을 입력하세요"
                 className="form-input"
                 autoComplete="name"
+                maxLength={20}
               />
               <i className="fas fa-user input-icon"></i>
             </div>
@@ -295,6 +297,7 @@ export default function SignupPage() {
                 onChange={handleChange}
                 placeholder="다른 사용자에게 보여질 이름"
                 className="form-input"
+                maxLength={20}
               />
               <i className="fas fa-signature input-icon"></i>
             </div>
@@ -358,6 +361,7 @@ export default function SignupPage() {
                 className="form-input"
                 autoComplete="email"
                 disabled={emailVerified}
+                maxLength={50}
               />
               <button
                 type="button"
@@ -416,6 +420,7 @@ export default function SignupPage() {
                 placeholder="8자 이상, 영문+숫자 조합"
                 className="form-input"
                 autoComplete="new-password"
+                maxLength={30}
               />
               <button
                 type="button"
@@ -442,6 +447,7 @@ export default function SignupPage() {
                 placeholder="비밀번호를 다시 입력하세요"
                 className="form-input"
                 autoComplete="new-password"
+                maxLength={30}
               />
               <button
                 type="button"
@@ -500,6 +506,7 @@ export default function SignupPage() {
               placeholder="간단한 자기소개를 입력하세요"
               className="form-textarea"
               rows={3}
+              maxLength={200}
             />
           </div>
 

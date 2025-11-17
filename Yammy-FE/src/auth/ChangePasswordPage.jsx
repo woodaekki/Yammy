@@ -113,6 +113,7 @@ export default function ChangePasswordPage() {
                   value={formData.currentPassword}
                   onChange={handleChange}
                   disabled={loading}
+                  maxLength={30}
                 />
                 <button
                   type="button"
@@ -136,6 +137,7 @@ export default function ChangePasswordPage() {
                   value={formData.newPassword}
                   onChange={handleChange}
                   disabled={loading}
+                  maxLength={30}
                 />
                 <button
                   type="button"
@@ -159,6 +161,7 @@ export default function ChangePasswordPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   disabled={loading}
+                  maxLength={30}
                 />
                 <button
                   type="button"

@@ -172,6 +172,7 @@ function UsedItemEdit() {
           onChange={handleChange}
           placeholder="제목을 입력하세요"
           className="edit-input-field"
+          maxLength={50}
         />
         {errors.title && <p className="edit-error-text">{errors.title}</p>}
 
@@ -191,6 +192,7 @@ function UsedItemEdit() {
           onChange={handleChange}
           placeholder="상품 설명을 입력하세요"
           className="edit-textarea-field"
+          maxLength={1000}
         />
         {errors.description && (
           <p className="edit-error-text">{errors.description}</p>

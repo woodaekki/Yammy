@@ -202,8 +202,8 @@ const MyPage = () => {
       alert('닉네임은 최대 20자까지 입력 가능합니다.');
       return;
     }
-    if (formData.bio.length > 50) {
-      alert('자기소개는 최대 50자까지 입력 가능합니다.');
+    if (formData.bio.length > 200) {
+      alert('자기소개는 최대 200자까지 입력 가능합니다.');
       return;
     }
 
@@ -455,6 +455,7 @@ const MyPage = () => {
                     className="info-input"
                     placeholder="비밀번호를 변경하려면 입력하세요"
                     disabled={loading}
+                    maxLength={30}
                   />
                 </div>
 
@@ -469,6 +470,7 @@ const MyPage = () => {
                       className="info-input"
                       placeholder="새 비밀번호 (최소 8자)"
                       disabled={loading}
+                      maxLength={30}
                     />
                   </div>
                 )}
@@ -484,6 +486,7 @@ const MyPage = () => {
                       className="info-input"
                       placeholder="새 비밀번호를 다시 입력하세요"
                       disabled={loading}
+                      maxLength={30}
                     />
                   </div>
                 )}
@@ -537,10 +540,10 @@ const MyPage = () => {
                 className="info-textarea"
                 placeholder="자기소개를 입력하세요"
                 rows={4}
-                maxLength={50}
+                maxLength={200}
               />
               <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: '0' }}>
-                {formData.bio.length}/50자
+                {formData.bio.length}/200자
               </p>
             </div>
 
