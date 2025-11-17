@@ -60,6 +60,12 @@ public class UsedItemService {
         UsedItem item = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
 
+        // 거래 완료 되었을 경우
+        List<String> completedStatuses = List.of("CONFIRMED", "CANCELLED", "HOLD");
+        if (completedStatuses.contains(item.getStatus().name())) {
+            throw new ResponseStatusException(HttpStatus.GONE, "이미 거래가 완료된 상품입니다.");
+        }
+
         return UsedItemResponseDto.builder()
                 .id(item.getId())
                 .memberId(item.getMember() != null ? item.getMember().getMemberId() : null)
@@ -136,13 +142,6 @@ public class UsedItemService {
     public UsedItemResponseDto updateTrade(HttpServletRequest request, Long id, UsedItemRequestDto dto) {
         String token = extractToken(request);
         Long memberId = jwtTokenProvider.getMemberId(token);
-
-        System.out.println("=== UPDATE REQUEST DTO ===");
-        System.out.println("title=" + dto.getTitle());
-        System.out.println("price=" + dto.getPrice());
-        System.out.println("team=" + dto.getTeam());
-        System.out.println("photoIds=" + dto.getPhotoIds());
-
 
         UsedItem usedItem = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
