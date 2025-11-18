@@ -226,54 +226,60 @@ export default function SignupPage() {
   };
 
   const validateForm = () => {
-    const newErrors = {};
-    const errorMessages = [];
-
+    // 검증 순서대로 체크
     if (!formData.id.trim()) {
-      newErrors.id = '아이디를 입력해주세요';
-      errorMessages.push('아이디를 입력해주세요');
+      setErrors({ id: '아이디를 입력해주세요' });
+      alert('아이디를 입력해주세요');
+      return false;
     }
     if (!formData.name.trim()) {
-      newErrors.name = '이름을 입력해주세요';
-      errorMessages.push('이름을 입력해주세요');
+      setErrors({ name: '이름을 입력해주세요' });
+      alert('이름을 입력해주세요');
+      return false;
     }
     if (!formData.nickname.trim()) {
-      newErrors.nickname = '닉네임을 입력해주세요';
-      errorMessages.push('닉네임을 입력해주세요');
+      setErrors({ nickname: '닉네임을 입력해주세요' });
+      alert('닉네임을 입력해주세요');
+      return false;
     }
     if (!formData.email.trim() || !formData.email.includes('@')) {
-      newErrors.email = '올바른 이메일을 입력해주세요';
-      errorMessages.push('올바른 이메일을 입력해주세요');
-    } else if (!emailVerified) {
-      newErrors.email = '이메일 인증을 완료해주세요';
-      errorMessages.push('이메일 인증을 완료해주세요');
+      setErrors({ email: '올바른 이메일을 입력해주세요' });
+      alert('올바른 이메일을 입력해주세요');
+      return false;
+    }
+    if (!emailVerified) {
+      setErrors({ email: '이메일 인증을 완료해주세요' });
+      alert('이메일 인증을 완료해주세요');
+      return false;
     }
     if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해주세요';
-      errorMessages.push('비밀번호를 입력해주세요');
-    } else if (formData.password.length < 8) {
-      newErrors.password = '비밀번호는 8자 이상이어야 합니다';
-      errorMessages.push('비밀번호는 8자 이상이어야 합니다');
+      setErrors({ password: '비밀번호를 입력해주세요' });
+      alert('비밀번호를 입력해주세요');
+      return false;
+    }
+    if (formData.password.length < 8) {
+      setErrors({ password: '비밀번호는 8자 이상이어야 합니다' });
+      alert('비밀번호는 8자 이상이어야 합니다');
+      return false;
     }
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = '비밀번호 확인을 입력해주세요';
-      errorMessages.push('비밀번호 확인을 입력해주세요');
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
-      errorMessages.push('비밀번호가 일치하지 않습니다');
+      setErrors({ confirmPassword: '비밀번호 확인을 입력해주세요' });
+      alert('비밀번호 확인을 입력해주세요');
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({ confirmPassword: '비밀번호가 일치하지 않습니다' });
+      alert('비밀번호가 일치하지 않습니다');
+      return false;
     }
     if (!formData.team) {
-      newErrors.team = '좋아하는 팀을 선택해주세요';
-      errorMessages.push('좋아하는 팀을 선택해주세요');
+      setErrors({ team: '좋아하는 팀을 선택해주세요' });
+      alert('좋아하는 팀을 선택해주세요');
+      return false;
     }
 
-    setErrors(newErrors);
-
-    if (errorMessages.length > 0) {
-      alert(errorMessages.join('\n'));
-    }
-
-    return Object.keys(newErrors).length === 0;
+    setErrors({});
+    return true;
   };
 
   const handleSubmit = async (e) => {
