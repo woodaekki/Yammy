@@ -18,6 +18,7 @@ export default function ChatGamePage() {
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
+  const [roomLoadError, setRoomLoadError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef(null);
@@ -52,6 +53,7 @@ export default function ChatGamePage() {
           status: error.response?.status,
           data: error.response?.data
         });
+        setRoomLoadError("채팅방을 찾을 수 없습니다.");
         setLoadingRoom(false);
       });
   }, [roomKey]);
@@ -95,12 +97,12 @@ export default function ChatGamePage() {
     alert('이미지 업로드 실패: ' + error.message);
   };
 
-  if (error) {
+  if (error || roomLoadError) {
     return (
       <div className="error-container">
         <div className="error-box">
           <h2>채팅방 오류</h2>
-          <p>{error}</p>
+          <p>{error || roomLoadError}</p>
           <button onClick={() => window.location.reload()}>
             새로고침
           </button>
