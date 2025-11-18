@@ -1,43 +1,40 @@
 /* === 전체 레이아웃 컨테이너 === */
 .chat-page-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  display: grid;
-  grid-template-rows: auto 1fr auto 58px;
-  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
   background-color: #f5f6f7;
-  margin: 0;        /* ← 추가 */
-  padding: 0;       /* ← 추가 */
+  margin: 0;
+  padding: 0;
 }
 
 /* === 고정된 헤더 === */
 .chat-header-fixed {
-  grid-row: 1;
-  width: 100%;
-  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 80px;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  position: sticky;
-  top: 0;
+  z-index: 999999;
+  margin: 0;
+  /* GameHeader 컴포넌트 자체에 padding이 있어서 여기서는 제거 */
 }
 
 /* === 메시지 스크롤 영역 (핵심!) === */
 .chat-messages-container {
-  grid-row: 2;
+  padding-top: 90px; /* 헤더 높이만큼 공간 확보 */
+  padding-bottom: 110px; /* 업로드 바 + 네비게이션 바 높이 */
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 1rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* 스크롤바 스타일 - 스크롤시에만 나타나고 얇고 흐리게 */
@@ -136,7 +133,10 @@
 
 /* === 하단 네비게이션 바 === */
 .chat-page-container .nav-bar-bottom {
-  grid-row: 4;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   z-index: 100;
 }
@@ -254,11 +254,6 @@
 }
 
 /* App.css 오버라이드 - 모든 기기에서 작동 */
-body:has(.chat-page-container) {
-  overflow: hidden;
-}
-
 body:has(.chat-page-container) .app-content-wrapper {
   padding-bottom: 0 !important;
-  overflow: hidden !important;
 }

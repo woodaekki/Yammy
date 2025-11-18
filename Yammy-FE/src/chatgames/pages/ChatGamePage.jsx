@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useChatMessages } from '../hooks/useChatMessages';
 import { chatRoomApi } from '../api/chatApi';
 import GameHeader from '../components/GameHeader';
@@ -18,6 +19,7 @@ export default function ChatGamePage() {
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
+  const [roomLoadError, setRoomLoadError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef(null);
@@ -29,13 +31,13 @@ export default function ChatGamePage() {
   const myId = user?.id || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
 
-  // body 스크롤 방지
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
+  // body 스크롤은 허용 (제거)
+  // useEffect(() => {
+  //   document.body.style.overflow = 'hidden';
+  //   return () => {
+  //     document.body.style.overflow = '';
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (!roomKey) return;
@@ -52,6 +54,7 @@ export default function ChatGamePage() {
           status: error.response?.status,
           data: error.response?.data
         });
+        setRoomLoadError("채팅방을 찾을 수 없습니다.");
         setLoadingRoom(false);
       });
   }, [roomKey]);
@@ -95,12 +98,12 @@ export default function ChatGamePage() {
     alert('이미지 업로드 실패: ' + error.message);
   };
 
-  if (error) {
+  if (error || roomLoadError) {
     return (
       <div className="error-container">
         <div className="error-box">
           <h2>채팅방 오류</h2>
-          <p>{error}</p>
+          <p>{error || roomLoadError}</p>
           <button onClick={() => window.location.reload()}>
             새로고침
           </button>
@@ -122,13 +125,16 @@ export default function ChatGamePage() {
 
   return (
     <div className="chat-page-container">
-      {/* 고정된 헤더 */}
-      <div className="chat-header-fixed">
-        <GameHeader room={loadingRoom ? null : room} navigate={navigate} />
-      </div>
+      {/* 고정된 헤더 (Portal로 document.body에 렌더링) */}
+      {createPortal(
+        <div className="chat-header-fixed">
+          <GameHeader room={loadingRoom ? null : room} navigate={navigate} />
+        </div>,
+        document.body
+      )}
 
       {/* 스크롤 가능한 메시지 영역 */}
-      <div 
+      <div
         className="chat-messages-container"
         ref={messagesContainerRef}
         onScroll={handleScroll}
@@ -172,14 +178,17 @@ export default function ChatGamePage() {
         </button>
       )} */}
 
-      {/* 고정된 이미지 업로드 바 */}
-      <div className="chat-upload-fixed">
-        <ImageUpload
-          roomKey={roomKey}
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={handleUploadError}
-        />
-      </div>
+      {/* 고정된 이미지 업로드 바 (Portal로 document.body에 렌더링) */}
+      {createPortal(
+        <div className="chat-upload-fixed">
+          <ImageUpload
+            roomKey={roomKey}
+            onUploadSuccess={handleUploadSuccess}
+            onUploadError={handleUploadError}
+          />
+        </div>,
+        document.body
+      )}
 
       {/* 이미지 확대 모달 */}
       {selectedImage && (
