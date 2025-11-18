@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import imageCompression from 'browser-image-compression';
 import { getTeamColors, TEAM_COLORS } from '../../sns/utils/teamColors';
 import { TEAM_LOGOS } from '../../utils/teamLogos';
@@ -79,6 +80,20 @@ const TicketCreatePage = () => {
             navigate('/mypage', { replace: true });
         }
     }, [validTeam, navigate]);
+
+    // 모달 열렸을 때 body 스크롤 비활성화
+    useEffect(() => {
+        if (showMatchModal || showLocationModal || showTeamModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        // cleanup: 컴포넌트 언마운트 시 스크롤 복구
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [showMatchModal, showLocationModal, showTeamModal]);
 
     // 팀 변경 시 색상과 배경 업데이트
     useEffect(() => {
@@ -666,8 +681,22 @@ const TicketCreatePage = () => {
             </div>
 
             {/* 경기 선택 모달 */}
-            {showMatchModal && (
-                <div className="location-modal" onClick={() => setShowMatchModal(false)}>
+            {showMatchModal && createPortal(
+                <div 
+                    className="location-modal" 
+                    onClick={() => setShowMatchModal(false)}
+                    style={{ 
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        margin: 0,
+                        padding: 0
+                    }}
+                >
                     <div className="location-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowMatchModal(false)}>✕</button>
                         <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>KBO 경기 선택</h3>
@@ -728,12 +757,27 @@ const TicketCreatePage = () => {
                             </div>
                         )}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* 팀 선택 모달 */}
             {showTeamModal && (
-                <div className="location-modal" onClick={() => setShowTeamModal(false)}>
+                <div 
+                    className="location-modal" 
+                    onClick={() => setShowTeamModal(false)}
+                    style={{ 
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        margin: 0,
+                        padding: 0
+                    }}
+                >
                     <div className="location-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowTeamModal(false)}>✕</button>
                         <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 700 }}>응원 팀 선택</h3>
@@ -770,12 +814,27 @@ const TicketCreatePage = () => {
                             ))}
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* 경기장 선택 모달 */}
-            {showLocationModal && (
-                <div className="location-modal" onClick={() => setShowLocationModal(false)}>
+            {showLocationModal && createPortal(
+                <div 
+                    className="location-modal" 
+                    onClick={() => setShowLocationModal(false)}
+                    style={{ 
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        margin: 0,
+                        padding: 0
+                    }}
+                >
                     <div className="location-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowLocationModal(false)}>✕</button>
                         <input
@@ -805,7 +864,8 @@ const TicketCreatePage = () => {
                             직접 입력
                         </button>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
