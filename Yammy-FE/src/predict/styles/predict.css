@@ -302,9 +302,10 @@
   background: white;
 }
 
-/* 매치 정보 섹션 */
-.match-info-section {
+/* 매치 팀 정보 섹션 */
+.match-teams-section {
   display: flex;
+  flex-direction: row;
   align-items: stretch;
   padding: 20px 16px;
   background: white;

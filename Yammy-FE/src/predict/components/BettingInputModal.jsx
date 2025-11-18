@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getTeamColor } from '../hooks/usePredict';
 import { createBetting, getMemberInfo } from '../api/predictApi';
 import { TeamLogo } from '../utils/teamLogo.jsx';
+import yammyPick from '../../assets/images/yammy_pick.png';
 import '../styles/BettingInputModal.css';
 import '../styles/TeamLogo.css';
 
@@ -213,13 +214,18 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
               />
 
               <div style={{ position: 'relative', zIndex: 2 }}>
-                <div className="team-label">{selectedTeamInfo.label}</div>
+                <div className="team-label">
+                  {match.aiPick === selectedTeam && (
+                    <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-label" />
+                  )}
+                  {selectedTeamInfo.label}
+                </div>
                 <div className="team-info-container">
                   <TeamLogo teamName={selectedTeamInfo.name} size="large" />
                   <div className="team-details">
                     <div className="team-name">{selectedTeamInfo.name}</div>
                     <div className="team-odds">{selectedTeamInfo.odds.toFixed(2)}</div>
-                    <div className="odds-ratio-text">예상 승률 : 
+                    <div className="odds-ratio-text">예상 승률 :
                       {((match.homeAmount + match.awayAmount) > 0 ?
                         (selectedTeam === 0 ?
                          (match.homeAmount / (match.homeAmount + match.awayAmount)) * 100 :
