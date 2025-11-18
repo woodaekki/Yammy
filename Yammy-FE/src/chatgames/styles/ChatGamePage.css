@@ -122,7 +122,10 @@
 
 /* === 고정된 업로드 바 === */
 .chat-upload-fixed {
-  grid-row: 3;
+  position: fixed;
+  bottom: 58px;
+  left: 0;
+  right: 0;
   width: 100%;
   z-index: 100;
   background-color: #f5f6f7;
@@ -248,18 +251,14 @@
   .chat-header-fixed {
     padding-top: env(safe-area-inset-top);
   }
+}
 
-  /* .chat-upload-fixed {
-    margin-bottom: calc(58px + env(safe-area-inset-bottom));
-  } */
+/* App.css 오버라이드 - 모든 기기에서 작동 */
+body:has(.chat-page-container) {
+  overflow: hidden;
+}
 
-  /* ChatGamePage.css 맨 아래 추가 */
-  body:has(.chat-page-container) {
-    overflow: hidden;
-  }
-
-  body:has(.chat-page-container) .app-content-wrapper {
-    padding-bottom: 0 !important;  /* App.css의 padding 무효화 */
-    overflow: hidden !important;
-  }
+body:has(.chat-page-container) .app-content-wrapper {
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
 }
