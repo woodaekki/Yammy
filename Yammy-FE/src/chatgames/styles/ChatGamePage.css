@@ -5,13 +5,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   overflow: hidden;
   background-color: #f5f6f7;
+  margin: 0;        /* ← 추가 */
+  padding: 0;       /* ← 추가 */
 }
 
 /* === 고정된 헤더 === */
@@ -250,4 +252,14 @@
   /* .chat-upload-fixed {
     margin-bottom: calc(58px + env(safe-area-inset-bottom));
   } */
+
+  /* ChatGamePage.css 맨 아래 추가 */
+  body:has(.chat-page-container) {
+    overflow: hidden;
+  }
+
+  body:has(.chat-page-container) .app-content-wrapper {
+    padding-bottom: 0 !important;  /* App.css의 padding 무효화 */
+    overflow: hidden !important;
+  }
 }
