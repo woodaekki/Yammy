@@ -37,10 +37,10 @@ public class Ticket {
     @Column(nullable = false, length = 100)
     private String location;  // 경기장
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 10)
     private String seat;  // 좌석
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 15)
     private String comment;  // 한줄평
 
     // 선택 정보

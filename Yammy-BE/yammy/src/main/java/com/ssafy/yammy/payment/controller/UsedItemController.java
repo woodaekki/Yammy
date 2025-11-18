@@ -41,8 +41,19 @@ public class UsedItemController {
     // 단건 조회
     @Operation(summary = "중고 거래 게시글 단건 조회")
     @GetMapping("/{id}")
-    public ResponseEntity<UsedItemResponseDto> getTrade(@PathVariable Long id) {
-        return ResponseEntity.ok(usedItemService.getTrade(id));
+    public ResponseEntity<UsedItemResponseDto> getTrade(
+            @PathVariable Long id,
+            @RequestParam(value = "from", required = false) String from,
+            HttpServletRequest request
+    ) {
+
+        String referer = request.getHeader("Referer");
+
+        boolean fromChat =
+                "chat".equalsIgnoreCase(from)
+                        || (referer != null && referer.contains("/useditem/chat"));
+
+        return ResponseEntity.ok(usedItemService.getTrade(id, fromChat));
     }
 
     // 게시물 작성

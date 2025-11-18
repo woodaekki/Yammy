@@ -9,6 +9,7 @@ import com.ssafy.yammy.payment.dto.UsedItemResponseDto;
 import com.ssafy.yammy.payment.entity.Photo;
 import com.ssafy.yammy.payment.entity.Team;
 import com.ssafy.yammy.payment.entity.UsedItem;
+import com.ssafy.yammy.payment.entity.UsedItemStatus;
 import com.ssafy.yammy.payment.repository.PhotoRepository;
 import com.ssafy.yammy.payment.repository.UsedItemRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,9 +57,14 @@ public class UsedItemService {
     }
 
     // 단건 조회
-    public UsedItemResponseDto getTrade(Long id) {
+    public UsedItemResponseDto getTrade(Long id, boolean fromChat) {
         UsedItem item = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+
+        // detail 페이지 접근일 때만 거래 완료 차단
+        if (!fromChat && item.getStatus() == UsedItemStatus.CONFIRMED) {
+            throw new ResponseStatusException(HttpStatus.GONE, "이미 거래가 완료된 상품입니다.");
+        }
 
         return UsedItemResponseDto.builder()
                 .id(item.getId())
@@ -136,13 +142,6 @@ public class UsedItemService {
     public UsedItemResponseDto updateTrade(HttpServletRequest request, Long id, UsedItemRequestDto dto) {
         String token = extractToken(request);
         Long memberId = jwtTokenProvider.getMemberId(token);
-
-        System.out.println("=== UPDATE REQUEST DTO ===");
-        System.out.println("title=" + dto.getTitle());
-        System.out.println("price=" + dto.getPrice());
-        System.out.println("team=" + dto.getTeam());
-        System.out.println("photoIds=" + dto.getPhotoIds());
-
 
         UsedItem usedItem = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));

@@ -6,9 +6,11 @@ export const getAllUsedItems = async (page = 0, size = 10, sort = "createdAt,des
   return res.data.content
 }
 
-// 단건 조회
-export const getUsedItemById = async (id) => {
-  const res = await apiClient.get(`/trades/${id}`)
+// 단건 조회 
+export const getUsedItemById = async (id, from = "") => {
+  // from 존재하면 ?from=chat 같이 붙임
+  const url = from ? `/trades/${id}?from=${from}` : `/trades/${id}`
+  const res = await apiClient.get(url)
   return res.data
 }
 

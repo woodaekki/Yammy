@@ -54,7 +54,7 @@ public class Member {
     @Builder.Default
     private Long gameTag = 0L;
 
-    @Column(length = 50)
+    @Column(length = 200)
     private String bio;
 
     @Column(name = "email_verified", nullable = false)

@@ -395,7 +395,12 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
                                 <div style={{
                                     width: '100%',
                                     borderRadius: '0',
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    maxHeight: '300px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#f5f5f5'
                                 }}>
                                     <img
                                         src={ticket.photoUrl || ticket.photoPreview}
@@ -404,6 +409,9 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
                                         style={{
                                             width: '100%',
                                             height: 'auto',
+                                            maxHeight: '300px',
+                                            objectFit: 'contain',
+                                            objectPosition: 'center',
                                             display: 'block'
                                         }}
                                     />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPostPresignedUrls, createPost } from '../api/snsApi';
 import axios from 'axios';
+import imageCompression from 'browser-image-compression';
 import '../styles/PostCreate.css';
 
 const PostCreate = () => {
@@ -11,24 +12,91 @@ const PostCreate = () => {
     const [previewUrls, setPreviewUrls] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
+    // 실제 이미지 파일인지 검증하는 함수
+    const validateImageFile = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const arr = new Uint8Array(reader.result).subarray(0, 4);
+                let header = '';
+                for (let i = 0; i < arr.length; i++) {
+                    header += arr[i].toString(16);
+                }
+
+                // 이미지 파일 시그니처 확인
+                const isValidImage =
+                    header.startsWith('89504e47') || // PNG
+                    header.startsWith('ffd8ff') ||   // JPEG
+                    header.startsWith('47494638') || // GIF
+                    header.startsWith('424d') ||     // BMP
+                    header.startsWith('49492a00') || // TIFF
+                    header.startsWith('4d4d002a');   // TIFF
+
+                resolve(isValidImage);
+            };
+            reader.onerror = () => resolve(false);
+            reader.readAsArrayBuffer(file.slice(0, 4));
+        });
+    };
+
+    // 이미지 압축 함수 (GIF 예외 처리 포함)
+    const compressImage = async (file) => {
+        try {
+            // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+            if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+                return file;
+            }
+
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            };
+
+            const compressed = await imageCompression(file, options);
+            return new File([compressed], file.name, { type: compressed.type });
+        } catch (error) {
+            console.error('이미지 압축 실패:', error);
+            return file;
+        }
+    };
+
     // 파일 선택 핸들러
-    const handleFileSelect = (e) => {
+    const handleFileSelect = async (e) => {
         const files = Array.from(e.target.files);
 
         // 이미지 파일만 허용
         const imageFiles = files.filter(file => file.type.startsWith('image/'));
 
-        // 최대 3개까지만 허용
-        if (imageFiles.length > 3) {
-            alert('이미지는 최대 3개까지 업로드할 수 있습니다.');
+        // 기존 파일과 합쳐서 최대 3개까지만 허용
+        const totalCount = selectedFiles.length + imageFiles.length;
+        if (totalCount > 3) {
+            alert(`이미지는 최대 3개까지 업로드할 수 있습니다. (현재 ${selectedFiles.length}개 선택됨)`);
             return;
         }
 
-        setSelectedFiles(imageFiles);
+        // 실제 이미지 파일인지 검증
+        const validationResults = await Promise.all(
+            imageFiles.map(file => validateImageFile(file))
+        );
 
-        // 미리보기 URL 생성
-        const previews = imageFiles.map(file => URL.createObjectURL(file));
-        setPreviewUrls(previews);
+        const invalidFiles = imageFiles.filter((_, index) => !validationResults[index]);
+        if (invalidFiles.length > 0) {
+            alert('유효하지 않은 이미지 파일이 포함되어 있습니다.');
+            return;
+        }
+
+        // 이미지 압축
+        const compressedFiles = await Promise.all(
+            imageFiles.map(file => compressImage(file))
+        );
+
+        // 기존 파일에 추가
+        setSelectedFiles([...selectedFiles, ...compressedFiles]);
+
+        // 미리보기 URL 생성 (기존 미리보기에 추가)
+        const previews = compressedFiles.map(file => URL.createObjectURL(file));
+        setPreviewUrls([...previewUrls, ...previews]);
     };
 
     // 이미지 제거
@@ -187,6 +255,7 @@ const PostCreate = () => {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     disabled={isUploading}
+                    maxLength={2000}
                 />
                 <div className="post-create-counter">{caption.length} / 2000</div>
 

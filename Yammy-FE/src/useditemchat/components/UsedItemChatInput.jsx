@@ -75,6 +75,36 @@ export default function UsedItemChatInput({ roomKey, disabled = false }) {
     }
   };
 
+
+  /** ================================
+   * 이미지 파일 헤더 검증
+   ================================== */
+  const validateImageFile = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const arr = new Uint8Array(reader.result).subarray(0, 4);
+        let header = '';
+        for (let i = 0; i < arr.length; i++) {
+          header += arr[i].toString(16);
+        }
+
+        // 이미지 파일 시그니처 확인
+        const isValidImage =
+          header.startsWith('89504e47') || // PNG
+          header.startsWith('ffd8ff') ||   // JPEG
+          header.startsWith('47494638') || // GIF
+          header.startsWith('424d') ||     // BMP
+          header.startsWith('49492a00') || // TIFF
+          header.startsWith('4d4d002a');   // TIFF
+
+        resolve(isValidImage);
+      };
+      reader.onerror = () => resolve(false);
+      reader.readAsArrayBuffer(file.slice(0, 4));
+    });
+  };
+
   /** ================================
    * 이미지 업로드
    ================================== */
@@ -84,6 +114,13 @@ export default function UsedItemChatInput({ roomKey, disabled = false }) {
 
     if (!file.type.startsWith("image/")) {
       alert("이미지 파일만 업로드 가능합니다.");
+      return;
+    }
+
+    // 파일 헤더 검증 추가 (여기!)
+    const isValidImage = await validateImageFile(file);
+    if (!isValidImage) {
+      alert("유효하지 않은 이미지 파일입니다.");
       return;
     }
 
@@ -146,7 +183,7 @@ export default function UsedItemChatInput({ roomKey, disabled = false }) {
           value={message}
           disabled={sending || disabled}
           placeholder={
-            disabled ? "채팅방을 나간 사용자가 있습니다" : "메시지를 입력하세요..."
+            disabled ? "채팅을 더 이상 진행할 수 없습니다." : "메시지를 입력하세요..."
           }
           onKeyDown={handleKeyDown}
           onChange={(e) => setMessage(e.target.value)}

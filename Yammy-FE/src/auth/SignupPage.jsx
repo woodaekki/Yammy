@@ -4,6 +4,7 @@ import { signup, sendVerificationCode, verifyEmail, login, updateMember } from '
 import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { TEAM_LOGOS } from '../utils/teamLogos';
 import { TEAM_COLORS } from '../sns/utils/teamColors';
+import imageCompression from 'browser-image-compression';
 import './styles/auth.css';
 
 export default function SignupPage() {
@@ -43,15 +44,58 @@ export default function SignupPage() {
     }
   };
 
-  const handleImageChange = (e) => {
+  // 실제 이미지 파일인지 검증하는 함수
+  const validateImageFile = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const arr = new Uint8Array(reader.result).subarray(0, 4);
+        let header = '';
+        for (let i = 0; i < arr.length; i++) {
+          header += arr[i].toString(16);
+        }
+
+        // 이미지 파일 시그니처 확인
+        const isValidImage =
+          header.startsWith('89504e47') || // PNG
+          header.startsWith('ffd8ff') ||   // JPEG
+          header.startsWith('47494638') || // GIF
+          header.startsWith('424d') ||     // BMP
+          header.startsWith('49492a00') || // TIFF
+          header.startsWith('4d4d002a');   // TIFF
+
+        resolve(isValidImage);
+      };
+      reader.onerror = () => resolve(false);
+      reader.readAsArrayBuffer(file.slice(0, 4));
+    });
+  };
+
+  // 이미지 압축 함수 (GIF 예외 처리 포함)
+  const compressImage = async (file) => {
+    try {
+      // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+      if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+        return file;
+      }
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressed = await imageCompression(file, options);
+      return new File([compressed], file.name, { type: compressed.type });
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // 파일 크기 체크 (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
-      return;
-    }
 
     // 파일 타입 체크
     if (!file.type.startsWith('image/')) {
@@ -59,7 +103,23 @@ export default function SignupPage() {
       return;
     }
 
-    setProfileImageFile(file);
+    // 실제 이미지 파일인지 검증
+    const isValidImage = await validateImageFile(file);
+    if (!isValidImage) {
+      setErrors((prev) => ({ ...prev, profileImage: '유효하지 않은 이미지 파일입니다' }));
+      return;
+    }
+
+    // 이미지 압축
+    const compressedFile = await compressImage(file);
+
+    // 압축 후 파일 크기 체크 (5MB)
+    if (compressedFile.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, profileImage: '이미지 크기는 5MB 이하여야 합니다' }));
+      return;
+    }
+
+    setProfileImageFile(compressedFile);
     setErrors((prev) => ({ ...prev, profileImage: '' }));
 
     // 미리보기 생성
@@ -67,7 +127,7 @@ export default function SignupPage() {
     reader.onloadend = () => {
       setProfileImagePreview(reader.result);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressedFile);
   };
 
   const handleSendCode = async () => {
@@ -256,6 +316,7 @@ export default function SignupPage() {
                 placeholder="로그인 아이디를 입력하세요"
                 className="form-input"
                 autoComplete="username"
+                maxLength={20}
               />
               <i className="fas fa-id-card input-icon"></i>
             </div>
@@ -276,6 +337,7 @@ export default function SignupPage() {
                 placeholder="실명을 입력하세요"
                 className="form-input"
                 autoComplete="name"
+                maxLength={20}
               />
               <i className="fas fa-user input-icon"></i>
             </div>
@@ -295,6 +357,7 @@ export default function SignupPage() {
                 onChange={handleChange}
                 placeholder="다른 사용자에게 보여질 이름"
                 className="form-input"
+                maxLength={20}
               />
               <i className="fas fa-signature input-icon"></i>
             </div>
@@ -358,6 +421,7 @@ export default function SignupPage() {
                 className="form-input"
                 autoComplete="email"
                 disabled={emailVerified}
+                maxLength={50}
               />
               <button
                 type="button"
@@ -416,6 +480,7 @@ export default function SignupPage() {
                 placeholder="8자 이상, 영문+숫자 조합"
                 className="form-input"
                 autoComplete="new-password"
+                maxLength={30}
               />
               <button
                 type="button"
@@ -442,6 +507,7 @@ export default function SignupPage() {
                 placeholder="비밀번호를 다시 입력하세요"
                 className="form-input"
                 autoComplete="new-password"
+                maxLength={30}
               />
               <button
                 type="button"
@@ -500,6 +566,7 @@ export default function SignupPage() {
               placeholder="간단한 자기소개를 입력하세요"
               className="form-textarea"
               rows={3}
+              maxLength={200}
             />
           </div>
 

@@ -20,6 +20,10 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
   // 입력 변경 핸들러
   const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
+
+  // 글자 수 제한
+  if (name === 'roomKey' && value.length > 50) return;
+  if (name === 'name' && value.length > 30) return;
   
   setFormData(prev => {
     const newData = {
@@ -85,10 +89,13 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
       <form onSubmit={handleSubmit} className="room-create-form-inner">
         {/* 채팅방 키 (선택) */}
         <div className="form-group">
-          <label className="form-label">채팅방 키 (선택사항)</label>
+          <label className="form-label">채팅방 키 (선택사항)
+            <span className="char-count">{formData.roomKey.length}/50</span>
+          </label>
           <input
             type="text"
             name="roomKey"
+            maxLength={50}
             value={formData.roomKey}
             onChange={handleChange}
             placeholder="비워두면 자동 생성"
@@ -101,10 +108,12 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
         <div className="form-group">
           <label className="form-label required">
             채팅방 이름
+            <span className="char-count">{formData.name.length}/30</span>
           </label>
           <input
             type="text"
             name="name"
+            maxLength={30}
             value={formData.name}
             onChange={handleChange}
             placeholder="KIA vs LG"
@@ -169,6 +178,7 @@ export default function RoomCreateForm({ onSuccess, onCancel }) {
             name="startAt"
             value={formData.startAt}
             onChange={handleChange}
+            required
             className="form-input"
           />
         </div>

@@ -46,6 +46,7 @@ function UsedItemSearch({ onSearch }) {
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="상품명 또는 설명 검색"
         className="search-input"
+        maxLength={100}
       />
 
       {/* 팀 컬러 적용 버튼 */}

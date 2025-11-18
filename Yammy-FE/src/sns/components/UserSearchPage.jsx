@@ -125,6 +125,7 @@ const UserSearchPage = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
+            maxLength={50}
           />
           {searchQuery && (
             <button
@@ -191,11 +192,13 @@ const UserSearchPage = () => {
                       <h3 className="user-nickname">{user.nickname}</h3>
                       {user.team && (
                         <div className="user-team">
-                          <img
-                            src={TEAM_LOGOS[user.team]}
-                            alt={user.team}
-                            className="user-team-logo"
-                          />
+                          {TEAM_LOGOS[user.team] && (
+                            <img
+                              src={TEAM_LOGOS[user.team]}
+                              alt={user.team}
+                              className="user-team-logo"
+                            />
+                          )}
                           <span className="user-team-name">{user.team}</span>
                         </div>
                       )}

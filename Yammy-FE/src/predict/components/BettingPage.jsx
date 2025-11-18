@@ -5,6 +5,7 @@ import { TEAM_COLORS } from '../../sns/utils/teamColors';
 import { TeamLogo } from '../utils/teamLogo.jsx';
 import BettingInputModal from './BettingInputModal';
 import { useAuthStore } from '../../stores/authStore'; // 인증 상태 확인
+import yammyPick from '../../assets/images/yammy_pick.png';
 import '../styles/BettingPage.css';
 import '../styles/TeamLogo.css';
 
@@ -171,7 +172,12 @@ const BettingPage = () => {
                   }}
                   onClick={() => handleTeamSelect(0)}
                 >
-                  <div className="betting-team-label">HOME</div>
+                  <div className="betting-team-label">
+                    {match.aiPick === 0 && (
+                      <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-label" />
+                    )}
+                    HOME
+                  </div>
                   <div className="betting-team-logo-name">
                     <TeamLogo teamName={match.homeTeam} size="medium" />
                     <div className="betting-team-name">{match.homeTeam}</div>
@@ -194,7 +200,12 @@ const BettingPage = () => {
                   }}
                   onClick={() => handleTeamSelect(1)}
                 >
-                  <div className="betting-team-label">AWAY</div>
+                  <div className="betting-team-label">
+                    {match.aiPick === 1 && (
+                      <img src={yammyPick} alt="Yammy Pick" className="yammy-pick-label" />
+                    )}
+                    AWAY
+                  </div>
                   <div className="betting-team-logo-name">
                     <TeamLogo teamName={match.awayTeam} size="medium" />
                     <div className="betting-team-name">{match.awayTeam}</div>
@@ -233,9 +244,7 @@ const BettingPage = () => {
           
           {/* 경기 정보 섹션 */}
           <div className="match-info-section">
-            <div style={{ marginTop: '15px' }}>
-              <h3>경기 정보</h3>
-            </div>
+            <h3>경기 정보</h3>
             <div className="info-grid">
               <div className="info-item">
                 <span className="info-label">시작 시간</span>

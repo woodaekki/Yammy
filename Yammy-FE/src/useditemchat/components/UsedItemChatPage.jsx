@@ -59,7 +59,8 @@ export default function UsedItemChatPage() {
         const chatRoom = await usedItemChatApi.getChatRoom(roomKey);
         setChatRoomInfo(chatRoom);
 
-        const item = await getUsedItemById(chatRoom.usedItemId);
+        /** from=chat 로 조회해야 detail 차단을 안당함 */
+        const item = await getUsedItemById(chatRoom.usedItemId, "chat");
         setItemInfo(item);
 
         await usedItemChatApi.markAsRead(roomKey);
@@ -88,6 +89,25 @@ export default function UsedItemChatPage() {
     };
   }, [roomKey]);
 
+  // 10초마다 물품 상태 확인 (CONFIRMED 감지)
+  useEffect(() => {
+    if (!chatRoomInfo?.usedItemId || itemInfo?.status === 'CONFIRMED') return;
+
+    const interval = setInterval(async () => {
+      try {
+        const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId, "chat");
+
+        if (updatedItem.status !== itemInfo?.status) {
+          setItemInfo(updatedItem);
+        }
+      } catch (error) {
+        console.error('물품 상태 확인 실패:', error);
+      }
+    }, 10000); // 10초마다
+
+    return () => clearInterval(interval);
+  }, [chatRoomInfo?.usedItemId, itemInfo?.status]);
+
   const handleOpenTransferModal = () => {
     const memberId = user?.memberId || localStorage.getItem("memberId");
     if (!memberId) {
@@ -115,6 +135,13 @@ export default function UsedItemChatPage() {
       const updated = await getMyPoint();
       setMyBalance(updated.balance);
       window.dispatchEvent(new Event("pointUpdated"));
+
+      // 물품 정보 즉시 갱신
+      const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId, "chat");
+      setItemInfo(updatedItem);
+
+      // 모달 닫기
+      handleCloseTransferModal();
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("인증이 만료되었습니다. 다시 로그인해주세요.");
@@ -173,7 +200,7 @@ export default function UsedItemChatPage() {
             {itemInfo && (
               <div
                 className="useditem-chat-item-info"
-                onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
+                onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}?from=chat`)}
               >
                 {itemInfo.imageUrls?.[0] && (
                   <img src={itemInfo.imageUrls[0]} className="useditem-chat-item-image" />
@@ -187,9 +214,16 @@ export default function UsedItemChatPage() {
             )}
 
             <div className="useditem-chat-header-buttons">
-              <button className="useditem-chat-transfer-btn" onClick={handleOpenTransferModal}>
-                송금
-              </button>
+              {/* 구매자만 송금 버튼 표시 */}
+              {chatRoomInfo?.buyerId == (user?.memberId || localStorage.getItem("memberId")) && (
+                <button 
+                  className="useditem-chat-transfer-btn" 
+                  onClick={handleOpenTransferModal}
+                  disabled={itemInfo?.status === 'CONFIRMED'}
+                >
+                  송금
+                </button>
+              )}
               <button className="useditem-chat-leave-btn" onClick={handleLeaveChatRoom}>
                 나가기
               </button>
@@ -210,9 +244,13 @@ export default function UsedItemChatPage() {
       {createPortal(
         <div className="useditem-chat-input-fixed">
           <UsedItemChatInput
-            roomKey={roomKey}
-            disabled={chatRoomInfo?.sellerDeleted || chatRoomInfo?.buyerDeleted}
-          />
+              roomKey={roomKey}
+              disabled={
+                chatRoomInfo?.sellerDeleted || 
+                chatRoomInfo?.buyerDeleted ||
+                itemInfo?.status === 'CONFIRMED'
+              }
+            />
         </div>,
         document.body
       )}

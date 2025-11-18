@@ -8,6 +8,7 @@ import { getPresignedUrls, completeUpload } from '../useditem/api/photoApi';
 import { getTickets } from '../ticket/api/ticketApi';
 import { getEtherscanNFTUrl } from '../ticket/api/nftApi';
 import { GameTitle, parseGameTeams } from '../ticket/components/TicketCard';
+import imageCompression from 'browser-image-compression';
 import './styles/MyPage.css';
 
 // 기본 프로필 이미지 (SVG data URI)
@@ -141,16 +142,81 @@ const MyPage = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  // 실제 이미지 파일인지 검증하는 함수
+  const validateImageFile = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const arr = new Uint8Array(reader.result).subarray(0, 4);
+        let header = '';
+        for (let i = 0; i < arr.length; i++) {
+          header += arr[i].toString(16);
+        }
+
+        // 이미지 파일 시그니처 확인
+        const isValidImage =
+          header.startsWith('89504e47') || // PNG
+          header.startsWith('ffd8ff') ||   // JPEG
+          header.startsWith('47494638') || // GIF
+          header.startsWith('424d') ||     // BMP
+          header.startsWith('49492a00') || // TIFF
+          header.startsWith('4d4d002a');   // TIFF
+
+        resolve(isValidImage);
+      };
+      reader.onerror = () => resolve(false);
+      reader.readAsArrayBuffer(file.slice(0, 4));
+    });
+  };
+
+  // 이미지 압축 함수 (GIF 예외 처리 포함)
+  const compressImage = async (file) => {
+    try {
+      // GIF는 압축하지 않음 (용량이 큰 경우만 압축)
+      if (file.type === 'image/gif' && file.size <= 10 * 1024 * 1024) {
+        return file;
+      }
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressed = await imageCompression(file, options);
+      return new File([compressed], file.name, { type: compressed.type });
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // 파일 타입 체크
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다');
+        return;
+      }
+
+      // 실제 이미지 파일인지 검증
+      const isValidImage = await validateImageFile(file);
+      if (!isValidImage) {
+        alert('유효하지 않은 이미지 파일입니다');
+        return;
+      }
+
+      // 이미지 압축
+      const compressedFile = await compressImage(file);
+
       // 이미지 미리보기
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
       };
-      reader.readAsDataURL(file);
-      setSelectedFile(file);
+      reader.readAsDataURL(compressedFile);
+      setSelectedFile(compressedFile);
     }
   };
 
@@ -202,8 +268,8 @@ const MyPage = () => {
       alert('닉네임은 최대 20자까지 입력 가능합니다.');
       return;
     }
-    if (formData.bio.length > 50) {
-      alert('자기소개는 최대 50자까지 입력 가능합니다.');
+    if (formData.bio.length > 200) {
+      alert('자기소개는 최대 200자까지 입력 가능합니다.');
       return;
     }
 
@@ -455,6 +521,7 @@ const MyPage = () => {
                     className="info-input"
                     placeholder="비밀번호를 변경하려면 입력하세요"
                     disabled={loading}
+                    maxLength={30}
                   />
                 </div>
 
@@ -469,6 +536,7 @@ const MyPage = () => {
                       className="info-input"
                       placeholder="새 비밀번호 (최소 8자)"
                       disabled={loading}
+                      maxLength={30}
                     />
                   </div>
                 )}
@@ -484,6 +552,7 @@ const MyPage = () => {
                       className="info-input"
                       placeholder="새 비밀번호를 다시 입력하세요"
                       disabled={loading}
+                      maxLength={30}
                     />
                   </div>
                 )}
@@ -537,10 +606,10 @@ const MyPage = () => {
                 className="info-textarea"
                 placeholder="자기소개를 입력하세요"
                 rows={4}
-                maxLength={50}
+                maxLength={200}
               />
               <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: '0' }}>
-                {formData.bio.length}/50자
+                {formData.bio.length}/200자
               </p>
             </div>
 
