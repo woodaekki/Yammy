@@ -413,11 +413,7 @@
   padding: 0 0.5rem;
   white-space: nowrap;
   flex-shrink: 0;
-<<<<<<< HEAD
   width: 50px;
-=======
-  min-width: 50px;
->>>>>>> 2ed16aea0c7d2f19147ff00c12c6e03af2bae8f2
 }
 
 .amount-input:focus {
@@ -655,20 +651,12 @@
 
   .amount-input-container {
     height: 44px;
-<<<<<<< HEAD
     gap: 0.5rem;
-=======
-    gap: 0.25rem;
->>>>>>> 2ed16aea0c7d2f19147ff00c12c6e03af2bae8f2
   }
 
   .amount-input-container > div {
     font-size: 1rem;
-<<<<<<< HEAD
     width: 45px;
-=======
-    min-width: 45px;
->>>>>>> 2ed16aea0c7d2f19147ff00c12c6e03af2bae8f2
     padding: 0 0.25rem;
   }
 }
