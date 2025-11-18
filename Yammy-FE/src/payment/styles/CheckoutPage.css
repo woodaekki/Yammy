@@ -1,0 +1,41 @@
+/* 오렌지 강조 경고 박스 */
+.warning-strong {
+  margin-bottom: 0.7rem;
+  padding: 16px 20px;
+  background: #FFF7E6;                 
+  border: 1px solid #FFE0B3;           
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+}
+
+/* Info 아이콘 */
+.warning-strong-icon {
+  font-size: 1.2rem; 
+  color: #D9822B;    
+  font-weight: 700;      
+  margin-top: 2px;
+}
+
+/* 텍스트 영역 */
+.warning-strong-msg {
+  line-height: 1.55;
+}
+
+/* 첫 문장 */
+.warning-strong-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #8B5200;
+}
+
+/* 두 번째 문장 */
+.warning-strong-line {
+  font-weight: 600;
+  font-size: 0.9rem; 
+  margin-bottom: 4px;
+  color: #A86400;
+}
