@@ -57,12 +57,12 @@ public class UsedItemService {
     }
 
     // 단건 조회
-    public UsedItemResponseDto getTrade(Long id) {
+    public UsedItemResponseDto getTrade(Long id, boolean fromChat) {
         UsedItem item = usedItemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
 
-        // 거래 완료 되었을 경우
-        if (item.getStatus() != null && item.getStatus() == UsedItemStatus.CONFIRMED) {
+        // detail 페이지 접근일 때만 거래 완료 차단
+        if (!fromChat && item.getStatus() == UsedItemStatus.CONFIRMED) {
             throw new ResponseStatusException(HttpStatus.GONE, "이미 거래가 완료된 상품입니다.");
         }
 
