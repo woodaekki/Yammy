@@ -86,6 +86,8 @@
 /* 모달 콘텐츠 */
 .betting-modal-content {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 배당률 비교 그래프 */
@@ -353,7 +355,8 @@
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
-  min-height: 180px;
+  height: 180px;
+  flex-shrink: 0;
 }
 
 .amount-header {
@@ -436,9 +439,11 @@
   border-radius: 4px;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 2rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .validation-message.error {
@@ -634,7 +639,8 @@
   }
 
   .bet-amount-section {
-    min-height: 160px;
+    height: 160px;
+    flex-shrink: 0;
   }
 
   .action-buttons {
