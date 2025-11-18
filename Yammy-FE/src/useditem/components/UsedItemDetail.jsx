@@ -1,10 +1,37 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getUsedItemById, deleteUsedItem } from "../api/usedItemApi"
-import { getTeamColors } from "../../sns/utils/teamColors"
 import { usedItemChatApi } from "../../useditemchat/api/usedItemChatApi"
 import "../styles/usedItemDetail.css"
 import empty from "../../assets/images/empty.png"
+
+// 팀 코드(ENUM) → 팀 한글 이름 매핑
+const TEAM_MAP = {
+  DOOSAN: "두산 베어스",
+  LOTTE: "롯데 자이언츠",
+  LG: "LG 트윈스",
+  SSG: "SSG 랜더스",
+  KIA: "KIA 타이거즈",
+  HANWHA: "한화 이글스",
+  SAMSUNG: "삼성 라이온즈",
+  NC: "NC 다이노스",
+  KT: "KT 위즈",
+  KIWOOM: "키움 히어로즈"
+}
+
+// 한글 팀명 → 색상 매핑
+const TEAM_COLORS = {
+  '키움 히어로즈': { bgColor: '#570514', textColor: '#ffffff' },
+  '두산 베어스': { bgColor: '#1A1748', textColor: '#ffffff' },
+  '롯데 자이언츠': { bgColor: '#041E42', textColor: '#ffffff' },
+  '삼성 라이온즈': { bgColor: '#074CA1', textColor: '#ffffff' },
+  '한화 이글스': { bgColor: '#FC4E00', textColor: '#ffffff' },
+  'KIA 타이거즈': { bgColor: '#EA0029', textColor: '#ffffff' },
+  'LG 트윈스': { bgColor: '#C30452', textColor: '#ffffff' },
+  'SSG 랜더스': { bgColor: '#CF0E20', textColor: '#ffffff' },
+  'NC 다이노스': { bgColor: '#315288', textColor: '#ffffff' },
+  'KT 위즈': { bgColor: '#000000', textColor: '#ffffff' }
+}
 
 function UsedItemDetail() {
   const params = useParams()
@@ -13,18 +40,13 @@ function UsedItemDetail() {
   const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
   const myId = localStorage.getItem("memberId")
-  const [teamColors, setTeamColors] = useState(getTeamColors())
   const [isChatLoading, setIsChatLoading] = useState(false)
 
-  // from 파라미터 
+  // from 파라미터
   const search = new URLSearchParams(window.location.search)
   const from = search.get("from")
 
-  useEffect(() => {
-    setTeamColors(getTeamColors())
-  }, [])
-
-  // 상품 상세 불러오기 (from 포함)
+  // 상품 상세 로드
   useEffect(() => {
     getUsedItemById(params.id, from)
       .then(data => setItem(data))
@@ -81,14 +103,13 @@ function UsedItemDetail() {
   }
 
   if (loading) return <p className="loading-text"></p>
-
   if (!item) return <p className="loading-text">데이터가 없습니다.</p>
 
-  // 거래 완료 상태
+  // 완료된 상태
   const completedStatuses = ["CONFIRMED", "HOLD", "CANCELLED"]
   const isCompletedStatus = completedStatuses.includes(item.status)
 
-  // chat에서 온 경우만 예외로 detail 차단 X
+  // chat 경로가 아니면 차단
   if (from !== "chat" && isCompletedStatus) {
     return (
       <div className="detail-notfound">
@@ -101,18 +122,9 @@ function UsedItemDetail() {
     )
   }
 
-  const teamNames = {
-    DOOSAN: "두산 베어스",
-    LOTTE: "롯데 자이언츠",
-    LG: "LG 트윈스",
-    SSG: "SSG 랜더스",
-    KIA: "KIA 타이거즈",
-    HANWHA: "한화 이글스",
-    SAMSUNG: "삼성 라이온즈",
-    NC: "NC 다이노스",
-    KT: "KT 위즈",
-    KIWOOM: "키움 히어로즈"
-  }
+  // 팀 컬러 가져오기
+  const teamKoreanName = TEAM_MAP[item.team]
+  const teamColor = TEAM_COLORS[teamKoreanName] || { bgColor: "#eee", textColor: "#000" }
 
   return (
     <div className="detail-container">
@@ -202,15 +214,16 @@ function UsedItemDetail() {
 
         <div className="detail-price-team">
           <p className="detail-price">{item.price?.toLocaleString()} 얌</p>
+
           {item.team && (
             <p
               className="detail-team-tag"
               style={{
-                backgroundColor: teamColors.bgColor,
-                color: teamColors.textColor
+                backgroundColor: teamColor.bgColor,
+                color: teamColor.textColor
               }}
             >
-              {teamNames[item.team] || item.team}
+              {teamKoreanName}
             </p>
           )}
         </div>
