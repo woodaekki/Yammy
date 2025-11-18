@@ -47,7 +47,7 @@ const BettingPage = () => {
   const handleTeamSelect = (teamIndex) => {
     // 로그인하지 않은 경우 로그인 페이지로 이동
     if (!isLoggedIn) {
-      alert('배팅을 하기 위해서는 로그인이 필요합니다.');
+      alert('예측을 하기 위해서는 로그인이 필요합니다.');
       navigate('/login');
       return;
     }
@@ -153,7 +153,7 @@ const BettingPage = () => {
             {/* 비로그인 사용자에게 안내 메시지 */}
             {!isLoggedIn && (
               <div className="login-required-notice">
-                <p>배팅을 하기 위해서는 로그인이 필요합니다</p>
+                <p>예측을 하기 위해서는 로그인이 필요합니다</p>
                 <button 
                   className="login-button"
                   onClick={() => navigate('/login')}
