@@ -16,20 +16,22 @@ function UsedItemDetail() {
   const [teamColors, setTeamColors] = useState(getTeamColors())
   const [isChatLoading, setIsChatLoading] = useState(false)
 
-  // 팀 컬러 초기 설정
+  // from 파라미터 읽기
+  const search = new URLSearchParams(window.location.search)
+  const from = search.get("from")
+
   useEffect(() => {
     setTeamColors(getTeamColors())
   }, [])
 
-  // 상품 상세 불러오기
+  // 상품 상세 불러오기 (from 포함)
   useEffect(() => {
-    getUsedItemById(params.id)
-      .then((data) => setItem(data))
-      .catch((error) => console.error("게시글 불러오기 실패:", error))
+    getUsedItemById(params.id, from)
+      .then(data => setItem(data))
+      .catch(error => console.error("게시글 불러오기 실패:", error))
       .finally(() => setLoading(false))
-  }, [params.id])
+  }, [params.id, from])
 
-  // 한국 시간 포맷
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString)
     const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000)
@@ -47,10 +49,8 @@ function UsedItemDetail() {
     return koreaTime.toLocaleDateString("ko-KR")
   }
 
-  // 수정
   const handleEdit = () => navigate(`/useditem/edit/${params.id}`)
 
-  // 채팅방 입장
   const handleChat = async () => {
     if (isChatLoading) return
     try {
@@ -65,7 +65,6 @@ function UsedItemDetail() {
     }
   }
 
-  // 삭제
   const handleDelete = () => {
     const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?")
     if (!confirmed) return
@@ -75,23 +74,22 @@ function UsedItemDetail() {
         alert("게시글이 삭제되었습니다.")
         navigate("/useditem")
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("삭제 실패:", error)
         alert("삭제 중 오류가 발생했습니다.")
       })
   }
 
-  // 로딩 중
   if (loading) return <p className="loading-text"></p>
 
-  // 데이터 없음
   if (!item) return <p className="loading-text">데이터가 없습니다.</p>
 
-  // 거래 완료 상태 차단
+  // 거래 완료 상태
   const completedStatuses = ["CONFIRMED", "HOLD", "CANCELLED"]
   const isCompletedStatus = completedStatuses.includes(item.status)
 
-  if (isCompletedStatus) {
+  // chat에서 온 경우만 예외로 detail 차단 X
+  if (from !== "chat" && isCompletedStatus) {
     return (
       <div className="detail-notfound">
         <p className="nf-title">이미 거래가 완료된 상품입니다</p>
@@ -103,7 +101,6 @@ function UsedItemDetail() {
     )
   }
 
-  // 팀 이름
   const teamNames = {
     DOOSAN: "두산 베어스",
     LOTTE: "롯데 자이언츠",
@@ -119,15 +116,12 @@ function UsedItemDetail() {
 
   return (
     <div className="detail-container">
-      {/* 상단 헤더 */}
+
       <div className="detail-header">
-        <button onClick={() => navigate("/useditem")} className="detail-back-btn">
-          ←
-        </button>
+        <button onClick={() => navigate("/useditem")} className="detail-back-btn">←</button>
         <span className="detail-title">상품 상세</span>
       </div>
 
-      {/* 이미지 슬라이더 */}
       <div className="detail-image-slider">
         {item.imageUrls?.length > 0 ? (
           <>
@@ -169,11 +163,9 @@ function UsedItemDetail() {
         )}
       </div>
 
-      {/* 본문 내용 */}
       <div className="detail-body">
         <h2 className="detail-item-title">{item.title}</h2>
 
-        {/* 판매자 */}
         <div className="detail-seller">
           <div className="detail-seller-left">
             <div className="detail-seller-avatar">
@@ -186,21 +178,15 @@ function UsedItemDetail() {
 
             <div className="detail-seller-info">
               <p className="detail-nickname">{item.nickname || "익명"}</p>
-              <p className="detail-date">
-                {item.createdAt ? formatTimeAgo(item.createdAt) : "방금 전"}
-              </p>
+              <p className="detail-date">{item.createdAt ? formatTimeAgo(item.createdAt) : "방금 전"}</p>
             </div>
           </div>
 
           <div className="detail-seller-actions">
             {item.memberId == myId ? (
               <>
-                <button className="detail-text-btn" onClick={handleEdit}>
-                  수정
-                </button>
-                <button className="detail-text-btn" onClick={handleDelete}>
-                  삭제
-                </button>
+                <button className="detail-text-btn" onClick={handleEdit}>수정</button>
+                <button className="detail-text-btn" onClick={handleDelete}>삭제</button>
               </>
             ) : (
               <button
@@ -214,7 +200,6 @@ function UsedItemDetail() {
           </div>
         </div>
 
-        {/* 가격 + 팀 */}
         <div className="detail-price-team">
           <p className="detail-price">{item.price?.toLocaleString()} 얌</p>
           {item.team && (
