@@ -27,19 +27,22 @@ const NavigationBarTop = () => {
 
   const formatYamUnit = (value) => {
     if (value < 10000) {
-      return value.toLocaleString(); 
+      return value.toLocaleString();
     }
 
+    // 만 단위
     if (value < 100000000) {
       const man = value / 10000;
-      const formatted = Number.isInteger(man) ? man : man.toFixed(2);
-      return `${formatted}만`;
+      const trimmed = Math.floor(man * 100) / 100; // 반올림 없이 버림
+      return `${trimmed}${Number.isInteger(trimmed) ? '' : ''}만`;
     }
 
+    // 억 단위
     const uk = value / 100000000;
-    const formatted = Number.isInteger(uk) ? uk : uk.toFixed(2);
-    return `${formatted}억`;
+    const trimmed = Math.floor(uk * 100) / 100; // 반올림 없이 버림
+    return `${trimmed}${Number.isInteger(trimmed) ? '' : ''}억`;
   };
+
 
   useEffect(() => {
     initialize();

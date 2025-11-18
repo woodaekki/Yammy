@@ -247,7 +247,7 @@
     padding-top: env(safe-area-inset-top);
   }
 
-  .chat-upload-fixed {
+  /* .chat-upload-fixed {
     margin-bottom: calc(58px + env(safe-area-inset-bottom));
-  }
+  } */
 }
