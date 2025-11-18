@@ -16,7 +16,7 @@ function UsedItemDetail() {
   const [teamColors, setTeamColors] = useState(getTeamColors())
   const [isChatLoading, setIsChatLoading] = useState(false)
 
-  // from 파라미터 읽기
+  // from 파라미터 
   const search = new URLSearchParams(window.location.search)
   const from = search.get("from")
 
