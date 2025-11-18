@@ -17,14 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,7 +42,7 @@ public class PhotoService {
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
-    // Presigned URL 생성 (useditem 관련 로직)
+    // Presigned URL 생성 (useditem)
     public List<PhotoUploadResponse> generatePresignedUrls(int count, String contentType) {
         return generatePresignedUrls(count, contentType, "useditem");
     }
@@ -61,7 +59,7 @@ public class PhotoService {
                             .build();
 
                     PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(
-                            r -> r.signatureDuration(Duration.ofDays(7)) // 7일로 설정
+                            r -> r.signatureDuration(Duration.ofDays(7))
                                     .putObjectRequest(putObjectRequest)
                     );
 
@@ -73,7 +71,7 @@ public class PhotoService {
                 .collect(Collectors.toList());
     }
 
-    // 업로드 완료 시 DB에 Photo 저장하고 Photo 반환
+    // 업로드 완료 → DB 저장
     public Photo completeUpload(HttpServletRequest request, PhotoUploadCompleteRequest dto) {
         String token = extractToken(request);
         Long memberId = jwtTokenProvider.getMemberId(token);
@@ -85,9 +83,6 @@ public class PhotoService {
             throw new IllegalArgumentException("파일 URL이 없습니다.");
         }
 
-        // presigned URL 업로드에 대해 이미지인 png인지 검증 로직
-        validatePngFromS3(dto.getS3Key());
-
         Photo photo = new Photo();
         photo.setMember(member);
         photo.setS3Key(dto.getS3Key());
@@ -97,7 +92,7 @@ public class PhotoService {
         return photoRepository.save(photo);
     }
 
-    // 티켓 nft에서 사용하는 로직
+    // 티켓 NFT용 업로드
     public String uploadPhoto(MultipartFile file) {
         return uploadPhoto(file, "ticket");
     }
@@ -118,35 +113,10 @@ public class PhotoService {
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-            // S3 URL 생성 및 반환
             return String.format("https://%s.s3.amazonaws.com/%s", bucketName, s3Key);
         } catch (IOException e) {
             log.error("파일 업로드 실패", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-        }
-    }
-
-    // Presigned PNG 검증 로직
-    private void validatePngFromS3(String s3Key) {
-        try {
-            GetObjectRequest request = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(s3Key)
-                    .range("bytes=0-7") // PNG signature 8 bytes
-                    .build();
-
-            byte[] header = s3Client.getObject(request).readAllBytes();
-
-            byte[] pngHeader = new byte[]{
-                    (byte) 0x89, 0x50, 0x4E, 0x47,
-                    0x0D, 0x0A, 0x1A, 0x0A
-            };
-
-            if (header.length < 8 || !Arrays.equals(header, pngHeader)) {
-                throw new IllegalArgumentException("PNG 파일이 아니거나 손상된 파일입니다.");
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("S3 PNG 검증 실패: " + e.getMessage());
         }
     }
 
