@@ -80,7 +80,12 @@
 }
 
 .app-content-wrapper.no-padding {
-  padding-bottom: 0 !important;
-  padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 !important;
+}
+
+.app-content-wrapper.with-topbar.no-padding {
+  padding-top: 70px !important;
 }
 

@@ -247,7 +247,7 @@ export default function UsedItemChatPage() {
               roomKey={roomKey}
               disabled={
                 chatRoomInfo?.sellerDeleted || 
-                chatRoomInfo?.buyerDeleted ||
+                chatRoomInfo?.buyerDeleted
                 // itemInfo?.status === 'CONFIRMED' //confirmed면 대화 불가(이거 살리라 해서 일단 주석처리)
               }
             />
