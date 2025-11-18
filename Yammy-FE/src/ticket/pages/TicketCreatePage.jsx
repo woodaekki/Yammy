@@ -762,11 +762,11 @@ const TicketCreatePage = () => {
             )}
 
             {/* 팀 선택 모달 */}
-            {showTeamModal && (
-                <div 
-                    className="location-modal" 
+            {showTeamModal && createPortal(
+                <div
+                    className="location-modal"
                     onClick={() => setShowTeamModal(false)}
-                    style={{ 
+                    style={{
                         position: 'fixed',
                         top: 0,
                         left: 0,
