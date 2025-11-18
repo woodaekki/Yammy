@@ -22,6 +22,17 @@ function App() {
 
   const hasTopBar = !hideTopBar;
 
+  // 여백을 제거해야 하는 페이지들
+  const noPaddingPages =
+    location.pathname.startsWith('/useditem') ||
+    location.pathname === '/bankstatement' ||
+    location.pathname === '/mypoint' ||
+    location.pathname === '/withdraw' ||
+    location.pathname.startsWith('/withdraw') ||
+    location.pathname === '/chatlist' ||
+    location.pathname.startsWith('/prediction') ||
+    location.pathname.startsWith('/cheerup');
+
   // ?�이지 ?�환 ???�크�?�??�로 초기??
   useEffect(() => {
     const scrollToTop = () => {
@@ -58,7 +69,7 @@ function App() {
 
   return (
     <div className="app-container" ref={containerRef}>
-      <div className={`app-content-wrapper${hasTopBar ? " with-topbar" : ""}`} ref={contentRef}>
+      <div className={`app-content-wrapper${hasTopBar ? " with-topbar" : ""}${noPaddingPages ? " no-padding" : ""}`} ref={contentRef}>
         {!hideTopBar && <NavigationBarTop />}
         <AppRouter />
       </div>

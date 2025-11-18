@@ -79,3 +79,8 @@
   padding-top: 70px;
 }
 
+.app-content-wrapper.no-padding {
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+

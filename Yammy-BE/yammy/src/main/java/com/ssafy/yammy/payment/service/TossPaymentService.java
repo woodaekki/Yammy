@@ -36,6 +36,7 @@ public class TossPaymentService {
     private final PointRepository pointRepository;
     private final PointTransactionRepository pointTransactionRepository;
     private final MemberRepository memberRepository;
+    private final PointTransactionService pointTransactionService;
 
     @Transactional
     // 결제 승인 요청 보내기
@@ -86,7 +87,7 @@ public class TossPaymentService {
         tossPayment.setApprovedAt(LocalDateTime.now());
         tossPaymentRepository.save(tossPayment);
 
-        // 포인트 적립
+        // 포인트 계좌 확인/생성
         Long amount = request.getAmount();
         Point point = pointRepository.findByMember(member)
                 .orElseGet(() -> {
@@ -96,19 +97,8 @@ public class TossPaymentService {
                     return pointRepository.save(newPoint);
                 });
 
-        point.setBalance(point.getBalance() + amount);
-        pointRepository.save(point);
-
-        // 포인트 변동 내역 저장
-        PointTransaction pointTransaction = new PointTransaction();
-        pointTransaction.setMember(member);
-        pointTransaction.setPoint(point);
-        pointTransaction.setTossPayment(tossPayment);
-        pointTransaction.setType(TransactionType.CHARGE);
-        pointTransaction.setAmount(amount);
-        pointTransaction.setBalanceAfter(point.getBalance());
-        pointTransaction.setCreatedAt(LocalDateTime.now());
-        pointTransactionRepository.save(pointTransaction);
+        // 포인트 충전 (증감 + 로그를 함께 처리)
+        pointTransactionService.recordChargeTransaction(member, amount);
 
         return responseBody;
     }

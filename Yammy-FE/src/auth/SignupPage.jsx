@@ -320,6 +320,9 @@ export default function SignupPage() {
               />
               <i className="fas fa-id-card input-icon"></i>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.id.length}/20자
+            </span>
             {errors.id && <span className="error-text">{errors.id}</span>}
           </div>
 
@@ -341,6 +344,9 @@ export default function SignupPage() {
               />
               <i className="fas fa-user input-icon"></i>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.name.length}/20자
+            </span>
             {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
 
@@ -361,6 +367,9 @@ export default function SignupPage() {
               />
               <i className="fas fa-signature input-icon"></i>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.nickname.length}/20자
+            </span>
             {errors.nickname && <span className="error-text">{errors.nickname}</span>}
           </div>
 
@@ -568,6 +577,9 @@ export default function SignupPage() {
               rows={3}
               maxLength={200}
             />
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.bio.length}/200자
+            </span>
           </div>
 
           <button

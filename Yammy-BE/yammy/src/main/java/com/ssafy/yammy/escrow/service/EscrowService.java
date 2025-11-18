@@ -109,17 +109,19 @@ public class EscrowService {
              usedItem.setStatus(UsedItemStatus.CONFIRMED);
          }
 
-         // 거래 로그 저장
+         // 거래 로그만 저장 (포인트 변경은 이미 위에서 완료)
          pointTransactionService.recordTransaction(
                  buyer,
                  amount,
-                 TransactionType.ESCROW_DEPOSIT  // 구매자 → 예치
+                 TransactionType.ESCROW_DEPOSIT,  // 구매자 → 예치
+                 buyer.getPoint().getBalance()  // 현재 잔액 전달
          );
 
          pointTransactionService.recordTransaction(
                  seller,
                  amount,
-                 TransactionType.ESCROW_CONFIRMED  // 판매자 → 수익 지급
+                 TransactionType.ESCROW_CONFIRMED,  // 판매자 → 수익 지급
+                 seller.getPoint().getBalance()  // 현재 잔액 전달
          );
 
         // Firebase 메시지 상태 업데이트
