@@ -1,5 +1,7 @@
 package com.ssafy.yammy.post.controller;
 
+import com.ssafy.yammy.auth.entity.Member;
+import com.ssafy.yammy.auth.repository.MemberRepository;
 import com.ssafy.yammy.config.CustomUserDetails;
 import com.ssafy.yammy.payment.dto.PhotoUploadResponse;
 import com.ssafy.yammy.payment.service.PhotoService;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class PostController {
     private final PostService postService;
     private final PostLikeService postLikeService;
     private final PhotoService photoService;
+    private final MemberRepository memberRepository;
 
     /**
      * S3 Presigned URL 발급 (게시글 이미지 업로드용)
@@ -116,13 +120,26 @@ public class PostController {
     @Operation(summary = "특정 사용자의 게시글 조회", description = "특정 사용자의 게시글을 최신순으로 조회합니다. (커서 기반 페이징)")
     public ResponseEntity<PostListResponse> getUserPosts(
             @PathVariable Long userId,
-            @RequestParam(required = false) Long cursor,
-            @AuthenticationPrincipal(errorOnInvalidType = false) CustomUserDetails userDetails) {
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        // 유저 정보 먼저 조회 (posts 없어도 항상 반환)
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        Long memberId = userDetails != null ? userDetails.getMemberId() : null;
-        log.info("[PostController] GET /api/posts/user/{} - cursor: {}, memberId: {}", userId, cursor, memberId);
+        UserInfoDto userInfo = new UserInfoDto();
+        userInfo.setNickname(member.getNickname());
+        userInfo.setProfileImage(member.getProfileImage());
+        userInfo.setTeam(member.getTeam());
+        userInfo.setBio(member.getBio());
 
-        PostListResponse response = postService.getUserPosts(userId, cursor, memberId);
+        // cursor를 Long으로 변환
+        Long cursorLong = (cursor != null && !cursor.isEmpty()) ? Long.parseLong(cursor) : null;
+
+        // posts 조회 (currentMemberId는 null - 프로필 조회 시 좋아요 여부 불필요)
+        PostListResponse response = postService.getUserPosts(userId, cursorLong, null);
+        response.setUserInfo(userInfo);  // 항상 유저 정보 포함
+
         return ResponseEntity.ok(response);
     }
 
