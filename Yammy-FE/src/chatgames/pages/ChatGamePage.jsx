@@ -199,9 +199,6 @@ export default function ChatGamePage() {
           </div>
         </div>
       )}
-
-      {/* 하단 네비게이션 바 */}
-      <NavigationBarBottom />
     </div>
   );
 }
