@@ -59,7 +59,8 @@ export default function UsedItemChatPage() {
         const chatRoom = await usedItemChatApi.getChatRoom(roomKey);
         setChatRoomInfo(chatRoom);
 
-        const item = await getUsedItemById(chatRoom.usedItemId);
+        /** from=chat 로 조회해야 detail 차단을 안당함 */
+        const item = await getUsedItemById(chatRoom.usedItemId, "chat");
         setItemInfo(item);
 
         await usedItemChatApi.markAsRead(roomKey);
@@ -94,7 +95,7 @@ export default function UsedItemChatPage() {
 
     const interval = setInterval(async () => {
       try {
-        const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId);
+        const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId, "chat");
 
         if (updatedItem.status !== itemInfo?.status) {
           setItemInfo(updatedItem);
@@ -136,7 +137,7 @@ export default function UsedItemChatPage() {
       window.dispatchEvent(new Event("pointUpdated"));
 
       // 물품 정보 즉시 갱신
-      const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId);
+      const updatedItem = await getUsedItemById(chatRoomInfo.usedItemId, "chat");
       setItemInfo(updatedItem);
 
       // 모달 닫기
@@ -199,7 +200,7 @@ export default function UsedItemChatPage() {
             {itemInfo && (
               <div
                 className="useditem-chat-item-info"
-                onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}`)}
+                onClick={() => navigate(`/useditem/${chatRoomInfo.usedItemId}?from=chat`)}
               >
                 {itemInfo.imageUrls?.[0] && (
                   <img src={itemInfo.imageUrls[0]} className="useditem-chat-item-image" />
