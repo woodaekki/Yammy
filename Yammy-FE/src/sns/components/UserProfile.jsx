@@ -59,34 +59,28 @@ const UserProfile = () => {
         try {
             // 사용자의 게시글 목록 가져오기
             const response = await getUserPosts(userId);
-            const userPosts = response.posts || [];
-
-            setPosts(userPosts);
-
-            // 첫 번째 게시글에서 사용자 정보 추출 (모든 게시글의 작성자 정보가 동일)
-            if (userPosts.length > 0) {
-                const firstPost = userPosts[0];
+            
+            // ✅ 백엔드에서 보낸 userInfo 사용 (posts 없어도 항상 있음)
+            if (response.userInfo) {
                 setProfileData({
-                    name: firstPost.nickname,
-                    username: `@${firstPost.nickname}`,
-                    avatar: firstPost.profileImage || DEFAULT_PROFILE_IMAGE,
-                    postsCount: userPosts.length,
-                    team: firstPost.team,
-                    bio: firstPost.bio || '',
+                    name: response.userInfo.nickname || '사용자',
+                    username: `@${response.userInfo.nickname || 'user'}`,
+                    avatar: response.userInfo.profileImage || DEFAULT_PROFILE_IMAGE,
+                    postsCount: response.posts?.length || 0,
+                    team: response.userInfo.team || '',
+                    bio: response.userInfo.bio || '',
                 });
             } else {
-                // 게시글이 없을 경우 localStorage 데이터 사용
-                setProfileData({
-                    name: currentUser.nickname || '사용자',
-                    username: `@${currentUser.nickname || 'user'}`,
-                    avatar: currentUser.profileImage || DEFAULT_PROFILE_IMAGE,
-                    postsCount: 0,
-                    team: currentUser.team || '',
-                    bio: currentUser.bio || '',
-                });
+                // userInfo가 없으면 에러 (백엔드 문제)
+                throw new Error('사용자 정보를 불러올 수 없습니다.');
             }
+
+            // 게시글이 있으면 설정
+            setPosts(response.posts || []);
+            
         } catch (error) {
             console.error('프로필 로드 실패:', error);
+            alert(error.message || '프로필을 불러올 수 없습니다.');
         } finally {
             setIsLoading(false);
         }
