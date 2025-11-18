@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
 import { getTeamColors } from "../../sns/utils/teamColors" 
+import "../styles/CheckoutPage.css"
 
 const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY
 const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY
@@ -63,6 +64,22 @@ function CheckoutPage() {
 
   return (
     <div style={{ padding: "20px" }}>
+
+      {/* 테스트 환경 경고 안내 */}
+      <div className="warning-strong">
+        <div className="warning-strong-icon">ⓘ</div>
+
+        <div className="warning-strong-msg">
+          <div className="warning-strong-title">
+            일부 결제수단은 테스트 환경에서 사용할 수 없습니다.
+          </div>
+
+          <div className="warning-strong-line">
+            실시간 계좌이체 · 페이코 · 휴대폰 결제는 사용 불가합니다.
+          </div>
+        </div>
+      </div>
+
       {/* 결제 UI */}
       <div id="payment-box" style={{ marginTop: "20px" }}></div>
       <div id="agreement-box" style={{ marginTop: "10px" }}></div>
@@ -73,7 +90,6 @@ function CheckoutPage() {
         disabled={!ready}
         style={{
           marginTop: "10px",
-          marginLeft: "20px",
           color: "white",
           border: "none",
           padding: "10px 20px",
@@ -88,4 +104,5 @@ function CheckoutPage() {
     </div>
   )
 }
+
 export default CheckoutPage
