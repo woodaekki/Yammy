@@ -31,13 +31,14 @@ export default function ChatGamePage() {
   const myId = user?.id || localStorage.getItem("memberId");
   const myNickname = user?.nickname || localStorage.getItem("nickname");
 
-  // body 스크롤은 허용 (제거)
-  // useEffect(() => {
-  //   document.body.style.overflow = 'hidden';
-  //   return () => {
-  //     document.body.style.overflow = '';
-  //   };
-  // }, []);
+  // 이미지 확대 시 body 스크롤 잠금
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [selectedImage]);
 
   useEffect(() => {
     if (!roomKey) return;
@@ -190,9 +191,16 @@ export default function ChatGamePage() {
         document.body
       )}
 
-      {/* 이미지 확대 모달 */}
-      {selectedImage && (
-        <div className="image-modal-overlay" onClick={closeModal}>
+      {/* 이미지 확대 모달 (Portal로 document.body에 렌더링) */}
+      {selectedImage && createPortal(
+        <div
+          className="image-modal-overlay"
+          onClick={(e) => {
+            if (e.target.classList.contains("image-modal-overlay")) {
+              closeModal();
+            }
+          }}
+        >
           <div className="image-modal-content">
             <button onClick={closeModal} className="image-modal-close">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +214,8 @@ export default function ChatGamePage() {
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
