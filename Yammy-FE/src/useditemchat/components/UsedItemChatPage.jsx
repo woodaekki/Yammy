@@ -248,7 +248,7 @@ export default function UsedItemChatPage() {
               disabled={
                 chatRoomInfo?.sellerDeleted || 
                 chatRoomInfo?.buyerDeleted ||
-                itemInfo?.status === 'CONFIRMED'
+                // itemInfo?.status === 'CONFIRMED' //confirmed면 대화 불가(이거 살리라 해서 일단 주석처리)
               }
             />
         </div>,
