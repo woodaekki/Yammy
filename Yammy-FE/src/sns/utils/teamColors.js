@@ -32,8 +32,8 @@ export const getUserTeam = () => {
 };
 
 // 팀 컬러 가져오기 (기본값: 어두운 잔디색)
-export const getTeamColors = () => {
-  const team = getUserTeam();
+export const getTeamColors = (teamOverride = null) => {
+  const team = teamOverride || getUserTeam();
   return TEAM_COLORS[team] || { bgColor: '#14452f', textColor: '#ffffff' };
 };
 

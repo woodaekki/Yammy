@@ -81,6 +81,16 @@ const TicketCreatePage = () => {
         }
     }, [validTeam, navigate]);
 
+    // 페이지 나갈 때 푸터를 원래 팀 색상으로 복구
+    useEffect(() => {
+        return () => {
+            const originalTeam = localStorage.getItem('team');
+            window.dispatchEvent(new CustomEvent('tempTeamChange', {
+                detail: { team: originalTeam }
+            }));
+        };
+    }, []);
+
     // 모달 열렸을 때 body 스크롤 비활성화
     useEffect(() => {
         if (showMatchModal || showLocationModal || showTeamModal) {
@@ -788,7 +798,10 @@ const TicketCreatePage = () => {
                                     className="stadium-item team-item"
                                     onClick={() => {
                                         setSelectedTeam(team);
-                                        // 티켓 발급에서는 일시적으로만 팀 선택 (localStorage 업데이트 안함)
+                                        // 임시 팀 변경 이벤트 발생 (푸터 색상도 변경)
+                                        window.dispatchEvent(new CustomEvent('tempTeamChange', {
+                                            detail: { team }
+                                        }));
                                         setShowTeamModal(false);
                                     }}
                                     style={{

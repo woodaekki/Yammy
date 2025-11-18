@@ -17,8 +17,18 @@ const NavigationBarBottom = () => {
 
   useEffect(() => {
     const handleTeamChange = () => setTeamColors(getTeamColors());
+    const handleTempTeamChange = (e) => {
+      const { team } = e.detail;
+      setTeamColors(getTeamColors(team));
+    };
+
     window.addEventListener("teamChanged", handleTeamChange);
-    return () => window.removeEventListener("teamChanged", handleTeamChange);
+    window.addEventListener("tempTeamChange", handleTempTeamChange);
+
+    return () => {
+      window.removeEventListener("teamChanged", handleTeamChange);
+      window.removeEventListener("tempTeamChange", handleTempTeamChange);
+    };
   }, []);
 
   const links = [
