@@ -36,11 +36,51 @@ export default function SignupPage() {
       ...prev,
       [name]: value,
     }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+
+    // 비밀번호 확인 실시간 검증
+    if (name === 'confirmPassword') {
+      if (value === '') {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: '',
+        }));
+      } else if (value !== formData.password) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: '비밀번호가 일치하지 않습니다',
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: '',
+        }));
+      }
+    } else if (name === 'password') {
+      // 비밀번호 입력 시 비밀번호 확인도 체크
+      if (formData.confirmPassword && value !== formData.confirmPassword) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: '비밀번호가 일치하지 않습니다',
+        }));
+      } else if (formData.confirmPassword && value === formData.confirmPassword) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: '',
+        }));
+      }
+      if (errors[name]) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: '',
+        }));
+      }
+    } else {
+      if (errors[name]) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: '',
+        }));
+      }
     }
   };
 
@@ -187,20 +227,52 @@ export default function SignupPage() {
 
   const validateForm = () => {
     const newErrors = {};
+    const errorMessages = [];
 
-    if (!formData.id.trim()) newErrors.id = '아이디를 입력해주세요';
-    if (!formData.name.trim()) newErrors.name = '이름을 입력해주세요';
-    if (!formData.nickname.trim()) newErrors.nickname = '닉네임을 입력해주세요';
-    if (!formData.email.trim() || !formData.email.includes('@'))
+    if (!formData.id.trim()) {
+      newErrors.id = '아이디를 입력해주세요';
+      errorMessages.push('아이디를 입력해주세요');
+    }
+    if (!formData.name.trim()) {
+      newErrors.name = '이름을 입력해주세요';
+      errorMessages.push('이름을 입력해주세요');
+    }
+    if (!formData.nickname.trim()) {
+      newErrors.nickname = '닉네임을 입력해주세요';
+      errorMessages.push('닉네임을 입력해주세요');
+    }
+    if (!formData.email.trim() || !formData.email.includes('@')) {
       newErrors.email = '올바른 이메일을 입력해주세요';
-    if (!emailVerified) newErrors.email = '이메일 인증을 완료해주세요';
-    if (!formData.team) newErrors.team = '좋아하는 팀을 선택해주세요';
-    if (formData.password.length < 8)
+      errorMessages.push('올바른 이메일을 입력해주세요');
+    } else if (!emailVerified) {
+      newErrors.email = '이메일 인증을 완료해주세요';
+      errorMessages.push('이메일 인증을 완료해주세요');
+    }
+    if (!formData.password) {
+      newErrors.password = '비밀번호를 입력해주세요';
+      errorMessages.push('비밀번호를 입력해주세요');
+    } else if (formData.password.length < 8) {
       newErrors.password = '비밀번호는 8자 이상이어야 합니다';
-    if (formData.password !== formData.confirmPassword)
+      errorMessages.push('비밀번호는 8자 이상이어야 합니다');
+    }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = '비밀번호 확인을 입력해주세요';
+      errorMessages.push('비밀번호 확인을 입력해주세요');
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
+      errorMessages.push('비밀번호가 일치하지 않습니다');
+    }
+    if (!formData.team) {
+      newErrors.team = '좋아하는 팀을 선택해주세요';
+      errorMessages.push('좋아하는 팀을 선택해주세요');
+    }
 
     setErrors(newErrors);
+
+    if (errorMessages.length > 0) {
+      alert(errorMessages.join('\n'));
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -441,6 +513,9 @@ export default function SignupPage() {
                 {codeSent ? '재발송' : '인증코드'}
               </button>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.email.length}/50자
+            </span>
             {errors.email && <span className="error-text">{errors.email}</span>}
             {successMessage && !errors.email && (
               <span className="success-text">{successMessage}</span>
@@ -499,6 +574,9 @@ export default function SignupPage() {
                 <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
               </button>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.password.length}/30자
+            </span>
             {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
 
@@ -528,6 +606,9 @@ export default function SignupPage() {
                 ></i>
               </button>
             </div>
+            <span style={{ fontSize: '12px', color: '#666', marginTop: '4px', display: 'block' }}>
+              {formData.confirmPassword.length}/30자
+            </span>
             {errors.confirmPassword && (
               <span className="error-text">{errors.confirmPassword}</span>
             )}
