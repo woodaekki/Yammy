@@ -13,7 +13,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
   const [loading, setLoading] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
   const [pointsLoading, setPointsLoading] = useState(true);
-  const [validationMessage, setValidationMessage] = useState(''); // 실시간 검증 메시지
+  const [validationMessage, setValidationMessage] = useState('팬심을 입력해주세요'); // 실시간 검증 메시지
 
   // 선택된 팀 정보
   const selectedTeamInfo = selectedTeam === 0 
@@ -67,17 +67,17 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
 
       // 실시간 검증
       if (valueWithoutComma === '') {
-        setValidationMessage('');
+        setValidationMessage('팬심을 입력해주세요');
       } else {
         const betAmountNum = parseFloat(valueWithoutComma);
 
         // 최소 배팅 금액 검사 (100팬심)
         if (betAmountNum < 100) {
-          setValidationMessage('최소 배팅 금액은 100팬심입니다');
+          setValidationMessage(`${formattedValue}팬심 - 최소 배팅 금액은 100팬심입니다`);
         } else if (betAmountNum > userPoints) {
-          setValidationMessage('보유 팬심을 초과하였습니다');
+          setValidationMessage(`${formattedValue}팬심 - 보유 팬심을 초과하였습니다`);
         } else {
-          setValidationMessage('');
+          setValidationMessage(`${formattedValue}팬심 입력하였습니다`);
         }
       }
     }
@@ -255,13 +255,12 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
                 value={betAmount}
                 onChange={handleAmountChange}
                 placeholder="100팬심 이상 입력하세요"
-                className={`amount-input ${validationMessage ? 'error' : ''}`}
+                className="amount-input"
               />
               <div>팬심</div>
-              <span className="currency"></span>
             </div>
-            <div className={`validation-message ${validationMessage ? 'error' : ''}`}>
-              {validationMessage || '\u00A0'}
+            <div className={`validation-message ${validationMessage.includes('입력하였습니다') ? 'success' : 'error'}`}>
+              {validationMessage}
             </div>
           </div>
 
@@ -270,7 +269,7 @@ const BettingInputModal = ({ match, selectedTeam, onClose, onBettingSuccess }) =
             <button
               className="bet-button"
               onClick={handleBet}
-              disabled={loading || !betAmount || validationMessage}
+              disabled={loading || !betAmount || !validationMessage.includes('입력하였습니다')}
               style={{ backgroundColor: getTeamColor(selectedTeamInfo.name) }}
             >
               {loading ? '처리중...' : '배팅하기'}
