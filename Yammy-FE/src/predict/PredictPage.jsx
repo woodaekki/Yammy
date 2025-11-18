@@ -126,7 +126,7 @@ const PredictPage = () => {
                   >
                     <div className="match-time-header">{match.gameTime}</div>
                     <div className="match-prediction-card">
-                      <div className="match-info-section">
+                      <div className="match-teams-section">
                         {/* HOME */}
                         <div className="team-column home-column">
                           <div className="team-label-new">

@@ -10,7 +10,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
   padding: 1rem;
   overflow-y: auto;
@@ -23,12 +23,14 @@
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   animation: modalSlideUp 0.3s ease-out;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 @keyframes modalSlideUp {
@@ -279,6 +281,23 @@
   font-weight: 600;
   opacity: 0.9;
   margin-bottom: 0.25rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.selected-team-card .team-label .yammy-pick-label {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  z-index: 10;
+  position: absolute;
+  left: -65px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .selected-team-card .team-name {
@@ -334,6 +353,7 @@
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
+  min-height: 180px;
 }
 
 .amount-header {
@@ -365,6 +385,7 @@
   align-items: center;
   position: relative;
   gap: 0.5rem;
+  height: 48px;
 }
 
 .amount-input {
@@ -379,6 +400,8 @@
   -webkit-user-select: text;
   user-select: text;
   touch-action: manipulation;
+  height: 48px;
+  box-sizing: border-box;
 }
 
 .amount-input-container > div {
@@ -585,21 +608,44 @@
 @media (max-width: 480px) {
   .betting-modal-backdrop {
     padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 0.5rem;
   }
-  
+
+  .betting-modal-container {
+    max-height: none;
+    min-height: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
   .betting-modal-header,
   .betting-modal-content {
     padding: 1rem;
   }
-  
+
   .selected-team-card,
   .bet-amount-section,
   .expected-return {
     padding: 1rem;
   }
-  
+
+  .bet-amount-section {
+    min-height: 160px;
+  }
+
   .action-buttons {
     gap: 0.75rem;
+  }
+
+  .amount-input {
+    font-size: 1rem;
+    padding: 0.875rem;
+    height: 44px;
+  }
+
+  .amount-input-container {
+    height: 44px;
   }
 }
 

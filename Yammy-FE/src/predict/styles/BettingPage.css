@@ -154,6 +154,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  gap: 6px;
+}
+
+.betting-team-label .yammy-pick-label {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  z-index: 10;
+  position: absolute;
+  left: -65px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .betting-team-logo-name {
@@ -221,21 +234,17 @@
 
 /* 경기 정보 섹션 */
 .match-info-section {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 1rem;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
 }
 
 .match-info-section h3 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #333;
-  margin: 0;
-  margin-top: 0.5rem;
+  margin: 0 0 1rem 0;
 }
 
 .info-grid {
@@ -249,8 +258,8 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e0e0e0;
-  padding: 0.5rem 0;
-  gap: 0; 
+  padding: 1rem 0;
+  gap: 0;
   background: none;
   border-radius: 0;
 }
@@ -329,11 +338,7 @@
   .odds-section {
     padding: 1rem;
   }
-  
-  .teams-container {
-    /* gap 제거되어 기본적으로 붙어있음 */
-  }
-  
+
   .team-odds-card {
     padding: 1rem 0.75rem;
   }

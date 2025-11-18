@@ -114,7 +114,6 @@ openai:
   key: ${GMS_KEY}
   model: gpt-4o
 
-
 #firebase:
 #  type: ${FIREBASE_TYPE}
 #  project-id: ${FIREBASE_PROJECT_ID}
