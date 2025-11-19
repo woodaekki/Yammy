@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    restart: always
+
+  kafka:
+    image: confluentinc/cp-kafka:6.2.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: always
+
+  # 1. DB 서비스
+  db:
+    image: mysql:8.0
+    container_name: mysql-prod-db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PROD_DB_PASSWORD}
+      MYSQL_DATABASE: ${PROD_DB_USERNAME}
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data # 데이터 지속성을 위한 볼륨 추가
+
+  # 3. 백엔드 서비스
+  backend:
+    image: ${BE_IMAGE_URI}
+    container_name: yammy-backend
+    restart: always
+    environment:
+      JAVA_TOOL_OPTIONS: -Dio.netty.handler.ssl.noOpenSsl=true
+      # Datasource
+      PROD_DB_URL: ${PROD_DB_URL}
+      PROD_DB_USERNAME: ${PROD_DB_USERNAME}
+      PROD_DB_PASSWORD: ${PROD_DB_PASSWORD}
+
+      # Redis
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379 # ${SPRING_DATA_REDIS_PORT} 대신 6379로 하드코딩 권장
+      SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
+
+      # AWS S3
+      AWS_ACCESSKEY: ${AWS_ACCESSKEY}
+      AWS_SECRETKEY: ${AWS_SECRETKEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+
+      # Mail
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+
+      # JWT
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+
+      # KAKAO
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      KAKAO_REST_API_KEY: ${KAKAO_REST_API_KEY}
+      KAKAO_REDIRECT_URI: ${KAKAO_REDIRECT_URI}
+
+      # firebase
+      FIREBASE_KEY: ${FIREBASE_KEY}
+
+      # toss
+      TOSS_URL: ${TOSS_URL}
+      TEST_SECRET_KEY: ${TEST_SECRET_KEY}
+
+      # NFT
+      NFT_CONTRACT_ADDRESS: ${NFT_CONTRACT_ADDRESS}
+      NFT_NETWORK: ${NFT_NETWORK}
+      NFT_OWNER_ADDRESS: ${NFT_OWNER_ADDRESS}
+      NFT_PRIVATE_KEY: ${NFT_PRIVATE_KEY}
+      NFT_RPC_URL: ${NFT_RPC_URL}
+
+      # IPFS
+      PINATA_API_KEY: ${PINATA_API_KEY}
+      PINATA_API_SECRET: ${PINATA_API_SECRET}
+      PINATA_GATEWAY: ${PINATA_GATEWAY}
+      PINATA_JWT: ${PINATA_JWT}
+
+      # KAFKA
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+      KAFKA_CONSUMER_GROUP: ${KAFKA_CONSUMER_GROUP}
+      KAFKA_PRODUCER_ACKS: ${KAFKA_PRODUCER_ACKS}
+      KAFKA_PRODUCER_RETRIES: ${KAFKA_PRODUCER_RETRIES}
+      KAFKA_AUTO_OFFSET_RESET: ${KAFKA_AUTO_OFFSET_RESET}
+
+      # OPENAI
+      GMS_KEY: ${GMS_KEY}
+
+    depends_on:
+      - db
+      - redis
+      - kafka
+
+  # 4. 프론트엔드 서비스
+  frontend:
+    image: ${FE_IMAGE_URI}
+    container_name: yammy-frontend
+    restart: always
+    depends_on:
+      - backend
+
+  # Nginx
+  nginx:
+    image: nginx:stable-alpine
+    container_name: yammy-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt/live/k13c205.p.ssafy.io/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/k13c205.p.ssafy.io/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  mysql_data:
+  redis_data:
