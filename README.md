@@ -1,6 +1,6 @@
 # 야미: 야구에 미치다
 
-<img src="./Yammy-FE/src/assets/images/readme.png" width="500px" />
+<img src="./Yammy-FE/src/assets/readme/readme.png" width="500px" />
 
 ## 목차
 - [프로젝트 소개](#프로젝트-소개)
