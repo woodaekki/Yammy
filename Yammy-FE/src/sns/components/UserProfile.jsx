@@ -89,7 +89,6 @@ const UserProfile = () => {
     const loadFollowStatus = async () => {
         try {
             const status = await getFollowStatus(userId);
-            // console.log('팔로우 상태 응답:', status);
             setIsFollowing(status.following || false);
             setFollowersCount(status.followerCount || 0);
             setFollowingCount(status.followingCount || 0);

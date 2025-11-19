@@ -66,12 +66,15 @@ public class FollowController {
     public ResponseEntity<Page<FollowListResponse>> getFollowers(
             @PathVariable Long memberId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal(errorOnInvalidType = false) CustomUserDetails userDetails) {
 
-        log.info("[FollowController] GET /api/follows/followers/{} - page: {}, size: {}", memberId, page, size);
+        Long currentMemberId = userDetails != null ? userDetails.getMemberId() : null;
+        log.info("[FollowController] GET /api/follows/followers/{} - currentMemberId: {}, page: {}, size: {}",
+                memberId, currentMemberId, page, size);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<FollowListResponse> followers = followService.getFollowers(memberId, pageable);
+        Page<FollowListResponse> followers = followService.getFollowers(memberId, currentMemberId, pageable);
 
         return ResponseEntity.ok(followers);
     }
@@ -84,12 +87,15 @@ public class FollowController {
     public ResponseEntity<Page<FollowListResponse>> getFollowing(
             @PathVariable Long memberId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal(errorOnInvalidType = false) CustomUserDetails userDetails) {
 
-        log.info("[FollowController] GET /api/follows/following/{} - page: {}, size: {}", memberId, page, size);
+        Long currentMemberId = userDetails != null ? userDetails.getMemberId() : null;
+        log.info("[FollowController] GET /api/follows/following/{} - currentMemberId: {}, page: {}, size: {}",
+                memberId, currentMemberId, page, size);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<FollowListResponse> following = followService.getFollowing(memberId, pageable);
+        Page<FollowListResponse> following = followService.getFollowing(memberId, currentMemberId, pageable);
 
         return ResponseEntity.ok(following);
     }

@@ -107,27 +107,34 @@ const FollowListModal = ({ isOpen, onClose, userId, initialTab = 'followers' }) 
                             {activeTab === 'followers' ? '팔로워가 없습니다.' : '팔로잉한 사람이 없습니다.'}
                         </div>
                     ) : (
-                        currentList.map((user) => (
-                            <div key={user.memberId} className="follow-item">
-                                <div className="user-info" onClick={() => handleUserClick(user.memberId)}>
-                                    <img
-                                        src={user.profileImage || 'https://via.placeholder.com/40'}
-                                        alt={user.nickname}
-                                        className="user-avatar"
-                                    />
-                                    <div className="user-details">
-                                        <div className="user-nickname">{user.nickname}</div>
-                                        {user.team && <div className="user-team">{user.team}</div>}
+                        currentList.map((user) => {
+                            const currentUserId = localStorage.getItem('memberId');
+                            const isCurrentUser = user.memberId.toString() === currentUserId;
+
+                            return (
+                                <div key={user.memberId} className="follow-item">
+                                    <div className="user-info" onClick={() => handleUserClick(user.memberId)}>
+                                        <img
+                                            src={user.profileImage || 'https://via.placeholder.com/40'}
+                                            alt={user.nickname}
+                                            className="user-avatar"
+                                        />
+                                        <div className="user-details">
+                                            <div className="user-nickname">{user.nickname}</div>
+                                            {user.team && <div className="user-team">{user.team}</div>}
+                                        </div>
                                     </div>
+                                    {!isCurrentUser && (
+                                        <button
+                                            className={`follow-btn ${user.isFollowing ? 'following' : ''}`}
+                                            onClick={() => handleFollowToggle(user.memberId, user.isFollowing)}
+                                        >
+                                            {user.isFollowing ? '언팔로우' : '팔로우'}
+                                        </button>
+                                    )}
                                 </div>
-                                <button
-                                    className={`follow-btn ${user.isFollowing ? 'following' : ''}`}
-                                    onClick={() => handleFollowToggle(user.memberId, user.isFollowing)}
-                                >
-                                    {user.isFollowing ? '팔로잉' : '팔로우'}
-                                </button>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>

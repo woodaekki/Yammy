@@ -127,9 +127,7 @@ export const toggleCommentLike = async (commentId) => {
  */
 export const followUser = async (followingId) => {
   try {
-    // console.log('팔로우 API 호출:', followingId);
     const response = await apiClient.post(`/follows/${followingId}`);
-    // console.log('팔로우 응답:', response.data);
     return response.data;
   } catch (error) {
     console.error('팔로우 API 에러:', error.response?.data);
@@ -142,9 +140,7 @@ export const followUser = async (followingId) => {
  */
 export const unfollowUser = async (followingId) => {
   try {
-    // console.log('언팔로우 API 호출:', followingId);
     const response = await apiClient.delete(`/follows/${followingId}`);
-    // console.log('언팔로우 응답:', response.data);
     return response.data;
   } catch (error) {
     console.error('언팔로우 API 에러:', error.response?.data);
