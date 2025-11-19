@@ -82,18 +82,27 @@ public class FollowService {
     /**
      * 팔로워 목록 (나를 팔로우한 사람들) - 페이징
      */
-    public Page<FollowListResponse> getFollowers(Long memberId, Pageable pageable) {
-        log.info("[FollowService] 팔로워 목록 조회: memberId={}", memberId);
+    public Page<FollowListResponse> getFollowers(Long memberId, Long currentMemberId, Pageable pageable) {
+        log.info("[FollowService] 팔로워 목록 조회: memberId={}, currentMemberId={}", memberId, currentMemberId);
 
         Page<Follow> follows = followRepository.findByFollowingId(memberId, pageable);
 
         return follows.map(follow -> {
             Member member = memberRepository.findById(follow.getFollowerId())
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+            // 현재 로그인한 사용자가 이 사람을 팔로우하는지 확인
+            Boolean isFollowing = null;
+            if (currentMemberId != null && !currentMemberId.equals(member.getMemberId())) {
+                isFollowing = followRepository.existsByFollowerIdAndFollowingId(currentMemberId, member.getMemberId());
+            }
+
             return new FollowListResponse(
                     member.getMemberId(),
                     member.getNickname(),
-                    member.getProfileImage()
+                    member.getProfileImage(),
+                    member.getTeam(),
+                    isFollowing
             );
         });
     }
@@ -101,18 +110,27 @@ public class FollowService {
     /**
      * 팔로잉 목록 (내가 팔로우한 사람들) - 페이징
      */
-    public Page<FollowListResponse> getFollowing(Long memberId, Pageable pageable) {
-        log.info("[FollowService] 팔로잉 목록 조회: memberId={}", memberId);
+    public Page<FollowListResponse> getFollowing(Long memberId, Long currentMemberId, Pageable pageable) {
+        log.info("[FollowService] 팔로잉 목록 조회: memberId={}, currentMemberId={}", memberId, currentMemberId);
 
         Page<Follow> follows = followRepository.findByFollowerId(memberId, pageable);
 
         return follows.map(follow -> {
             Member member = memberRepository.findById(follow.getFollowingId())
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+            // 현재 로그인한 사용자가 이 사람을 팔로우하는지 확인
+            Boolean isFollowing = null;
+            if (currentMemberId != null && !currentMemberId.equals(member.getMemberId())) {
+                isFollowing = followRepository.existsByFollowerIdAndFollowingId(currentMemberId, member.getMemberId());
+            }
+
             return new FollowListResponse(
                     member.getMemberId(),
                     member.getNickname(),
-                    member.getProfileImage()
+                    member.getProfileImage(),
+                    member.getTeam(),
+                    isFollowing
             );
         });
     }
