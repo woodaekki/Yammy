@@ -53,7 +53,7 @@ function UsedItemCreate() {
 
       case "price":
         if (value === "") message = "가격을 입력해주세요."
-        else if (value < 0) message = "가격은 0원 이상이어야 합니다."
+        else if (value < 1) message = "가격은 1원 이상이어야 합니다."
         else if (value > 1000000000) message = "가격은 10억원 이하로 입력해주세요."
         break
 

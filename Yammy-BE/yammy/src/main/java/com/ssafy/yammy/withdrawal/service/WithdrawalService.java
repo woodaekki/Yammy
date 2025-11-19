@@ -33,8 +33,8 @@ public class WithdrawalService {
     @Transactional
     public WithdrawalResponse requestWithdrawal(Long memberId, WithdrawalRequest dto) {
 
-        // 계좌번호 검증 (숫자-only + prefix + 총 자리수 검사)
-        validateBankAccount(dto.getBankName(), dto.getAccountNumber());
+        // 최소 계좌번호 검증
+        validateBasicAccount(dto.getBankName(), dto.getAccountNumber());
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
@@ -88,52 +88,29 @@ public class WithdrawalService {
         return convertToResponse(withdrawal);
     }
 
+    // 계좌 검증
+    private void validateBasicAccount(String bank, String account) {
 
-    // 은행 규칙 기반 계좌번호 유효성 검사
-    private void validateBankAccount(String bank, String account) {
-
-        if (!validateAccount(bank, account)) {
-            throw new RuntimeException("계좌번호 형식이 올바르지 않습니다. (" + bank + ")");
-        }
-    }
-
-
-    // 계좌번호 패턴 검증
-    private boolean validateAccount(String bank, String account) {
-
-        // 숫자만 추출
-        String digits = account.replaceAll("\\D", "");
-
-        switch (bank) {
-
-            case "카카오뱅크":
-                return digits.startsWith("3333") && digits.length() == 13;
-
-            case "토스뱅크":
-                return digits.startsWith("1000") && digits.length() == 12;
-
-            case "신한은행":
-                return digits.startsWith("110") && digits.length() == 9;
-
-            case "국민은행":
-                return digits.length() == 12;
-
-            case "기업은행":
-                return digits.length() == 14;
-
-            case "농협은행":
-                return digits.length() == 13;
-
-            case "우리은행":
-                return digits.length() == 11;
-
-            case "하나은행":
-                return digits.length() == 12;
+        if (bank == null || bank.isBlank()) {
+            throw new RuntimeException("은행명을 입력해주세요.");
         }
 
-        return false;
-    }
+        if (account == null || account.isBlank()) {
+            throw new RuntimeException("계좌번호를 입력해주세요.");
+        }
 
+        String digits = account.replaceAll("\\D+", "");
+
+        // 계좌번호 최소 6자리 이하일 시
+        if (digits.length() < 7) {
+            throw new RuntimeException("계좌번호가 너무 짧습니다.");
+        }
+
+        // 20자리 이상일 시
+        if (digits.length() > 19) {
+            throw new RuntimeException("계좌번호 형식이 올바르지 않습니다.");
+        }
+    }
 
     private WithdrawalResponse convertToResponse(Withdrawal withdrawal) {
         WithdrawalResponse dto = new WithdrawalResponse();

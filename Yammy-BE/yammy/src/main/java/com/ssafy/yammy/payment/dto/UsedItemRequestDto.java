@@ -20,7 +20,7 @@ public class UsedItemRequestDto {
     private String description;
 
     @NotNull(message = "가격을 입력해주세요")
-    @Min(value = 0, message = "가격은 0원 이상이어야 합니다")
+    @Min(value = 1, message = "가격은 1원 이상이어야 합니다")
     @Max(value = 1000000000, message = "가격은 10억원 이하여야 합니다")
     private Integer price;
 
