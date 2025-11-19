@@ -33,20 +33,20 @@ apiClient.interceptors.response.use(
 
     // 401 에러이고 재시도하지 않은 경우
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('[apiClient] 401 error detected, attempting token refresh');
+      // console.log('[apiClient] 401 error detected, attempting token refresh');
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem('refreshToken');
       const accessToken = localStorage.getItem('accessToken');
 
-      console.log('[apiClient] Tokens exist:', {
-        hasAccessToken: !!accessToken,
-        hasRefreshToken: !!refreshToken
-      });
+      // console.log('[apiClient] Tokens exist:', {
+      //   hasAccessToken: !!accessToken,
+      //   hasRefreshToken: !!refreshToken
+      // });
 
       if (refreshToken && accessToken) {
         try {
-          console.log('[apiClient] Calling /auth/refresh endpoint');
+          // console.log('[apiClient] Calling /auth/refresh endpoint');
           // 리프레시 토큰으로 액세스 토큰 재발급 (Header 방식)
           const response = await axios.post(
             `${API_BASE_URL}/auth/refresh`,
@@ -60,7 +60,7 @@ apiClient.interceptors.response.use(
           );
 
           const newAccessToken = response.data.accessToken;
-          console.log('[apiClient] Token refresh successful');
+          // console.log('[apiClient] Token refresh successful');
 
           // 새 토큰 저장
           localStorage.setItem('accessToken', newAccessToken);
@@ -79,7 +79,7 @@ apiClient.interceptors.response.use(
         }
       } else {
         // 리프레시 토큰이나 accessToken이 없는 경우
-        console.log('[apiClient] Missing tokens, redirecting to login');
+        // console.log('[apiClient] Missing tokens, redirecting to login');
         localStorage.clear();
         alert('로그인이 필요한 서비스입니다.');
         window.location.href = '/login';

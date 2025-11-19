@@ -220,7 +220,7 @@ const SNSPage = () => {
     setIsLoading(true);
     try {
       const response = await getAllPosts(nextCursor);
-       console.log("SNS 응답:", response);
+      // console.log("SNS 응답:", response);
       const newPosts = response.posts;
       setPosts((prev) => [...prev, ...newPosts]);
       setNextCursor(response.nextCursor);
@@ -260,7 +260,7 @@ const SNSPage = () => {
   const handleToggleFollow = async (memberId, isFollowing) => {
     // 이미 처리 중이면 무시
     if (followingInProgress.has(memberId)) {
-      console.log('이미 처리 중입니다.');
+      // console.log('이미 처리 중입니다.');
       return;
     }
 
@@ -268,14 +268,14 @@ const SNSPage = () => {
     setFollowingInProgress(prev => new Set([...prev, memberId]));
 
     try {
-      console.log('팔로우 토글 시도:', { memberId, isFollowing });
-      
+      // console.log('팔로우 토글 시도:', { memberId, isFollowing });
+
       if (isFollowing) {
         await unfollowUser(memberId);
-        console.log('언팔로우 성공');
+        // console.log('언팔로우 성공');
       } else {
         await followUser(memberId);
-        console.log('팔로우 성공');
+        // console.log('팔로우 성공');
       }
       
       // 성공 시 UI 업데이트

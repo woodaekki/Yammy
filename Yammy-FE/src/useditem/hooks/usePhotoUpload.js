@@ -24,11 +24,11 @@ export const usePhotoUpload = () => {
       const compressedFiles = await Promise.all(
         Array.from(files).map(async (file) => {
           if (file.size > 10 * 1024 * 1024) {
-            console.log("압축 필요:", file.name, file.size)
+            // console.log("압축 필요:", file.name, file.size)
 
             try {
               const compressed = await imageCompression(file, compressOptions)
-              console.log(`압축 완료: ${file.size} → ${compressed.size}`)
+              // console.log(`압축 완료: ${file.size} → ${compressed.size}`)
               return compressed
             } catch (err) {
               console.error("이미지 압축 실패:", err)

@@ -182,21 +182,21 @@ const TicketCreatePage = () => {
 
         try {
             const originalSize = (file.size / 1024 / 1024).toFixed(2);
-            console.log('[TicketCreate] 이미지 압축 시작:', {
-                fileName: file.name,
-                originalSize: `${originalSize}MB`,
-                type: file.type
-            });
+            // console.log('[TicketCreate] 이미지 압축 시작:', {
+            //     fileName: file.name,
+            //     originalSize: `${originalSize}MB`,
+            //     type: file.type
+            // });
 
             const compressedFile = await imageCompression(file, options);
             const compressedSize = (compressedFile.size / 1024 / 1024).toFixed(2);
 
-            console.log('[TicketCreate] 이미지 압축 완료:', {
-                fileName: file.name,
-                originalSize: `${originalSize}MB`,
-                compressedSize: `${compressedSize}MB`,
-                compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
-            });
+            // console.log('[TicketCreate] 이미지 압축 완료:', {
+            //     fileName: file.name,
+            //     originalSize: `${originalSize}MB`,
+            //     compressedSize: `${compressedSize}MB`,
+            //     compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
+            // });
 
             return new File([compressedFile], file.name, { type: compressedFile.type });
         } catch (error) {
@@ -263,11 +263,11 @@ const TicketCreatePage = () => {
         setLoadingMatches(true);
         try {
             const response = await getMatchesByDate(selectedDate);
-            console.log('경기 목록 응답:', response);
+            // console.log('경기 목록 응답:', response);
             // response가 배열이면 그대로, 아니면 response.data 사용
             const matchList = Array.isArray(response) ? response : (response.data || []);
             setMatches(matchList);
-            console.log('설정된 경기 수:', matchList.length);
+            // console.log('설정된 경기 수:', matchList.length);
         } catch (error) {
             console.error('경기 목록 불러오기 실패:', error);
             setMatches([]);

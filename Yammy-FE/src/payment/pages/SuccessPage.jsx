@@ -23,8 +23,8 @@ function SuccessPage() {
           orderId,
           amount,
         })
-        
-        console.log("결제 승인 완료:", response)
+
+        // console.log("결제 승인 완료:", response)
         setIsSuccess(true)
         setMessage(`결제가 완료되었습니다. 충전 금액: ${Number(amount).toLocaleString()}얌`)
         
