@@ -5,29 +5,74 @@ function PhotoUploader({ onFilesSelected, existingCount = 0 }) {
   const [files, setFiles] = useState([])
   const [previewUrls, setPreviewUrls] = useState([])
 
-  // 파일 선택 처리
-  async function handleFileChange(event) {
-    const selectedFiles = Array.from(event.target.files)
+  // 진짜 PNG인지 검사
+  async function isRealPng(file) {
+    try {
+      const buffer = await file.slice(0, 8).arrayBuffer()
+      const header = new Uint8Array(buffer)
 
-    // 3장 제한 체크
+      if (header.length < 8) return false
+
+      const pngHeader = new Uint8Array([
+        0x89, 0x50, 0x4E, 0x47,
+        0x0D, 0x0A, 0x1A, 0x0A
+      ])
+
+      for (let i = 0; i < 8; i++) {
+        if (header[i] !== pngHeader[i]) return false
+      }
+
+      return true
+    } catch (e) {
+      console.error("PNG 검사 오류:", e)
+      return false
+    }
+  }
+
+  // 파일 선택
+  async function handleFileChange(event) {
+    const selectedFiles = Array.from(event.target.files || [])
+    if (selectedFiles.length === 0) return
+
+    for (const file of selectedFiles) {
+      const ext = file.name.split(".").pop().toLowerCase()
+
+      const isImage = file.type.startsWith("image/")
+      if (!isImage) {
+        alert("이미지 파일만 업로드 가능합니다.")
+        event.target.value = ""
+        return
+      }
+
+      // PNG인 경우에만 헤더 검사
+      if (ext === "png") {
+        const real = await isRealPng(file)
+        if (!real) {
+          alert("유효하지 않은 이미지 파일이 포함되어 있습니다.")
+          event.target.value = ""
+          return
+        }
+      }
+    }
+
+    // 최대 3장 제한
     const totalCount = existingCount + files.length + selectedFiles.length
     if (totalCount > 3) {
-      alert("이미지는 최대 3장까지만 업로드할 수 있습니다.")
+      alert("최대 3장까지 업로드 가능")
+      event.target.value = ""
       return
     }
 
-    // 파일 저장
     const newFiles = [...files, ...selectedFiles]
     setFiles(newFiles)
 
-    // 미리보기 생성
-    const newPreviews = selectedFiles.map((f) => URL.createObjectURL(f))
-    setPreviewUrls((prev) => [...prev, ...newPreviews])
+    const newPreviews = selectedFiles.map(f => URL.createObjectURL(f))
+    setPreviewUrls(prev => [...prev, ...newPreviews])
 
     onFilesSelected(newFiles)
+    event.target.value = ""
   }
 
-  // 파일 제거
   function handleRemove(index) {
     URL.revokeObjectURL(previewUrls[index])
 
@@ -42,12 +87,10 @@ function PhotoUploader({ onFilesSelected, existingCount = 0 }) {
 
   return (
     <div className="photo-uploader">
-      {/* 사진 수 표시 */}
       <div className="photo-count-text">
         업로드 수: {existingCount + files.length} / 3
       </div>
 
-      {/* 새로 추가된 사진 리스트 */}
       <div className="photo-preview-list">
         {previewUrls.map((url, index) => (
           <div key={index} className="image-card">
@@ -63,7 +106,6 @@ function PhotoUploader({ onFilesSelected, existingCount = 0 }) {
         ))}
       </div>
 
-      {/* 업로드 input */}
       <div className="photo-input">
         <input
           type="file"
