@@ -1,0 +1,142 @@
+.edit-container {
+  width: 100%;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #333;
+  min-height: 100vh;
+}
+
+.edit-header {
+  display: flex;
+  background: #fff;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #f1f1f1;
+  margin-bottom: 1rem;
+}
+
+.edit-back-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.edit-header-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.edit-input-field,
+.edit-textarea-field,
+.edit-select {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.edit-input-field:focus,
+.edit-textarea-field:focus,
+.edit-select:focus {
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(153, 153, 153, 0.15);
+}
+
+.edit-textarea-field {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.edit-images {
+  width: 100%;
+  margin-bottom: 0.8rem;
+}
+
+.edit-image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.image-card {
+  position: relative;
+  width: 95px;
+  height: 95px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #f4f4f4;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.image-remove-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.edit-button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.edit-submit-btn,
+.edit-cancel-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.edit-cancel-btn {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.edit-error-text {
+  font-size: 0.9rem;
+  color: #d33;
+  margin: -0.4rem 0 0.6rem 0.2rem;
+}

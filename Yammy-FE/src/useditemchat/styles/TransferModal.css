@@ -1,0 +1,146 @@
+.transfer-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999 !important;
+}
+
+.transfer-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* 헤더 */
+.transfer-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.transfer-modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.transfer-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.transfer-modal-close-btn:hover {
+  color: #333;
+}
+
+/* 바디 */
+.transfer-modal-body {
+  padding: 20px;
+}
+
+.transfer-modal-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.transfer-modal-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: right;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.transfer-modal-input:focus {
+  outline: none;
+  border-color: #ff6b35;
+}
+
+.transfer-modal-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.transfer-modal-buttons button {
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.transfer-modal-buttons button:hover {
+  background-color: #ff6b35;
+  color: white;
+  border-color: #ff6b35;
+}
+
+.transfer-modal-buttons button:active {
+  transform: scale(0.95);
+}
+
+/* 푸터 */
+.transfer-modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.transfer-modal-balance {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.transfer-modal-submit-btn {
+  width: 100%;
+  padding: 15px;
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.transfer-modal-submit-btn:hover:not(:disabled) {
+  background-color: #e55a28;
+}
+
+.transfer-modal-submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.transfer-modal-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}

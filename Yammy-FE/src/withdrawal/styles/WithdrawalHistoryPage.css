@@ -1,0 +1,141 @@
+.history-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 128px);
+  background: #f5f6f8;
+  padding: 1.2rem 1.4rem;
+  box-sizing: border-box;
+}
+
+/* 상단 잔액 카드 */
+.history-balance-card {
+  background: #fff;
+  padding: 1.4rem 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.4rem;
+}
+
+.balance-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.back-statement-btn {
+  border: none;
+  background: transparent;
+  color: #777;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.balance-card-box {
+  margin-top: 0.9rem;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.balance-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.balance-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* 리스트 카드 */
+.history-list-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem 0.9rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* 리스트 아이템 */
+.history-item {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-item-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.history-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.status-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* 상태 색상 */
+.status-pill.completed {
+  background: #e5f6e5;
+  color: #2a7f2a;
+}
+
+.status-pill.denied {
+  background: #ffe5e5;
+  color: #d63f3f;
+}
+
+.status-pill.requested {
+  background: #eee;
+  color: #555;
+}
+
+.history-reason {
+  font-size: 0.85rem;
+  color: #cc3a3a;
+  margin-bottom: 0.4rem;
+}
+
+.history-item-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* 빈 상태 */
+.empty-history {
+  text-align: center;
+  padding: 2rem 0;
+  color: #777;
+  font-size: 0.95rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem 0;
+  font-size: 1rem;
+  color: #777;
+}

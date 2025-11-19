@@ -1,0 +1,139 @@
+.withdraw-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 128px);
+  background: #f5f6f8;
+  padding: 1.8rem 1.4rem;
+  box-sizing: border-box;
+}
+
+.withdraw-balance-card {
+  background: #fff;
+  padding: 1.6rem 1.4rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.withdraw-balance-label {
+  font-size: 0.95rem;
+  color: #888;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.withdraw-balance-value {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 상단 제목 + 버튼 */
+.withdraw-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.withdraw-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.withdraw-history-btn {
+  background: transparent;
+  border: none;
+  color: #777;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* 카드 */
+.withdraw-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* 필드 */
+.withdraw-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.withdraw-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.35rem;
+}
+
+.withdraw-input,
+.custom-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: right 14px center;
+  padding-right: 38px;
+}
+
+
+
+/* 상태 */
+.input-error {
+  border: 1.4px solid #ff4d4d;
+  background: #fff5f5;
+}
+
+.error-text {
+  margin-top: 6px;
+  color: #ff4d4d;
+  font-size: 0.78rem;
+}
+
+/* 버튼 */
+.withdraw-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  margin-top: 10px;
+  transition: 0.2s ease;
+}
+
+.withdraw-submit-btn.disabled {
+  background-color: #C8C8C8;
+  color: #ffffff;
+}
+
+.withdraw-submit-btn.active {
+  background-color: #2f2f2f;
+  color: white;
+  cursor: pointer;
+}
+
+.withdraw-submit-btn.active:hover {
+  background-color: #3a3a3a;
+}

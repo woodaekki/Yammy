@@ -1,0 +1,260 @@
+/* 티켓 모아보기 페이지 */
+.ticket-list-page {
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* 헤더 */
+.ticket-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.create-ticket-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+}
+
+/* 안내 문구 */
+.ticket-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.ticket-info p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* 팀 필터 래퍼 */
+.team-filter-wrapper {
+    position: sticky;
+    top: 80px;
+    z-index: 9;
+    margin: 0 16px 20px 16px;
+    min-height: 36px;
+}
+
+/* 팀 필터 */
+.team-filter-container {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    background-color: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.team-filter-container.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none;
+}
+
+.filter-toggle-btn {
+    width: 100%;
+    padding: 8px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.filter-toggle-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.filter-collapse-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1;
+}
+
+.filter-collapse-icon:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+.filter-expand-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1;
+}
+
+.filter-expand-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.team-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: white;
+    color: #374151;
+}
+
+.team-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-filter-btn.active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.team-filter-btn.active:first-child {
+    box-shadow: none;
+}
+
+.team-filter-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* 티켓 컨테이너 */
+.tickets-container {
+    padding: 0 16px;
+}
+
+/* 티켓 그리드 */
+.tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 96px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ticket-item {
+    width: 100%;
+}
+
+/* 로딩 메시지 */
+.loading-message {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 16px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* 빈 상태 */
+.empty-message {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-message p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 24px 0;
+    font-weight: 600;
+}
+
+.create-first-ticket-btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.create-first-ticket-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .tickets-grid {
+        grid-template-columns: 1fr;
+        gap: 96px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .tickets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

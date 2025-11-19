@@ -1,0 +1,746 @@
+/* 전역 box-sizing */
+* {
+  box-sizing: border-box;
+}
+
+/* 인증 컨테이너 - 전체 화면 */
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  margin: -70px 0 -58px 0;
+  padding: 70px 0 58px 0;
+}
+
+.auth-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  width: 100%;
+  justify-content: center;
+  flex: 1;
+}
+
+.auth-content > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 헤더 */
+.auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0 0.5rem;
+}
+
+.back-button {
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+.back-button:hover {
+  color: #374151;
+}
+
+.header-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.header-spacer {
+  width: 2rem;
+}
+
+/* 로고 섹션 */
+.auth-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-logo-section.small {
+  padding: 1.5rem 0 1rem;
+}
+
+.auth-logo-icon {
+  width: 10rem;
+  height: 10rem;
+  background: none;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.auth-logo-icon.small {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.auth-logo-icon i {
+  color: white;
+  font-size: 2rem;
+}
+
+.auth-logo-icon.small i {
+  font-size: 1.5rem;
+}
+
+.auth-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.auth-title.small {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+  color: #6b7280;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+/* 폼 스타일 */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.auth-form * {
+  box-sizing: border-box ;
+}
+
+.auth-form,
+.auth-form .form-group,
+.auth-form .input-wrapper,
+.auth-form .form-input,
+.auth-form .btn-primary,
+.auth-form .btn-kakao {
+  width: 100% ;
+  max-width: 100% ;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border-bottom: none !important;
+  text-decoration: none !important;
+  border: none;
+  outline: none;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  border: none;
+  outline: none;
+}
+
+.form-label,
+.form-label * {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: #ef4444;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.input-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.form-input,
+.form-textarea {
+  width: 100% ;
+  padding: 0.875rem ;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-sizing: border-box ;
+  margin: 0 ;
+  display: block;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-textarea {
+  resize: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: #6b7280;
+}
+
+/* 인라인 버튼 */
+.input-wrapper.with-button .form-input {
+  padding-right: 5rem;
+}
+
+.inline-button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem 0.75rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.inline-button:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.inline-button.success {
+  background-color: #10b981;
+}
+
+.inline-button.success:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.inline-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 에러/성공 메시지 */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.error-text {
+  display: block;
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.success-text {
+  display: block;
+  color: #10b981;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* 버튼 */
+.btn-primary {
+  width: 100% ;
+  padding: 0.875rem ;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+  margin-left: 0 ;
+  margin-right: 0 ;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box ;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-primary.loading {
+  opacity: 0.8;
+}
+
+/* 구분선 */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.divider span {
+  position: relative;
+  display: inline-block;
+  padding: 0 1rem;
+  background-color: white;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* 카카오 로그인 버튼 */
+.btn-kakao {
+  width: 100% ;
+  padding: 0.875rem ;
+  background-color: #fee500;
+  color: #000000;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: 0 ;
+  margin-right: 0 ;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box ;
+}
+
+.btn-kakao:hover {
+  background-color: #fdd835;
+}
+
+.kakao-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* 스피너 */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 하단 링크 */
+.auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.footer-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+/* 경고 섹션 */
+.warning-section {
+  background: linear-gradient(to bottom, #fef3c7, #fed7aa);
+  border: 2px solid #fbbf24;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.warning-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #92400e;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.warning-list li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #78350f;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.warning-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0.5rem;
+  color: #f59e0b;
+  font-weight: bold;
+}
+
+/* 사용자 정보 박스 */
+.user-info-box {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.info-row:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* 체크박스 그룹 */
+.checkbox-group {
+  margin: 1rem 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Danger 버튼 */
+.submit-button.danger {
+  background: linear-gradient(to right, #dc2626, #ef4444);
+}
+
+.submit-button.danger:hover:not(:disabled) {
+  background: linear-gradient(to right, #b91c1c, #dc2626);
+}
+
+.submit-button.danger:disabled {
+  background: #9ca3af;
+}
+
+/* Secondary 버튼 */
+.submit-button.secondary {
+  background: #e5e7eb;
+  color: #374151;
+  margin-top: 0.75rem;
+}
+
+.submit-button.secondary:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+/* Form section title */
+.form-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+/* Profile Image Upload */
+.profile-image-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e5e7eb;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.image-preview-container:hover {
+  border-color: #3b82f6;
+}
+
+.profile-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-change-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: white;
+  gap: 0.3rem;
+  padding: 1rem;
+}
+
+.image-preview-container:hover .image-change-overlay {
+  opacity: 1;
+}
+
+.image-change-overlay i {
+  font-size: 1.5rem;
+}
+
+.image-change-overlay span {
+  font-size: 0.7rem;
+  padding: 0;
+  text-align: center;
+  word-break: keep-all;
+  max-width: 80%;
+  display: block;
+  line-height: 1.2;
+}
+
+.image-upload-label {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed #d1d5db;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #f9fafb;
+  transition: all 0.2s;
+  gap: 0.3rem;
+  padding: 1rem;
+}
+
+.image-upload-label:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.image-upload-label i {
+  font-size: 2rem;
+  color: #9ca3af;
+}
+
+.image-upload-label:hover i {
+  color: #3b82f6;
+}
+
+.image-upload-label span {
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-align: center;
+  padding: 0;
+  word-break: keep-all;
+  max-width: 80%;
+  display: block;
+  line-height: 1.2;
+}
+
+.help-text {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+/* 팀 선택 - 마이페이지와 동일 */
+.team-toggle-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.team-toggle-btn {
+  padding: 12px 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.team-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-toggle-btn.active {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.team-logo-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+

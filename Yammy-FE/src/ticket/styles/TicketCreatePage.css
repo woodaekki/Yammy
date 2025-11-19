@@ -1,0 +1,484 @@
+/* 티켓 발급 페이지 */
+.ticket-create-page {
+    min-height: 100vh;
+    padding-bottom: 20px;
+}
+
+/* 헤더 */
+.ticket-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.team-select-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 12px 8px 12px;
+    border-radius: 0;
+    transition: all 0.3s;
+    min-width: 80px;
+    position: relative;
+}
+
+.team-select-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: currentColor;
+    transform: scaleX(1);
+    animation: pulse-underline 2s infinite;
+}
+
+.team-select-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+@keyframes pulse-underline {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 팀 선택 안내 배너 */
+.team-info-banner {
+    margin: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    animation: slide-down 0.5s ease-out;
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 진행 단계 */
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    gap: 8px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #d1d5db;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+
+.step.active .step-circle {
+    background-color: var(--team-color);
+}
+
+.step-label {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+.step.active .step-label {
+    color: var(--team-color);
+}
+
+.step-line {
+    width: 60px;
+    height: 2px;
+    background-color: #e5e7eb;
+    margin-bottom: 24px;
+}
+
+/* 폼 컨테이너 */
+.ticket-form-container {
+    padding: 0 16px;
+}
+
+.form-step {
+    background-color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 4px;
+    border: none;
+    border-bottom: 2px solid #e5e7eb;
+    border-radius: 0;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-bottom-color: var(--team-color);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #9ca3af;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* 점수 입력 */
+.score-inputs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.score-inputs input {
+    flex: 1;
+    text-align: center;
+}
+
+.score-inputs span {
+    font-size: 20px;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+/* 사진 업로드 - 인라인 */
+.photo-upload-section-inline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.photo-preview-inline {
+    width: 120px;
+    height: 160px;
+    background-color: #f9fafb;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.photo-preview-inline:hover {
+    border-color: var(--team-color);
+    background-color: #f0f0f0;
+}
+
+.photo-preview-inline img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-upload-btn-inline {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.photo-upload-btn-inline:hover {
+    filter: brightness(1.1);
+}
+
+/* 사진 업로드 - 전체화면 (사용안함) */
+.photo-upload-section {
+    text-align: center;
+}
+
+.photo-preview {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background-color: #f9fafb;
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #9ca3af;
+}
+
+.photo-icon {
+    font-size: 32px;
+}
+
+.photo-placeholder p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.photo-guide {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.photo-upload-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    color: white;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.photo-upload-btn:hover {
+    filter: brightness(1.1);
+}
+
+/* 버튼 */
+.next-btn,
+.prev-btn,
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 32px;
+}
+
+.next-btn,
+.submit-btn {
+    background-color: var(--team-color);
+    color: white;
+}
+
+.next-btn:hover,
+.submit-btn:hover {
+    filter: brightness(1.1);
+}
+
+.prev-btn {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.prev-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.form-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 경기장 선택 모달 */
+.location-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.location-modal-content {
+    background-color: white;
+    border-radius: 24px;
+    width: 90vw;
+    max-width: 500px;
+    max-height: 75vh;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-close {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    color: #6b7280;
+}
+
+.location-search {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.location-search:focus {
+    outline: none;
+    border-color: var(--team-color);
+}
+
+.stadium-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.stadium-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+}
+
+.stadium-item:hover {
+    background-color: #f9fafb;
+}
+
+.location-icon {
+    font-size: 20px;
+}
+
+.direct-input-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--team-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.direct-input-btn:hover {
+    filter: brightness(1.1);
+}
+
+/* 경기 선택 모달 */
+.match-item {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.match-item:last-child {
+    border-bottom: none;
+}
+
+.match-item:hover {
+    background-color: #f9fafb;
+}
+
+.direct-input-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}

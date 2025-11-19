@@ -1,0 +1,11 @@
+.idea/
+
+.claude/
+
+.env
+
+# Firebase
+firebase-service-account.json
+
+# Windows null device files
+nul

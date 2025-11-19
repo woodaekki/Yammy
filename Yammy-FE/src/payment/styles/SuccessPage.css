@@ -1,0 +1,86 @@
+.payment-result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  background-color: #f9f9f9;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+}
+
+.payment-card {
+  background-color: #fff;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 2.2rem 1.8rem;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* 아이콘 */
+.payment-icon {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  margin: 0 auto 1.2rem;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.payment-icon.success {
+  background-color: #3b3d3c; 
+}
+
+.payment-icon.fail {
+  background-color: #ff5252; 
+}
+
+/* 타이틀 */
+.payment-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: #222;
+}
+
+.payment-message {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* 버튼 그룹 */
+.payment-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.payment-btn {
+  background-color: #3b3d3c;
+  color: white;
+  padding: 0.7rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-btn:hover {
+  background-color: #eee;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

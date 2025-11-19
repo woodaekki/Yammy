@@ -1,0 +1,471 @@
+/* 마이?�이지 컨테?�너 */
+.mypage-container {
+  min-height: 100vh;
+  padding-bottom: 80px;
+  padding-top: 0;
+}
+
+/* ?�더 */
+.mypage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #4CAF50;
+}
+
+.back-btn,
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  font-weight: 600;
+}
+
+.back-btn {
+  font-size: 24px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+/* 컨텐�?*/
+.mypage-content {
+  padding: 24px 0;
+}
+
+/* ?�로???�션 */
+.profile-section {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 0 16px 24px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.profile-avatar-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.profile-avatar-container.editable {
+  cursor: pointer;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.profile-avatar-container.editable:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-overlay i {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.avatar-overlay span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ?�보 그룹 */
+.mypage-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #111827;
+  margin: 0;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.info-value.readonly {
+  background-color: #e5e7eb;
+  color: #6b7280;
+  border-radius: 8px;
+  text-align: left;
+  padding: 14px;
+}
+
+.info-input,
+.info-textarea {
+  font-size: 16px;
+  color: #111827;
+  padding: 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.info-input:focus,
+.info-textarea:focus {
+  outline: none;
+  border-color: var(--team-color);
+}
+
+.info-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ?�??버튼 */
+.save-btn {
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  padding: 16px;
+  background-color: var(--team-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.save-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.save-btn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ?� ?��? 버튼 */
+.team-toggle-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.team-toggle-btn {
+  padding: 12px 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.team-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-toggle-btn.active {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.team-logo-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+
+/* 비�?번호 변�?버튼 */
+.password-change-btn-inline {
+  padding: 12px 24px;
+  background-color: var(--team-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.password-change-btn-inline:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.password-change-btn-inline:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ?�원 ?�퇴 버튼 */
+.delete-account-btn {
+  width: auto;
+  padding: 8px;
+  background: none;
+  color: #dc2626;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.delete-account-btn:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.delete-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 탭 메뉴 */
+.mypage-tabs {
+  display: flex;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 16px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #6b7280;
+}
+
+.tab-btn:hover {
+  background-color: #f9fafb;
+}
+
+.tab-btn.active {
+  font-weight: 700;
+}
+
+/* NFT 리스트 섹션 */
+.nft-list-section {
+  padding: 24px 16px;
+}
+
+.nft-list-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+/* 팀 필터 */
+.team-filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.team-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: white;
+  color: #374151;
+}
+
+.team-filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-filter-btn.active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.team-filter-btn.active:first-child {
+  box-shadow: none;
+}
+
+.team-filter-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.nft-loading,
+.nft-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.nft-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nft-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.nft-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  /* 팀 컬러는 인라인 스타일로 적용 */
+}
+
+.nft-card-header > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nft-badge {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nft-card-body {
+  padding: 16px;
+}
+
+.nft-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.nft-info-row:last-child {
+  border-bottom: none;
+}
+
+.nft-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.nft-value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.nft-card-footer {
+  padding: 12px 16px;
+  background-color: #f9fafb;
+}
+
+.nft-etherscan-link {
+  display: block;
+  text-align: center;
+  /* 팀 컬러는 인라인 스타일로 적용 */
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.nft-etherscan-link:hover {
+  opacity: 0.8;
+  transform: translateX(4px);
+}
+
+/* 모바일 반응형 */
+@media (min-width: 640px) {
+  .nft-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .nft-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

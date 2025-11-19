@@ -1,0 +1,550 @@
+
+    
+
+
+/* ?�더 */
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: none;
+    background-color: transparent;
+}
+
+.back-btn, .options-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    color: #333;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ?�로???�보 ?�션 */
+.profile-info-section {
+    padding: 20px 16px;
+    background-color: transparent;
+    border: none;
+    border-radius: 12px;
+    margin: 16px;
+    box-shadow: none;
+}
+
+.profile-top {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    z-index: 1;
+    margin-right: 32px;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.verified-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    background-color: var(--team-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border: 2px solid white;
+    z-index: 2;
+}
+
+.profile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    padding-left: 48px;
+}
+
+.profile-info h2,
+.profile-info p {
+    margin: 0;
+    margin-block: 0;
+    margin-inline: 0;
+    padding: 0;
+    display: block;
+}
+
+.profile-name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.profile-username {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.2;
+}
+
+.bio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.profile-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-team-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.profile-team-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.bio-text {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 70px;
+    margin-bottom: 16px;
+    padding: 12px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: none !important;
+    flex: 1 1 0;
+    outline: none !important;
+}
+
+.stat-item:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.stat-item:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+    background: transparent !important;
+    box-shadow: none !important;
+    white-space: nowrap;
+}
+
+.stat-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ?�개 */
+.bio-section {
+    margin-bottom: 16px;
+}
+
+.bio-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0 0 8px 0;
+    white-space: pre-wrap;
+}
+
+.website-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.link-icon {
+    font-size: 14px;
+}
+
+.link-text {
+    font-size: 14px;
+    color: var(--team-color);
+    text-decoration: none;
+}
+
+.link-text:hover {
+    text-decoration: underline;
+}
+
+/* ?�션 버튼 */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.follow-button, .message-button, .share-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background-color: var(--team-color);
+    color: white;
+    transition: all 0.2s;
+}
+
+.follow-button {
+    flex: 1;
+}
+
+.follow-button.following {
+    background-color: #e5e7eb;
+    color: #333;
+}
+
+.follow-button:hover:not(.following) {
+    filter: brightness(1.1);
+}
+
+.message-button {
+    flex: 1;
+    background-color: var(--team-color);
+    color: white;
+}
+
+.message-button:hover {
+    filter: brightness(1.1);
+}
+
+.share-button {
+    width: 40px;
+    padding: 8px;
+    background-color: white;
+    color: #333;
+    font-size: 16px;
+}
+
+/* ???�션 */
+.tabs-section {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin: 0 16px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-button.active {
+    color: var(--team-color);
+    border-bottom-color: var(--team-color);
+    font-weight: 700;
+}
+
+/* 컨텐�??�션 */
+.content-section {
+    margin-top: 4px;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+}
+
+.grid-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.grid-item:hover {
+    transform: scale(1.05);
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* NFT 그리??*/
+.nfts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+}
+
+/* ?�켓 그리??*/
+.tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+}
+
+/* ?�켓 ?�션 ?�용 그리???�정 */
+.tickets-section .tickets-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    padding: 16px !important;
+}
+
+/* ?�켓 ?�션 - UserProfile ?�에???�용 */
+.tickets-section .ticket-card-container {
+    max-width: 100% !important;
+    width: 100%;
+    transform: scale(0.7);
+    transform-origin: top center;
+    margin-bottom: -80px;
+}
+
+.tickets-section .ticket-card {
+    width: 100%;
+}
+
+.tickets-section .ticket-front,
+.tickets-section .ticket-back {
+    width: 100%;
+}
+
+/* ?�켓 ?�면 ?�기 조정 */
+.tickets-section .ticket-front img {
+    width: 100%;
+    height: auto;
+}
+
+/* ?�립 ???��????��? */
+.tickets-section .ticket-card.flipped {
+    transform: rotateY(180deg);
+}
+
+/* ?�면 ?�트 ?�기 조정 */
+.tickets-section .ticket-back-header h3 {
+    font-size: 18px;
+}
+
+.tickets-section .ticket-subtitle {
+    font-size: 11px;
+}
+
+.tickets-section .info-label {
+    font-size: 11px;
+}
+
+.tickets-section .info-value {
+    font-size: 13px;
+}
+
+.tickets-section .score-value {
+    font-size: 20px;
+}
+
+.tickets-section .review-text {
+    font-size: 12px;
+}
+
+.tickets-section .nft-mint-button {
+    font-size: 13px;
+    padding: 10px 20px;
+}
+
+.tickets-section .nft-badge {
+    font-size: 12px;
+}
+
+.tickets-section .nft-link {
+    font-size: 11px;
+}
+
+.tickets-section .nft-info-text {
+    font-size: 11px;
+}
+
+.nft-card {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+}
+
+.nft-card.bg-gradient-to-br {
+    background: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to));
+}
+
+.nft-card.from-purple-400 {
+    --tw-gradient-from: #c084fc;
+}
+
+.nft-card.to-pink-400 {
+    --tw-gradient-to: #f472b6;
+}
+
+.nft-card.from-blue-400 {
+    --tw-gradient-from: #60a5fa;
+}
+
+.nft-card.to-cyan-400 {
+    --tw-gradient-to: #22d3ee;
+}
+
+.nft-id {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.nft-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nft-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.nft-price {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* ?�션 모달 */
+.options-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.options-content {
+    background-color: white;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 360px;
+    padding: 20px 0;
+}
+
+.modal-handle {
+    width: 40px;
+    height: 4px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+}
+
+.option-item {
+    width: 100%;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.option-item:hover {
+    background-color: #f5f5f5;
+}
+
+.option-item.danger {
+    color: #FF5722;
+}
+
+.option-item span {
+    font-size: 20px;
+}
+
+/* Make SNS nav sticky on profile pages */
+.user-profile .nav-bar-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+

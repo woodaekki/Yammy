@@ -1,0 +1,74 @@
+.bs-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 128px);
+  background: #f5f6f8;
+  padding: 1.8rem 1.4rem;
+  box-sizing: border-box;
+}
+
+/* 잔액 카드 */
+.bs-balance-card {
+  background: #fff;
+  padding: 1.6rem 1.4rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.bs-balance-label {
+  font-size: 0.95rem;
+  color: #888;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.bs-balance-value {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 메뉴 리스트 */
+.bs-menu-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  padding: 0.4rem 0;
+}
+
+/* 메뉴 아이템 */
+.bs-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bs-menu-item:hover {
+  background: #f8f8f8;
+}
+
+.bs-menu-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bs-menu-icon {
+  font-size: 1.25rem;
+  color: #444;
+}
+
+.bs-menu-text {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.bs-menu-arrow {
+  font-size: 1.2rem;
+  color: #999;
+}

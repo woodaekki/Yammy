@@ -1,0 +1,123 @@
+/* === 전체 메시지 컨테이너 === */
+.message-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  word-break: break-word;
+}
+
+/* === 내 메시지 / 상대 메시지 정렬 === */
+.message-item.mine {
+  align-items: flex-end;
+}
+
+.message-item.other {
+  align-items: flex-start;
+}
+
+/* === 닉네임 + 시간 === */
+.message-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  padding: 0 4px;
+  margin-bottom: 4px;   
+}
+
+.message-item.mine .message-info {
+  justify-content: flex-end;
+}
+
+.message-user {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* === 메시지 말풍선 === */
+.message-bubble {
+  border-radius: 12px;
+  padding: 0.6rem;
+  max-width: 80%;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  align-items: flex-start;
+  background-color: #f8f9fa; 
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* 내 메시지 (오른쪽) */
+.message-bubble.mine {
+  background-color: #e6e6e6; 
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* 상대 메시지 (왼쪽) */
+.message-bubble.other {
+  background-color: #ffffff;
+  align-self: flex-start;
+  text-align: left;
+}
+
+/* === 이미지 크기 === */
+.message-image {
+  border-radius: 10px;
+  max-width: 70%;
+  max-width: 180px;
+  /* max-height: 70%; */
+  max-height: 180px;  
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  cursor: pointer;
+  display: block;
+  margin: 4px auto 0; 
+}
+
+/* === 이미지 로딩 === */
+.image-loading {
+  background: #f3f4f6;
+  height: 150px;
+  width: 200px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+/* === 로딩 스피너 === */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #d1d5db;
+  border-top-color: #6b7280;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

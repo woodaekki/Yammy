@@ -1,0 +1,313 @@
+.chat-room-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #1f2937;
+  padding-bottom: 5rem;
+}
+
+/* 헤더 */
+.chat-room-header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.chat-room-header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-room-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.chat-room-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 0.3rem;
+}
+
+/* 관리자 버튼 */
+.chat-room-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chat-room-admin-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: #6b7280;
+}
+
+.chat-room-admin-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* 목록 */
+.chat-room-list {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.chat-room-empty {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.chat-room-empty-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.chat-room-empty-desc {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+/* 카드 */
+.chat-room-list {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.chat-room-card {
+  display: block;
+  width: 100%;
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-room-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chat-room-card:link,
+.chat-room-card:visited,
+.chat-room-card:hover,
+.chat-room-card:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 팀 */
+.chat-room-teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.chat-room-team-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.chat-room-team {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.chat-room-team .team-logo-small {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.chat-room-team-sub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+  color: #9ca3af;
+}
+
+.chat-room-vs {
+  color: #6b7280;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 0.4rem 0.8rem;
+}
+
+/* 정보 */
+.chat-room-info {
+  text-align: center;
+}
+
+.chat-room-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.chat-room-date {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* 태그 */
+.chat-room-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chat-room-tag {
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  padding: 0.4rem 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.chat-room-tag.double {
+  background: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.chat-room-tag.live {
+  background: #ef4444;
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* 입장 버튼 */
+.chat-room-enter {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.chat-room-enter-btn {
+  color: white;
+  background: var(--team-color, #3b82f6);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  white-space: nowrap;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.chat-room-enter-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.chat-room-enter-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.chat-room-enter-btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* 새로고침 버튼 */
+.chat-room-refresh {
+  position: fixed;
+  bottom: 5rem;
+  right: 1rem;
+}
+
+.chat-room-refresh-btn {
+  background-color: #9ca3af;
+  color: white;
+  padding: 0.9rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-room-refresh-btn:hover {
+  background-color: #6b7280;
+}
+
+/* 로딩 */
+.chat-room-spinner {
+  border: 3px solid #e5e7eb;
+  border-top-color: #9ca3af;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+

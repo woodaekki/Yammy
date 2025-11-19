@@ -1,0 +1,129 @@
+server:
+  port: 8080
+  address: 127.0.0.1
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  application:
+    name: yammy
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:redis}   # 기본값: redis
+      port: ${SPRING_DATA_REDIS_PORT:6379}    # 기본값: 6379
+      password: ${SPRING_DATA_REDIS_PASSWORD:#{null}}
+      timeout: 6000ms
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: ${KAFKA_PRODUCER_ACKS:all}
+      retries: ${KAFKA_PRODUCER_RETRIES:3}
+
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:yammy-group}
+      auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:earliest}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  cloud:
+    aws:
+      credentials:
+        accessKey: ${AWS_ACCESS_KEY}
+        secretKey: ${AWS_SECRET_KEY}
+      s3:
+        bucket: ${AWS_S3_BUCKET}
+      region:
+        static: ${AWS_REGION}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+  accessExpiration: ${JWT_ACCESS_EXPIRATION:900000}
+  refreshExpiration: ${JWT_REFRESH_EXPIRATION:1209600000}
+
+firebase:
+  service-account: classpath:firebase-service-account.json
+  storage-bucket: yammy-chat-games.firebasestorage.app
+# 카카오 OAuth 설정
+kakao:
+  rest:
+    api:
+      key: ${KAKAO_REST_API_KEY}
+  client-secret: ${KAKAO_CLIENT_SECRET:}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+
+# NFT 설정
+nft:
+  contract-address: ${NFT_CONTRACT_ADDRESS:0xC3411A874DC352569927A57556E3b35682CfaEBE}
+  network: ${NFT_NETWORK:sepolia}
+  rpc-url: ${NFT_RPC_URL:https://rpc.sepolia.org}
+  private-key: ${NFT_PRIVATE_KEY}
+  owner-address: ${NFT_OWNER_ADDRESS:0xD8aC392887BEad44D2da842B4Dbb5b12d5c48CE6}
+
+# IPFS 설정 (Pinata)
+ipfs:
+  api-key: ${PINATA_API_KEY}
+  api-secret: ${PINATA_API_SECRET}
+  gateway: ${PINATA_GATEWAY:https://gateway.pinata.cloud/ipfs/}
+
+toss:
+  secret-key: ${TEST_SECRET_KEY}
+  url: ${TOSS_URL}
+
+openai:
+  key: ${GMS_KEY}
+  model: gpt-4o
+
+#firebase:
+#  type: ${FIREBASE_TYPE}
+#  project-id: ${FIREBASE_PROJECT_ID}
+#  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
+#  private-key: ${FIREBASE_PRIVATE_KEY}
+#  client-email: ${FIREBASE_CLIENT_EMAIL}
+#  client-id: ${FIREBASE_CLIENT_ID}
+#  auth-uri: ${FIREBASE_AUTH_URI}
+#  token-uri: ${FIREBASE_TOKEN_URI}
+#  auth-provider-cert-url: ${FIREBASE_AUTH_PROVIDER_CERT_URL}
+#  client-cert-url: ${FIREBASE_CLIENT_CERT_URL}
+#  universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
+#  storage-bucket: ${FIREBASE_STORAGE_BUCKET}

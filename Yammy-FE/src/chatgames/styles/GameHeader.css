@@ -1,0 +1,135 @@
+.game-header {
+  background-color: #ffffff;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  padding: 1rem;
+}
+
+/* 상단 띠 */
+.team-bar {
+  display: flex;
+  height: 5px; 
+  width: 100%;
+}
+
+.home-bar {
+  flex: 1;
+  background-color: #d32f2f; 
+}
+
+.away-bar {
+  flex: 1;
+  background-color: #4a148c;
+}
+
+/* 본문 내용 */
+.game-info {
+  padding: 0.6rem 0; 
+  line-height: 1.2;
+}
+
+/* 팀 이름 */
+.game-teams {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111827;
+  margin-bottom: 0.2rem;
+}
+
+.team-with-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-logo-header {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* VS */
+.vs {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* 경기 이름 */
+.game-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.2rem;
+}
+
+/* 시간 + 상태 */
+.game-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* 상태 */
+.game-status {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.game-status.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.game-status.finished {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+/* 로딩 */
+.loading {
+  padding: 1rem 0;
+  color: #9ca3af;
+}
+
+
+/* 뒤로가기 버튼 */
+.game-header {
+  position: relative;
+}
+
+.game-info {
+  position: relative;
+}
+
+.chat-list-back-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #374151;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.chat-list-back-btn:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+  border-radius: 8px;
+}

@@ -1,0 +1,15 @@
+[project]
+name = "yammy-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.119.1",
+    "kbodata>=0.2.3",
+    "mysql-connector-python>=9.5.0",
+    "pandas>=2.3.3",
+    "python-dotenv>=1.1.1",
+    "uvicorn>=0.38.0",
+    "webdriver-manager>=4.0.2",
+]

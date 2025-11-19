@@ -1,0 +1,189 @@
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { getMyPoint } from "../payment/api/pointAPI"
+import { requestWithdraw } from "../withdrawal/api/withdrawalApi"
+import "./styles/WithdrawalPage.css"
+
+const WithdrawalPage = () => {
+  const navigate = useNavigate()
+
+  const [balance, setBalance] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  const [amount, setAmount] = useState("")
+  const [bankName, setBankName] = useState("선택")
+  const [accountNumber, setAccountNumber] = useState("")
+  const [error, setError] = useState("")
+
+  const token = localStorage.getItem("accessToken")
+  const format = (n) => n.toLocaleString()
+
+  // 잔액 불러오기
+  useEffect(() => {
+    loadBalance()
+
+    const handler = () => loadBalance()
+    window.addEventListener("pointUpdated", handler)
+
+    return () => {
+      window.removeEventListener("pointUpdated", handler)
+    }
+  }, [])
+
+  const loadBalance = async () => {
+    try {
+      const res = await getMyPoint(token)
+      setBalance(res.balance)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 계좌 검증 
+  const handleAccountChange = (e) => {
+    const raw = e.target.value.replace(/\D/g, "") // 숫자만
+    setAccountNumber(raw)
+
+    if (bankName === "선택") {
+      setError("은행을 먼저 선택해주세요.")
+      return
+    }
+
+    if (raw.length < 7) {
+      setError("유효하지 않은 계좌번호 입니다.")
+      return
+    }
+
+    setError("") // 정상
+  }
+
+  // 유효성 검사
+  const isValid =
+    amount &&
+    bankName !== "선택" &&
+    error === "" &&
+    accountNumber.length > 6
+
+  // 환전 요청
+  const handleSubmit = async () => {
+    if (!isValid) return
+
+    try {
+      const dto = {
+        amount: Number(amount),
+        bankName,
+        accountNumber
+      }
+
+      await requestWithdraw(dto)
+
+      window.dispatchEvent(new Event("pointUpdated"))
+
+      setAmount("")
+      setBankName("선택")
+      setAccountNumber("")
+      setError("")
+
+      alert("환전이 완료되었습니다.")
+    } catch (err) {
+      alert(err?.response?.data?.message || "환전 요청 실패")
+    }
+  }
+
+  return (
+    <div className="withdraw-wrapper">
+      <div className="withdraw-header-row">
+        <h2 className="withdraw-title">환전하기</h2>
+
+        <button
+          className="withdraw-history-btn"
+          onClick={() => navigate("/withdraw/history")}
+        >
+          내역 보기
+        </button>
+      </div>
+
+      {/* 현재 잔액 카드 */}
+      <div className="withdraw-balance-card">
+        <span className="withdraw-balance-label">현재 잔액</span>
+        <span className="withdraw-balance-value">{format(balance)} 얌</span>
+      </div>
+
+      <div className="withdraw-card">
+
+        {/* 금액 입력 */}
+        <div className="withdraw-field">
+          <label>환전 금액</label>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            value={amount}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^\d]/g, "")
+              if (raw.length > 9) return
+              setAmount(raw)
+            }}
+            placeholder="예: 10,000"
+            className="withdraw-input"
+          />
+        </div>
+
+        {/* 은행 선택 */}
+        <div className="withdraw-field">
+          <label>은행 선택</label>
+          <select
+            value={bankName}
+            onChange={(e) => {
+              setBankName(e.target.value)
+              setAccountNumber("")
+              setError("")
+            }}
+            className="custom-select"
+          >
+            <option value="선택">은행을 선택하세요</option>
+            <option>카카오뱅크</option>
+            <option>토스뱅크</option>
+            <option>국민은행</option>
+            <option>신한은행</option>
+            <option>기업은행</option>
+            <option>농협은행</option>
+            <option>우리은행</option>
+            <option>하나은행</option>
+          </select>
+        </div>
+
+        {/* 계좌 번호 */}
+        <div className="withdraw-field">
+          <label>계좌번호</label>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            value={accountNumber}
+            onChange={(e) => handleAccountChange(e)}
+            className={`withdraw-input ${accountNumber && error ? "input-error" : ""}`}
+          />
+
+          {accountNumber && error && (
+            <div className="error-text">{error}</div>
+          )}
+        </div>
+
+        {/* 제출 버튼 */}
+        <button
+          className={`withdraw-submit-btn ${isValid ? "active" : "disabled"}`}
+          disabled={!isValid}
+          onClick={handleSubmit}
+        >
+          환전하기
+        </button>
+
+      </div>
+    </div>
+  )
+}
+
+export default WithdrawalPage

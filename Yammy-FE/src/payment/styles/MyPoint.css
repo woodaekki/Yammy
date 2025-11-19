@@ -1,0 +1,125 @@
+.mypoint-container {
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 0.75rem 1.5rem 1rem;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: #333;
+  min-height: calc(100vh - 128px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 헤더 */
+.mypoint-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.mypoint-logo::before {
+  content: "Y";
+  display: inline-block;
+  background-color: #3b3d3c;
+  color: white;
+  border-radius: 50%;
+  width: 1.8rem;
+  height: 1.8rem;
+  text-align: center;
+  line-height: 1.8rem;
+  font-weight: 900;
+  margin-right: 0.4rem;
+}
+
+/* 섹션 */
+.mypoint-section {
+  margin-bottom: 1.6rem;
+}
+
+.mypoint-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* 금액 입력 */
+.mypoint-input {
+  width: 100%;
+  padding: 0.7rem 0.3rem;
+  font-size: 1.1rem;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mypoint-input:focus {
+  border-color: #3b3d3c;
+}
+
+/* 단위 버튼 */
+.mypoint-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+  gap: 0.4rem;
+}
+
+.mypoint-buttons button {
+  flex: 1;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+/* 버튼 눌림 UX 개선 */
+.mypoint-buttons button:active {
+  background: #e2e2e2;
+  transform: scale(0.97);
+}
+
+.mypoint-buttons button:hover {
+  background: #f1f1f1;
+}
+
+/* 하단 */
+.mypoint-footer {
+  text-align: center;
+  border-top: 1px solid #f3f3f3;
+  padding-top: 1.2rem;
+  margin-top: 2rem;
+}
+
+.mypoint-balance {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.mypoint-charge-btn {
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.9rem 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.mypoint-charge-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.mypoint-charge-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,259 @@
+/* === 전체 레이아웃 컨테이너 === */
+.chat-page-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f6f7;
+  margin: 0;
+  padding: 0;
+}
+
+/* === 고정된 헤더 === */
+.chat-header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 80px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  z-index: 999999;
+  margin: 0;
+  /* GameHeader 컴포넌트 자체에 padding이 있어서 여기서는 제거 */
+}
+
+/* === 메시지 스크롤 영역 (핵심!) === */
+.chat-messages-container {
+  padding-top: 90px; /* 헤더 높이만큼 공간 확보 */
+  padding-bottom: 110px; /* 업로드 바 + 네비게이션 바 높이 */
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 스크롤바 스타일 - 스크롤시에만 나타나고 얇고 흐리게 */
+.chat-messages-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Firefox */
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.messages-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* === 로딩/빈 메시지 === */
+.message-loading,
+.message-empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 3rem 1rem;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #d1d5db;
+  border-top-color: #6b7280;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === 스크롤 버튼 === */
+/* .scroll-btn {
+  position: fixed;
+  right: 1rem;
+  bottom: 10rem;
+  background-color: #9ca3af;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.scroll-btn:hover {
+  background-color: #6b7280;
+  transform: scale(1.05);
+} */
+
+/* === 고정된 업로드 바 === */
+.chat-upload-fixed {
+  position: fixed;
+  bottom: 58px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: #f5f6f7;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* === 하단 네비게이션 바 === */
+.chat-page-container .nav-bar-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+/* === 에러 화면 === */
+.error-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.error-box {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.error-box h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.error-box p {
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.error-box button {
+  background-color: #4b5563;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.error-box button:hover {
+  background-color: #374151;
+}
+
+/* === 이미지 모달 === */
+.image-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000000;
+  backdrop-filter: blur(4px);
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #374151;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 2001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.image-modal-close:hover {
+  background-color: #ffffff;
+  transform: scale(1.1);
+}
+
+.image-modal-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.image-modal-img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 노치/다이나믹 아일랜드 대응 */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .chat-header-fixed {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* App.css 오버라이드 - 모든 기기에서 작동 */
+body:has(.chat-page-container) .app-content-wrapper {
+  padding-bottom: 0 !important;
+}

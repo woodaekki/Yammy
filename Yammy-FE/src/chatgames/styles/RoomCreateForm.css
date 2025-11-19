@@ -1,0 +1,157 @@
+.room-create-form {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  max-width: 520px;
+  margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
+.room-create-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.2rem;
+}
+
+.room-create-form-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 필드 그룹 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.2rem;
+}
+
+.form-label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+.form-input {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #1f2937;
+  height: 34px; 
+  width: 100%;
+  max-width: 95%; 
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-input:focus {
+  border-color: #9ca3af;
+  outline: none;
+  box-shadow: 0 0 0 1px #d1d5db;
+}
+
+.form-hint {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  margin-top: 0.1rem;
+}
+
+/* 두 칸짜리 행 */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* 체크박스 */
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.checkbox-input {
+  width: 14px;
+  height: 14px;
+  accent-color: #6b7280;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+/* 에러 메시지 */
+.form-error {
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #b91c1c;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+/* 버튼 영역 */
+.form-buttons {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-end; 
+}
+
+.btn-primary {
+  background-color: #9ca3af;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.45rem 0.9rem; 
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto; 
+  min-width: 90px; 
+}
+
+.btn-primary:hover {
+  background-color: #6b7280;
+}
+
+.btn-primary:disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 70px; 
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.char-count {
+  margin-left: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ef4444;
+}
