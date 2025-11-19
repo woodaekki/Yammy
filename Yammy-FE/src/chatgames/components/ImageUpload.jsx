@@ -15,21 +15,21 @@ export default function ImageUpload({ roomKey, apiUploadFunction }) {
 
     try {
       const originalSize = (file.size / 1024 / 1024).toFixed(2);
-      console.log("[ImageUpload] 이미지 압축 시작:", {
-        fileName: file.name,
-        originalSize: `${originalSize}MB`,
-        type: file.type
-      });
+      // console.log("[ImageUpload] 이미지 압축 시작:", {
+      //   fileName: file.name,
+      //   originalSize: `${originalSize}MB`,
+      //   type: file.type
+      // });
 
       const compressedFile = await imageCompression(file, options);
       const compressedSize = (compressedFile.size / 1024 / 1024).toFixed(2);
 
-      console.log("[ImageUpload] 이미지 압축 완료:", {
-        fileName: file.name,
-        originalSize: `${originalSize}MB`,
-        compressedSize: `${compressedSize}MB`,
-        compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
-      });
+      // console.log("[ImageUpload] 이미지 압축 완료:", {
+      //   fileName: file.name,
+      //   originalSize: `${originalSize}MB`,
+      //   compressedSize: `${compressedSize}MB`,
+      //   compressionRatio: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`
+      // });
 
       return new File([compressedFile], file.name, { type: compressedFile.type }); // 이름 유지
     } catch (error) {
@@ -91,10 +91,10 @@ export default function ImageUpload({ roomKey, apiUploadFunction }) {
         
         // GIF가 10MB 넘으면 정적 이미지로 압축
         if (compressedFile.size > 10 * 1024 * 1024) {
-          console.log("[ImageUpload] GIF 파일이 10MB를 초과하여 압축합니다:", {
-            fileName: file.name,
-            originalSize: `${(file.size / 1024 / 1024).toFixed(2)}MB`
-          });
+          // console.log("[ImageUpload] GIF 파일이 10MB를 초과하여 압축합니다:", {
+          //   fileName: file.name,
+          //   originalSize: `${(file.size / 1024 / 1024).toFixed(2)}MB`
+          // });
           compressedFile = await compressImage(file);  // 압축 (애니메이션 손실)
         }
       } else {

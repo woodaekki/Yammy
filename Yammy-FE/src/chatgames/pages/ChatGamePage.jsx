@@ -83,11 +83,11 @@ export default function ChatGamePage() {
   };
 
   const handleUploadSuccess = (result) => {
-    console.log('[ChatGamePage] 이미지 업로드 성공:', {
-      roomKey,
-      messageId: result?.messageId,
-      imageUrl: result?.imageUrl
-    });
+    // console.log('[ChatGamePage] 이미지 업로드 성공:', {
+    //   roomKey,
+    //   messageId: result?.messageId,
+    //   imageUrl: result?.imageUrl
+    // });
   };
 
   const handleUploadError = (error) => {

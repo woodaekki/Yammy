@@ -64,8 +64,8 @@ const MyPage = () => {
     const profileImage = localStorage.getItem('profileImage') || '';
     const team = localStorage.getItem('team') || '';
 
-    console.log('로드된 프로필 이미지:', profileImage);
-    console.log('로드된 팀:', team);
+    // console.log('로드된 프로필 이미지:', profileImage);
+    // console.log('로드된 팀:', team);
 
     setFormData({
       nickname: localStorage.getItem('nickname') || '',
@@ -92,7 +92,7 @@ const MyPage = () => {
       // NFT가 발급된 티켓만 필터링
       const nftOnlyTickets = tickets.filter(ticket => ticket.nftMinted === true);
       setNftTickets(nftOnlyTickets);
-      console.log('NFT 티켓 목록:', nftOnlyTickets);
+      // console.log('NFT 티켓 목록:', nftOnlyTickets);
     } catch (error) {
       console.error('NFT 티켓 목록 로드 실패:', error);
     } finally {
@@ -222,11 +222,11 @@ const MyPage = () => {
 
   const uploadImageToS3 = async (file) => {
     try {
-      console.log('S3 업로드 시작:', file.name);
+      // console.log('S3 업로드 시작:', file.name);
 
       // 1. Presigned URL 요청
       const presignedData = await getPresignedUrls([file]);
-      console.log('Presigned URL 받음:', presignedData);
+      // console.log('Presigned URL 받음:', presignedData);
 
       const { s3Key, presignedUrl } = presignedData[0];
 
@@ -243,7 +243,7 @@ const MyPage = () => {
         throw new Error('S3 업로드 실패');
       }
 
-      console.log('S3 업로드 성공');
+      // console.log('S3 업로드 성공');
 
       // 3. 업로드 완료 알림
       const fileUrl = `https://yammy-project.s3.ap-northeast-2.amazonaws.com/${s3Key}`;
@@ -253,7 +253,7 @@ const MyPage = () => {
         contentType: file.type,
       });
 
-      console.log('업로드 완료:', fileUrl);
+      // console.log('업로드 완료:', fileUrl);
       return fileUrl;
     } catch (error) {
       console.error('S3 업로드 실패:', error);
@@ -295,9 +295,9 @@ const MyPage = () => {
         profileImage: profileImageUrl || '',
       };
 
-      console.log('프로필 업데이트 요청:', updateData);
+      // console.log('프로필 업데이트 요청:', updateData);
       const response = await updateMember(updateData);
-      console.log('프로필 업데이트 응답:', response);
+      // console.log('프로필 업데이트 응답:', response);
 
       // localStorage 업데이트
       localStorage.setItem('nickname', response.nickname || formData.nickname);
@@ -386,9 +386,9 @@ const MyPage = () => {
 
     setLoading(true);
     try {
-      console.log('회원탈퇴 API 호출 시작');
+      // console.log('회원탈퇴 API 호출 시작');
       const response = await deleteMember();
-      console.log('회원탈퇴 API 응답:', response);
+      // console.log('회원탈퇴 API 응답:', response);
 
       alert('회원탈퇴가 완료되었습니다.');
 
@@ -463,7 +463,7 @@ const MyPage = () => {
                 alt="프로필"
                 className="profile-avatar"
                 onError={(e) => {
-                  console.log('이미지 로드 실패, 기본 이미지로 대체');
+                  // console.log('이미지 로드 실패, 기본 이미지로 대체');
                   e.target.src = DEFAULT_PROFILE_IMAGE;
                 }}
               />

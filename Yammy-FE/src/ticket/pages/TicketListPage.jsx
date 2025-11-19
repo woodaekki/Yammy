@@ -28,7 +28,7 @@ const TicketListPage = () => {
         const checkFilterHeight = () => {
             if (filterRef.current) {
                 const filterHeight = filterRef.current.scrollHeight;
-                console.log('Filter height:', filterHeight); // 디버깅용
+                // console.log('Filter height:', filterHeight); // 디버깅용
                 // 2줄 이상이면 약 80px 이상 (1줄은 약 50-60px)
                 setShowToggleButton(filterHeight > 80);
             }

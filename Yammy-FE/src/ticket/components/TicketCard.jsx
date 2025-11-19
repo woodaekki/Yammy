@@ -215,11 +215,11 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
                 canvas.toBlob(resolve, 'image/png');
             });
 
-            console.log('Blob 생성 확인:', {
-                blobExists: !!blob,
-                blobSize: blob?.size,
-                blobType: blob?.type
-            });
+            // console.log('Blob 생성 확인:', {
+            //     blobExists: !!blob,
+            //     blobSize: blob?.size,
+            //     blobType: blob?.type
+            // });
 
             if (!blob) {
                 throw new Error('이미지 캡처에 실패했습니다.');
@@ -231,11 +231,11 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
                 type: 'image/png'
             });
 
-            console.log('캡처된 티켓 이미지:', {
-                fileName: ticketImageFile.name,
-                fileSize: ticketImageFile.size,
-                fileType: ticketImageFile.type
-            });
+            // console.log('캡처된 티켓 이미지:', {
+            //     fileName: ticketImageFile.name,
+            //     fileSize: ticketImageFile.size,
+            //     fileType: ticketImageFile.type
+            // });
 
             setMintStatus('NFT 발급 중...');
 
