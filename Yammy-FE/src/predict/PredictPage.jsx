@@ -105,7 +105,7 @@ const PredictPage = () => {
                   </div>
                   <div className="tooltip-content">
                     <p><strong>배당률 2.00이라면:</strong></p>
-                    <p>• 100팬심 배팅 시 승리하면 200팬심을 받는다</p>
+                    <p>• 100팬심 투입 시 승리하면 200팬심을 받는다</p>
                     <p>• 즉, 팬심 100 + 수익 100 = 총 200팬심</p>
                     <br/>
                     <p><strong>계산법:</strong></p>
@@ -222,7 +222,7 @@ const PredictPage = () => {
           )}
 
           {!loading && !error && todayMatches.length === 0 && (
-            <div className="no-matches">배팅 가능한 경기가 없습니다.</div>
+            <div className="no-matches">예측 가능한 경기가 없습니다.</div>
           )}
         </div>
       </div>
