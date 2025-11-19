@@ -18,23 +18,10 @@ const WithdrawalPage = () => {
   const token = localStorage.getItem("accessToken")
   const format = (n) => n.toLocaleString()
 
-  // 계좌 번호 규칙 검증 
-  const rules = {
-    "카카오뱅크": { prefix: "3333", length: 13 },
-    "토스뱅크": { prefix: "1000", length: 12 },
-    "국민은행": { prefix: "", length: 12 },
-    "신한은행": { prefix: "110", length: 9 },
-    "기업은행": { prefix: "", length: 14 },
-    "농협은행": { prefix: "", length: 13 },
-    "우리은행": { prefix: "", length: 11 },
-    "하나은행": { prefix: "", length: 12 }
-  }
-
-  // 현재 잔액 불러오기 
+  // 잔액 불러오기
   useEffect(() => {
     loadBalance()
 
-    // 잔액 갱신 이벤트
     const handler = () => loadBalance()
     window.addEventListener("pointUpdated", handler)
 
@@ -54,33 +41,22 @@ const WithdrawalPage = () => {
     }
   }
 
-  // 계좌 검증
+  // 계좌 검증 
   const handleAccountChange = (e) => {
-    const raw = e.target.value.replace(/\D/g, "")
+    const raw = e.target.value.replace(/\D/g, "") // 숫자만
     setAccountNumber(raw)
 
     if (bankName === "선택") {
-      setError("은행을 선택하세요.")
+      setError("은행을 먼저 선택해주세요.")
       return
     }
 
-    const { prefix, length } = rules[bankName]
-
-    if (prefix && !raw.startsWith(prefix)) {
-      setError("존재하지 않는 계좌번호입니다.")
+    if (raw.length < 7) {
+      setError("유효하지 않은 계좌번호 입니다.")
       return
     }
 
-    if (raw.length > length) {
-      setError("존재하지 않는 계좌번호입니다.")
-      return
-    }
-
-    if (raw.length === length) {
-      setError("")
-    } else {
-      setError("존재하지 않는 계좌번호입니다.")
-    }
+    setError("") // 정상
   }
 
   // 유효성 검사
@@ -88,7 +64,7 @@ const WithdrawalPage = () => {
     amount &&
     bankName !== "선택" &&
     error === "" &&
-    accountNumber.length === (rules[bankName]?.length || 0)
+    accountNumber.length > 6
 
   // 환전 요청
   const handleSubmit = async () => {
@@ -103,7 +79,6 @@ const WithdrawalPage = () => {
 
       await requestWithdraw(dto)
 
-      // 잔액 자동 갱신
       window.dispatchEvent(new Event("pointUpdated"))
 
       setAmount("")
@@ -121,7 +96,7 @@ const WithdrawalPage = () => {
     <div className="withdraw-wrapper">
       <div className="withdraw-header-row">
         <h2 className="withdraw-title">환전하기</h2>
-        
+
         <button
           className="withdraw-history-btn"
           onClick={() => navigate("/withdraw/history")}
@@ -129,7 +104,7 @@ const WithdrawalPage = () => {
           내역 보기
         </button>
       </div>
-      
+
       {/* 현재 잔액 카드 */}
       <div className="withdraw-balance-card">
         <span className="withdraw-balance-label">현재 잔액</span>
@@ -138,9 +113,9 @@ const WithdrawalPage = () => {
 
       <div className="withdraw-card">
 
+        {/* 금액 입력 */}
         <div className="withdraw-field">
           <label>환전 금액</label>
-
           <input
             type="text"
             inputMode="numeric"
@@ -156,6 +131,7 @@ const WithdrawalPage = () => {
           />
         </div>
 
+        {/* 은행 선택 */}
         <div className="withdraw-field">
           <label>은행 선택</label>
           <select
@@ -179,6 +155,7 @@ const WithdrawalPage = () => {
           </select>
         </div>
 
+        {/* 계좌 번호 */}
         <div className="withdraw-field">
           <label>계좌번호</label>
           <input
@@ -186,10 +163,7 @@ const WithdrawalPage = () => {
             inputMode="numeric"
             pattern="\d*"
             value={accountNumber}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^\d]/g, "")
-              handleAccountChange({ target: { value: raw } })
-            }}
+            onChange={(e) => handleAccountChange(e)}
             className={`withdraw-input ${accountNumber && error ? "input-error" : ""}`}
           />
 
@@ -198,6 +172,7 @@ const WithdrawalPage = () => {
           )}
         </div>
 
+        {/* 제출 버튼 */}
         <button
           className={`withdraw-submit-btn ${isValid ? "active" : "disabled"}`}
           disabled={!isValid}
