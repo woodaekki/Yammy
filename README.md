@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 야미: 야구에 미치다
 
 <img src="./Yammy-FE/src/assets/readme/readme.png" width="500px" />
@@ -543,3 +544,6 @@ S13P31C205/
     </td>
   </tr>
 </table>
+=======
+## 야미 (야구에 미치다)
+>>>>>>> 35e5b22c459ec1409253bb7a8ba3ddf36bb07a39
