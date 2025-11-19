@@ -478,13 +478,13 @@ S13P31C205/
   </tr>
   <tr>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
   </tr>
   <tr>
@@ -516,13 +516,13 @@ S13P31C205/
   </tr>
   <tr>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
     <td align="center">
-      <img src="./Yammy-FE/src/assets/readme/readme.png" width="200">
+      <img src="./Yammy-FE/src/assets/images/gugong.png" width="200">
     </td>
   </tr>
   <tr>
