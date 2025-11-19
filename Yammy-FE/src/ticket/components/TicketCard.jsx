@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getTeamColors } from '../../sns/utils/teamColors';
 import { TEAM_LOGOS } from '../../utils/teamLogos';
 import { mintNFT, canMintNFT, getNFTStatusMessage, getEtherscanNFTUrl } from '../api/nftApi';
@@ -136,7 +136,12 @@ export const GameTitle = ({ gameName, size = 'medium' }) => {
 
 const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
     const [isFlipped, setIsFlipped] = useState(false);
-    const [isMinting, setIsMinting] = useState(false);
+    const ticketId = ticket.id || ticket.ticketId;
+
+    // localStorage에서 발급 중 상태 확인
+    const [isMinting, setIsMinting] = useState(() => {
+        return localStorage.getItem(`nft_minting_${ticketId}`) === 'true';
+    });
     const [mintStatus, setMintStatus] = useState('');
     const teamColors = getTeamColors();
     const ticketCardRef = useRef(null);
@@ -144,6 +149,14 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
     // ticket.team이 있으면 사용, 없으면 localStorage의 team 사용
     const team = ticket.team || localStorage.getItem('team');
     const ticketBackground = team ? TICKET_BACKGROUNDS[team] : null;
+
+    // useEffect: NFT 발급이 이미 완료된 경우 localStorage 정리
+    useEffect(() => {
+        if (ticket.nftMinted) {
+            localStorage.removeItem(`nft_minting_${ticketId}`);
+            setIsMinting(false);
+        }
+    }, [ticket.nftMinted, ticketId]);
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
@@ -161,6 +174,8 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
             return;
         }
 
+        // NFT 발급 시작 - localStorage에 상태 저장
+        localStorage.setItem(`nft_minting_${ticketId}`, 'true');
         setIsMinting(true);
         setMintStatus('티켓 이미지 생성 중...');
 
@@ -251,17 +266,26 @@ const TicketCard = ({ ticket, onNftMinted, showNFTSection = true }) => {
                 setMintStatus('NFT 발급 완료!');
                 alert(`NFT 발급이 완료되었습니다!\n\nToken ID: ${response.tokenId}\nTransaction: ${response.transactionHash}`);
 
+                // NFT 발급 완료 - localStorage에서 제거
+                localStorage.removeItem(`nft_minting_${ticketId}`);
+
                 if (onNftMinted) {
                     onNftMinted(ticketId, response);
                 }
             } else {
                 setMintStatus('NFT 발급 실패');
                 alert(`NFT 발급에 실패했습니다.\n\n오류: ${response.errorMessage || '알 수 없는 오류'}`);
+
+                // NFT 발급 실패 - localStorage에서 제거
+                localStorage.removeItem(`nft_minting_${ticketId}`);
             }
         } catch (error) {
             console.error('NFT 발급 오류:', error);
             setMintStatus('NFT 발급 실패');
             alert(`NFT 발급 중 오류가 발생했습니다.\n\n${error.response?.data?.message || error.message}`);
+
+            // NFT 발급 오류 - localStorage에서 제거
+            localStorage.removeItem(`nft_minting_${ticketId}`);
         } finally {
             setIsMinting(false);
             setTimeout(() => setMintStatus(''), 3000);

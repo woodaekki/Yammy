@@ -71,8 +71,8 @@ public class PostService {
             postImages.add(postImageRepository.save(postImage));
         }
 
-        // Response 생성
-        return buildPostResponse(savedPost, member, postImages, false);
+        // Response 생성 (자기 글이므로 isFollowing은 null)
+        return buildPostResponse(savedPost, member, postImages, false, null);
     }
 
     // 게시글 상세 조회
@@ -88,7 +88,13 @@ public class PostService {
 
         boolean isLiked = memberId != null && postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
 
-        return buildPostResponse(post, member, postImages, isLiked);
+        // 팔로우 상태 확인 (본인 글이 아니고, 로그인한 경우에만)
+        Boolean isFollowing = null;
+        if (memberId != null && !post.getMemberId().equals(memberId)) {
+            isFollowing = followRepository.existsByFollowerIdAndFollowingId(memberId, post.getMemberId());
+        }
+
+        return buildPostResponse(post, member, postImages, isLiked, isFollowing);
     }
 
     // 전체 피드 조회 (커서 기반 페이징)
@@ -168,7 +174,8 @@ public class PostService {
         List<PostImage> postImages = postImageRepository.findByPostIdOrderByImageOrder(postId);
         boolean isLiked = postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
 
-        return buildPostResponse(post, member, postImages, isLiked);
+        // 자기 글 수정이므로 isFollowing은 null
+        return buildPostResponse(post, member, postImages, isLiked, null);
     }
 
     // 게시글 삭제
@@ -190,7 +197,7 @@ public class PostService {
     }
 
     // PostResponse 빌드 헬퍼 메서드
-    private PostResponse buildPostResponse(Post post, Member member, List<PostImage> postImages, boolean isLiked) {
+    private PostResponse buildPostResponse(Post post, Member member, List<PostImage> postImages, boolean isLiked, Boolean isFollowing) {
         List<String> imageUrls = postImages.stream()
                 .map(PostImage::getImageUrl)
                 .collect(Collectors.toList());
@@ -207,6 +214,7 @@ public class PostService {
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .isLiked(isLiked)
+                .isFollowing(isFollowing)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -241,14 +249,36 @@ public class PostService {
         Map<Long, Member> memberMap = memberRepository.findAllById(memberIds).stream()
                 .collect(Collectors.toMap(Member::getMemberId, m -> m));
 
+        // 팔로우 여부 배치 조회
+        Set<Long> followingMemberIds = new HashSet<>();
+        if (memberId != null) {
+            // 본인 글은 제외하고 다른 사람 글만 필터링
+            List<Long> otherMemberIds = memberIds.stream()
+                    .filter(id -> !id.equals(memberId))
+                    .collect(Collectors.toList());
+
+            if (!otherMemberIds.isEmpty()) {
+                followingMemberIds = new HashSet<>(
+                    followRepository.findFollowingIdsByFollowerIdAndFollowingIds(memberId, otherMemberIds)
+                );
+            }
+        }
+
         // PostResponse 리스트 생성
+        final Set<Long> finalFollowingMemberIds = followingMemberIds;
         List<PostResponse> postResponses = posts.stream()
                 .map(post -> {
                     Member member = memberMap.get(post.getMemberId());
                     List<PostImage> postImages = postImagesMap.getOrDefault(post.getId(), Collections.emptyList());
                     boolean isLiked = likedPostIds.contains(post.getId());
 
-                    return buildPostResponse(post, member, postImages, isLiked);
+                    // 팔로우 상태 결정: 본인 글이면 null, 아니면 팔로우 여부 확인
+                    Boolean isFollowing = null;
+                    if (memberId != null && !post.getMemberId().equals(memberId)) {
+                        isFollowing = finalFollowingMemberIds.contains(post.getMemberId());
+                    }
+
+                    return buildPostResponse(post, member, postImages, isLiked, isFollowing);
                 })
                 .collect(Collectors.toList());
 

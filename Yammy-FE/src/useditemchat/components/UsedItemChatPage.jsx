@@ -162,7 +162,7 @@ export default function UsedItemChatPage() {
       setIsLeaving(true);
       await usedItemChatApi.leaveChatRoom(roomKey);
       alert("채팅방을 나갔습니다.");
-      navigate("/chatlist");
+      navigate("/chatlist", { replace: true });
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("인증이 만료되었습니다. 다시 로그인해주세요.");

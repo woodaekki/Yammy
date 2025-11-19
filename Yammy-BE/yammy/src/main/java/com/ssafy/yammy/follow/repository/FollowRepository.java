@@ -4,8 +4,11 @@ import com.ssafy.yammy.follow.entity.Follow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,4 +34,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     // 언팔로우
     void deleteByFollowerIdAndFollowingId(Long followerId, Long followingId);
+
+    // 배치 조회: 특정 사용자가 여러 사용자를 팔로우하고 있는지 확인
+    @Query("SELECT f.followingId FROM Follow f WHERE f.followerId = :followerId AND f.followingId IN :followingIds")
+    List<Long> findFollowingIdsByFollowerIdAndFollowingIds(@Param("followerId") Long followerId, @Param("followingIds") List<Long> followingIds);
 }

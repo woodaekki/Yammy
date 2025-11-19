@@ -22,6 +22,7 @@ public class PostResponse {
     private Integer likeCount;
     private Integer commentCount;
     private Boolean isLiked;  // 현재 사용자가 좋아요를 눌렀는지
+    private Boolean isFollowing;  // 현재 사용자가 작성자를 팔로우하고 있는지
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
