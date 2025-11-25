@@ -196,6 +196,13 @@ S13P31C205/
 |--------|--------|--------|
 | <img src="./Yammy-FE/src/assets/readme/nft.gif" width="260"/> | <img src="./Yammy-FE/src/assets/readme/fanchat.png" width="260"/> | <img src="./Yammy-FE/src/assets/readme/profile.gif" width="260"/> |
 
+---
+
+## 시연 영상
+[시청하기](https://youtube.com/shorts/36Z9kB8dx_U?si=TYhqoyJAOnurlRuU)
+
+---
+
 
 ## API 문서
 
