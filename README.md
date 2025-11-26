@@ -473,7 +473,7 @@ S13P31C205/
 
 ## 아키텍쳐
 
-<img src="./Yammy-FE/src/assets/readme/아키텍쳐_간단버전.png" width="650px" />
+<img src="./Yammy-FE/src/assets/readme/yammy_architecture.png" width="650px" />
 
 
 ## 팀원 소개
